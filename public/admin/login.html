@@ -1,56 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Align Login</title>
+
+    <link rel="stylesheet" href="/css/output.css">
 </head>
-<body>
 
-<h2>Login</h2>
+<body class="min-h-screen bg-slate-100">
 
-<input id="email" placeholder="Email">
+<div class="min-h-screen grid grid-cols-2">
 
-<br><br>
+    <div class="bg-blue-700 flex items-center justify-center">
 
-<input id="password" type="password" placeholder="Password">
+        <div class="text-center text-white">
 
-<br><br>
+            <h1 class="text-6xl font-bold mb-4">
+                ALIGN
+            </h1>
 
-<button onclick="login()">
-Login
-</button>
+            <p class="text-xl">
+                Smart Restaurant Operating System
+            </p>
 
-<pre id="result"></pre>
+        </div>
 
-<script>
+    </div>
 
-async function login(){
+    <div class="flex items-center justify-center">
 
-    const response = await fetch("/api/auth/login",{
+        <div class="w-full max-w-md rounded-2xl bg-white p-10 shadow-xl">
 
-        method:"POST",
+            <h2 class="mb-2 text-3xl font-bold">
+                Welcome Back
+            </h2>
 
-        headers:{
-            "Content-Type":"application/json"
-        },
+            <p class="mb-8 text-gray-500">
+                Login to your restaurant account
+            </p>
 
-        body:JSON.stringify({
+            <input
+                id="email"
+                type="email"
+                placeholder="Email Address"
+                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
 
-            email:document.getElementById("email").value,
+            <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                class="mb-6 w-full rounded-lg border border-gray-300 p-3">
 
-            password:document.getElementById("password").value
+            <button
+                id="loginBtn"
+                class="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700">
 
-        })
+                Login
 
-    });
+            </button>
 
-    const data=await response.json();
+            <div
+                id="result"
+                class="mt-6 text-red-600">
+            </div>
 
-    document.getElementById("result").textContent=
-    JSON.stringify(data,null,4);
+        </div>
 
-}
+    </div>
 
-</script>
+</div>
+
+<script src="/js/login.js"></script>
 
 </body>
 </html>

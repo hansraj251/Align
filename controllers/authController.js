@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const db = require("../db");
 exports.signup = async (req, res) => {
 
@@ -191,16 +192,29 @@ if (!passwordMatched) {
     });
 }
 
-            return res.json({
-                success: true,
-                message: "User Found",
-                user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role
-                }
-            });
+            const token = jwt.sign(
+    {
+        userId: user.id,
+        restaurantId: user.restaurant_id,
+        role: user.role
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: "7d"
+    }
+);
+
+return res.json({
+    success: true,
+    message: "Login Successful",
+    token,
+    user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+    }
+});
 
         }
     );
