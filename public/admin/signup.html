@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Align - Sign Up</title>
+
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background:#f4f4f4;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .card{
+            width:400px;
+            background:white;
+            padding:25px;
+            border-radius:10px;
+            box-shadow:0 0 10px rgba(0,0,0,.15);
+        }
+
+        h2{
+            text-align:center;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-top:10px;
+            box-sizing:border-box;
+        }
+
+        button{
+            width:100%;
+            margin-top:15px;
+            padding:12px;
+            cursor:pointer;
+        }
+
+        pre{
+            margin-top:20px;
+            background:#eee;
+            padding:10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Align Signup</h2>
+
+<input id="restaurantName" placeholder="Restaurant Name">
+
+<input id="ownerName" placeholder="Owner Name">
+
+<input id="email" placeholder="Email">
+
+<input id="mobile" placeholder="Mobile">
+
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="signup()">
+Create Account
+</button>
+
+<pre id="result"></pre>
+
+</div>
+
+<script>
+
+async function signup(){
+
+    const response = await fetch("/api/auth/signup",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+
+            restaurantName:document.getElementById("restaurantName").value,
+
+            ownerName:document.getElementById("ownerName").value,
+
+            email:document.getElementById("email").value,
+
+            mobile:document.getElementById("mobile").value,
+
+            password:document.getElementById("password").value
+
+        })
+
+    });
+
+    const data=await response.json();
+
+    document.getElementById("result").textContent=
+    JSON.stringify(data,null,4);
+
+}
+
+</script>
+
+</body>
+</html>
