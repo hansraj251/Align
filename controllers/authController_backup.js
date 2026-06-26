@@ -152,57 +152,9 @@ db.run(
 };
 exports.login = (req, res) => {
 
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return res.status(400).json({
-            success: false,
-            message: "Email and Password are required"
-        });
-    }
-
-    db.get(
-        `SELECT * FROM users WHERE email = ?`,
-        [email],
-        async (err, user) => {
-
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: "Database error"
-                });
-            }
-
-            if (!user) {
-                return res.status(401).json({
-                    success: false,
-                    message: "Invalid email or password"
-                });
-            }
-            const passwordMatched = await bcrypt.compare(
-    password,
-    user.password
-);
-
-if (!passwordMatched) {
-    return res.status(401).json({
-        success: false,
-        message: "Invalid email or password"
+    res.json({
+        success: true,
+        message: "Login API Working"
     });
-}
-
-            return res.json({
-                success: true,
-                message: "User Found",
-                user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role
-                }
-            });
-
-        }
-    );
 
 };
