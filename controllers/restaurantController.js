@@ -47,6 +47,30 @@ exports.getRestaurant = (req, res) => {
     );
 
 };
-exports.updateRestaurant = (req, res) => {
-    // update logic
+const restaurantRepository =
+    require("../repositories/restaurantRepository");
+
+exports.updateRestaurant = async (req, res) => {
+
+    try {
+
+        await restaurantRepository.updateRestaurant(
+            req.user.restaurantId,
+            req.body
+        );
+
+        res.json({
+            success: true,
+            message: "Restaurant updated successfully"
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
 };

@@ -13,32 +13,148 @@
 <div class="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow">
 
     <h1 class="mb-6 text-3xl font-bold">
-        Restaurant Settings
-    </h1>
+    Restaurant Settings
+</h1>
 
-    <label class="mb-2 block font-medium">
-        Restaurant Name
-    </label>
+<!-- Restaurant Profile -->
+
+<h2 class="mb-4 text-xl font-semibold">
+    Restaurant Profile
+</h2>
+
+<label class="mb-2 block font-medium">
+    Restaurant Name
+</label>
+
+<input
+    id="restaurantName"
+    class="w-full rounded-lg border p-3">
+
+<label class="mt-4 mb-2 block font-medium">
+    Owner Name
+</label>
+
+<input
+    id="ownerName"
+    class="w-full rounded-lg border p-3">
+
+<label class="mt-4 mb-2 block font-medium">
+    Mobile
+</label>
+
+<input
+    id="mobile"
+    class="w-full rounded-lg border p-3">
+
+<label class="mt-4 mb-2 block font-medium">
+    Email
+</label>
+
+<input
+    id="email"
+    class="w-full rounded-lg border p-3">
+
+<label class="mt-4 mb-2 block font-medium">
+    GST Number
+</label>
+
+<input
+    id="gstNumber"
+    class="w-full rounded-lg border p-3">
+
+<label class="mt-4 mb-2 block font-medium">
+    FSSAI Number
+</label>
+
+<input
+    id="fssaiNumber"
+    class="w-full rounded-lg border p-3">
+
+<label class="mt-4 mb-2 block font-medium">
+    Address
+</label>
+
+<textarea
+    id="address"
+    rows="3"
+    class="w-full rounded-lg border p-3"></textarea>
+
+<div class="mt-4 grid grid-cols-3 gap-4">
 
     <input
-        id="restaurantName"
-        class="w-full rounded-lg border p-3">
-        <button
+        id="city"
+        placeholder="City"
+        class="rounded-lg border p-3">
 
-    id="saveBtn"
+    <input
+        id="state"
+        placeholder="State"
+        class="rounded-lg border p-3">
 
-    class="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
+    <input
+        id="pincode"
+        placeholder="Pincode"
+        class="rounded-lg border p-3">
 
-    Save Changes
+</div>
+
+<button
+    id="saveRestaurantBtn"
+    class="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white">
+
+    Save Restaurant
+
+</button>
+
+<hr class="my-8">
+
+<h2 class="mb-4 text-xl font-semibold">
+    POS Settings
+</h2>
+
+<label class="mb-2 block font-medium">
+    Footer Message
+</label>
+
+<textarea
+    id="footerMessage"
+    rows="3"
+    class="w-full rounded-lg border p-3"></textarea>
+
+<div class="mt-4 grid grid-cols-2 gap-4">
+
+    <input
+        id="cgst"
+        type="number"
+        step="0.01"
+        placeholder="CGST %"
+        class="rounded-lg border p-3">
+
+    <input
+        id="sgst"
+        type="number"
+        step="0.01"
+        placeholder="SGST %"
+        class="rounded-lg border p-3">
+
+</div>
+
+<button
+    id="saveSettingsBtn"
+    class="mt-6 rounded-lg bg-green-600 px-6 py-3 font-semibold text-white">
+
+    Save POS Settings
 
 </button>
 
 </div>
 
+<script src="/js/api.js"></script>
+<script src="/js/toast.js"></script>
 <script src="/js/settings.js"></script>
 
 <script>
-loadRestaurant();
+    loadRestaurant();
 </script>
 
 </body>

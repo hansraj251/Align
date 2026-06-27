@@ -99,6 +99,10 @@ async function payOrder(
     }
 
     Toast.show("Payment received");
+    window.open(
+    `/admin/receipt.html?orderId=${orderId}`,
+    "_blank"
+);
 
     loadBillingOrders();
 

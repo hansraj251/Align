@@ -190,3 +190,50 @@ exports.getOrderSubtotal = async (
     );
 
 };
+exports.getReceipt = async (restaurantId, orderId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            o.id,
+            o.order_number,
+            o.subtotal,
+            o.tax,
+            o.discount,
+            o.total,
+            o.payment_method,
+            o.paid_at,
+            t.name AS table_name
+        FROM orders o
+        JOIN tables t
+            ON t.id = o.table_id
+        WHERE
+            o.id = ?
+            AND o.restaurant_id = ?
+        `,
+        [
+            orderId,
+            restaurantId
+        ]
+    );
+
+};
+exports.getReceiptItems = async (orderId) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+            m.name,
+            oi.quantity,
+            oi.unit_price,
+            oi.total_price
+        FROM order_items oi
+        JOIN menu_items m
+            ON m.id = oi.menu_item_id
+        WHERE oi.order_id = ?
+        ORDER BY oi.id
+        `,
+        [orderId]
+    );
+
+};

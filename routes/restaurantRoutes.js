@@ -10,9 +10,9 @@ router.get(
     restaurantController.getRestaurant
 );
 
-module.exports = router;
 router.put(
     "/me",
     authMiddleware,
     restaurantController.updateRestaurant
 );
+module.exports = router;

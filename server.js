@@ -30,6 +30,10 @@ const billingRoutes =
     require("./routes/billingRoutes");    
 const paymentRoutes =
     require("./routes/paymentRoutes");    
+const receiptRoutes =
+    require("./routes/receiptRoutes");   
+const settingsRoutes =
+    require("./routes/settingsRoutes");     
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -45,6 +49,14 @@ app.use(express.static("public"));
 app.use("/api/orders", orderStatusRoutes);
 app.use("/api/billing", billingRoutes);
 app.use("/api/payment", paymentRoutes);
+app.use(
+    "/api/receipt",
+    receiptRoutes
+);
+app.use(
+    "/api/settings",
+    settingsRoutes
+);
 app.get("/", (req, res) => {
 
   res.json({
