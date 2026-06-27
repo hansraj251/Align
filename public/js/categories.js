@@ -1,18 +1,12 @@
 const token = localStorage.getItem("token");
-
-if (!token) {
+if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
 
+
 async function loadCategories() {
 
-    const response = await fetch("/api/menu/categories", {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    const data = await response.json();
+    const data = await API.get("/api/menu/categories");
 
     const list = document.getElementById("categoryList");
 
@@ -65,26 +59,16 @@ async function createCategory() {
         return;
     }
 
-    const response = await fetch("/api/menu/categories", {
-
-        method: "POST",
-
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
-        },
-
-        body: JSON.stringify({
-            name,
-            description
-        })
-
-    });
-
-    const data = await response.json();
+    const data = await API.post(
+    "/api/menu/categories",
+    {
+        name,
+        description
+    }
+);
 
     if (!data.success) {
-        alert(data.message);
+        Toast.show(data.message, "error");
         return;
     }
 
@@ -92,6 +76,7 @@ async function createCategory() {
     document.getElementById("categoryDescription").value = "";
 
     loadCategories();
+    Toast.show("Category created successfully");
 
 }
 
@@ -107,23 +92,16 @@ async function deleteCategory(id) {
         return;
     }
 
-    const response = await fetch(
-        `/api/menu/categories/${id}`,
-        {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-    );
-
-    const data = await response.json();
+    const data = await API.delete(
+    `/api/menu/categories/${id}`
+);
 
     if (!data.success) {
-        alert(data.message);
+        Toast.show(data.message, "error");
         return;
     }
 
     loadCategories();
+    Toast.show("Category deleted successfully");
 
 }

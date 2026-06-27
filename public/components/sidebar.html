@@ -13,36 +13,63 @@
     <nav class="flex-1 p-4 space-y-2">
 
         <a href="/admin/dashboard.html"
-           class="block rounded-lg bg-blue-600 px-4 py-3 text-white">
+        data-page="dashboard"
+           class="block rounded-lg px-4 py-3 hover:bg-slate-100">
             🏠 Dashboard
         </a>
 
         <a href="#"
+        data-page="Orders"
            class="block rounded-lg px-4 py-3 hover:bg-slate-100">
             🍽 Orders
         </a>
 
-        <a href="#"
-           class="block rounded-lg px-4 py-3 hover:bg-slate-100">
-            📋 Menu
-        </a>
+        <div>
+
+    <p class="mb-2 px-4 text-xs font-semibold uppercase text-slate-400">
+        Menu
+    </p>
+
+    <a
+        href="/admin/categories.html"
+        data-page="categories"
+        class="mb-1 block rounded-lg px-4 py-3 hover:bg-slate-100">
+
+        📂 Categories
+
+    </a>
+
+    <a
+        href="/admin/menu-items.html"
+        data-page="menu-items"
+        class="block rounded-lg px-4 py-3 hover:bg-slate-100">
+
+        🍽 Menu Items
+
+    </a>
+
+</div>
 
         <a href="#"
+        data-page="Tables"
            class="block rounded-lg px-4 py-3 hover:bg-slate-100">
             🪑 Tables
         </a>
 
         <a href="#"
+        data-page="Kitchen"
            class="block rounded-lg px-4 py-3 hover:bg-slate-100">
             👨‍🍳 Kitchen
         </a>
 
         <a href="#"
+        data-page="Billing"
            class="block rounded-lg px-4 py-3 hover:bg-slate-100">
             💳 Billing
         </a>
 
         <a href="#"
+        data-page="Settings"
            class="block rounded-lg px-4 py-3 hover:bg-slate-100">
             ⚙ Settings
         </a>

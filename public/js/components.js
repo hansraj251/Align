@@ -5,5 +5,25 @@ async function loadComponent(elementId, filePath) {
     const html = await response.text();
 
     document.getElementById(elementId).innerHTML = html;
+    const currentPage =
+    window.location.pathname
+        .split("/")
+        .pop()
+        .replace(".html", "");
+
+const activeLink = document.querySelector(
+    `[data-page="${currentPage}"]`
+);
+
+if (activeLink) {
+
+    activeLink.classList.remove("hover:bg-slate-100");
+
+    activeLink.classList.add(
+        "bg-blue-600",
+        "text-white"
+    );
+
+}
 
 }
