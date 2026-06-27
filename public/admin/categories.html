@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Menu Categories</title>
+
+    <link rel="stylesheet" href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="flex">
+
+    <div id="sidebar"></div>
+
+    <main class="flex-1 p-8">
+
+        <h1 class="mb-8 text-3xl font-bold">
+            Menu Categories
+        </h1>
+
+        <div class="rounded-xl bg-white p-6 shadow">
+
+            <div class="grid gap-4">
+
+                <input
+                    id="categoryName"
+                    type="text"
+                    placeholder="Category Name"
+                    class="rounded-lg border p-3">
+
+                <textarea
+                    id="categoryDescription"
+                    placeholder="Description"
+                    class="rounded-lg border p-3"></textarea>
+
+                <button
+                    id="saveCategoryBtn"
+                    class="rounded-lg bg-blue-600 p-3 font-semibold text-white hover:bg-blue-700">
+
+                    Add Category
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="mt-8 rounded-xl bg-white p-6 shadow">
+
+            <h2 class="mb-4 text-xl font-semibold">
+                Categories
+            </h2>
+
+            <div id="categoryList">
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="/js/components.js"></script>
+<script src="/js/categories.js"></script>
+
+<script>
+
+loadComponent(
+    "sidebar",
+    "/components/sidebar.html"
+);
+
+</script>
+
+</body>
+
+</html>

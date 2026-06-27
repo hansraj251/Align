@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Settings</title>
+
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-slate-100 p-10">
+
+<div class="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow">
+
+    <h1 class="mb-6 text-3xl font-bold">
+        Restaurant Settings
+    </h1>
+
+    <label class="mb-2 block font-medium">
+        Restaurant Name
+    </label>
+
+    <input
+        id="restaurantName"
+        class="w-full rounded-lg border p-3">
+        <button
+
+    id="saveBtn"
+
+    class="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
+
+    Save Changes
+
+</button>
+
+</div>
+
+<script src="/js/settings.js"></script>
+
+<script>
+loadRestaurant();
+</script>
+
+</body>
+</html>

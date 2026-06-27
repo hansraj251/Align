@@ -15,6 +15,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
+const restaurantRoutes = require("./routes/restaurantRoutes");
+const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
+app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/menu/categories", menuCategoryRoutes);
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
