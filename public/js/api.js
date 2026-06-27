@@ -61,6 +61,17 @@ const API = {
         });
 
     },
+    async patch(url, data) {
+
+    return this.request(url, {
+
+        method: "PATCH",
+
+        body: JSON.stringify(data)
+
+        });
+
+    },
 
     async delete(url) {
 
@@ -71,5 +82,6 @@ const API = {
         });
 
     }
+    
 
 };

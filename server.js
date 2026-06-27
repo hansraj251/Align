@@ -23,6 +23,13 @@ const tableRoutes = require("./routes/tableRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const checkoutRoutes =
     require("./routes/checkoutRoutes");
+const kitchenRoutes = require("./routes/kitchenRoutes");
+const orderStatusRoutes =
+    require("./routes/orderStatusRoutes");    
+const billingRoutes =
+    require("./routes/billingRoutes");    
+const paymentRoutes =
+    require("./routes/paymentRoutes");    
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -33,7 +40,11 @@ app.use(
     checkoutRoutes
 );
 app.use("/api/orders", orderRoutes);
+app.use("/api/kitchen", kitchenRoutes);
 app.use(express.static("public"));
+app.use("/api/orders", orderStatusRoutes);
+app.use("/api/billing", billingRoutes);
+app.use("/api/payment", paymentRoutes);
 app.get("/", (req, res) => {
 
   res.json({

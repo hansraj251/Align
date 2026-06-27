@@ -18,13 +18,37 @@ exports.checkout = async (restaurantId, body) => {
 
 return await db.transaction(async () => {
 
-    const orderId =
+    let order =
+    await orderRepository.getActiveOrderByTable(
+        restaurantId,
+        table_id
+    );
+
+let orderId;
+
+if (order) {
+
+    orderId = order.id;
+
+} else {
+
+    orderId =
         await orderRepository.createOrder(
             restaurantId,
             table_id
         );
 
-    let subtotal = 0;
+    const orderNumber =
+        `ORD-${String(orderId).padStart(6, "0")}`;
+
+    await orderRepository.updateOrderNumber(
+        orderId,
+        orderNumber
+    );
+
+}
+
+let subtotal = 0;
 
     for (const item of items) {
 
@@ -46,16 +70,45 @@ return await db.transaction(async () => {
 
         subtotal += totalPrice;
 
-        await orderRepository.addOrderItem(
-            orderId,
-            menu.id,
-            item.quantity,
-            unitPrice,
-            totalPrice
-        );
+        const existingItem =
+    await orderRepository.getOrderItem(
+        orderId,
+        menu.id
+    );
+
+if (existingItem) {
+
+    const newQuantity =
+        existingItem.quantity + item.quantity;
+
+    const newTotal =
+        newQuantity * unitPrice;
+
+    await orderRepository.updateOrderItem(
+        existingItem.id,
+        newQuantity,
+        newTotal
+    );
+
+} else {
+
+    await orderRepository.addOrderItem(
+        orderId,
+        menu.id,
+        item.quantity,
+        unitPrice,
+        totalPrice
+    );
+
+}
 
     }
+const totals =
+    await orderRepository.getOrderSubtotal(
+        orderId
+    );
 
+subtotal = totals.subtotal;
     const tax = subtotal * 0.05;
     const discount = 0;
     const total = subtotal + tax - discount;

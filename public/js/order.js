@@ -68,6 +68,12 @@ async function loadMenu() {
 }
 
 loadMenu();
+document
+    .getElementById("sendKitchenBtn")
+    .addEventListener(
+        "click",
+        sendToKitchen
+    );
 renderCart();
 function addItem(id, name, price) {
 
@@ -211,5 +217,67 @@ function decreaseQty(id) {
     }
 
     renderCart();
+
+}
+async function sendToKitchen() {
+
+    if (cart.length === 0) {
+
+        Toast.show("Cart is empty", "error");
+
+        return;
+
+    }
+
+    const button =
+        document.getElementById("sendKitchenBtn");
+
+    button.disabled = true;
+
+    button.textContent = "Sending...";
+
+    const payload = {
+
+        table_id: Number(tableId),
+
+        items: cart.map(item => ({
+
+            menu_item_id: item.id,
+
+            quantity: item.quantity
+
+        }))
+
+    };
+
+    const data =
+        await API.post(
+            "/api/orders/checkout",
+            payload
+        );
+
+    if (!data.success) {
+
+        Toast.show(data.message, "error");
+
+        button.disabled = false;
+
+        button.textContent =
+            "Send To Kitchen";
+
+        return;
+
+    }
+
+    sessionStorage.removeItem("cart");
+
+    Toast.show("Order sent successfully");
+
+    setTimeout(() => {
+
+        window.location.href =
+            "/admin/tables.html";
+
+    }, 800);
 
 }
