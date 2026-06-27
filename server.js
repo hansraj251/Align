@@ -19,10 +19,12 @@ const restaurantRoutes = require("./routes/restaurantRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const tableRoutes = require("./routes/tableRoutes");
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/tables", tableRoutes);
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {

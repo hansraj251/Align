@@ -1,3 +1,4 @@
+const menuCategoryService = require("../services/menuCategoryService");
 const db = require("../db");
 
 exports.createCategory = (req, res) => {
@@ -53,38 +54,30 @@ exports.createCategory = (req, res) => {
     );
 
 };
-exports.getCategories = (req, res) => {
+exports.getCategories = async (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
+    try {
 
-    db.all(
-        `SELECT
-            id,
-            name,
-            slug,
-            description,
-            display_order,
-            status
-        FROM menu_categories
-        WHERE restaurant_id = ?
-        ORDER BY display_order, name`,
-        [restaurantId],
-        (err, categories) => {
+        const restaurantId = req.user.restaurantId;
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+        const categories =
+            await menuCategoryService.getCategories(
+                restaurantId
+            );
 
-            return res.json({
-                success: true,
-                categories
-            });
+        return res.json({
+            success: true,
+            categories
+        });
 
-        }
-    );
+    } catch (err) {
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
 
 };
 exports.deleteCategory = (req, res) => {
