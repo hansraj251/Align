@@ -14,4 +14,9 @@ router.get(
     authMiddleware,
     tableController.getTables
 );
+router.delete(
+    "/:id",
+    authMiddleware,
+    tableController.deleteTable
+);
 module.exports = router;

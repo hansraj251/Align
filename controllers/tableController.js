@@ -112,3 +112,40 @@ exports.getTables = (req, res) => {
     );
 
 };
+exports.deleteTable = (req, res) => {
+
+    const restaurantId = req.user.restaurantId;
+    const tableId = req.params.id;
+
+    db.run(
+        `
+        DELETE FROM tables
+        WHERE id = ?
+          AND restaurant_id = ?
+        `,
+        [tableId, restaurantId],
+        function (err) {
+
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: err.message
+                });
+            }
+
+            if (this.changes === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Table not found"
+                });
+            }
+
+            return res.json({
+                success: true,
+                message: "Table deleted successfully"
+            });
+
+        }
+    );
+
+};

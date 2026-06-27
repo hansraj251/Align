@@ -5,6 +5,11 @@ const createTablesTable =
     require("./tables/createTablesTable");
 const createMenuCategoriesTable = require("./schema/menuCategories");
 const createMenuItemsTable = require("./schema/menuItems");
+const createOrdersTable =
+    require("./orders/createOrdersTable");
+
+const createOrderItemsTable =
+    require("./orders/createOrderItemsTable");
 function initializeDatabase() {
     console.log("📦 Initializing database...");
 
@@ -13,6 +18,8 @@ function initializeDatabase() {
     createMenuCategoriesTable();
     createMenuItemsTable();
     createTablesTable();
+    createOrdersTable();
+    createOrderItemsTable();
 
     console.log("✅ Database initialization completed.");
 }

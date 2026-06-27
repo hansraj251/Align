@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order</title>
+
+    <link rel="stylesheet" href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="flex">
+
+    <div id="sidebar"></div>
+
+    <main class="flex-1 p-8">
+
+        <h1
+            id="tableTitle"
+            class="mb-8 text-3xl font-bold">
+
+            Order
+
+        </h1>
+
+        <div class="grid grid-cols-2 gap-6">
+
+            <div
+                class="rounded-xl bg-white p-6 shadow">
+
+                <h2 class="mb-5 text-xl font-semibold">
+
+                    Menu
+
+                </h2>
+
+                <div id="menuList">
+
+                </div>
+
+            </div>
+
+            <div
+                class="rounded-xl bg-white p-6 shadow">
+
+                <h2 class="mb-5 text-xl font-semibold">
+
+                    Current Order
+
+                </h2>
+
+                <div id="cart">
+
+                    No Items
+
+                </div>
+
+                <div
+                    class="mt-6 border-t pt-4">
+
+                    <div class="flex justify-between">
+
+                        <span>
+
+                            Total
+
+                        </span>
+
+                        <span id="total">
+
+                            ₹0
+
+                        </span>
+
+                    </div>
+
+                    <button
+                        id="sendKitchenBtn"
+                        class="mt-6 w-full rounded-lg bg-blue-600 py-3 text-white">
+
+                        Send To Kitchen
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="/js/components.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/toast.js"></script>
+
+<script>
+
+loadComponent(
+    "sidebar",
+    "/components/sidebar.html"
+);
+
+</script>
+
+<script src="/js/order.js"></script>
+
+</body>
+
+</html>

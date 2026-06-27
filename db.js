@@ -8,6 +8,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.error("❌ Database connection failed:", err.message);
     } else {
         console.log("✅ SQLite Connected");
+        db.run("PRAGMA foreign_keys = ON;");
     }
 });
 db.runAsync = (sql, params = []) => {
@@ -64,6 +65,29 @@ db.allAsync = (sql, params = []) => {
         });
 
     });
+
+};
+db.transaction = async (callback) => {
+
+    try {
+
+        await db.runAsync("BEGIN TRANSACTION");
+
+        const result = await callback(db);
+
+        await db.runAsync("COMMIT");
+
+        return result;
+
+    } catch (err) {
+
+        try {
+            await db.runAsync("ROLLBACK");
+        } catch (_) {}
+
+        throw err;
+
+    }
 
 };
 module.exports = db;
