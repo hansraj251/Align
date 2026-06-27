@@ -17,8 +17,10 @@ const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
 const restaurantRoutes = require("./routes/restaurantRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
+const menuItemRoutes = require("./routes/menuItemRoutes");
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
+app.use("/api/menu/items", menuItemRoutes);
 app.use(express.static("public"));
 
 app.get("/", (req, res) => {
