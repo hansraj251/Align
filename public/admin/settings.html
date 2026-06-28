@@ -8,9 +8,14 @@
     <link rel="stylesheet" href="/css/output.css">
 </head>
 
-<body class="bg-slate-100 p-10">
+<body class="bg-slate-100">
 
-<div class="mx-auto max-w-3xl rounded-xl bg-white p-8 shadow">
+<div class="flex">
+
+    <div id="sidebar"></div>
+
+    <main class="flex-1 p-8">
+        <div class="rounded-xl bg-white p-8 shadow">
 
     <h1 class="mb-6 text-3xl font-bold">
     Restaurant Settings
@@ -30,45 +35,69 @@
     id="restaurantName"
     class="w-full rounded-lg border p-3">
 
-<label class="mt-4 mb-2 block font-medium">
-    Owner Name
-</label>
+<div class="mt-4 grid grid-cols-2 gap-6">
 
-<input
-    id="ownerName"
-    class="w-full rounded-lg border p-3">
+    <div>
 
-<label class="mt-4 mb-2 block font-medium">
-    Mobile
-</label>
+        <label class="mb-2 block font-medium">
+            Owner Name
+        </label>
 
-<input
-    id="mobile"
-    class="w-full rounded-lg border p-3">
+        <input
+            id="ownerName"
+            class="w-full rounded-lg border p-3">
 
-<label class="mt-4 mb-2 block font-medium">
-    Email
-</label>
+    </div>
 
-<input
-    id="email"
-    class="w-full rounded-lg border p-3">
+    <div>
 
-<label class="mt-4 mb-2 block font-medium">
-    GST Number
-</label>
+        <label class="mb-2 block font-medium">
+            Mobile
+        </label>
 
-<input
-    id="gstNumber"
-    class="w-full rounded-lg border p-3">
+        <input
+            id="mobile"
+            class="w-full rounded-lg border p-3">
 
-<label class="mt-4 mb-2 block font-medium">
-    FSSAI Number
-</label>
+    </div>
 
-<input
-    id="fssaiNumber"
-    class="w-full rounded-lg border p-3">
+    <div>
+
+        <label class="mb-2 block font-medium">
+            Email
+        </label>
+
+        <input
+            id="email"
+            class="w-full rounded-lg border p-3">
+
+    </div>
+
+    <div>
+
+        <label class="mb-2 block font-medium">
+            GST Number
+        </label>
+
+        <input
+            id="gstNumber"
+            class="w-full rounded-lg border p-3">
+
+    </div>
+
+    <div>
+
+        <label class="mb-2 block font-medium">
+            FSSAI Number
+        </label>
+
+        <input
+            id="fssaiNumber"
+            class="w-full rounded-lg border p-3">
+
+    </div>
+
+</div>
 
 <label class="mt-4 mb-2 block font-medium">
     Address
@@ -79,7 +108,7 @@
     rows="3"
     class="w-full rounded-lg border p-3"></textarea>
 
-<div class="mt-4 grid grid-cols-3 gap-4">
+<div class="mt-6 grid grid-cols-3 gap-6">
 
     <input
         id="city"
@@ -105,8 +134,9 @@
     Save Restaurant
 
 </button>
+</div>
 
-<hr class="my-8">
+<div class="mt-8 rounded-xl bg-white p-8 shadow">
 
 <h2 class="mb-4 text-xl font-semibold">
     POS Settings
@@ -146,16 +176,31 @@
     Save POS Settings
 
 </button>
+</div>
+</div>
+ </main>
 
 </div>
 
+<script src="/js/components.js"></script>
+
 <script src="/js/api.js"></script>
+
 <script src="/js/toast.js"></script>
-<script src="/js/settings.js"></script>
 
 <script>
-    loadRestaurant();
+
+loadComponent(
+
+    "sidebar",
+
+    "/components/sidebar.html"
+
+);
+
 </script>
+
+<script src="/js/settings.js"></script>
 
 </body>
 </html>
