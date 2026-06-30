@@ -76,17 +76,7 @@ app.use(
     staffRoutes
 );
 app.get("/", (req, res) => {
-
-  res.json({
-
-    success: true,
-
-    message: "Welcome to Align API",
-
-    version: "1.0.0"
-
-  });
-
+    res.redirect("/admin/login.html");
 });
 
 initializeDatabase()
