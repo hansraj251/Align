@@ -45,6 +45,13 @@ exports.getDashboardSummary = async (restaurantId) => {
             ) AS occupiedTables,
 
             (
+    SELECT COUNT(*)
+    FROM tables
+    WHERE
+        restaurant_id = ?
+) AS totalTables,
+
+            (
                 SELECT COUNT(*)
                 FROM orders
                 WHERE
@@ -55,14 +62,15 @@ exports.getDashboardSummary = async (restaurantId) => {
                     )
             ) AS pendingKitchen
         `,
-        [
-            restaurantId,
-            restaurantId,
-            restaurantId,
-            restaurantId,
-            restaurantId,
-            restaurantId
-        ]
+       [
+    restaurantId,
+    restaurantId,
+    restaurantId,
+    restaurantId,
+    restaurantId,
+    restaurantId,
+    restaurantId
+]
     );
 
 };

@@ -18,35 +18,38 @@ exports.getDashboard = async (
 
     return {
 
-        success: true,
+    success: true,
 
-        todaySales,
+    todaySales,
 
-        todayOrders,
+    todayOrders,
 
-        averageBill:
+    averageBill:
 
-            todayOrders > 0
-                ? Number(
-                    (
-                        todaySales /
-                        todayOrders
-                    ).toFixed(2)
-                )
-                : 0,
+        todayOrders > 0
+            ? Number(
+                (
+                    todaySales /
+                    todayOrders
+                ).toFixed(2)
+            )
+            : 0,
 
-        occupiedTables:
-            summary.occupiedTables,
+    occupiedTables:
+        summary.occupiedTables,
 
-        pendingKitchen:
-            summary.pendingKitchen,
+    totalTables:
+        summary.totalTables,
 
-        categories:
-            summary.categories,
+    pendingKitchen:
+        summary.pendingKitchen,
 
-        menuItems:
-            summary.menuItems
+    categories:
+        summary.categories,
 
-    };
+    menuItems:
+        summary.menuItems
+
+};
 
 };

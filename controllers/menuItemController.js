@@ -1,124 +1,209 @@
-const db = require("../db");
+const menuItemService =
+    require("../services/menuItemService");
 
-exports.createMenuItem = (req, res) => {
+exports.createMenuItem = async (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
+    try {
 
-    const {
-        category_id,
-        name,
-        description,
-        price,
-        food_type
-    } = req.body;
+        const restaurantId =
+            req.user.restaurantId;
 
-    if (!category_id) {
-        return res.status(400).json({
+        const {
+
+            category_id,
+
+            name,
+
+            description,
+
+            price,
+
+            food_type
+
+        } = req.body;
+
+        if (!category_id) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Category is required"
+            });
+
+        }
+
+        if (!name || name.trim() === "") {
+
+            return res.status(400).json({
+                success: false,
+                message: "Item name is required"
+            });
+
+        }
+
+        if (price === undefined || price === "") {
+
+            return res.status(400).json({
+                success: false,
+                message: "Price is required"
+            });
+
+        }
+
+        const result =
+            await menuItemService.createMenuItem(
+
+                restaurantId,
+
+                category_id,
+
+                name,
+
+                price,
+
+                food_type || "veg",
+
+                description
+
+            );
+
+        return res.json(result);
+
+    } catch (err) {
+
+        return res.status(500).json({
+
             success: false,
-            message: "Category is required"
+
+            message: err.message
+
         });
+
     }
 
-    if (!name || name.trim() === "") {
-        return res.status(400).json({
+};
+exports.getMenuItems = async (req, res) => {
+
+    try {
+
+        const result =
+            await menuItemService.getMenuItems(
+                req.user.restaurantId
+            );
+
+        return res.json(result);
+
+    } catch (err) {
+
+        return res.status(500).json({
+
             success: false,
-            message: "Item name is required"
+
+            message: err.message
+
         });
+
     }
 
-    if (price === undefined || price === "") {
-        return res.status(400).json({
-            success: false,
-            message: "Price is required"
-        });
-    }
+};
+exports.updateMenuItem = async (req, res) => {
 
-    const slug = name
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-");
+    try {
 
-    db.run(
-        `INSERT INTO menu_items
-        (
-            restaurant_id,
+        const {
             category_id,
             name,
-            slug,
             description,
             price,
             food_type
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [
-            restaurantId,
-            category_id,
-            name,
-            slug,
-            description || "",
-            price,
-            food_type || "veg"
-        ],
-        function (err) {
+        } = req.body;
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+        if (!category_id) {
 
-            return res.json({
-                success: true,
-                message: "Menu item created successfully",
-                itemId: this.lastID
+            return res.status(400).json({
+                success: false,
+                message: "Category is required"
             });
 
         }
-    );
+
+        if (!name || name.trim() === "") {
+
+            return res.status(400).json({
+                success: false,
+                message: "Item name is required"
+            });
+
+        }
+
+        if (price === undefined || price === "") {
+
+            return res.status(400).json({
+                success: false,
+                message: "Price is required"
+            });
+
+        }
+
+        const result =
+            await menuItemService.updateMenuItem(
+
+                req.user.restaurantId,
+
+                req.params.id,
+
+                category_id,
+
+                name,
+
+                price,
+
+                food_type || "veg",
+
+                description
+
+            );
+
+        return res.json(result);
+
+    } catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };
-exports.getMenuItems = (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
+exports.deleteMenuItem = async (req, res) => {
 
-    db.all(
-        `SELECT
+    try {
 
-            mi.id,
-            mi.name,
-            mc.name AS category,
-            mi.price,
-            mi.food_type,
-            mi.description,
-            mi.is_available
+        const result =
+            await menuItemService.deleteMenuItem(
 
-        FROM menu_items mi
+                req.user.restaurantId,
 
-        JOIN menu_categories mc
-            ON mc.id = mi.category_id
+                req.params.id
 
-        WHERE mi.restaurant_id = ?
+            );
 
-        ORDER BY mc.name, mi.name`,
+        return res.json(result);
 
-        [restaurantId],
+    } catch (err) {
 
-        (err, items) => {
+        return res.status(500).json({
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+            success: false,
 
-            return res.json({
-                success: true,
-                items
-            });
+            message: err.message
 
-        }
-    );
+        });
+
+    }
 
 };

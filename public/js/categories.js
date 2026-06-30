@@ -1,8 +1,9 @@
+let editingCategoryId = null;
 const token = localStorage.getItem("token");
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
-
+const isEdit = !!editingCategoryId;
 
 async function loadCategories() {
 
@@ -32,13 +33,28 @@ async function loadCategories() {
         </p>
     </div>
 
+    <div class="flex gap-2">
+
     <button
-        onclick="deleteCategory(${category.id})"
-        class="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700">
+        class="edit-category rounded bg-amber-500 px-4 py-2 text-white hover:bg-amber-600"
+        data-id="${category.id}"
+        data-name="${encodeURIComponent(category.name)}"
+        data-description="${encodeURIComponent(category.description || "")}">
+
+        Edit
+
+    </button>
+
+    <button
+        class="delete-category rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+        data-id="${category.id}"
+        data-name="${encodeURIComponent(category.name)}">
 
         Delete
 
     </button>
+
+</div>
 
 </div>
 `;
@@ -47,7 +63,7 @@ async function loadCategories() {
 
 }
 
-async function createCategory() {
+async function saveCategory() {
 
     const name = document.getElementById("categoryName").value.trim();
 
@@ -59,13 +75,29 @@ async function createCategory() {
         return;
     }
 
-    const data = await API.post(
-    "/api/menu/categories",
-    {
-        name,
-        description
-    }
-);
+    let data;
+
+if (editingCategoryId) {
+
+    data = await API.put(
+        `/api/menu/categories/${editingCategoryId}`,
+        {
+            name,
+            description
+        }
+    );
+
+} else {
+
+    data = await API.post(
+        "/api/menu/categories",
+        {
+            name,
+            description
+        }
+    );
+
+}
 
     if (!data.success) {
         Toast.show(data.message, "error");
@@ -75,33 +107,147 @@ async function createCategory() {
     document.getElementById("categoryName").value = "";
     document.getElementById("categoryDescription").value = "";
 
-    loadCategories();
+    await loadCategories();
     Toast.show("Category created successfully");
+    editingCategoryId = null;
+
+document.getElementById("categoryId").value = "";
+
+document.getElementById("saveCategoryBtn").textContent =
+    "Add Category";
+
+document.getElementById("cancelEditBtn")
+    .classList.add("hidden");
 
 }
 
 document
     .getElementById("saveCategoryBtn")
-    .addEventListener("click", createCategory);
+    .addEventListener("click", saveCategory);
 
 loadCategories();
 
-async function deleteCategory(id) {
+document.addEventListener("click", async (e) => {
 
-    if (!confirm("Delete this category?")) {
+    const editBtn =
+        e.target.closest(".edit-category");
+
+    if (editBtn) {
+
+        editCategory(
+
+            Number(editBtn.dataset.id),
+
+            decodeURIComponent(editBtn.dataset.name),
+
+            decodeURIComponent(editBtn.dataset.description)
+
+        );
+
         return;
+
     }
 
-    const data = await API.delete(
-    `/api/menu/categories/${id}`
-);
+    const deleteBtn =
+        e.target.closest(".delete-category");
 
-    if (!data.success) {
-        Toast.show(data.message, "error");
-        return;
+    if (deleteBtn) {
+
+        deleteCategory(
+
+            Number(deleteBtn.dataset.id),
+
+            decodeURIComponent(deleteBtn.dataset.name)
+
+        );
+
     }
 
-    loadCategories();
-    Toast.show("Category deleted successfully");
+});
+
+function deleteCategory(id, name) {
+
+    Modal.confirm(
+
+        "Delete Category",
+
+        `Are you sure you want to delete "${name}"?`,
+
+        async () => {
+
+            const data =
+                await API.delete(
+                    `/api/menu/categories/${id}`
+                );
+
+            if (!data.success) {
+
+                Toast.show(
+                    data.message,
+                    "error"
+                );
+
+                return;
+
+            }
+
+            Modal.close();
+
+            Toast.show(
+                "Category deleted successfully"
+            );
+
+            loadCategories();
+
+        }
+
+    );
 
 }
+function editCategory(
+    id,
+    name,
+    description
+) {
+
+    editingCategoryId = id;
+
+    document.getElementById("categoryId").value =
+        id;
+
+    document.getElementById("categoryName").value =
+        name;
+
+    document.getElementById("categoryDescription").value =
+        description;
+
+    document.getElementById("saveCategoryBtn").textContent =
+        "Update Category";
+
+    document.getElementById("cancelEditBtn")
+        .classList.remove("hidden");
+
+}
+function cancelEdit() {
+
+    editingCategoryId = null;
+
+    document.getElementById("categoryId").value = "";
+
+    document.getElementById("categoryName").value = "";
+
+    document.getElementById("categoryDescription").value = "";
+
+    document.getElementById("saveCategoryBtn").textContent =
+        "Add Category";
+
+    document.getElementById("cancelEditBtn")
+        .classList.add("hidden");
+
+}
+document
+    .getElementById("cancelEditBtn")
+    .addEventListener(
+        "click",
+        cancelEdit
+    );

@@ -113,7 +113,9 @@
             rows="3"></textarea>
 
     </div>
-
+<input
+    id="itemId"
+    type="hidden">
     <button
         id="saveItemBtn"
         class="mt-6 rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
@@ -121,6 +123,13 @@
         Save Item
 
     </button>
+    <button
+    id="cancelEditBtn"
+    class="ml-3 mt-6 hidden rounded-lg border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-100">
+
+    Cancel
+
+</button>
 
 </div>
 
@@ -139,32 +148,29 @@
 </div>
 
     </main>
+    <div id="modalContainer"></div>
 
 </div>
 
 <script src="/js/components.js"></script>
-
-<script>
-
-loadComponent(
-    "sidebar",
-    "/components/sidebar.html"
-);
-
-</script>
-
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/toast.js"></script>
 <script src="/js/sidebar.js"></script>
+
 <script>
 loadComponent(
     "sidebar",
     "/components/sidebar.html"
 );
+
+loadComponent(
+    "modalContainer",
+    "/components/modal.html"
+);
 </script>
 
-
+<script src="/js/modal.js"></script>
 <script src="/js/menuItems.js"></script>
 
 </body>

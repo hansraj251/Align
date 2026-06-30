@@ -17,6 +17,9 @@ const createOrderItemsTable =
     require("./orders/createOrderItemsTable");
 const runMigrations =
     require("../migrations");    
+const createStaffTable =
+
+    require("./schema/staff");    
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
@@ -32,6 +35,8 @@ await createMenuCategoriesTable();
 
 await createMenuItemsTable();
 
+await createStaffTable();
+
 await createOrdersTable();
 
 await createOrderItemsTable();
@@ -39,6 +44,7 @@ await createOrderItemsTable();
 await createKitchenTables();
 
 await runMigrations();
+
 
     console.log("✅ Database initialization completed.");
 }

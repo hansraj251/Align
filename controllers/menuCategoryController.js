@@ -1,57 +1,40 @@
 const menuCategoryService = require("../services/menuCategoryService");
-const db = require("../db");
 
-exports.createCategory = (req, res) => {
+exports.createCategory = async (req, res) => {
 
-    const { name, description } = req.body;
+    try {
 
-    const restaurantId = req.user.restaurantId;
+        const { name, description } = req.body;
 
-    if (!name || name.trim() === "") {
-        return res.status(400).json({
-            success: false,
-            message: "Category name is required"
-        });
-    }
+        const restaurantId =
+            req.user.restaurantId;
 
-    const slug = name
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-");
+        if (!name || name.trim() === "") {
 
-    db.run(
-        `INSERT INTO menu_categories
-        (
-            restaurant_id,
-            name,
-            slug,
-            description
-        )
-        VALUES (?, ?, ?, ?)`,
-        [
-            restaurantId,
-            name,
-            slug,
-            description || ""
-        ],
-        function (err) {
-
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
-
-            return res.json({
-                success: true,
-                message: "Category created successfully",
-                categoryId: this.lastID
+            return res.status(400).json({
+                success: false,
+                message: "Category name is required"
             });
 
         }
-        
-    );
+
+        const result =
+            await menuCategoryService.createCategory(
+                restaurantId,
+                name,
+                description
+            );
+
+        return res.json(result);
+
+    } catch (err) {
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
 
 };
 exports.getCategories = async (req, res) => {
@@ -80,38 +63,60 @@ exports.getCategories = async (req, res) => {
     }
 
 };
-exports.deleteCategory = (req, res) => {
+exports.deleteCategory = async (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
-    const categoryId = req.params.id;
+    try {
 
-    db.run(
-        `DELETE FROM menu_categories
-         WHERE id = ?
-         AND restaurant_id = ?`,
-        [categoryId, restaurantId],
-        function (err) {
+        const result =
+            await menuCategoryService.deleteCategory(
+                req.user.restaurantId,
+                req.params.id
+            );
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+        return res.json(result);
 
-            if (this.changes === 0) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Category not found"
-                });
-            }
+    } catch (err) {
 
-            return res.json({
-                success: true,
-                message: "Category deleted successfully"
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
+};
+exports.updateCategory = async (req, res) => {
+
+    try {
+
+        const { name, description } = req.body;
+
+        if (!name || name.trim() === "") {
+
+            return res.status(400).json({
+                success: false,
+                message: "Category name is required"
             });
 
         }
-    );
+
+        const result =
+            await menuCategoryService.updateCategory(
+                req.user.restaurantId,
+                req.params.id,
+                name,
+                description
+            );
+
+        return res.json(result);
+
+    } catch (err) {
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
 
 };

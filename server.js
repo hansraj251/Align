@@ -35,7 +35,9 @@ const receiptRoutes =
 const settingsRoutes =
     require("./routes/settingsRoutes");   
 const diningAreaRoutes =
-    require("./routes/diningAreaRoutes");      
+    require("./routes/diningAreaRoutes");     
+const staffRoutes =
+    require("./routes/staffRoutes");     
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -68,6 +70,10 @@ app.use(
 app.use(
     "/api/dining-areas",
     diningAreaRoutes
+);
+app.use(
+    "/api/staff",
+    staffRoutes
 );
 app.get("/", (req, res) => {
 

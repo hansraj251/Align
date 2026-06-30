@@ -1,27 +1,102 @@
-const db = require("../db");
+const menuCategoryRepository =
+    require("../repositories/menuCategoryRepository");
 
-exports.getCategories = (restaurantId) => {
+exports.createCategory = async (
+    restaurantId,
+    name,
+    description
+) => {
 
-    const db = require("../db");
-
-exports.getCategories = async (restaurantId) => {
-
-    return await db.allAsync(
-        `
-        SELECT
-            id,
+    const categoryId =
+        await menuCategoryRepository.createCategory(
+            restaurantId,
             name,
-            slug,
-            description,
-            display_order,
-            status
-        FROM menu_categories
-        WHERE restaurant_id = ?
-        ORDER BY display_order, name
-        `,
-        [restaurantId]
+            description
+        );
+
+    return {
+
+        success: true,
+
+        message:
+            "Category created successfully",
+
+        categoryId
+
+    };
+
+};
+
+exports.getCategories = async (
+    restaurantId
+) => {
+
+    return await menuCategoryRepository.getCategories(
+        restaurantId
     );
 
 };
+
+exports.updateCategory = async (
+    restaurantId,
+    categoryId,
+    name,
+    description
+) => {
+
+    const changes =
+        await menuCategoryRepository.updateCategory(
+            restaurantId,
+            categoryId,
+            name,
+            description
+        );
+
+    if (!changes) {
+
+        throw new Error(
+            "Category not found"
+        );
+
+    }
+
+    return {
+
+        success: true,
+
+        message:
+            "Category updated successfully"
+
+    };
+
+};
+
+exports.deleteCategory = async (
+    restaurantId,
+    categoryId
+) => {
+
+    const changes =
+        await menuCategoryRepository.deleteCategory(
+            restaurantId,
+            categoryId
+        );
+
+    if (!changes) {
+
+        throw new Error(
+            "Category not found"
+        );
+
+    }
+
+    return {
+
+        success: true,
+
+        message:
+            "Category deleted successfully"
+
+    };
 
 };

@@ -16,6 +16,11 @@ router.get(
     authMiddleware,
     menuCategoryController.getCategories
 );
+router.put(
+    "/:id",
+    authMiddleware,
+    menuCategoryController.updateCategory
+);
 router.delete(
     "/:id",
     authMiddleware,

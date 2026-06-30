@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Staff Management</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="flex">
+
+    <div id="sidebar"></div>
+
+    <main class="flex-1 p-8">
+
+        <div
+            class="mb-8 flex items-center justify-between">
+
+            <div>
+
+                <h1
+                    class="text-3xl font-bold">
+
+                    👥 Staff Management
+
+                </h1>
+
+            </div>
+
+            <button
+                id="addStaffBtn"
+                class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
+
+                + Add Staff
+
+            </button>
+
+        </div>
+
+        <div
+            class="mb-6 rounded-xl bg-white p-5 shadow">
+
+            <input
+
+                id="searchStaff"
+
+                type="text"
+
+                placeholder="Search by name, mobile or role..."
+
+                class="w-full rounded-lg border p-3">
+
+        </div>
+
+        <div
+            id="staffList"
+            class="space-y-4">
+
+            Loading...
+
+        </div>
+
+    </main>
+
+</div>
+
+<div id="modalContainer"></div>
+
+<script src="/js/components.js"></script>
+
+<script src="/js/api.js"></script>
+
+<script src="/js/auth.js"></script>
+
+<script src="/js/toast.js"></script>
+
+<script src="/js/sidebar.js"></script>
+
+<script>
+
+(async () => {
+
+    await loadComponent(
+        "sidebar",
+        "/components/sidebar.html"
+    );
+
+    await loadComponent(
+        "modalContainer",
+        "/components/modal.html"
+    );
+
+})();
+
+</script>
+
+<script src="/js/modal.js"></script>
+
+<script src="/js/staff.js"></script>
+
+</body>
+
+</html>

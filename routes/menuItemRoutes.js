@@ -15,5 +15,16 @@ router.get(
     authMiddleware,
     menuItemController.getMenuItems
 );
+router.put(
+    "/:id",
+    authMiddleware,
+    menuItemController.updateMenuItem
+);
+
+router.delete(
+    "/:id",
+    authMiddleware,
+    menuItemController.deleteMenuItem
+);
 
 module.exports = router;

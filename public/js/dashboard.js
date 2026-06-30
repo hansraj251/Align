@@ -23,7 +23,7 @@ async function loadDashboard() {
     document.getElementById("menuItemCount").textContent =
         data.menuItems;
     document.getElementById("occupiedTables").textContent =
-    data.occupiedTables;
+    `${data.occupiedTables} / ${data.totalTables}`;
 
     document.getElementById("pendingKitchen").textContent =
     data.pendingKitchen;
