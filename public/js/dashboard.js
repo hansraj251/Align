@@ -1,8 +1,6 @@
 let floorAreas = [];
 let floorTables = [];
-if (!API.getToken()) {
-    window.location.href = "/admin/login.html";
-}
+Auth.requireLogin();
 
 async function loadDashboard() {
 

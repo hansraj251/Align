@@ -25,12 +25,19 @@ if (activeLink) {
     );
 
 }
-if (
-    elementId === "sidebar" &&
-    typeof loadSidebarRestaurant === "function"
-) {
+if (elementId === "sidebar") {
 
-    loadSidebarRestaurant();
+    if (typeof loadSidebarRestaurant === "function") {
+
+        loadSidebarRestaurant();
+
+    }
+
+    if (typeof initializeSidebar === "function") {
+
+        initializeSidebar();
+
+    }
 
 }
 

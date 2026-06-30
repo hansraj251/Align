@@ -65,9 +65,13 @@ exports.signup = async (req, res) => {
                 message: "Email or Mobile already registered"
             });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
+        console.log("Original Password:", password);
 
-console.log(hashedPassword);
+const hashedPassword = await bcrypt.hash(password, 10);
+
+console.log("Hashed Password:", hashedPassword);
+
+
 db.run(
     `INSERT INTO restaurants
     (
@@ -126,22 +130,53 @@ db.run(
             });
         }
 
-        return res.json({
-            success: true,
-            message: "Signup Successful",
-            restaurantId: restaurantId,
-            userId: this.lastID
-        });
+        const userId = this.lastID;
+
+        db.run(
+            `
+            INSERT INTO restaurant_settings
+            (
+                restaurant_id,
+                footer_message,
+                cgst,
+                sgst
+            )
+            VALUES (?, ?, ?, ?)
+            `,
+            [
+                restaurantId,
+                "Thank You! Visit Again.",
+                2.5,
+                2.5
+            ],
+            function (err) {
+
+                if (err) {
+
+                    return res.status(500).json({
+                        success: false,
+                        message: err.message
+                    });
+
+                }
+
+                return res.json({
+
+                    success: true,
+
+                    message: "Signup Successful",
+
+                    restaurantId,
+
+                    userId
+
+                });
+
+            }
+        );
 
     }
 );
-        // return res.json({
-        //     success: true,
-        //     message: "Restaurant Created",
-        //     restaurantId: this.lastID
-        // });
-        
-
     }
 );
 
@@ -154,7 +189,13 @@ db.run(
 exports.login = (req, res) => {
 
     const { email, password } = req.body;
+console.log("Received Login:", {
 
+    email,
+
+    password
+
+});
     if (!email || !password) {
         return res.status(400).json({
             success: false,
@@ -173,18 +214,26 @@ exports.login = (req, res) => {
                     message: "Database error"
                 });
             }
-
+console.log("Login Email:", email);
+console.log("User Found:", user);
             if (!user) {
                 return res.status(401).json({
                     success: false,
                     message: "Invalid email or password"
                 });
             }
-            const passwordMatched = await bcrypt.compare(
-    password,
-    user.password
+            console.log("Password Type:", typeof password);
+console.log("Password Length:", password.length);
+console.log("Password JSON:", JSON.stringify(password));
+
+console.log("Hash:", user.password);
+
+const passwordMatched = await bcrypt.compare(
+    password.trim(),
+    user.password.trim()
 );
 
+console.log("Password Matched:", passwordMatched);
 if (!passwordMatched) {
     return res.status(401).json({
         success: false,

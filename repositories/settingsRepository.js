@@ -89,7 +89,7 @@ exports.getReceiptSettings = async (
     restaurantId
 ) => {
 
-    return await db.getAsync(
+    const settings = await db.getAsync(
         `
         SELECT
             footer_message
@@ -98,5 +98,9 @@ exports.getReceiptSettings = async (
         `,
         [restaurantId]
     );
+
+    return settings || {
+        footer_message: "Thank You! Visit Again."
+    };
 
 };

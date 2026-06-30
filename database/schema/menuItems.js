@@ -1,6 +1,6 @@
 const db = require("../../db");
 
-function createMenuItemsTable() {
+async function createMenuItemsTable() {
 
     const sql = `
         CREATE TABLE IF NOT EXISTS menu_items (
@@ -42,15 +42,24 @@ function createMenuItemsTable() {
         )
     `;
 
-    db.run(sql, (err) => {
+    try {
 
-        if (err) {
-            console.error("❌ Menu Items table creation failed:", err.message);
-        } else {
-            console.log("✅ Menu Items table ready");
-        }
+        await db.runAsync(sql);
 
-    });
+        console.log(
+            "✅ Menu Items table ready"
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ Menu Items table creation failed:",
+            err.message
+        );
+
+        throw err;
+
+    }
 
 }
 

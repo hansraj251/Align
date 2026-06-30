@@ -1,6 +1,6 @@
 const db = require("../../db");
 
-function createOrderItemsTable() {
+async function createOrderItemsTable() {
 
     const sql = `
         CREATE TABLE IF NOT EXISTS order_items (
@@ -32,18 +32,24 @@ function createOrderItemsTable() {
         )
     `;
 
-    db.run(sql, err => {
+    try {
 
-        if (err) {
-            console.error(
-                "❌ Order Items table creation failed:",
-                err.message
-            );
-        } else {
-            console.log("✅ Order Items table ready");
-        }
+        await db.runAsync(sql);
 
-    });
+        console.log(
+            "✅ Order Items table ready"
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ Order Items table creation failed:",
+            err.message
+        );
+
+        throw err;
+
+    }
 
 }
 

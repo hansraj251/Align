@@ -1,3 +1,5 @@
+const createDiningAreasTable =
+    require("./schema/diningAreas");
 const createRestaurantsTable = require("./schema/restaurants");
 const createUsersTable = require("./schema/users");
 const createTablesTable =
@@ -19,13 +21,23 @@ async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
     await createRestaurantsTable();
+
 await createUsersTable();
-await createMenuCategoriesTable();
-await createMenuItemsTable();
+
+await createDiningAreasTable();
+
 await createTablesTable();
+
+await createMenuCategoriesTable();
+
+await createMenuItemsTable();
+
 await createOrdersTable();
+
 await createOrderItemsTable();
+
 await createKitchenTables();
+
 await runMigrations();
 
     console.log("✅ Database initialization completed.");

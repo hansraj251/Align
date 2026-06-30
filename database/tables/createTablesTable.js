@@ -1,6 +1,6 @@
 const db = require("../../db");
 
-function createTablesTable() {
+async function createTablesTable() {
 
     const sql = `
         CREATE TABLE IF NOT EXISTS tables (
@@ -15,32 +15,41 @@ function createTablesTable() {
 
             area_id INTEGER,
 
-display_row INTEGER DEFAULT 1,
+            display_row INTEGER DEFAULT 1,
 
-display_order INTEGER DEFAULT 1,
+            display_order INTEGER DEFAULT 1,
 
             status TEXT DEFAULT 'available',
 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (restaurant_id)
-            REFERENCES restaurants(id)
+                REFERENCES restaurants(id),
+
+            FOREIGN KEY (area_id)
+                REFERENCES dining_areas(id)
 
         )
     `;
 
-    db.run(sql, (err) => {
+    try {
 
-        if (err) {
-            console.error(
-                "❌ Tables table creation failed:",
-                err.message
-            );
-        } else {
-            console.log("✅ Tables table ready");
-        }
+        await db.runAsync(sql);
 
-    });
+        console.log(
+            "✅ Tables table ready"
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ Tables table creation failed:",
+            err.message
+        );
+
+        throw err;
+
+    }
 
 }
 

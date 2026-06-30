@@ -1,27 +1,17 @@
 const db = require("../../db");
 
-async function createUsersTable() {
+async function createDiningAreasTable() {
 
     const sql = `
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE IF NOT EXISTS dining_areas (
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            restaurant_id INTEGER,
+            restaurant_id INTEGER NOT NULL,
 
             name TEXT NOT NULL,
 
-            email TEXT UNIQUE,
-
-            mobile TEXT UNIQUE,
-
-            password TEXT NOT NULL,
-
-            role TEXT NOT NULL DEFAULT 'owner',
-
-            status TEXT NOT NULL DEFAULT 'active',
-
-            last_login DATETIME,
+            display_order INTEGER DEFAULT 0,
 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
@@ -38,13 +28,13 @@ async function createUsersTable() {
         await db.runAsync(sql);
 
         console.log(
-            "✅ Users table ready"
+            "✅ Dining Areas table ready"
         );
 
     } catch (err) {
 
         console.error(
-            "❌ Users table creation failed:",
+            "❌ Dining Areas table creation failed:",
             err.message
         );
 
@@ -54,4 +44,4 @@ async function createUsersTable() {
 
 }
 
-module.exports = createUsersTable;
+module.exports = createDiningAreasTable;

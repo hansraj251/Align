@@ -21,17 +21,24 @@ async function loadSidebarRestaurant() {
 
         const restaurant = data.restaurant;
 
-        document.getElementById(
-            "sidebarRestaurantName"
-        ).textContent =
-            restaurant.name || "ALIGN";
+        const nameElement =
+            document.getElementById(
+                "sidebarRestaurantName"
+            );
 
-        if (restaurant.logo) {
+        if (nameElement) {
 
-            const img =
-                document.getElementById(
-                    "sidebarLogo"
-                );
+            nameElement.textContent =
+                restaurant.name || "ALIGN";
+
+        }
+
+        const img =
+            document.getElementById(
+                "sidebarLogo"
+            );
+
+        if (img && restaurant.logo) {
 
             img.src = restaurant.logo;
 
@@ -42,6 +49,30 @@ async function loadSidebarRestaurant() {
     } catch (err) {
 
         console.error(err);
+
+    }
+
+}
+
+function initializeSidebar() {
+
+    const logoutBtn =
+        document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+
+        logoutBtn.addEventListener(
+            "click",
+            () => {
+
+                if (confirm("Are you sure you want to logout?")) {
+
+                    Auth.logout();
+
+                }
+
+            }
+        );
 
     }
 

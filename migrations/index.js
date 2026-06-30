@@ -21,6 +21,16 @@ const migrations = [
     [
         "004_add_table_snapshot",
         require("./004_add_table_snapshot")
+    ],
+
+    [
+        "004_create_restaurant_settings",
+        require("./004_create_restaurant_settings")
+    ],
+
+    [
+        "006_create_dining_areas",
+        require("./006_create_dining_areas")
     ]
 
 ];

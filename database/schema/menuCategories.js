@@ -1,6 +1,6 @@
 const db = require("../../db");
 
-function createMenuCategoriesTable() {
+async function createMenuCategoriesTable() {
 
     const sql = `
         CREATE TABLE IF NOT EXISTS menu_categories (
@@ -24,19 +24,29 @@ function createMenuCategoriesTable() {
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (restaurant_id)
-            REFERENCES restaurants(id)
+                REFERENCES restaurants(id)
+
         )
     `;
 
-    db.run(sql, (err) => {
+    try {
 
-        if (err) {
-            console.error("❌ Menu Categories table creation failed:", err.message);
-        } else {
-            console.log("✅ Menu Categories table ready");
-        }
+        await db.runAsync(sql);
 
-    });
+        console.log(
+            "✅ Menu Categories table ready"
+        );
+
+    } catch (err) {
+
+        console.error(
+            "❌ Menu Categories table creation failed:",
+            err.message
+        );
+
+        throw err;
+
+    }
 
 }
 

@@ -1,115 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Align - Sign Up</title>
 
-    <style>
-        body{
-            font-family: Arial, Helvetica, sans-serif;
-            background:#f4f4f4;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-            height:100vh;
-        }
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-        .card{
-            width:400px;
-            background:white;
-            padding:25px;
-            border-radius:10px;
-            box-shadow:0 0 10px rgba(0,0,0,.15);
-        }
+    <title>Align Signup</title>
 
-        h2{
-            text-align:center;
-        }
-
-        input{
-            width:100%;
-            padding:10px;
-            margin-top:10px;
-            box-sizing:border-box;
-        }
-
-        button{
-            width:100%;
-            margin-top:15px;
-            padding:12px;
-            cursor:pointer;
-        }
-
-        pre{
-            margin-top:20px;
-            background:#eee;
-            padding:10px;
-        }
-    </style>
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
 
 </head>
 
-<body>
+<body class="min-h-screen bg-slate-100">
 
-<div class="card">
+<div class="grid min-h-screen grid-cols-2">
 
-<h2>Align Signup</h2>
+    <div class="flex items-center justify-center bg-blue-700">
 
-<input id="restaurantName" placeholder="Restaurant Name">
+        <div class="text-center text-white">
 
-<input id="ownerName" placeholder="Owner Name">
+            <h1 class="mb-4 text-6xl font-bold">
 
-<input id="email" placeholder="Email">
+                ALIGN
 
-<input id="mobile" placeholder="Mobile">
+            </h1>
 
-<input id="password" type="password" placeholder="Password">
+            <p class="text-xl">
 
-<button onclick="signup()">
-Create Account
+                Smart Restaurant Operating System
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="flex items-center justify-center">
+
+        <div class="w-full max-w-md rounded-2xl bg-white p-10 shadow-xl">
+
+            <h2 class="mb-2 text-3xl font-bold">
+
+                Create Account
+
+            </h2>
+
+            <p class="mb-8 text-gray-500">
+
+                Start managing your restaurant with Align
+
+            </p>
+<form id="signupForm">
+            <input
+                id="restaurantName"
+                type="text"
+                placeholder="Restaurant Name"
+                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+
+            <input
+                id="ownerName"
+                type="text"
+                placeholder="Owner Name"
+                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+
+            <input
+                id="email"
+                type="email"
+                placeholder="Email Address"
+                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+
+            <input
+                id="mobile"
+                type="tel"
+                placeholder="Mobile Number"
+                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+
+            <input
+                id="password"
+                type="password"
+                autocomplete="new-password"
+                placeholder="Password"
+                class="mb-6 w-full rounded-lg border border-gray-300 p-3">
+
+            <button
+    id="signupBtn"
+    type="submit"
+    class="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700">
+
+    Create Account
+
 </button>
+</form>
+            <div class="mt-6 text-center text-sm text-gray-600">
 
-<pre id="result"></pre>
+                Already have an account?
+
+                <a
+                    href="/admin/login.html"
+                    class="font-semibold text-blue-600 hover:underline">
+
+                    Login
+
+                </a>
+
+            </div>
+
+            <div
+                id="result"
+                class="mt-6 text-center text-red-600">
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-<script>
-
-async function signup(){
-
-    const response = await fetch("/api/auth/signup",{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify({
-
-            restaurantName:document.getElementById("restaurantName").value,
-
-            ownerName:document.getElementById("ownerName").value,
-
-            email:document.getElementById("email").value,
-
-            mobile:document.getElementById("mobile").value,
-
-            password:document.getElementById("password").value
-
-        })
-
-    });
-
-    const data=await response.json();
-
-    document.getElementById("result").textContent=
-    JSON.stringify(data,null,4);
-
-}
-
-</script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/signup.js"></script>
 
 </body>
+
 </html>
