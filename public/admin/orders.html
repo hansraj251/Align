@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Orders</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="flex">
+
+    <div
+        id="sidebar">
+    </div>
+
+    <main class="flex-1 p-8">
+
+        <h1 class="mb-6 text-3xl font-bold">
+
+            Order History
+
+        </h1>
+
+        <div class="rounded-xl bg-white p-6 shadow">
+
+    <div class="mb-6 flex items-end gap-4">
+
+        <div>
+
+            <label class="mb-1 block text-sm font-medium">
+
+                From
+
+            </label>
+
+            <input
+                id="fromDate"
+                type="date"
+                class="rounded-lg border p-2">
+
+        </div>
+
+        <div>
+
+            <label class="mb-1 block text-sm font-medium">
+
+                To
+
+            </label>
+
+            <input
+                id="toDate"
+                type="date"
+                class="rounded-lg border p-2">
+
+        </div>
+
+        <button
+            id="searchBtn"
+            class="rounded-lg bg-blue-600 px-5 py-2 text-white">
+
+            Search
+
+        </button>
+
+    </div>
+
+    <table class="min-w-full">
+
+        <thead>
+
+            <tr class="border-b">
+
+                <th class="p-3 text-left">
+                    Order No
+                </th>
+
+                <th class="p-3 text-left">
+                    Table
+                </th>
+
+                <th class="p-3 text-left">
+                    Amount
+                </th>
+
+                <th class="p-3 text-left">
+                    Payment
+                </th>
+
+                <th class="p-3 text-left">
+                    Date
+                </th>
+
+                <th class="p-3 text-center">
+                    Action
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="ordersTable">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+    </main>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/components.js"></script>
+<script src="/js/sidebar.js"></script>
+<script>
+
+Auth.requireLogin();
+
+loadComponent(
+    "sidebar",
+    "/components/sidebar.html"
+);
+
+</script>
+<script src="/js/orders.js"></script>
+
+</body>
+
+</html>

@@ -17,9 +17,7 @@ async function loadReceipt() {
         return;
 
     }
-const r = data.restaurant;
-const s = data.settings;
-    const o = data.order;
+const o = data.order;
     const paidDate = new Date(o.paid_at);
 
 const paidAt = paidDate.toLocaleString(
@@ -64,33 +62,44 @@ const paidAt = paidDate.toLocaleString(
 
 <div class="center">
 
+    ${
+        o.restaurant_logo
+            ? `
+            <img
+                src="${o.restaurant_logo}"
+                alt="Restaurant Logo"
+                style="
+                    width:70px;
+                    height:70px;
+                    object-fit:contain;
+                    display:block;
+                    margin:0 auto 10px;
+                ">
+            `
+            : ""
+    }
+
     <h2>
 
-        ${r.name}
+        ${o.restaurant_name}
 
     </h2>
 
     <div>
 
-        ${r.address}
+        ${o.restaurant_address}
 
     </div>
 
     <div>
 
-        ${r.city}, ${r.state} ${r.pincode}
+        Phone : ${o.restaurant_phone}
 
     </div>
 
     <div>
 
-        Phone : ${r.mobile}
-
-    </div>
-
-    <div>
-
-        GSTIN : ${r.gst_number}
+        GSTIN : ${o.restaurant_gst}
 
     </div>
 
@@ -204,7 +213,7 @@ ${{
 
     <br>
 
-    ${s.footer_message}
+    ${o.receipt_footer}
 
 </div>
 

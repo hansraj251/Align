@@ -63,15 +63,7 @@ function initializeSidebar() {
 
         logoutBtn.addEventListener(
             "click",
-            () => {
-
-                if (confirm("Are you sure you want to logout?")) {
-
-                    Auth.logout();
-
-                }
-
-            }
+            Auth.logout
         );
 
     }

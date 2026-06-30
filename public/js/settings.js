@@ -24,11 +24,16 @@ async function loadRestaurant() {
 
     if (r.logo) {
 
-    const img = document.getElementById("logoPreview");
+    const img =
+        document.getElementById(
+            "logoPreview"
+        );
 
     img.src = r.logo;
 
-    img.classList.remove("hidden");
+    img.classList.remove(
+        "hidden"
+    );
 
 }
 

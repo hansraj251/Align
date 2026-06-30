@@ -21,29 +21,9 @@ exports.getReceipt = async (
             orderId
         );
 
-    const restaurantRepository =
-    require("../repositories/restaurantRepository");
-
-const settingsRepository =
-    require("../repositories/settingsRepository");
-
-const restaurant =
-    await restaurantRepository.getRestaurantForReceipt(
-        restaurantId
-    );
-
-const settings =
-    await settingsRepository.getReceiptSettings(
-        restaurantId
-    );
-
 return {
 
     success: true,
-
-    restaurant,
-
-    settings,
 
     order,
 

@@ -31,7 +31,13 @@ const migrations = [
     [
         "006_create_dining_areas",
         require("./006_create_dining_areas")
-    ]
+    ],
+    [
+    "007_add_receipt_snapshot_columns",
+    require(
+        "./007_add_receipt_snapshot_columns"
+    )
+]
 
 ];
 

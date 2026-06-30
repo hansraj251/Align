@@ -110,3 +110,36 @@ exports.getOrder = async (req, res) => {
     }
 
 };
+exports.getOrderHistory = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await orderService.getOrderHistory(
+
+                req.user.restaurantId,
+
+                req.query.from,
+
+                req.query.to
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

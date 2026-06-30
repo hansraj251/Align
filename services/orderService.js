@@ -224,3 +224,25 @@ exports.getOrder = async (
     };
 
 };
+exports.getOrderHistory = async (
+    restaurantId,
+    fromDate,
+    toDate
+) => {
+
+    const orders =
+        await orderRepository.getOrderHistory(
+            restaurantId,
+            fromDate,
+            toDate
+        );
+
+    return {
+
+        success: true,
+
+        orders
+
+    };
+
+};

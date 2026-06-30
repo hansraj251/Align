@@ -75,7 +75,9 @@ exports.getRestaurantForReceipt = async (restaurantId) => {
         `
         SELECT
             name,
+            logo,
             mobile,
+            email,
             gst_number,
             address,
             city,

@@ -237,21 +237,31 @@ exports.getReceipt = async (restaurantId, orderId) => {
     return await db.getAsync(
         `
         SELECT
-            o.id,
-            o.order_number,
-            o.subtotal,
-            o.tax,
-            o.discount,
-            o.total,
-            o.payment_method,
-            o.paid_at,
-            t.name AS table_name
-        FROM orders o
-        JOIN tables t
-            ON t.id = o.table_id
-        WHERE
-            o.id = ?
-            AND o.restaurant_id = ?
+    o.id,
+    o.order_number,
+    o.subtotal,
+    o.tax,
+    o.discount,
+    o.total,
+    o.payment_method,
+    o.paid_at,
+    o.table_name,
+
+    o.restaurant_name,
+    o.restaurant_address,
+    o.restaurant_phone,
+    o.restaurant_email,
+    o.restaurant_gst,
+    o.restaurant_logo,
+    o.receipt_footer,
+    o.cgst,
+    o.sgst
+
+FROM orders o
+
+WHERE
+    o.id = ?
+    AND o.restaurant_id = ?
         `,
         [
             orderId,
@@ -353,6 +363,116 @@ exports.getLastOrderNumberForToday = async () => {
         `,
         [
             `ORD-${date}-%`
+        ]
+    );
+
+};
+
+exports.getOrderHistory = async (
+    restaurantId,
+    fromDate,
+    toDate
+) => {
+
+    let query = `
+        SELECT
+
+            id,
+            order_number,
+            table_name,
+            total,
+            payment_method,
+            status,
+            paid_at
+
+        FROM orders
+
+        WHERE
+
+            restaurant_id = ?
+            AND status = 'paid'
+    `;
+
+    const params = [
+        restaurantId
+    ];
+
+    if (fromDate && toDate) {
+
+        query += `
+            AND DATE(paid_at)
+            BETWEEN DATE(?) AND DATE(?)
+        `;
+
+        params.push(
+            fromDate,
+            toDate
+        );
+
+    }
+
+    query += `
+        ORDER BY paid_at DESC
+    `;
+
+    return await db.allAsync(
+        query,
+        params
+    );
+
+};
+exports.saveReceiptSnapshot = async (
+    orderId,
+    snapshot
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE orders
+        SET
+
+            restaurant_name = ?,
+
+            restaurant_address = ?,
+
+            restaurant_phone = ?,
+
+            restaurant_email = ?,
+
+            restaurant_gst = ?,
+
+            restaurant_logo = ?,
+
+            receipt_footer = ?,
+
+            cgst = ?,
+
+            sgst = ?
+
+        WHERE id = ?
+        `,
+        [
+
+            snapshot.restaurant_name,
+
+            snapshot.restaurant_address,
+
+            snapshot.restaurant_phone,
+
+            snapshot.restaurant_email,
+
+            snapshot.restaurant_gst,
+
+            snapshot.restaurant_logo,
+
+            snapshot.receipt_footer,
+
+            snapshot.cgst,
+
+            snapshot.sgst,
+
+            orderId
+
         ]
     );
 
