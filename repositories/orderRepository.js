@@ -1,22 +1,36 @@
 const db = require("../db");
 
-exports.createOrder = async (restaurantId, tableId) => {
+exports.createOrder = async (
+
+    restaurantId,
+
+    tableId,
+
+    tableName,
+
+    areaName
+
+) => {
 
     const result = await db.runAsync(
         `
         INSERT INTO orders
-        (
-            restaurant_id,
-            table_id,
-            status
-        )
-        VALUES (?, ?, ?)
+(
+    restaurant_id,
+    table_id,
+    table_name,
+    area_name,
+    status
+)
+VALUES (?, ?, ?, ?, ?)
         `,
         [
-            restaurantId,
-            tableId,
-            "open"
-        ]
+    restaurantId,
+    tableId,
+    tableName,
+    areaName,
+    "open"
+]
     );
 
     return result.lastID;
@@ -117,7 +131,8 @@ exports.getActiveOrderByTable = (restaurantId, tableId) => {
                 'open',
                 'sent_to_kitchen',
                 'preparing',
-                'ready'
+                'ready',
+                'ready_for_billing'
             )
         LIMIT 1
         `,
@@ -190,6 +205,33 @@ exports.getOrderSubtotal = async (
     );
 
 };
+exports.getOrderDetails = async (
+    restaurantId,
+    orderId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            table_id,
+            status,
+            subtotal,
+            tax,
+            discount,
+            total
+        FROM orders
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            orderId,
+            restaurantId
+        ]
+    );
+
+};
 exports.getReceipt = async (restaurantId, orderId) => {
 
     return await db.getAsync(
@@ -218,6 +260,42 @@ exports.getReceipt = async (restaurantId, orderId) => {
     );
 
 };
+exports.getOrderItems = async (
+    orderId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            oi.menu_item_id,
+
+            m.name,
+
+            oi.quantity,
+
+            oi.unit_price
+
+        FROM order_items oi
+
+        JOIN menu_items m
+
+            ON m.id = oi.menu_item_id
+
+        WHERE
+
+            oi.order_id = ?
+
+        ORDER BY
+
+            oi.id
+        `,
+        [
+            orderId
+        ]
+    );
+
+};
 exports.getReceiptItems = async (orderId) => {
 
     return await db.allAsync(
@@ -234,6 +312,48 @@ exports.getReceiptItems = async (orderId) => {
         ORDER BY oi.id
         `,
         [orderId]
+    );
+
+};
+exports.updateOrderStatus = async (
+    orderId,
+    status
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE orders
+        SET
+            status = ?
+        WHERE id = ?
+        `,
+        [
+            status,
+            orderId
+        ]
+    );
+
+};
+exports.getLastOrderNumberForToday = async () => {
+
+    const today = new Date();
+
+    const date =
+        `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+
+    return await db.getAsync(
+        `
+        SELECT
+            order_number
+        FROM orders
+        WHERE
+            order_number LIKE ?
+        ORDER BY id DESC
+        LIMIT 1
+        `,
+        [
+            `ORD-${date}-%`
+        ]
     );
 
 };

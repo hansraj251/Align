@@ -1,6 +1,6 @@
 require("dotenv").config();
 require("./db");
-
+const path = require("path");
 const initializeDatabase = require("./database/init");
 console.log("initializeDatabase =", initializeDatabase);
 console.log("type =", typeof initializeDatabase);
@@ -33,7 +33,9 @@ const paymentRoutes =
 const receiptRoutes =
     require("./routes/receiptRoutes");   
 const settingsRoutes =
-    require("./routes/settingsRoutes");     
+    require("./routes/settingsRoutes");   
+const diningAreaRoutes =
+    require("./routes/diningAreaRoutes");      
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -46,6 +48,12 @@ app.use(
 app.use("/api/orders", orderRoutes);
 app.use("/api/kitchen", kitchenRoutes);
 app.use(express.static("public"));
+app.use(
+    "/uploads",
+    express.static(
+        path.join(__dirname, "uploads")
+    )
+);
 app.use("/api/orders", orderStatusRoutes);
 app.use("/api/billing", billingRoutes);
 app.use("/api/payment", paymentRoutes);
@@ -56,6 +64,10 @@ app.use(
 app.use(
     "/api/settings",
     settingsRoutes
+);
+app.use(
+    "/api/dining-areas",
+    diningAreaRoutes
 );
 app.get("/", (req, res) => {
 
@@ -71,7 +83,8 @@ app.get("/", (req, res) => {
 
 });
 
-initializeDatabase();
+initializeDatabase()
+    .catch(console.error);
 
 const PORT = process.env.PORT || 3000;
 

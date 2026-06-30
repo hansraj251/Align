@@ -25,5 +25,13 @@ if (activeLink) {
     );
 
 }
+if (
+    elementId === "sidebar" &&
+    typeof loadSidebarRestaurant === "function"
+) {
+
+    loadSidebarRestaurant();
+
+}
 
 }

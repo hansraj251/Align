@@ -9,5 +9,14 @@ router.post(
     authMiddleware,
     orderController.createOrder
 );
-
+router.get(
+    "/table/:tableId",
+    authMiddleware,
+    orderController.getActiveOrder
+);
+router.get(
+    "/:orderId",
+    authMiddleware,
+    orderController.getOrder
+);
 module.exports = router;

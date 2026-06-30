@@ -1,3 +1,5 @@
+const upload =
+    require("../middlewares/uploadMiddleware");
 const express = require("express");
 const router = express.Router();
 
@@ -14,5 +16,16 @@ router.put(
     "/me",
     authMiddleware,
     restaurantController.updateRestaurant
+);
+router.post(
+
+    "/logo",
+
+    authMiddleware,
+
+    upload.single("logo"),
+
+    restaurantController.uploadLogo
+
 );
 module.exports = router;

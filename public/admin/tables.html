@@ -8,7 +8,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>Tables</title>
+    <title>Floor Management</title>
 
     <link rel="stylesheet" href="/css/output.css">
 
@@ -24,13 +24,30 @@
 
         <h1 class="mb-8 text-3xl font-bold">
 
-            Tables
+    Floor Management
 
-        </h1>
+</h1>
+<div class="mb-6 flex items-center justify-between">
+
+    <p class="text-slate-500">
+
+        Manage dining areas and tables.
+
+    </p>
+
+    <button
+        id="addAreaBtn"
+        class="rounded-lg bg-green-600 px-5 py-3 font-semibold text-white">
+
+        + Add Area
+
+    </button>
+
+</div>
 
         <div class="rounded-xl bg-white p-6 shadow">
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-3 gap-4">
 
                 <div>
 
@@ -62,6 +79,55 @@
                         class="w-full rounded-lg border p-3">
 
                 </div>
+                <div>
+
+    <label class="mb-2 block font-medium">
+
+        Dining Area
+
+    </label>
+
+    <select
+        id="areaId"
+        class="w-full rounded-lg border p-3">
+
+    </select>
+
+</div>
+
+<div>
+
+    <label class="mb-2 block font-medium">
+
+        Display Row
+
+    </label>
+
+    <input
+        id="displayRow"
+        type="number"
+        value="1"
+        min="1"
+        class="w-full rounded-lg border p-3">
+
+</div>
+
+<div>
+
+    <label class="mb-2 block font-medium">
+
+        Display Order
+
+    </label>
+
+    <input
+        id="displayOrder"
+        type="number"
+        value="1"
+        min="1"
+        class="w-full rounded-lg border p-3">
+
+</div>
 
             </div>
 
@@ -88,7 +154,7 @@
 <script src="/js/components.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/toast.js"></script>
-
+<script src="/js/sidebar.js"></script>
 <script>
 
 loadComponent(

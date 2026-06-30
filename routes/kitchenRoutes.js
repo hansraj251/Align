@@ -9,5 +9,9 @@ router.get(
     authMiddleware,
     kitchenController.getKitchenOrders
 );
-
+router.patch(
+    "/:ticketId/status",
+    authMiddleware,
+    kitchenController.updateTicketStatus
+);
 module.exports = router;

@@ -18,3 +18,258 @@ exports.updateStatus = async (
     );
 
 };
+
+
+exports.getByName = async (
+    restaurantId,
+    name
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT id
+        FROM tables
+        WHERE
+            restaurant_id = ?
+            AND name = ?
+        `,
+        [
+            restaurantId,
+            name
+        ]
+    );
+
+};
+
+exports.create = async (
+    restaurantId,
+    name,
+    capacity,
+    areaId = null
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            INSERT INTO tables
+            (
+                restaurant_id,
+                name,
+                capacity,
+                area_id
+            )
+            VALUES (?,?,?,?)
+            `,
+            [
+                restaurantId,
+                name,
+                capacity,
+                areaId
+            ]
+        );
+
+    return result.lastID;
+
+};
+
+exports.getAll = async (restaurantId) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            t.id,
+            t.name,
+            t.capacity,
+            t.status,
+            t.area_id,
+            t.display_row,
+            t.display_order,
+            a.name AS area_name,
+
+            o.id AS order_id,
+            o.total,
+
+            COALESCE(
+                SUM(oi.quantity),
+                0
+            ) AS total_items,
+
+            CAST(
+                (
+                    strftime('%s','now') -
+                    strftime('%s', o.created_at)
+                ) / 60
+                AS INTEGER
+            ) AS minutes
+
+        FROM tables t
+
+        LEFT JOIN dining_areas a
+            ON a.id = t.area_id
+
+        LEFT JOIN orders o
+            ON o.table_id = t.id
+            AND o.status IN (
+                'open',
+                'sent_to_kitchen',
+                'preparing',
+                'ready'
+            )
+
+        LEFT JOIN order_items oi
+            ON oi.order_id = o.id
+
+        WHERE
+            t.restaurant_id = ?
+
+        GROUP BY
+            t.id
+
+        ORDER BY
+
+    t.area_id,
+
+    t.display_row,
+
+    t.display_order,
+
+    t.name
+        `,
+        [restaurantId]
+    );
+
+};
+
+exports.delete = async (
+    restaurantId,
+    tableId
+) => {
+
+    return await db.runAsync(
+        `
+        DELETE
+        FROM tables
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            tableId,
+            restaurantId
+        ]
+    );
+
+};
+exports.getById = async (
+    restaurantId,
+    tableId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+    id,
+    name,
+    capacity,
+    area_id,
+    display_row,
+    display_order
+        FROM tables
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            tableId,
+            restaurantId
+        ]
+    );
+
+};
+exports.update = async (
+
+    restaurantId,
+
+    tableId,
+
+    name,
+
+    capacity,
+
+    areaId,
+
+    displayRow
+) => {
+
+    return await db.runAsync(
+        `
+        UPDATE tables
+SET
+
+    name = ?,
+
+    capacity = ?,
+
+    area_id = ?,
+
+    display_row = ?
+
+        WHERE
+
+            id = ?
+
+            AND restaurant_id = ?
+        `,
+        [
+
+    name,
+
+    capacity,
+
+    areaId,
+
+    displayRow,
+
+    tableId,
+
+    restaurantId
+
+]
+    );
+
+};
+exports.getTableDetails = async (
+    restaurantId,
+    tableId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            t.id,
+
+            t.name,
+
+            a.name AS area_name
+
+        FROM tables t
+
+        LEFT JOIN dining_areas a
+            ON a.id = t.area_id
+
+        WHERE
+
+            t.id = ?
+
+            AND t.restaurant_id = ?
+
+        `,
+        [
+            tableId,
+            restaurantId
+        ]
+    );
+
+};

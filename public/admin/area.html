@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Dining Area</title>
+
+<link rel="stylesheet"
+      href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<main class="min-h-screen bg-slate-100 p-8">
+
+        <div class="mb-8 flex items-center justify-between">
+
+            <div>
+
+                <h1
+                    id="areaTitle"
+                    class="text-3xl font-bold">
+
+                    Dining Area
+
+                </h1>
+
+                <p
+                    id="areaSubtitle"
+                    class="mt-2 text-slate-500">
+
+                    Manage tables
+
+                </p>
+
+            </div>
+
+            <button
+                id="backBtn"
+                class="rounded-lg bg-slate-700 px-5 py-3 text-white">
+
+                ← Dashboard
+
+            </button>
+
+        </div>
+
+        <div
+            id="areaRows">
+
+        </div>
+
+    </main>
+
+<script src="/js/components.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/toast.js"></script>
+<script>
+
+document
+    .getElementById("backBtn")
+    .onclick = () => {
+
+        window.location.href =
+            "/admin/dashboard.html";
+
+    };
+
+</script>
+
+<script src="/js/area.js"></script>
+
+</body>
+
+</html>

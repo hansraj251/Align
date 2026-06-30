@@ -19,4 +19,13 @@ router.delete(
     authMiddleware,
     tableController.deleteTable
 );
+router.put(
+
+    "/:id",
+
+    authMiddleware,
+
+    tableController.updateTable
+
+);
 module.exports = router;

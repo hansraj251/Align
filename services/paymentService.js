@@ -26,9 +26,11 @@ exports.receivePayment = async (
             throw new Error("Order not found");
         }
 
-        if (order.status !== "ready") {
-            throw new Error("Only ready orders can be paid");
-        }
+        if (order.status !== "ready_for_billing") {
+    throw new Error(
+        "Only ready orders can be paid"
+    );
+}
 
         await db.runAsync(
             `

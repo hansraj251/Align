@@ -3,6 +3,9 @@ const createUsersTable = require("./schema/users");
 const createTablesTable =
 
     require("./tables/createTablesTable");
+const {
+    createKitchenTables
+} = require("./schema/kitchenTickets");    
 const createMenuCategoriesTable = require("./schema/menuCategories");
 const createMenuItemsTable = require("./schema/menuItems");
 const createOrdersTable =
@@ -10,16 +13,20 @@ const createOrdersTable =
 
 const createOrderItemsTable =
     require("./orders/createOrderItemsTable");
-function initializeDatabase() {
+const runMigrations =
+    require("../migrations");    
+async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
-    createRestaurantsTable();
-    createUsersTable();
-    createMenuCategoriesTable();
-    createMenuItemsTable();
-    createTablesTable();
-    createOrdersTable();
-    createOrderItemsTable();
+    await createRestaurantsTable();
+await createUsersTable();
+await createMenuCategoriesTable();
+await createMenuItemsTable();
+await createTablesTable();
+await createOrdersTable();
+await createOrderItemsTable();
+await createKitchenTables();
+await runMigrations();
 
     console.log("✅ Database initialization completed.");
 }

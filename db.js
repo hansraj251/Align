@@ -67,6 +67,25 @@ db.allAsync = (sql, params = []) => {
     });
 
 };
+db.execAsync = (sql) => {
+
+    return new Promise((resolve, reject) => {
+
+        db.exec(sql, err => {
+
+            if (err) {
+
+                return reject(err);
+
+            }
+
+            resolve();
+
+        });
+
+    });
+
+};
 db.transaction = async (callback) => {
 
     try {

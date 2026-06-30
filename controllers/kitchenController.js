@@ -1,49 +1,61 @@
-const db = require("../db");
+const kitchenService =
+    require("../services/kitchenService");
 
-exports.getKitchenOrders = (req, res) => {
+exports.getKitchenOrders = async (
+    req,
+    res
+) => {
 
-    const restaurantId = req.user.restaurantId;
+    try {
 
-    db.all(
-        `
-        SELECT
-            o.id,
-            o.order_number,
-            o.table_id,
-            o.status,
-            o.total,
-            o.created_at,
-            t.name AS table_name
-        FROM orders o
-        JOIN tables t
-            ON t.id = o.table_id
-        WHERE
-            o.restaurant_id = ?
-            AND o.status IN (
+        const result =
+            await kitchenService.getKitchenTickets(
+                req.user.restaurantId
+            );
 
-    'sent_to_kitchen',
+        res.json(result);
 
-    'preparing'
+    } catch (err) {
 
-)
-        ORDER BY o.created_at
-        `,
-        [restaurantId],
-        (err, rows) => {
+        res.status(500).json({
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+            success: false,
 
-            return res.json({
-                success: true,
-                orders: rows
-            });
+            message: err.message
 
-        }
-    );
+        });
+
+    }
+
+};
+exports.updateTicketStatus = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await kitchenService.updateTicketStatus(
+
+                req.params.ticketId,
+
+                req.body.status
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };

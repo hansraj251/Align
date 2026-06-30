@@ -1,46 +1,27 @@
-const db = require("../db");
+const dashboardService =
+    require("../services/dashboardService");
 
-exports.getDashboard = (req, res) => {
+exports.getDashboard = async (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
+    try {
 
-    db.get(
-        `
-        SELECT
-            (
-                SELECT COUNT(*)
-                FROM menu_categories
-                WHERE restaurant_id = ?
-            ) AS categories,
+        const result =
+            await dashboardService.getDashboard(
+                req.user.restaurantId
+            );
 
-            (
-                SELECT COUNT(*)
-                FROM menu_items
-                WHERE restaurant_id = ?
-            ) AS menuItems
-        `,
-        [
-            restaurantId,
-            restaurantId
-        ],
-        (err, row) => {
+        res.json(result);
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+    } catch (err) {
 
-            return res.json({
-                success: true,
-                todaySales: 0,
-                todayOrders: 0,
-                categories: row.categories,
-                menuItems: row.menuItems
-            });
+        res.status(500).json({
 
-        }
-    );
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };

@@ -1,5 +1,6 @@
 const db = require("../db");
-
+const orderService =
+    require("../services/orderService");
 exports.createOrder = (req, res) => {
 
     const restaurantId = req.user.restaurantId;
@@ -43,5 +44,69 @@ exports.createOrder = (req, res) => {
 
         }
     );
+
+};
+exports.getActiveOrder = async (req, res) => {
+
+    try {
+
+        const order =
+            await orderService.getActiveOrderByTable(
+
+                req.user.restaurantId,
+
+                req.params.tableId
+
+            );
+
+        res.json({
+
+            success: true,
+
+            hasActiveOrder: !!order,
+
+            order
+
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.getOrder = async (req, res) => {
+
+    try {
+
+        const result =
+            await orderService.getOrder(
+
+                req.user.restaurantId,
+
+                req.params.orderId
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(404).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };

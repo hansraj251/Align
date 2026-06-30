@@ -1,0 +1,66 @@
+const db =
+    require("../db");
+
+const {
+
+    ensureMigrationTable,
+
+    hasRun,
+
+    markAsRun
+
+} = require("./migrationManager");
+
+const migrations = [
+
+    [
+        "003_add_payment_columns",
+        require("./003_add_payment_columns")
+    ],
+
+    [
+        "004_add_table_snapshot",
+        require("./004_add_table_snapshot")
+    ]
+
+];
+
+module.exports = async () => {
+
+    console.log(
+        "🚀 Running migrations..."
+    );
+
+    await ensureMigrationTable();
+
+    for (const [
+
+        name,
+
+        migration
+
+    ] of migrations) {
+
+        if (
+            await hasRun(name)
+        ) {
+
+            continue;
+
+        }
+
+        await migration(db);
+
+        await markAsRun(name);
+
+        console.log(
+            `✓ ${name}`
+        );
+
+    }
+
+    console.log(
+        "✅ Migrations completed."
+    );
+
+};

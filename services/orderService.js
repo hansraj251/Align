@@ -1,7 +1,12 @@
 const orderRepository = require("../repositories/orderRepository");
 const menuRepository = require("../repositories/menuRepository");
 const tableRepository = require("../repositories/tableRepository");
+const kitchenService =
 
+    require("./kitchenService");
+const {
+    generateNumber
+} = require("../utils/numberGenerator");    
 exports.checkout = async (restaurantId, body) => {
 
     const { table_id, items } = body;
@@ -32,19 +37,46 @@ if (order) {
 
 } else {
 
-    orderId =
-        await orderRepository.createOrder(
-            restaurantId,
-            table_id
-        );
-
-    const orderNumber =
-        `ORD-${String(orderId).padStart(6, "0")}`;
-
-    await orderRepository.updateOrderNumber(
-        orderId,
-        orderNumber
+    const table =
+    await tableRepository.getTableDetails(
+        restaurantId,
+        table_id
     );
+
+if (!table) {
+
+    throw new Error(
+        "Table not found"
+    );
+
+}
+
+orderId =
+    await orderRepository.createOrder(
+
+        restaurantId,
+
+        table_id,
+
+        table.name,
+
+        table.area_name
+
+    );
+
+    const lastOrder =
+    await orderRepository.getLastOrderNumberForToday();
+
+const orderNumber =
+    generateNumber(
+        "ORD",
+        lastOrder?.order_number
+    );
+
+await orderRepository.updateOrderNumber(
+    orderId,
+    orderNumber
+);
 
 }
 
@@ -126,7 +158,11 @@ subtotal = totals.subtotal;
         table_id,
         "occupied"
     );
-
+const kitchenTicket =
+    await kitchenService.createKitchenTicket(
+        orderId,
+        items
+    );
     return {
         success: true,
         message: "Order sent to kitchen",
@@ -137,5 +173,54 @@ subtotal = totals.subtotal;
     };
 
 });
+
+};
+exports.getActiveOrderByTable = async (
+    restaurantId,
+    tableId
+) => {
+
+    return await orderRepository.getActiveOrderByTable(
+
+        restaurantId,
+
+        tableId
+
+    );
+
+};
+exports.getOrder = async (
+    restaurantId,
+    orderId
+) => {
+
+    const order =
+        await orderRepository.getOrderDetails(
+            restaurantId,
+            orderId
+        );
+
+    if (!order) {
+
+        throw new Error(
+            "Order not found"
+        );
+
+    }
+
+    const items =
+        await orderRepository.getOrderItems(
+            orderId
+        );
+
+    return {
+
+        success: true,
+
+        order,
+
+        items
+
+    };
 
 };

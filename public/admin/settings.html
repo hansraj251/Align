@@ -95,6 +95,29 @@
             id="fssaiNumber"
             class="w-full rounded-lg border p-3">
 
+        <label class="mt-4 mb-2 block font-medium">
+    Restaurant Logo
+</label>
+
+<input
+    id="logo"
+    type="file"
+    accept="image/*"
+    class="w-full rounded-lg border p-3">
+
+<img
+    id="logoPreview"
+    class="mt-4 hidden h-32 w-32 rounded-lg border object-contain">
+
+<button
+    id="uploadLogoBtn"
+    type="button"
+    class="mt-4 rounded-lg bg-slate-700 px-5 py-3 font-semibold text-white">
+
+    Upload Logo
+
+</button>    
+
     </div>
 
 </div>
@@ -188,6 +211,10 @@
 
 <script src="/js/toast.js"></script>
 
+<script src="/js/sidebar.js"></script>
+
+<script src="/js/settings.js"></script>
+
 <script>
 
 loadComponent(
@@ -199,8 +226,6 @@ loadComponent(
 );
 
 </script>
-
-<script src="/js/settings.js"></script>
 
 </body>
 </html>

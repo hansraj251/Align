@@ -13,6 +13,12 @@ function createTablesTable() {
 
             capacity INTEGER DEFAULT 4,
 
+            area_id INTEGER,
+
+display_row INTEGER DEFAULT 1,
+
+display_order INTEGER DEFAULT 1,
+
             status TEXT DEFAULT 'available',
 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

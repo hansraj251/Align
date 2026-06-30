@@ -17,7 +17,7 @@ exports.getReadyOrders = (req, res) => {
             ON t.id = o.table_id
         WHERE
             o.restaurant_id = ?
-            AND o.status = 'ready'
+            AND o.status = 'ready_for_billing'
         ORDER BY o.created_at
         `,
         [restaurantId],

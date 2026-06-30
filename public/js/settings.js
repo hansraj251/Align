@@ -22,6 +22,16 @@ async function loadRestaurant() {
 
     const r = data.restaurant;
 
+    if (r.logo) {
+
+    const img = document.getElementById("logoPreview");
+
+    img.src = r.logo;
+
+    img.classList.remove("hidden");
+
+}
+
 document.getElementById("restaurantName").value =
     r.name || "";
 
@@ -197,6 +207,110 @@ async function saveSettings() {
     );
 
 }    
+
+async function uploadLogo() {
+
+    const file =
+        document.getElementById("logo").files[0];
+
+    if (!file) {
+
+        Toast.show(
+            "Please choose a logo",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "logo",
+        file
+    );
+
+    const response =
+        await fetch(
+            "/api/restaurants/logo",
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    Authorization:
+                        `Bearer ${localStorage.getItem("token")}`
+
+                },
+
+                body: formData
+
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    document
+        .getElementById("logoPreview")
+        .src = data.logo;
+
+    document
+        .getElementById("logoPreview")
+        .classList.remove("hidden");
+
+    Toast.show(
+        "Logo uploaded successfully"
+    );
+
+}
+document
+    .getElementById("logo")
+    .addEventListener(
+        "change",
+        e => {
+
+            const file =
+                e.target.files[0];
+
+            if (!file) return;
+
+            const img =
+                document.getElementById(
+                    "logoPreview"
+                );
+
+            img.src =
+                URL.createObjectURL(file);
+
+            img.classList.remove(
+                "hidden"
+            );
+
+        }
+    );
+    document
+    .getElementById(
+        "uploadLogoBtn"
+    )
+    .addEventListener(
+        "click",
+        uploadLogo
+    );
 document
     .getElementById("saveSettingsBtn")
     .addEventListener(
@@ -206,3 +320,4 @@ document
 loadRestaurant();
 
 loadSettings();    
+

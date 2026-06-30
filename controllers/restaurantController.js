@@ -74,3 +74,57 @@ exports.updateRestaurant = async (req, res) => {
     }
 
 };
+exports.uploadLogo = async (
+    req,
+    res
+) => {
+
+    try {
+
+        if (!req.file) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Please select a logo"
+
+            });
+
+        }
+
+        const restaurantRepository =
+            require("../repositories/restaurantRepository");
+
+        const logo =
+            `/uploads/logos/${req.file.filename}`;
+
+        await restaurantRepository.updateLogo(
+
+            req.user.restaurantId,
+
+            logo
+
+        );
+
+        res.json({
+
+            success: true,
+
+            logo
+
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

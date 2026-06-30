@@ -1,151 +1,121 @@
-const db = require("../db");
+const tableService =
+    require("../services/tableService");
 
-exports.createTable = (req, res) => {
+exports.createTable = async (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
+    try {
 
-    const {
-        name,
-        capacity
-    } = req.body;
+        const result =
+            await tableService.create(
 
-    if (!name || name.trim() === "") {
-        return res.status(400).json({
+                req.user.restaurantId,
+
+                req.body
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
             success: false,
-            message: "Table name is required"
+
+            message: err.message
+
         });
+
     }
 
-    db.get(
-    `
-    SELECT id
-    FROM tables
-    WHERE restaurant_id = ?
-      AND name = ?
-    `,
-    [restaurantId, name.trim()],
-    (err, row) => {
+};
 
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: err.message
-            });
-        }
+exports.getTables = async (req, res) => {
 
-        if (row) {
-            return res.status(400).json({
-                success: false,
-                message: "Table name already exists"
-            });
-        }
+    try {
 
-        // Yahan INSERT chalega
+        const tables =
+            await tableService.getAll(
+                req.user.restaurantId
+            );
+
+        res.json({
+
+            success: true,
+
+            tables
+
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
     }
-);
-
-    db.run(
-        `
-        INSERT INTO tables
-        (
-            restaurant_id,
-            name,
-            capacity
-        )
-        VALUES (?, ?, ?)
-        `,
-        [
-            restaurantId,
-            name.trim(),
-            capacity || 4
-        ],
-        function (err) {
-
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
-
-            return res.json({
-                success: true,
-                message: "Table created successfully",
-                tableId: this.lastID
-            });
-
-        }
-    );
 
 };
-exports.getTables = (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
+exports.deleteTable = async (req, res) => {
 
-    db.all(
-        `
-        SELECT
-            id,
-            name,
-            capacity,
-            status
-        FROM tables
-        WHERE restaurant_id = ?
-        ORDER BY name
-        `,
-        [restaurantId],
-        (err, tables) => {
+    try {
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+        const result =
+            await tableService.delete(
 
-            return res.json({
-                success: true,
-                tables
-            });
+                req.user.restaurantId,
 
-        }
-    );
+                req.params.id
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };
-exports.deleteTable = (req, res) => {
+exports.updateTable = async (req, res) => {
 
-    const restaurantId = req.user.restaurantId;
-    const tableId = req.params.id;
+    try {
 
-    db.run(
-        `
-        DELETE FROM tables
-        WHERE id = ?
-          AND restaurant_id = ?
-        `,
-        [tableId, restaurantId],
-        function (err) {
+        const result =
+            await tableService.update(
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
+                req.user.restaurantId,
 
-            if (this.changes === 0) {
-                return res.status(404).json({
-                    success: false,
-                    message: "Table not found"
-                });
-            }
+                req.params.id,
 
-            return res.json({
-                success: true,
-                message: "Table deleted successfully"
-            });
+                req.body
 
-        }
-    );
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
 
 };

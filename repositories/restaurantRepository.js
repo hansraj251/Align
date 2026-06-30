@@ -88,3 +88,25 @@ exports.getRestaurantForReceipt = async (restaurantId) => {
     );
 
 };
+exports.updateLogo = async (
+    restaurantId,
+    logo
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE restaurants
+        SET
+
+            logo = ?,
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            logo,
+            restaurantId
+        ]
+    );
+
+};

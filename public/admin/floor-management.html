@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Floor Management</title>
+
+    <link rel="stylesheet" href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="flex">
+
+    <div id="sidebar"></div>
+
+    <main class="flex-1 p-8">
+
+        <div class="mb-8 flex items-center justify-between">
+
+            <button
+                id="addAreaBtn"
+                class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white">
+
+                + Add Area
+
+            </button>
+
+        </div>
+
+        <div
+            id="areaList"
+            class="space-y-6">
+
+            Loading...
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="/js/components.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/toast.js"></script>
+<script src="/js/sidebar.js"></script>
+
+<script>
+
+loadComponent(
+    "sidebar",
+    "/components/sidebar.html"
+);
+
+</script>
+<script>
+loadComponent(
+    "modalContainer",
+    "/components/modal.html"
+);
+</script>
+
+<script src="/js/modal.js"></script>
+
+<script src="/js/floorManagement.js"></script>
+<div id="modalContainer"></div>
+</body>
+
+</html>

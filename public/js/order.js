@@ -2,17 +2,27 @@ if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
 
-const params = new URLSearchParams(window.location.search);
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
-const tableId = params.get("table");
+const tableId =
+    params.get("table");
+
+const orderId =
+    params.get("order");
+
+const cartKey =
+    tableId
+        ? `cart_${tableId}`
+        : `order_${orderId}`;
 
 let cart =
-
     JSON.parse(
-
-        sessionStorage.getItem("cart")
-
+        sessionStorage.getItem(cartKey)
     ) || [];
+let existingItems = [];    
 
 async function loadMenu() {
 
@@ -67,14 +77,57 @@ async function loadMenu() {
 
 }
 
-loadMenu();
+async function initialize() {
+
+    await loadMenu();
+
+    await loadExistingOrder();
+
+    renderCart();
+
+}
+
 document
     .getElementById("sendKitchenBtn")
     .addEventListener(
         "click",
         sendToKitchen
     );
+
+initialize();
+async function loadExistingOrder() {
+
+    if (!tableId) return;
+
+    const active =
+        await API.get(
+            `/api/orders/table/${tableId}`
+        );
+
+    if (!active.hasActiveOrder) {
+        return;
+    }
+
+    const order =
+        await API.get(
+            `/api/orders/${active.order.id}`
+        );
+
+    existingItems = order.items.map(item => ({
+
+    id: item.menu_item_id,
+
+    name: item.name,
+
+    price: item.unit_price,
+
+    quantity: item.quantity
+
+}));
+
 renderCart();
+
+}
 function addItem(id, name, price) {
 
     const existing = cart.find(item => item.id === id);
@@ -102,19 +155,81 @@ function renderCart() {
 
     const cartDiv = document.getElementById("cart");
 
-    if (cart.length === 0) {
+    if (
+    existingItems.length === 0 &&
+    cart.length === 0
+) {
 
-        cartDiv.innerHTML = "No Items";
+    cartDiv.innerHTML = "No Items";
 
-        document.getElementById("total").textContent = "₹0";
+    document.getElementById("total").textContent = "₹0";
 
-        return;
+    return;
 
-    }
+}
 
     let total = 0;
 
     cartDiv.innerHTML = "";
+    if (existingItems.length > 0) {
+
+    cartDiv.innerHTML += `
+        <h3 class="mb-3 text-lg font-bold">
+
+            Current Order
+
+        </h3>
+    `;
+
+    existingItems.forEach(item => {
+
+        const total =
+            item.price * item.quantity;
+
+        cartDiv.innerHTML += `
+<div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+
+    <div class="flex justify-between">
+
+        <div>
+
+            <h4 class="font-semibold">
+
+                ${item.name}
+
+            </h4>
+
+            <p class="text-sm text-slate-500">
+
+                Qty : ${item.quantity}
+
+            </p>
+
+        </div>
+
+        <strong>
+
+            ₹${total}
+
+        </strong>
+
+    </div>
+
+</div>
+`;
+
+    });
+
+    cartDiv.innerHTML += `
+        <hr class="my-4">
+        <h3 class="mb-3 text-lg font-bold">
+
+            New Items
+
+        </h3>
+    `;
+
+}
 
     cart.forEach(item => {
 
@@ -185,7 +300,7 @@ function renderCart() {
     document.getElementById("total").textContent =
         `₹${total}`;
         sessionStorage.setItem(
-    "cart",
+    cartKey,
     JSON.stringify(cart)
 );
 
@@ -269,15 +384,15 @@ async function sendToKitchen() {
 
     }
 
-    sessionStorage.removeItem("cart");
+    sessionStorage.removeItem(cartKey);
 
     Toast.show("Order sent successfully");
 
     setTimeout(() => {
 
-        window.location.href =
-            "/admin/tables.html";
+    window.location.href =
+        "/admin/dashboard.html";
 
-    }, 800);
+}, 800);
 
 }
