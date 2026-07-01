@@ -26,5 +26,13 @@ router.delete(
     authMiddleware,
     menuItemController.deleteMenuItem
 );
+router.patch(
 
+    "/:id/availability",
+
+    authMiddleware,
+
+    menuItemController.updateAvailability
+
+);
 module.exports = router;

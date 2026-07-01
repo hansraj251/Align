@@ -196,7 +196,56 @@ exports.deleteMenuItem = async (req, res) => {
 
     } catch (err) {
 
-        return res.status(500).json({
+    if (
+        err.message.includes(
+            "FOREIGN KEY constraint failed"
+        )
+    ) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "This menu item cannot be deleted because it has already been used in orders. Mark it as Not Available instead."
+
+        });
+
+    }
+
+    return res.status(500).json({
+
+        success: false,
+
+        message: err.message
+
+    });
+
+}
+
+};
+
+exports.updateAvailability =
+async (req, res) => {
+
+    try {
+
+        const result =
+            await menuItemService.updateAvailability(
+
+                req.user.restaurantId,
+
+                req.params.id,
+
+                req.body.is_available
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(500).json({
 
             success: false,
 

@@ -127,6 +127,8 @@ if (existingItem) {
     await orderRepository.addOrderItem(
         orderId,
         menu.id,
+        menu.name,
+    menu.food_type,
         item.quantity,
         unitPrice,
         totalPrice

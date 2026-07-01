@@ -61,7 +61,8 @@ exports.getMenuItems = async (
 
             mi.food_type,
 
-            mi.description
+            mi.description,
+             mi.is_available
 
         FROM menu_items mi
 
@@ -90,7 +91,10 @@ exports.updateMenuItem = async (
     price,
     foodType,
     description
-) => {
+) => {const slug = name
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-");
 
     const result = await db.runAsync(
         `
@@ -148,6 +152,34 @@ exports.deleteMenuItem = async (
             restaurantId
         ]
     );
+
+    return result.changes;
+
+};
+exports.updateAvailability = async (
+    restaurantId,
+    itemId,
+    isAvailable
+) => {
+
+    const result =
+        await db.runAsync(
+
+            `UPDATE menu_items
+             SET
+                 is_available = ?,
+                 updated_at = CURRENT_TIMESTAMP
+             WHERE
+                 id = ?
+                 AND restaurant_id = ?`,
+
+            [
+                isAvailable,
+                itemId,
+                restaurantId
+            ]
+
+        );
 
     return result.changes;
 

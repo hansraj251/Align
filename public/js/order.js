@@ -27,6 +27,13 @@ let existingItems = [];
 async function loadMenu() {
 
     const data = await API.get("/api/menu/items");
+    if (data.success) {
+
+    data.items = data.items.filter(
+        item => item.is_available == 1
+    );
+
+}
 
     if (!data.success) {
 

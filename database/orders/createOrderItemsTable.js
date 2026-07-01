@@ -3,34 +3,35 @@ const db = require("../../db");
 async function createOrderItemsTable() {
 
     const sql = `
-        CREATE TABLE IF NOT EXISTS order_items (
+    CREATE TABLE IF NOT EXISTS order_items (
 
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            order_id INTEGER NOT NULL,
+        order_id INTEGER NOT NULL,
 
-            menu_item_id INTEGER NOT NULL,
+        menu_item_id INTEGER,
 
-            quantity INTEGER DEFAULT 1,
+        item_name TEXT NOT NULL,
 
-            unit_price REAL NOT NULL,
+        food_type TEXT,
 
-            total_price REAL NOT NULL,
+        quantity INTEGER DEFAULT 1,
 
-            notes TEXT,
+        unit_price REAL NOT NULL,
 
-            status TEXT DEFAULT 'pending',
+        total_price REAL NOT NULL,
 
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        notes TEXT,
 
-            FOREIGN KEY (order_id)
-                REFERENCES orders(id),
+        status TEXT DEFAULT 'pending',
 
-            FOREIGN KEY (menu_item_id)
-                REFERENCES menu_items(id)
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-        )
-    `;
+        FOREIGN KEY (order_id)
+            REFERENCES orders(id)
+
+    )
+`;
 
     try {
 

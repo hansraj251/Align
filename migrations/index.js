@@ -37,6 +37,10 @@ const migrations = [
     require(
         "./007_add_receipt_snapshot_columns"
     )
+],
+[
+    "008_order_item_snapshot",
+    require("./008_order_item_snapshot")
 ]
 
 ];

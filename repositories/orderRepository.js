@@ -72,6 +72,8 @@ exports.updateTotals = async (
 exports.addOrderItem = async (
     orderId,
     menuItemId,
+    itemName,
+    foodType,
     quantity,
     unitPrice,
     totalPrice
@@ -83,15 +85,19 @@ exports.addOrderItem = async (
         (
             order_id,
             menu_item_id,
+            item_name,
+            food_type,
             quantity,
             unit_price,
             total_price
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
         [
             orderId,
             menuItemId,
+            itemName,
+            foodType,
             quantity,
             unitPrice,
             totalPrice
@@ -280,17 +286,15 @@ exports.getOrderItems = async (
 
             oi.menu_item_id,
 
-            m.name,
+            oi.item_name AS name,
+
+            oi.food_type,
 
             oi.quantity,
 
             oi.unit_price
 
         FROM order_items oi
-
-        JOIN menu_items m
-
-            ON m.id = oi.menu_item_id
 
         WHERE
 
@@ -311,14 +315,23 @@ exports.getReceiptItems = async (orderId) => {
     return await db.allAsync(
         `
         SELECT
-            m.name,
+
+            oi.item_name AS name,
+
+            oi.food_type,
+
             oi.quantity,
+
             oi.unit_price,
+
             oi.total_price
+
         FROM order_items oi
-        JOIN menu_items m
-            ON m.id = oi.menu_item_id
-        WHERE oi.order_id = ?
+
+        WHERE
+
+            oi.order_id = ?
+
         ORDER BY oi.id
         `,
         [orderId]

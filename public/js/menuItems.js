@@ -118,6 +118,25 @@ async function loadMenuItems() {
         </button>
 
         <button
+    class="toggle-item rounded px-4 py-2 text-white ${
+        item.is_available
+            ? "bg-green-600 hover:bg-green-700"
+            : "bg-slate-600 hover:bg-slate-700"
+    }"
+
+    data-id="${item.id}"
+
+    data-available="${item.is_available}">
+
+    ${
+        item.is_available
+            ? "Available"
+            : "Not Available"
+    }
+
+</button>
+
+        <button
 
             class="delete-item rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
 
@@ -369,8 +388,59 @@ document.addEventListener("click", async (e) => {
         );
 
     }
+    const toggleBtn =
+    e.target.closest(".toggle-item");
+
+if (toggleBtn) {
+
+    await toggleAvailability(
+
+        Number(toggleBtn.dataset.id),
+
+        Number(toggleBtn.dataset.available)
+            ? 0
+            : 1
+
+    );
+
+    return;
+
+}
 
 });
+async function toggleAvailability(
+    id,
+    value
+) {
+
+    const data =
+        await API.patch(
+
+            `/api/menu/items/${id}/availability`,
+
+            {
+
+                is_available:
+                    value
+
+            }
+
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    await loadMenuItems();
+
+}
 function deleteMenuItem(
     id,
     name

@@ -122,3 +122,38 @@ exports.deleteMenuItem = async (
     };
 
 };
+exports.updateAvailability = async (
+    restaurantId,
+    itemId,
+    isAvailable
+) => {
+
+    const changes =
+        await menuItemRepository.updateAvailability(
+
+            restaurantId,
+
+            itemId,
+
+            isAvailable
+
+        );
+
+    if (!changes) {
+
+        throw new Error(
+            "Menu item not found"
+        );
+
+    }
+
+    return {
+
+        success: true,
+
+        message:
+            "Availability updated successfully"
+
+    };
+
+};

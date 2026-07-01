@@ -16,6 +16,7 @@ exports.getDashboardSummary = async (restaurantId) => {
                 SELECT COUNT(*)
                 FROM menu_items
                 WHERE restaurant_id = ?
+                
             ) AS menuItems,
 
             (
