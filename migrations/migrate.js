@@ -62,7 +62,7 @@ const db = require("../db");
 
     }
 
-    console.log("\n🎉 All migrations complete");
+    console.log("\n All migrations complete");
 
     process.exit();
 

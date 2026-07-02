@@ -138,7 +138,7 @@ class="min-w-[220px] rounded-xl border bg-white p-5 shadow">
 
 <h3 class="text-lg font-bold">
 
-🪑 ${table.name}
+ ${table.name}
 
 </h3>
 
@@ -150,8 +150,8 @@ class="min-w-[220px] rounded-xl border bg-white p-5 shadow">
 
 ${
     table.status === "available"
-        ? "🟢 Available"
-        : "🔴 Occupied"
+        ? " Available"
+        : " Occupied"
 }
 
 </span>
@@ -173,7 +173,7 @@ table.status !== "available"
 
 <div class="flex justify-between">
 
-<span>🍽 Items</span>
+<span> Items</span>
 
 <strong>${table.total_items}</strong>
 

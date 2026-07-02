@@ -139,7 +139,7 @@ No tables found.
 
     <h3 class="font-semibold">
 
-        🪑 ${table.name}
+         ${table.name}
 
     </h3>
 
@@ -161,8 +161,8 @@ No tables found.
 
         ${
             table.status === "available"
-                ? "🟢 Available"
-                : "🔴 Occupied"
+                ? " Available"
+                : " Occupied"
         }
 
     </span>

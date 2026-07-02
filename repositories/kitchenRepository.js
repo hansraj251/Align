@@ -57,6 +57,7 @@ exports.createTicketItem = async (
     ticketId,
     menuItemId,
     itemName,
+    variantName,
     unitPrice,
     quantity
 ) => {
@@ -68,15 +69,17 @@ exports.createTicketItem = async (
             ticket_id,
             menu_item_id,
             item_name,
+            variant_name,
             unit_price,
             quantity
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
         `,
         [
             ticketId,
             menuItemId,
             itemName,
+            variantName,
             unitPrice,
             quantity
         ]
@@ -162,21 +165,19 @@ exports.getTicketItems = async (
         `
         SELECT
 
-            item_name,
+    item_name,
 
-            quantity,
+    variant_name,
 
-            unit_price
+    quantity,
 
-        FROM kitchen_ticket_items
+    unit_price
 
-        WHERE
+FROM kitchen_ticket_items
 
-            ticket_id = ?
+WHERE ticket_id = ?
 
-        ORDER BY
-
-            id
+ORDER BY id
         `,
         [
             ticketId

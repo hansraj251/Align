@@ -5,6 +5,8 @@ exports.createStaff = async (
     staffCode,
     name,
     mobile,
+    username,
+    password,
     role,
     salaryType,
     basicSalary,
@@ -22,6 +24,8 @@ exports.createStaff = async (
             staff_code,
             name,
             mobile,
+            username,
+            password,
             role,
             salary_type,
             basic_salary,
@@ -30,13 +34,15 @@ exports.createStaff = async (
             emergency_contact,
             status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
             restaurantId,
             staffCode,
             name,
             mobile,
+            username,
+            password,
             role,
             salaryType,
             basicSalary,
@@ -75,6 +81,7 @@ exports.updateStaff = async (
     staffId,
     name,
     mobile,
+    username,
     role,
     salaryType,
     basicSalary,
@@ -92,6 +99,7 @@ exports.updateStaff = async (
             name=?,
 
             mobile=?,
+            username=?,
 
             role=?,
 
@@ -120,6 +128,7 @@ exports.updateStaff = async (
             name,
 
             mobile,
+            username,
 
             role,
 
@@ -186,6 +195,106 @@ exports.getLastStaffCode = async (
         LIMIT 1
         `,
         [restaurantId]
+    );
+
+};
+exports.getByUsername = async (
+    username
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            id,
+
+            restaurant_id,
+
+            name,
+
+            username,
+
+            password,
+
+            role,
+
+            status
+
+        FROM staff
+
+        WHERE
+
+            LOWER(username) = LOWER(?)
+
+        LIMIT 1
+        `,
+        [
+            username
+        ]
+    );
+
+};
+
+exports.updateLastLogin = async (
+    staffId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE staff
+
+        SET
+
+            last_login =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            staffId
+        ]
+    );
+
+};
+exports.usernameExists = async (
+    username
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT id
+        FROM staff
+        WHERE LOWER(username)=LOWER(?)
+        `,
+        [
+            username
+        ]
+    );
+
+};
+
+exports.updatePassword = async (
+    staffId,
+    password
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE staff
+
+        SET
+
+            password = ?,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            password,
+            staffId
+        ]
     );
 
 };

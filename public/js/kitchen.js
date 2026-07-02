@@ -23,7 +23,7 @@ async function loadKitchenOrders() {
         container.innerHTML = `
             <div class="col-span-3 rounded-xl bg-white p-8 text-center shadow">
 
-                🎉 No Pending Orders
+                 No Pending Orders
 
             </div>
         `;
@@ -64,7 +64,7 @@ async function loadKitchenOrders() {
         </h2>
 
         <p class="mt-2 text-slate-500">
-            🪑 ${ticket.table_name}
+             ${ticket.table_name}
         </p>
 
         <div class="mt-4 border-t border-b py-3">

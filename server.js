@@ -15,6 +15,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const authRoutes = require("./routes/authRoutes");
 app.use("/api/auth", authRoutes);
+const staffAuthRoutes =
+    require("./routes/staffAuthRoutes");
 const restaurantRoutes = require("./routes/restaurantRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
@@ -37,7 +39,9 @@ const settingsRoutes =
 const diningAreaRoutes =
     require("./routes/diningAreaRoutes");     
 const staffRoutes =
-    require("./routes/staffRoutes");     
+    require("./routes/staffRoutes");   
+const menuVariantRoutes =
+    require("./routes/menuVariantRoutes");      
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -55,6 +59,12 @@ app.use(
     express.static(
         path.join(__dirname, "uploads")
     )
+);
+app.use(
+
+    "/api/staff-auth",
+
+    staffAuthRoutes
 );
 app.use("/api/orders", orderStatusRoutes);
 app.use("/api/billing", billingRoutes);
@@ -74,6 +84,13 @@ app.use(
 app.use(
     "/api/staff",
     staffRoutes
+);
+app.use(
+
+    "/api/menu/items",
+
+    menuVariantRoutes
+
 );
 app.get("/", (req, res) => {
     res.redirect("/admin/login.html");

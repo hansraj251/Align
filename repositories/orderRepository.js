@@ -74,6 +74,8 @@ exports.addOrderItem = async (
     menuItemId,
     itemName,
     foodType,
+    variantId,
+    variantName,
     quantity,
     unitPrice,
     totalPrice
@@ -87,17 +89,22 @@ exports.addOrderItem = async (
             menu_item_id,
             item_name,
             food_type,
+            variant_id,
+            variant_name,
             quantity,
             unit_price,
             total_price
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        VALUES
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
             orderId,
             menuItemId,
             itemName,
             foodType,
+            variantId,
+            variantName,
             quantity,
             unitPrice,
             totalPrice
@@ -150,8 +157,13 @@ exports.getActiveOrderByTable = (restaurantId, tableId) => {
 
 };
 exports.getOrderItem = async (
+
     orderId,
-    menuItemId
+
+    menuItemId,
+
+    variantId
+
 ) => {
 
     return await db.getAsync(
@@ -161,13 +173,22 @@ exports.getOrderItem = async (
             quantity
         FROM order_items
         WHERE
-            order_id = ?
-            AND menu_item_id = ?
+
+order_id = ?
+
+AND menu_item_id = ?
+
+AND variant_id = ?
         `,
         [
-            orderId,
-            menuItemId
-        ]
+
+    orderId,
+
+    menuItemId,
+
+    variantId
+
+]
     );
 
 };
@@ -284,55 +305,49 @@ exports.getOrderItems = async (
         `
         SELECT
 
-            oi.menu_item_id,
+            menu_item_id,
 
-            oi.item_name AS name,
+            item_name AS name,
 
-            oi.food_type,
+            variant_name,
 
-            oi.quantity,
+            quantity,
 
-            oi.unit_price
+            unit_price
 
-        FROM order_items oi
+        FROM order_items
 
-        WHERE
+        WHERE order_id = ?
 
-            oi.order_id = ?
-
-        ORDER BY
-
-            oi.id
+        ORDER BY id
         `,
-        [
-            orderId
-        ]
+        [orderId]
     );
 
 };
-exports.getReceiptItems = async (orderId) => {
+exports.getReceiptItems = async (
+    orderId
+) => {
 
     return await db.allAsync(
         `
         SELECT
 
-            oi.item_name AS name,
+            item_name,
 
-            oi.food_type,
+            variant_name,
 
-            oi.quantity,
+            quantity,
 
-            oi.unit_price,
+            unit_price,
 
-            oi.total_price
+            total_price
 
-        FROM order_items oi
+        FROM order_items
 
-        WHERE
+        WHERE order_id = ?
 
-            oi.order_id = ?
-
-        ORDER BY oi.id
+        ORDER BY id
         `,
         [orderId]
     );

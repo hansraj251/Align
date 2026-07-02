@@ -1,0 +1,125 @@
+StaffAuth.requireLogin();
+
+const staff =
+    StaffAuth.staff();
+
+document.getElementById(
+    "staffName"
+).textContent =
+    staff.name;
+
+document
+.getElementById("logoutBtn")
+.onclick =
+() =>
+StaffAuth.logout();
+
+async function loadAreas() {
+
+    const data =
+        await API.get(
+            "/api/dining-areas"
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    renderAreas(
+        data.areas
+    );
+
+}
+
+function renderAreas(
+    areas
+) {
+
+    const container =
+        document.getElementById(
+            "areaList"
+        );
+
+    container.innerHTML = "";
+
+    if (
+        areas.length === 0
+    ) {
+
+        container.innerHTML = `
+
+<div
+class="rounded-xl bg-white p-10 text-center">
+
+No Dining Areas
+
+</div>
+
+`;
+
+        return;
+
+    }
+
+    areas.forEach(area => {
+
+        container.innerHTML += `
+
+<div
+
+onclick="openArea(${area.id})"
+
+class="cursor-pointer rounded-xl bg-white p-6 shadow transition hover:shadow-xl">
+
+<div class="text-5xl">
+
+🍽️
+
+</div>
+
+<h2
+class="mt-4 text-2xl font-bold">
+
+${area.name}
+
+</h2>
+
+<p
+class="mt-2 text-slate-500">
+
+Tap to View Tables
+
+</p>
+
+</div>
+
+`;
+
+    });
+
+}
+
+// function openArea(
+//     areaId
+// ) {
+
+//     window.location.href =
+// `/waiter/tables.html?area=${areaId}`;
+
+// }
+function openArea(areaId) {
+
+    alert(
+        "Area : " + areaId
+    );
+
+}
+
+loadAreas();

@@ -23,7 +23,7 @@ async function loadTables() {
 <div class="rounded-xl bg-white p-5 shadow">
 
     <h3 class="text-xl font-bold">
-        🪑 ${table.name}
+         ${table.name}
     </h3>
 
     <p class="mt-3 text-slate-500">
@@ -34,8 +34,8 @@ async function loadTables() {
 
         ${
             table.status === "available"
-                ? '<span class="rounded-full bg-green-100 px-3 py-1 text-green-700">🟢 Available</span>'
-                : '<span class="rounded-full bg-red-100 px-3 py-1 text-red-700">🔴 Occupied</span>'
+                ? '<span class="rounded-full bg-green-100 px-3 py-1 text-green-700"> Available</span>'
+                : '<span class="rounded-full bg-red-100 px-3 py-1 text-red-700"> Occupied</span>'
         }
 
     </p>

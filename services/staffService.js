@@ -1,3 +1,5 @@
+const bcrypt =
+    require("bcrypt");
 const staffRepository =
     require("../repositories/staffRepository");
 
@@ -22,6 +24,21 @@ exports.createStaff = async (
     restaurantId,
     staff
 ) => {
+    if (!staff.username) {
+
+    throw new Error(
+        "Username is required"
+    );
+
+}
+
+if (!staff.password) {
+
+    throw new Error(
+        "Password is required"
+    );
+
+}
 
     const last =
         await staffRepository.getLastStaffCode(
@@ -32,33 +49,64 @@ exports.createStaff = async (
         generateStaffCode(
             last?.staff_code
         );
+    const existing =
+
+    await staffRepository.usernameExists(
+
+        staff.username
+
+    );
+
+if (existing) {
+
+    throw new Error(
+
+        "Username already exists"
+
+    );
+
+}
+
+const hashedPassword =
+
+    await bcrypt.hash(
+
+        staff.password,
+
+        10
+
+    );    
 
     const staffId =
-        await staffRepository.createStaff(
+    await staffRepository.createStaff(
 
-            restaurantId,
+        restaurantId,
 
-            staffCode,
+        staffCode,
 
-            staff.name,
+        staff.name,
 
-            staff.mobile,
+        staff.mobile,
 
-            staff.role,
+        staff.username,
 
-            staff.salary_type,
+        hashedPassword,
 
-            staff.basic_salary,
+        staff.role,
 
-            staff.joining_date,
+        staff.salary_type,
 
-            staff.address,
+        staff.basic_salary,
 
-            staff.emergency_contact,
+        staff.joining_date,
 
-            staff.status || "active"
+        staff.address,
 
-        );
+        staff.emergency_contact,
+
+        staff.status || "active"
+
+    );
 
     return {
 
@@ -110,6 +158,7 @@ exports.updateStaff = async (
             staff.name,
 
             staff.mobile,
+            staff.username,
 
             staff.role,
 

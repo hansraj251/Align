@@ -118,6 +118,12 @@ function renderStaff(rows) {
 
             <p>
 
+🔑 ${item.username || "-"}
+
+</p>
+
+            <p>
+
                 💰 ₹${item.basic_salary}
 
                 /
@@ -196,186 +202,198 @@ function renderStaff(rows) {
 
 }
 function openStaffModal(staff = null) {
+ if (staff instanceof Event) {
 
+        staff = null;
+
+    }
     Modal.open(
 
-      staff
-    ? "Edit Staff"
-    : "Add Staff",
+        staff
+            ? "Edit Staff"
+            : "Add Staff",
 
         `
 <div class="grid grid-cols-2 gap-4">
 
-<div>
+    <div>
 
-<label class="mb-2 block font-medium">
+        <label class="mb-2 block font-medium">
+            Name
+        </label>
 
-Name
+        <input
+            id="staffName"
+            value="${staff?.name || ""}"
+            class="w-full rounded-lg border p-3">
 
-</label>
+    </div>
 
-<input
-    id="staffName"
-    value="${staff?.name || ""}"
-    class="w-full rounded-lg border p-3">
+    <div>
 
-</div>
+        <label class="mb-2 block font-medium">
+            Mobile
+        </label>
 
-<div>
+        <input
+            id="staffMobile"
+            value="${staff?.mobile || ""}"
+            class="w-full rounded-lg border p-3">
 
-<label class="mb-2 block font-medium">
+    </div>
 
-Mobile
+    <div>
 
-</label>
+        <label class="mb-2 block font-medium">
+            Username
+        </label>
 
-<input
-    id="staffMobile"
-    value="${staff?.mobile || ""}"
-    class="w-full rounded-lg border p-3">
+        <input
+            id="staffUsername"
+            value="${staff?.username || ""}"
+            placeholder="waiter1"
+            class="w-full rounded-lg border p-3">
 
-</div>
+    </div>
 
-<div>
+    <div>
 
-<label class="mb-2 block font-medium">
+        <label class="mb-2 block font-medium">
+            Role
+        </label>
 
-Role
+        <select
+            id="staffRole"
+            class="w-full rounded-lg border p-3">
 
-</label>
+            <option value="owner" ${staff?.role==="owner"?"selected":""}>Owner</option>
 
-<input
-    id="staffRole"
-    placeholder="Manager / Waiter"
-    value="${staff?.role || ""}"
-    class="w-full rounded-lg border p-3">
+            <option value="manager" ${staff?.role==="manager"?"selected":""}>Manager</option>
 
-</div>
+            <option value="waiter" ${staff?.role==="waiter"?"selected":""}>Waiter</option>
 
-<div>
+            <option value="kitchen" ${staff?.role==="kitchen"?"selected":""}>Kitchen</option>
 
-<label class="mb-2 block font-medium">
+            <option value="cashier" ${staff?.role==="cashier"?"selected":""}>Cashier</option>
 
-Salary Type
+        </select>
 
-</label>
+    </div>
 
-<select
-    id="salaryType"
-    class="w-full rounded-lg border p-3">
+    ${!staff ? `
 
-<option
-    value="monthly"
-    ${staff?.salary_type === "monthly" ? "selected" : ""}>
+    <div>
 
-Monthly
+        <label class="mb-2 block font-medium">
+            Password
+        </label>
 
-</option>
+        <input
+            id="staffPassword"
+            type="password"
+            placeholder="Minimum 8 characters"
+            class="w-full rounded-lg border p-3">
 
-<option
-    value="daily"
-    ${staff?.salary_type === "daily" ? "selected" : ""}>
+    </div>
 
-Daily
+    ` : `<div></div>`}
 
-</option>
+    <div>
 
-</select>
+        <label class="mb-2 block font-medium">
+            Salary Type
+        </label>
 
-</div>
+        <select
+            id="salaryType"
+            class="w-full rounded-lg border p-3">
 
-<div>
+            <option value="monthly" ${staff?.salary_type==="monthly"?"selected":""}>
+                Monthly
+            </option>
 
-<label class="mb-2 block font-medium">
+            <option value="daily" ${staff?.salary_type==="daily"?"selected":""}>
+                Daily
+            </option>
 
-Basic Salary
+        </select>
 
-</label>
+    </div>
 
-<input
-    id="basicSalary"
-    type="number"
-    value="${staff?.basic_salary || 0}"
-    class="w-full rounded-lg border p-3">
+    <div>
 
-</div>
+        <label class="mb-2 block font-medium">
+            Basic Salary
+        </label>
 
-<div>
+        <input
+            id="basicSalary"
+            type="number"
+            value="${staff?.basic_salary || 0}"
+            class="w-full rounded-lg border p-3">
 
-<label class="mb-2 block font-medium">
+    </div>
 
-Joining Date
+    <div>
 
-</label>
+        <label class="mb-2 block font-medium">
+            Joining Date
+        </label>
 
-<input
-    id="joiningDate"
-    type="date"
-    value="${staff?.joining_date || ""}"
-    class="w-full rounded-lg border p-3">
+        <input
+            id="joiningDate"
+            type="date"
+            value="${staff?.joining_date || ""}"
+            class="w-full rounded-lg border p-3">
 
-</div>
+    </div>
 
-<div class="col-span-2">
+    <div class="col-span-2">
 
-<label class="mb-2 block font-medium">
+        <label class="mb-2 block font-medium">
+            Address
+        </label>
 
-Address
+        <textarea
+            id="staffAddress"
+            class="w-full rounded-lg border p-3">${staff?.address || ""}</textarea>
 
-</label>
+    </div>
 
-<textarea
-    id="staffAddress"
-    class="w-full rounded-lg border p-3">${staff?.address || ""}</textarea>
+    <div>
 
-</div>
+        <label class="mb-2 block font-medium">
+            Emergency Contact
+        </label>
 
-<div>
+        <input
+            id="emergencyContact"
+            value="${staff?.emergency_contact || ""}"
+            class="w-full rounded-lg border p-3">
 
-<label class="mb-2 block font-medium">
+    </div>
 
-Emergency Contact
+    <div>
 
-</label>
+        <label class="mb-2 block font-medium">
+            Status
+        </label>
 
-<input
-    id="emergencyContact"
-    value="${staff?.emergency_contact || ""}"
-    class="w-full rounded-lg border p-3">
+        <select
+            id="staffStatus"
+            class="w-full rounded-lg border p-3">
 
-</div>
+            <option value="active" ${staff?.status==="active"?"selected":""}>
+                Active
+            </option>
 
-<div>
+            <option value="inactive" ${staff?.status==="inactive"?"selected":""}>
+                Inactive
+            </option>
 
-<label class="mb-2 block font-medium">
+        </select>
 
-Status
-
-</label>
-
-<select
-    id="staffStatus"
-    class="w-full rounded-lg border p-3">
-
-<option
-    value="active"
-    ${staff?.status === "active" ? "selected" : ""}>
-
-Active
-
-</option>
-
-<option
-    value="inactive"
-    ${staff?.status === "inactive" ? "selected" : ""}>
-
-Inactive
-
-</option>
-
-</select>
-
-</div>
+    </div>
 
 </div>
 `,
@@ -386,6 +404,12 @@ Inactive
 
 }
 async function saveStaff() {
+    
+    const usernameInput =
+    document.getElementById("staffUsername");
+
+const passwordInput =
+    document.getElementById("staffPassword");
 
     const body = {
 
@@ -397,6 +421,15 @@ async function saveStaff() {
 
         role:
             document.getElementById("staffRole").value.trim(),
+        username:
+    usernameInput.value
+        .trim()
+        .toLowerCase(),
+
+password:
+    passwordInput
+        ? passwordInput.value
+        : undefined,
 
         salary_type:
             document.getElementById("salaryType").value,
@@ -441,6 +474,39 @@ async function saveStaff() {
         return;
 
     }
+    if (!body.username) {
+
+    Toast.show(
+
+        "Username is required",
+
+        "error"
+
+    );
+
+    return;
+
+}
+
+if (
+
+!editingStaffId &&
+
+!body.password
+
+) {
+
+    Toast.show(
+
+        "Password is required",
+
+        "error"
+
+    );
+
+    return;
+
+}
 
     let data;
 
@@ -500,10 +566,7 @@ async function saveStaff() {
 
 document
     .getElementById("addStaffBtn")
-    .addEventListener(
-        "click",
-        openStaffModal
-    );
+    .onclick = () => openStaffModal(null);
 
 loadStaff();
 

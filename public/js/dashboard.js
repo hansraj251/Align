@@ -14,11 +14,11 @@ async function loadDashboard() {
     document.getElementById("todaySales").textContent =
         `₹${data.todaySales}`;
 
-    document.getElementById("todayOrders").textContent =
-        data.todayOrders;
+    // document.getElementById("todayOrders").textContent =
+    //     data.todayOrders;
 
-    document.getElementById("categoryCount").textContent =
-        data.categories;
+    // document.getElementById("categoryCount").textContent =
+    //     data.categories;
 
     document.getElementById("menuItemCount").textContent =
         data.menuItems;
@@ -28,8 +28,9 @@ async function loadDashboard() {
     document.getElementById("pendingKitchen").textContent =
     data.pendingKitchen;
 
-    document.getElementById("averageBill").textContent =
-    `₹${data.averageBill}`;  
+    // document.getElementById("averageBill").textContent =
+    // `₹${data.averageBill}`;  
+
     await loadRestaurantFloor();  
 
 }
@@ -100,25 +101,25 @@ function renderRestaurantFloor() {
 
             <h2 class="text-2xl font-bold">
 
-                📍 ${area.name}
+                 ${area.name}
 
             </h2>
 
             <p class="mt-3 text-slate-500">
 
-                🪑 ${areaTables.length} Tables
+                 ${areaTables.length} Tables
 
             </p>
 
             <p class="mt-1 text-slate-500">
 
-                🔴 ${occupied} Occupied
+                 ${occupied} Occupied
 
             </p>
 
             <p class="mt-1 text-slate-500">
 
-                🟢 ${areaTables.length - occupied} Available
+                 ${areaTables.length - occupied} Available
 
             </p>
 

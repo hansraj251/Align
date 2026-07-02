@@ -39,7 +39,8 @@ const paidAt = paidDate.toLocaleString(
 
             <span>
 
-                ${item.name}
+                ${item.item_name}
+${item.variant_name ? ` (${item.variant_name})` : ""}
                 <br>
 
                 ${item.quantity} × ₹${item.unit_price}

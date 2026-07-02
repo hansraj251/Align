@@ -1,0 +1,7 @@
+window.Checkout = {
+
+    async send() {
+
+    }
+
+};

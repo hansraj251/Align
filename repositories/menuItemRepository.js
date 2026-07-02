@@ -184,3 +184,52 @@ exports.updateAvailability = async (
     return result.changes;
 
 };
+exports.getVariantsByMenuItems = async (
+    menuItemIds
+) => {
+
+    if (menuItemIds.length === 0) {
+
+        return [];
+
+    }
+
+    const placeholders =
+        menuItemIds
+            .map(() => "?")
+            .join(",");
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            id,
+
+            menu_item_id,
+
+            name,
+
+            price,
+
+            display_order
+
+        FROM menu_item_variants
+
+        WHERE
+
+            menu_item_id IN (${placeholders})
+
+            AND status = 1
+
+        ORDER BY
+
+            menu_item_id,
+
+            display_order,
+
+            id
+        `,
+        menuItemIds
+    );
+
+};

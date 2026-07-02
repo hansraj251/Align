@@ -6,7 +6,9 @@ const kitchenService =
     require("./kitchenService");
 const {
     generateNumber
-} = require("../utils/numberGenerator");    
+} = require("../utils/numberGenerator");  
+const variantRepository =
+    require("../repositories/menuVariantRepository");  
 exports.checkout = async (restaurantId, body) => {
 
     const { table_id, items } = body;
@@ -96,16 +98,51 @@ let subtotal = 0;
         if (!menu.is_available) {
             throw new Error(`${menu.name} is unavailable`);
         }
+        let variant = null;
 
-        const unitPrice = menu.price;
+if (item.variant_id) {
+
+    variant =
+        await variantRepository.getVariantById(
+            item.variant_id
+        );
+
+    if (!variant) {
+
+        throw new Error(
+            "Invalid variant"
+        );
+
+    }
+
+    if (
+        variant.menu_item_id !==
+        menu.id
+    ) {
+
+        throw new Error(
+            "Variant does not belong to menu item"
+        );
+
+    }
+
+}
+
+        const unitPrice =
+    variant ? variant.price : menu.price;
         const totalPrice = unitPrice * item.quantity;
 
         subtotal += totalPrice;
 
         const existingItem =
     await orderRepository.getOrderItem(
+
         orderId,
-        menu.id
+
+        menu.id,
+
+        variant?.id || null
+
     );
 
 if (existingItem) {
@@ -125,14 +162,26 @@ if (existingItem) {
 } else {
 
     await orderRepository.addOrderItem(
-        orderId,
-        menu.id,
-        menu.name,
+
+    orderId,
+
+    menu.id,
+
+    menu.name,
+
     menu.food_type,
-        item.quantity,
-        unitPrice,
-        totalPrice
-    );
+
+    variant?.id || null,
+
+    variant?.name || null,
+
+    item.quantity,
+
+    unitPrice,
+
+    totalPrice
+
+);
 
 }
 

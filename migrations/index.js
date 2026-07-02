@@ -41,6 +41,30 @@ const migrations = [
 [
     "008_order_item_snapshot",
     require("./008_order_item_snapshot")
+],
+[
+    "009_create_menu_item_variants",
+    require(
+        "./009_create_menu_item_variants"
+    )
+],
+[
+    "010_add_variant_snapshot_to_order_items",
+    require(
+        "./010_add_variant_snapshot_to_order_items"
+    )
+],
+[
+    "011_add_variant_to_kitchen_ticket_items",
+    require(
+        "./011_add_variant_to_kitchen_ticket_items"
+    )
+],
+[
+    "012_upgrade_staff_auth",
+    require(
+        "./012_upgrade_staff_auth"
+    )
 ]
 
 ];

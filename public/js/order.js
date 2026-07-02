@@ -1,3 +1,11 @@
+let allMenuItems = [];
+
+let filteredMenuItems = [];
+
+let selectedCategory = "all";
+
+let selectedFoodType = "all";
+let selectedVariants = {};
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
@@ -18,69 +26,268 @@ const cartKey =
         ? `cart_${tableId}`
         : `order_${orderId}`;
 
-let cart =
-    JSON.parse(
-        sessionStorage.getItem(cartKey)
-    ) || [];
+Align.Order.state.cartKey = cartKey;
+
+Align.Order.cart.load();
 let existingItems = [];    
 
 async function loadMenu() {
 
-    const data = await API.get("/api/menu/items");
-    if (data.success) {
-
-    data.items = data.items.filter(
-        item => item.is_available == 1
-    );
-
-}
+    const data =
+        await API.get("/api/menu/items");
 
     if (!data.success) {
 
-        Toast.show(data.message, "error");
+        Toast.show(
+            data.message,
+            "error"
+        );
+
         return;
 
     }
 
-    const menu = document.getElementById("menuList");
+    allMenuItems =
+        data.items.filter(
+            item => item.is_available == 1
+        );
+
+    renderCategoryFilters();
+
+    renderFoodFilters();
+
+    applyFilters();
+
+}
+function renderMenu(items) {
+
+    const menu =
+        document.getElementById(
+            "menuList"
+        );
 
     menu.innerHTML = "";
 
-    data.items.forEach(item => {
+    if (items.length === 0) {
+
+        menu.innerHTML = `
+
+<div class="rounded-lg border border-dashed p-8 text-center text-slate-500">
+
+No menu items found
+
+</div>
+
+`;
+
+        return;
+
+    }
+
+    items.forEach(item => {
+
+        if (
+    item.variants &&
+    item.variants.length === 1 &&
+    !selectedVariants[item.id]
+) {
+    selectedVariants[item.id] =
+        item.variants[0].id;
+}
+
+        const variantsHtml =
+            item.variants.map(v => `
+
+<button
+
+onclick="selectVariant(${item.id},${v.id})"
+
+class="variant-chip rounded-full border px-3 py-1 text-sm ${
+    selectedVariants[item.id] === v.id
+        ? "bg-blue-600 text-white"
+        : ""
+}"
+
+>
+
+${v.name}
+
+₹${v.price}
+
+</button>
+
+`).join("");
 
         menu.innerHTML += `
-            <div class="mb-3 flex items-center justify-between rounded-lg border p-4">
 
-                <div>
+<div class="rounded-xl border bg-white p-4">
 
-                    <h3 class="font-semibold">
-                        ${item.name}
-                    </h3>
+<div class="flex items-start justify-between">
 
-                    <p class="text-sm text-slate-500">
+<div>
 
-                        ₹${item.price}
+<h3 class="font-semibold">
 
-                    </p>
+${item.name}
 
-                </div>
+</h3>
 
-                <button
-                    onclick="addItem(
-                        ${item.id},
-                        '${item.name}',
-                        ${item.price}
-                    )"
-                    class="rounded bg-blue-600 px-4 py-2 text-white">
+<p class="mt-1 text-sm text-slate-500">
 
-                    +
+${item.category}
 
-                </button>
+</p>
 
-            </div>
-        `;
+</div>
+
+<button
+
+onclick="addSelectedVariant(${item.id})"
+
+class="rounded-lg bg-blue-600 px-4 py-2 text-white">
+
++
+
+</button>
+
+</div>
+
+<div
+
+class="mt-3 flex flex-wrap gap-2">
+
+${variantsHtml}
+
+</div>
+
+</div>
+
+`;
 
     });
+
+}
+function selectVariant(
+    menuItemId,
+    variantId
+) {
+
+    selectedVariants[
+        menuItemId
+    ] = variantId;
+
+    renderMenu(
+        filteredMenuItems
+    );
+
+}
+function addSelectedVariant(menuItemId) {
+
+    const item =
+        allMenuItems.find(
+            i => i.id === menuItemId
+        );
+
+    if (!item) {
+        return;
+    }
+
+    // No variants
+    if (
+        !item.variants ||
+        item.variants.length === 0
+    ) {
+
+        addItem(
+            item.id,
+            item.name,
+            item.price
+        );
+
+        return;
+    }
+
+    let variant =
+        item.variants.find(
+            v =>
+                v.id ===
+                selectedVariants[menuItemId]
+        );
+
+    if (!variant) {
+        variant = item.variants[0];
+    }
+
+    addItem(
+        item.id,
+        item.name,
+        variant?.price || menu.price,
+        variant?.id || null,
+        variant?.name || null
+    );
+
+}
+function applyFilters() {
+
+    const keyword =
+        document
+            .getElementById("menuSearch")
+            .value
+            .toLowerCase()
+            .trim();
+
+    filteredMenuItems =
+        allMenuItems.filter(item => {
+
+            const searchMatch =
+
+                item.name
+                    .toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                item.category
+                    .toLowerCase()
+                    .includes(keyword);
+
+            const categoryMatch =
+
+                selectedCategory === "all"
+
+                ||
+
+                item.category_id ==
+                selectedCategory;
+
+            const foodMatch =
+
+                selectedFoodType === "all"
+
+                ||
+
+                item.food_type ==
+                selectedFoodType;
+
+            return (
+
+                searchMatch
+
+                &&
+
+                categoryMatch
+
+                &&
+
+                foodMatch
+
+            );
+
+        });
+
+    renderMenu(
+        filteredMenuItems
+    );
 
 }
 
@@ -135,30 +342,37 @@ async function loadExistingOrder() {
 renderCart();
 
 }
-function addItem(id, name, price) {
 
-    const existing = cart.find(item => item.id === id);
+function addItem(
+    menuItemId,
+    itemName,
+    unitPrice,
+    variantId = null,
+    variantName = null
+) {
 
-    if (existing) {
+    Align.Order.cart.add({
 
-        existing.quantity++;
+        menu_item_id: menuItemId,
 
-    } else {
+        item_name: itemName,
 
-        cart.push({
-            id,
-            name,
-            price,
-            quantity: 1
-        });
+        variant_id: variantId,
 
-    }
+        variant_name: variantName,
+
+        unit_price: unitPrice
+
+    });
 
     renderCart();
 
 }
 
 function renderCart() {
+    const cart =
+
+    Align.Order.state.cart;
 
     const cartDiv = document.getElementById("cart");
 
@@ -202,7 +416,13 @@ function renderCart() {
 
             <h4 class="font-semibold">
 
-                ${item.name}
+               ${item.name}
+
+<small class="block text-slate-500">
+
+${item.variant_name}
+
+</small>
 
             </h4>
 
@@ -240,7 +460,11 @@ function renderCart() {
 
     cart.forEach(item => {
 
-        const itemTotal = item.quantity * item.price;
+        const itemTotal =
+
+    item.quantity *
+
+    item.unit_price;
 
         total += itemTotal;
 
@@ -253,13 +477,24 @@ function renderCart() {
 
             <h4 class="font-semibold">
 
-                ${item.name}
+                ${item.item_name}
+                ${
+    item.variant_name
+        ? `
+<p class="text-xs text-blue-600">
+
+${item.variant_name}
+
+</p>
+`
+        : ""
+}
 
             </h4>
 
             <p class="text-sm text-slate-500">
 
-                ₹${item.price} each
+                ₹${item.unit_price} each
 
             </p>
 
@@ -276,7 +511,10 @@ function renderCart() {
     <div class="mt-3 flex items-center gap-3">
 
         <button
-            onclick="decreaseQty(${item.id})"
+            onclick="decreaseQty(
+    ${item.menu_item_id},
+    ${item.variant_id || "null"}
+)"
             class="h-9 w-9 rounded bg-red-500 text-white">
 
             -
@@ -290,7 +528,10 @@ function renderCart() {
         </span>
 
         <button
-            onclick="increaseQty(${item.id})"
+            onclick="increaseQty(
+    ${item.menu_item_id},
+    ${item.variant_id || "null"}
+)"
             class="h-9 w-9 rounded bg-green-600 text-white">
 
             +
@@ -305,45 +546,45 @@ function renderCart() {
     });
 
     document.getElementById("total").textContent =
-        `₹${total}`;
+    `₹${Align.Order.cart.total()}`;
         sessionStorage.setItem(
     cartKey,
     JSON.stringify(cart)
 );
 
 }
-function increaseQty(id) {
+function increaseQty(
+    menuItemId,
+    variantId = null
+) {
 
-    const item = cart.find(i => i.id === id);
-
-    if (!item) return;
-
-    item.quantity++;
+    Align.Order.cart.increase(
+        menuItemId,
+        variantId
+    );
 
     renderCart();
 
 }
 
-function decreaseQty(id) {
+function decreaseQty(
+    menuItemId,
+    variantId = null
+) {
 
-    const index = cart.findIndex(i => i.id === id);
-
-    if (index === -1) return;
-
-    cart[index].quantity--;
-
-    if (cart[index].quantity <= 0) {
-
-        cart.splice(index, 1);
-
-    }
+    Align.Order.cart.decrease(
+        menuItemId,
+        variantId
+    );
 
     renderCart();
 
 }
 async function sendToKitchen() {
 
-    if (cart.length === 0) {
+   if (
+    Align.Order.state.cart.length === 0
+) {
 
         Toast.show("Cart is empty", "error");
 
@@ -360,17 +601,21 @@ async function sendToKitchen() {
 
     const payload = {
 
-        table_id: Number(tableId),
+    table_id: Number(tableId),
 
-        items: cart.map(item => ({
+    items: Align.Order.state.cart.map(item => ({
 
-            menu_item_id: item.id,
+        menu_item_id: item.menu_item_id,
 
-            quantity: item.quantity
+        variant_id: item.variant_id,
 
-        }))
+        quantity: item.quantity,
 
-    };
+        notes: item.notes || ""
+
+    }))
+
+};
 
     const data =
         await API.post(
@@ -391,7 +636,7 @@ async function sendToKitchen() {
 
     }
 
-    sessionStorage.removeItem(cartKey);
+    Align.Order.cart.clear();
 
     Toast.show("Order sent successfully");
 
@@ -401,5 +646,239 @@ async function sendToKitchen() {
         "/admin/dashboard.html";
 
 }, 800);
+}
+
+function renderCategoryFilters() {
+
+    const container =
+        document.getElementById(
+            "categoryFilters"
+        );
+
+    container.innerHTML = "";
+
+    const categories = [
+
+        {
+
+            id: "all",
+
+            name: "All"
+
+        },
+
+        ...new Map(
+
+            allMenuItems.map(item => [
+
+                item.category_id,
+
+                {
+
+                    id: item.category_id,
+
+                    name: item.category
+
+                }
+
+            ])
+
+        ).values()
+
+    ];
+
+    categories.forEach(cat => {
+
+        container.innerHTML += `
+
+<button
+
+onclick="selectCategory('${cat.id}')"
+
+class="category-chip rounded-full border px-4 py-2"
+
+data-id="${cat.id}">
+
+${cat.name}
+
+</button>
+
+`;
+
+    });
+
+    updateCategorySelection();
 
 }
+function selectCategory(id) {
+
+    selectedCategory = id;
+
+    updateCategorySelection();
+
+    applyFilters();
+
+}
+function updateCategorySelection() {
+
+    document
+
+        .querySelectorAll(
+            ".category-chip"
+        )
+
+        .forEach(btn => {
+
+            if (
+
+                btn.dataset.id ==
+                selectedCategory
+
+            ) {
+
+                btn.className =
+"category-chip rounded-full bg-blue-600 px-4 py-2 text-white";
+
+            } else {
+
+                btn.className =
+"category-chip rounded-full border px-4 py-2";
+
+            }
+
+        });
+
+}
+
+function renderFoodFilters() {
+
+    const container =
+        document.getElementById(
+            "foodFilters"
+        );
+
+    container.innerHTML = "";
+
+    const icons = {
+
+        veg: "🟢",
+
+        egg: "🥚",
+
+        non_veg: "🔴",
+
+        vegan: "🌱",
+
+        jain: "🟡"
+
+    };
+
+    const foodTypes = [
+
+        {
+
+            id: "all",
+
+            name: "All"
+
+        },
+
+        ...new Map(
+
+            allMenuItems.map(item => [
+
+                item.food_type,
+
+                {
+
+                    id: item.food_type,
+
+                    name:
+
+                        `${icons[item.food_type] || "🍽️"} ` +
+
+                        item.food_type
+
+                            .replace(/_/g, " ")
+
+                            .replace(/\b\w/g, c => c.toUpperCase())
+
+                }
+
+            ])
+
+        ).values()
+
+    ];
+
+    foodTypes.forEach(type => {
+
+        container.innerHTML += `
+
+<button
+
+onclick="selectFoodType('${type.id}')"
+
+class="food-chip rounded-full border px-4 py-2"
+
+data-id="${type.id}">
+
+${type.name}
+
+</button>
+
+`;
+
+    });
+
+    updateFoodSelection();
+
+}
+function selectFoodType(id) {
+
+    selectedFoodType = id;
+
+    updateFoodSelection();
+
+    applyFilters();
+
+}
+function updateFoodSelection() {
+
+    document
+
+        .querySelectorAll(".food-chip")
+
+        .forEach(btn => {
+
+            if (
+
+                btn.dataset.id ==
+                selectedFoodType
+
+            ) {
+
+                btn.className =
+"food-chip rounded-full bg-blue-600 px-4 py-2 text-white";
+
+            }
+
+            else {
+
+                btn.className =
+"food-chip rounded-full border px-4 py-2";
+
+            }
+
+        });
+
+}
+document
+.getElementById("menuSearch")
+.addEventListener(
+
+"input",
+
+applyFilters
+
+);

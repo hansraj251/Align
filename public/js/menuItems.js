@@ -1,5 +1,8 @@
 let editingItemId = null;
+let allMenuItems = [];
+let currentVariantItemId = null;
 
+let currentVariantItemName = "";
 if (!API.getToken()) {
 
     window.location.href =
@@ -43,27 +46,35 @@ async function loadCategories() {
     });
 
 }
-
 async function loadMenuItems() {
 
     const data =
         await API.get("/api/menu/items");
 
-    const list =
-        document.getElementById("itemList");
-
-    list.innerHTML = "";
-
     if (!data.success) {
 
-        list.innerHTML =
+        document.getElementById("itemList").innerHTML =
             "<p>Unable to load menu items.</p>";
 
         return;
 
     }
 
-    data.items.forEach(item => {
+    allMenuItems = data.items;
+
+    renderMenuItems(allMenuItems);
+
+}
+
+   function renderMenuItems(items) {
+
+    const list =
+
+        document.getElementById("itemList");
+
+    list.innerHTML = "";
+
+    items.forEach(item => {
 
         list.innerHTML += `
 
@@ -118,6 +129,18 @@ async function loadMenuItems() {
         </button>
 
         <button
+
+    class="variants-item rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+
+    data-id="${item.id}"
+
+    data-name="${encodeURIComponent(item.name)}">
+
+    Variants
+
+</button>
+
+        <button
     class="toggle-item rounded px-4 py-2 text-white ${
         item.is_available
             ? "bg-green-600 hover:bg-green-700"
@@ -155,8 +178,8 @@ async function loadMenuItems() {
 `;
 
     });
+    }
 
-}
 async function saveMenuItem() {
 
     const body = {
@@ -371,6 +394,28 @@ document.addEventListener("click", async (e) => {
         return;
 
     }
+    const variantBtn =
+    e.target.closest(
+        ".variants-item"
+    );
+
+if (variantBtn) {
+
+    openVariantModal(
+
+        Number(
+            variantBtn.dataset.id
+        ),
+
+        decodeURIComponent(
+            variantBtn.dataset.name
+        )
+
+    );
+
+    return;
+
+}
 
     const deleteBtn =
         e.target.closest(".delete-item");
@@ -483,6 +528,247 @@ function deleteMenuItem(
     );
 
 }
+async function openVariantModal(
+    itemId,
+    itemName
+) {
+
+    currentVariantItemId =
+        itemId;
+
+    currentVariantItemName =
+        itemName;
+
+    document.getElementById(
+        "variantItemName"
+    ).textContent =
+        itemName;
+
+    const modal =
+    document.getElementById(
+        "variantModal"
+    );
+
+modal.classList.remove(
+    "hidden"
+);
+
+modal.classList.add(
+    "flex"
+);
+
+    await loadVariants();
+
+}
+async function loadVariants() {
+
+    const data =
+        await API.get(
+
+            `/api/menu/items/${currentVariantItemId}/variants`
+
+        );
+
+    const list =
+        document.getElementById(
+            "variantList"
+        );
+
+    list.innerHTML = "";
+
+    if (!data.success) {
+
+        list.innerHTML =
+            "Unable to load variants";
+
+        return;
+
+    }
+
+    data.variants.forEach(renderVariantRow);
+
+}
+function renderVariantRow(item = {}) {
+
+    document
+        .getElementById(
+            "variantList"
+        )
+        .innerHTML += `
+
+<div
+
+class="variant-row flex items-center gap-3"
+
+data-id="${item.id || ""}">
+
+<input
+
+class="variant-name flex-1 rounded border p-2"
+
+placeholder="Variant"
+
+value="${item.name || ""}">
+
+<input
+
+class="variant-price w-32 rounded border p-2"
+
+type="number"
+
+step="0.01"
+
+placeholder="Price"
+
+value="${item.price || ""}">
+
+<button
+
+class="delete-variant rounded bg-red-600 px-3 py-2 text-white">
+
+🗑
+
+</button>
+
+</div>
+
+`;
+
+}
+
+async function saveVariants() {
+
+    const variants = [];
+
+    document
+
+        .querySelectorAll(
+            ".variant-row"
+        )
+
+        .forEach(row => {
+
+            const name =
+                row.querySelector(
+                    ".variant-name"
+                ).value.trim();
+
+            const price =
+                Number(
+
+                    row.querySelector(
+                        ".variant-price"
+                    ).value
+
+                );
+
+            if (!name) {
+
+                return;
+
+            }
+
+            variants.push({
+
+                name,
+
+                price
+
+            });
+
+        });
+
+    if (variants.length === 0) {
+
+        Toast.show(
+            "Please add at least one variant",
+            "error"
+        );
+
+        return;
+
+    }
+
+    const data =
+        await API.put(
+
+            `/api/menu/items/${currentVariantItemId}/variants`,
+
+            {
+
+                variants
+
+            }
+
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    Toast.show(
+        "Variants updated successfully"
+    );
+
+    closeVariantModal();
+
+}
+function closeVariantModal() {
+
+    const modal =
+    document.getElementById(
+        "variantModal"
+    );
+
+modal.classList.remove(
+    "flex"
+);
+
+modal.classList.add(
+    "hidden"
+);
+
+}
+document
+    .getElementById("menuSearch")
+    .addEventListener("input", function () {
+
+        const keyword =
+            this.value
+                .toLowerCase()
+                .trim();
+
+        const filtered =
+            allMenuItems.filter(item =>
+
+                item.name
+                    .toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                item.category
+                    .toLowerCase()
+                    .includes(keyword)
+
+                ||
+
+                item.food_type
+                    .toLowerCase()
+                    .includes(keyword)
+
+            );
+
+        renderMenuItems(filtered);
+
+    });
 
 document
     .getElementById("saveItemBtn")
@@ -497,6 +783,57 @@ document
         "click",
         cancelEdit
     );
+document
+
+.getElementById(
+    "addVariantBtn"
+)
+
+.addEventListener(
+
+    "click",
+
+    () => {
+
+        renderVariantRow();
+
+    }
+
+);
+document.addEventListener(
+
+    "click",
+
+    e => {
+
+        const btn =
+            e.target.closest(
+                ".delete-variant"
+            );
+
+        if (!btn) return;
+
+        btn
+            .closest(".variant-row")
+            .remove();
+
+    }
+
+);
+document
+
+.getElementById(
+    "saveVariantsBtn"
+)
+
+.addEventListener(
+
+    "click",
+
+    saveVariants
+
+);
+
 
 loadCategories();
 

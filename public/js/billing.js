@@ -48,7 +48,7 @@ async function loadBillingOrders() {
 
                 <p class="mt-2 text-slate-500">
 
-                    🪑 ${order.table_name}
+                     ${order.table_name}
 
                 </p>
 

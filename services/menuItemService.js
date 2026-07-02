@@ -1,6 +1,7 @@
 const menuItemRepository =
     require("../repositories/menuItemRepository");
-
+const variantRepository =
+    require("../repositories/menuVariantRepository");
 exports.createMenuItem = async (
     restaurantId,
     categoryId,
@@ -42,6 +43,29 @@ exports.getMenuItems = async (
         await menuItemRepository.getMenuItems(
             restaurantId
         );
+
+    const ids =
+        items.map(
+            item => item.id
+        );
+
+    const variants =
+        await variantRepository.getVariantsByMenuItems(
+            ids
+        );
+
+    items.forEach(item => {
+
+        item.variants =
+            variants.filter(
+                variant =>
+
+                    variant.menu_item_id ===
+                    item.id
+
+            );
+
+    });
 
     return {
 

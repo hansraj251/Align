@@ -6,7 +6,9 @@ const orderRepository =
     require("../repositories/orderRepository");
 const {
     generateNumber
-} = require("../utils/numberGenerator");    
+} = require("../utils/numberGenerator");  
+const variantRepository =
+    require("../repositories/menuVariantRepository");  
 exports.createKitchenTicket = async (
     orderId,
     items
@@ -46,6 +48,25 @@ await kitchenRepository.updateTicketNumber(
 
     }
 
+    let variant = null;
+
+if (item.variant_id) {
+
+    variant =
+        await variantRepository.getVariantById(
+            item.variant_id
+        );
+
+    if (!variant) {
+
+        throw new Error(
+            "Invalid variant"
+        );
+
+    }
+
+}
+
     await kitchenRepository.createTicketItem(
 
         ticketId,
@@ -54,7 +75,9 @@ await kitchenRepository.updateTicketNumber(
 
         menu.name,
 
-        menu.price,
+        variant?.name || null,
+
+       variant?.price || menu.price,
 
         item.quantity
 
