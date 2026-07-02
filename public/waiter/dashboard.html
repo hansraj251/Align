@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Waiter Dashboard</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="min-h-screen p-5">
+
+<div class="mb-8">
+
+<h1 class="text-3xl font-bold">
+
+🍽 Waiter Dashboard
+
+</h1>
+
+<p class="mt-2 text-slate-500">
+
+Welcome back
+
+</p>
+
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+
+<a
+
+href="/staff/tables.html"
+
+class="rounded-2xl bg-blue-600 p-6 text-center text-white shadow">
+
+<div class="text-4xl">
+
+🍽
+
+</div>
+
+<div class="mt-3 text-lg font-semibold">
+
+Tables
+
+</div>
+
+</a>
+
+<a
+
+href="/staff/ready.html"
+
+class="rounded-2xl bg-green-600 p-6 text-center text-white shadow">
+
+<div class="text-4xl">
+
+🍳
+
+</div>
+
+<div class="mt-3 text-lg font-semibold">
+
+Ready Items
+
+</div>
+
+</a>
+
+<a
+
+href="/staff/orders.html"
+
+class="rounded-2xl bg-orange-500 p-6 text-center text-white shadow">
+
+<div class="text-4xl">
+
+🧾
+
+</div>
+
+<div class="mt-3 text-lg font-semibold">
+
+Orders
+
+</div>
+
+</a>
+
+<a
+
+href="/staff/profile.html"
+
+class="rounded-2xl bg-slate-700 p-6 text-center text-white shadow">
+
+<div class="text-4xl">
+
+👤
+
+</div>
+
+<div class="mt-3 text-lg font-semibold">
+
+Profile
+
+</div>
+
+</a>
+
+</div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+
+<script>
+
+if (!API.getToken()) {
+
+    window.location.href =
+        "/staff/login.html";
+
+}
+
+</script>
+
+</body>
+
+</html>

@@ -26,16 +26,19 @@ async function loadTables() {
 
     }
 
-    renderTables(
-        data.tables.filter(
+    const tables = data.tables.filter(
+    table => table.area_id == areaId
+);
 
-            table =>
+renderTables(tables);
+if (tables.length) {
 
-                table.area_id == areaId
+    document.getElementById(
+        "areaName"
+    ).textContent =
+        tables[0].area_name || "Tables";
 
-        )
-
-    );
+}
 
 }
 
@@ -67,6 +70,25 @@ No Tables
     }
 
     tables.forEach(table => {
+         let icon = "🟢";
+
+    if (table.status === "occupied") {
+
+        icon = "🔴";
+
+    }
+
+    else if (table.status === "ready") {
+
+        icon = "🟡";
+
+    }
+
+    else if (table.status === "billing") {
+
+        icon = "🔵";
+
+    }
 
         list.innerHTML += `
 
@@ -86,11 +108,7 @@ ${table.name}
 
 <span>
 
-${table.status === "occupied"
-
-? "🔴"
-
-: "🟢"}
+${icon}
 
 </span>
 
@@ -110,18 +128,18 @@ ${table.status}
 
 }
 
-// function openTable(
-//     tableId
-// ) {
+function openTable(tableId) {
 
-//     window.location.href =
-// `/waiter/order.html?table=${tableId}`;
-
-// }
-function openTable(id){
-
-    alert(id);
+    window.location.href =
+        `/waiter/order.html?table=${tableId}`;
 
 }
+setInterval(
+
+    loadTables,
+
+    5000
+
+);
 
 loadTables();

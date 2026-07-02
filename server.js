@@ -41,7 +41,9 @@ const diningAreaRoutes =
 const staffRoutes =
     require("./routes/staffRoutes");   
 const menuVariantRoutes =
-    require("./routes/menuVariantRoutes");      
+    require("./routes/menuVariantRoutes");    
+const orderItemRoutes =
+    require("./routes/orderItemRoutes");      
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -90,6 +92,13 @@ app.use(
     "/api/menu/items",
 
     menuVariantRoutes
+
+);
+app.use(
+
+    "/api/order-items",
+
+    orderItemRoutes
 
 );
 app.get("/", (req, res) => {
