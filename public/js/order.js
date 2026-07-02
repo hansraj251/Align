@@ -308,6 +308,21 @@ document
         sendToKitchen
     );
 
+const checkoutBtn =
+    document.getElementById(
+        "checkoutBtn"
+    );
+
+if (checkoutBtn) {
+
+    checkoutBtn.addEventListener(
+        "click",
+        sendToKitchen
+    );
+
+}
+
+
 initialize();
 async function loadExistingOrder() {
 
@@ -332,6 +347,8 @@ async function loadExistingOrder() {
     id: item.menu_item_id,
 
     name: item.name,
+
+    variant_name: item.variant_name,
 
     price: item.unit_price,
 
@@ -582,70 +599,159 @@ function decreaseQty(
 }
 async function sendToKitchen() {
 
-   if (
-    Align.Order.state.cart.length === 0
-) {
+    if (Align.Order.state.cart.length === 0) {
 
-        Toast.show("Cart is empty", "error");
-
-        return;
-
-    }
-
-    const button =
-        document.getElementById("sendKitchenBtn");
-
-    button.disabled = true;
-
-    button.textContent = "Sending...";
-
-    const payload = {
-
-    table_id: Number(tableId),
-
-    items: Align.Order.state.cart.map(item => ({
-
-        menu_item_id: item.menu_item_id,
-
-        variant_id: item.variant_id,
-
-        quantity: item.quantity,
-
-        notes: item.notes || ""
-
-    }))
-
-};
-
-    const data =
-        await API.post(
-            "/api/orders/checkout",
-            payload
+        Toast.show(
+            "Cart is empty",
+            "error"
         );
 
-    if (!data.success) {
-
-        Toast.show(data.message, "error");
-
-        button.disabled = false;
-
-        button.textContent =
-            "Send To Kitchen";
-
         return;
 
     }
 
-    Align.Order.cart.clear();
+    const sendButton =
+        document.getElementById(
+            "sendKitchenBtn"
+        );
 
-    Toast.show("Order sent successfully");
+    const cartButton =
+        document.getElementById(
+            "checkoutBtn"
+        );
 
-    setTimeout(() => {
+    if (sendButton) {
 
-    window.location.href =
-        "/admin/dashboard.html";
+    sendButton.disabled = true;
 
-}, 800);
+    sendButton.textContent = "Sending...";
+
+}
+
+if (cartButton) {
+
+    cartButton.disabled = true;
+
+    cartButton.textContent = "Sending...";
+
+}
+
+    try {
+
+        const payload = {
+
+            table_id: Number(tableId),
+
+            items: Align.Order.state.cart.map(item => ({
+
+                menu_item_id: item.menu_item_id,
+
+                variant_id: item.variant_id,
+
+                quantity: item.quantity,
+
+                notes: item.notes || ""
+
+            }))
+
+        };
+
+        const data =
+            await API.post(
+                "/api/orders/checkout",
+                payload
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Align.Order.cart.clear();
+
+        if (typeof updateCartSummary === "function") {
+
+    updateCartSummary();
+
+}
+
+        if (typeof closeCart === "function") {
+
+    closeCart();
+
+}
+
+        if (typeof loadCurrentOrder === "function") {
+
+    await loadCurrentOrder();
+
+}
+
+        if (typeof loadTable === "function") {
+
+    await loadTable();
+
+}
+
+        Toast.show(
+            "Order sent successfully",
+            "success"
+        );
+        if (typeof loadExistingOrder === "function") {
+
+    await loadExistingOrder();
+
+}
+
+if (typeof loadMenu === "function") {
+
+    await loadMenu();
+
+}
+
+if (typeof renderCart === "function") {
+
+    renderCart();
+
+}
+
+    }
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+    finally {
+
+       if (sendButton) {
+
+    sendButton.disabled = false;
+
+    sendButton.textContent =
+        "Send To Kitchen";
+
+}
+
+if (cartButton) {
+
+    cartButton.disabled = false;
+
+    cartButton.textContent =
+        "Send To Kitchen";
+
+}
+
+    }
+
 }
 
 function renderCategoryFilters() {

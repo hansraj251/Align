@@ -78,12 +78,6 @@ No Tables
 
     }
 
-    else if (table.status === "ready") {
-
-        icon = "🟡";
-
-    }
-
     else if (table.status === "billing") {
 
         icon = "🔵";
@@ -114,11 +108,50 @@ ${icon}
 
 </div>
 
-<p class="mt-3 text-slate-500">
+<div class="mt-4 space-y-1 text-sm text-slate-600">
+
+<div>
+
+👥 ${table.capacity} Seats
+
+</div>
+
+${
+table.status === "occupied"
+
+? `
+
+<div>
+
+🧾 ${table.total_items} Items
+
+</div>
+
+<div>
+
+💰 ₹${Number(table.total || 0).toFixed(2)}
+
+</div>
+
+<div class="font-medium text-red-600">
+
+⏱ ${table.minutes ?? 0} min
+
+</div>
+
+`
+
+: ""
+
+}
+
+<div class="pt-2 font-medium">
 
 ${table.status}
 
-</p>
+</div>
+
+</div>
 
 </div>
 
@@ -131,14 +164,14 @@ ${table.status}
 function openTable(tableId) {
 
     window.location.href =
-        `/waiter/order.html?table=${tableId}`;
+        `/waiter/order.html?table=${tableId}&area=${areaId}`;
 
 }
 setInterval(
 
     loadTables,
 
-    5000
+    30000
 
 );
 

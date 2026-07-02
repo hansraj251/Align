@@ -5,14 +5,47 @@ exports.getAll = async (restaurantId) => {
     return await db.allAsync(
         `
         SELECT
-            id,
-            name,
-            display_order
-        FROM dining_areas
-        WHERE restaurant_id = ?
+            da.id,
+            da.name,
+            da.display_order,
+
+            COUNT(t.id) AS total_tables,
+
+            SUM(
+                CASE
+                    WHEN t.status = 'occupied'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS occupied_tables,
+
+            COUNT(t.id)
+-
+SUM(
+    CASE
+        WHEN t.status = 'occupied'
+        THEN 1
+        ELSE 0
+    END
+)
+AS available_tables
+
+        FROM dining_areas da
+
+        LEFT JOIN tables t
+
+            ON t.area_id = da.id
+
+        WHERE da.restaurant_id = ?
+
+        GROUP BY
+            da.id,
+            da.name,
+            da.display_order
+
         ORDER BY
-            display_order,
-            id
+            da.display_order,
+            da.id
         `,
         [restaurantId]
     );

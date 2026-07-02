@@ -130,30 +130,87 @@ exports.updateOrderNumber = async (
     );
 
 };
-exports.getActiveOrderByTable = (restaurantId, tableId) => {
+exports.getActiveOrderByTable = async (
+    restaurantId,
+    tableId
+) => {
 
-    return db.getAsync(
-        `
-        SELECT
-            id
-        FROM orders
-        WHERE
-            restaurant_id = ?
-            AND table_id = ?
-            AND status IN (
-                'open',
-                'sent_to_kitchen',
-                'preparing',
-                'ready',
-                'ready_for_billing'
-            )
-        LIMIT 1
-        `,
-        [
-            restaurantId,
-            tableId
-        ]
-    );
+    const order =
+        await db.getAsync(
+            `
+            SELECT *
+
+            FROM orders
+
+            WHERE
+
+                restaurant_id = ?
+
+                AND table_id = ?
+
+                AND status IN (
+
+                    'open',
+
+                    'sent_to_kitchen',
+
+                    'preparing',
+
+                    'ready',
+
+                    'ready_for_billing'
+
+                )
+
+            LIMIT 1
+            `,
+            [
+                restaurantId,
+                tableId
+            ]
+        );
+
+    if (!order) {
+
+        return null;
+
+    }
+
+    order.items =
+        await db.allAsync(
+            `
+            SELECT
+
+                id,
+
+                menu_item_id,
+
+                item_name,
+
+                variant_name,
+
+                quantity,
+
+                unit_price,
+
+                total_price,
+
+                status,
+
+                notes
+
+            FROM order_items
+
+            WHERE order_id = ?
+
+            ORDER BY id
+            `,
+            [
+                order.id
+            ]
+        );
+
+    return order;
 
 };
 exports.getOrderItem = async (

@@ -34,20 +34,40 @@ async function loadKitchenOrders() {
 
     data.tickets.forEach(ticket => {
         const itemsHtml = (ticket.items || [])
-    .map(item => `
-        <div class="flex justify-between text-sm py-1">
+.map(item => `
+    <div class="flex justify-between py-2">
 
-            <span>
+        <div>
+
+            <div class="font-medium">
+
                 ${item.item_name}
-            </span>
 
-            <strong>
-                ×${item.quantity}
-            </strong>
+            </div>
+
+            ${
+                item.variant_name
+                ? `
+                <div class="text-xs text-slate-500">
+
+                    ${item.variant_name}
+
+                </div>
+                `
+                : ""
+            }
 
         </div>
-    `)
-    .join("");
+
+        <strong>
+
+            ×${item.quantity}
+
+        </strong>
+
+    </div>
+`)
+.join("");
 
     const borderClass =
     ticket.status === "sent_to_kitchen"
@@ -74,7 +94,7 @@ async function loadKitchenOrders() {
         </div>
 
         <p class="mt-4 text-lg font-semibold">
-            ₹${ticket.ticket_total}
+            ₹${ticket.total}
         </p>
 
         ${

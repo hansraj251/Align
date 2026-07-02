@@ -70,24 +70,22 @@ async function login() {
         case "waiter":
 
     window.location.href =
-
-        "/admin/dashboard.html";
+        "/waiter/dashboard.html";
 
     break;
 
         case "kitchen":
 
     window.location.href =
-
-        "/admin/dashboard.html";
+        "/kitchen/index.html";
 
     break;
 
 case "cashier":
 
-    window.location.href =
-
-        "/admin/dashboard.html";
+    Toast.show(
+        "Cashier module under development"
+    );
 
     break;
 

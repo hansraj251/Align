@@ -21,29 +21,43 @@
 
 <div class="min-h-screen p-5">
 
-<div class="mb-8">
+<div class="mb-8 flex items-start justify-between">
 
-<h1 class="text-3xl font-bold">
+    <div>
 
-🍽 Waiter Dashboard
+        <h1 class="text-3xl font-bold">
 
-</h1>
+            Waiter Dashboard
 
-<p class="mt-2 text-slate-500">
+        </h1>
 
-Welcome back
+        <p class="mt-2 text-slate-500">
 
-</p>
+            Welcome back
+
+        </p>
+
+    </div>
+
+    <a
+
+         href="/waiter/profile.html"
+
+        class="flex h-12 w-12 items-center justify-center rounded-full bg-white shadow">
+
+        👤
+
+    </a>
 
 </div>
 
-<div class="grid grid-cols-2 gap-4">
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 
 <a
 
-href="/staff/tables.html"
+href="/waiter/index.html"
 
-class="rounded-2xl bg-blue-600 p-6 text-center text-white shadow">
+class="rounded-2xl bg-green-600 p-8 text-center text-white shadow transition active:scale-95">
 
 <div class="text-4xl">
 
@@ -53,7 +67,7 @@ class="rounded-2xl bg-blue-600 p-6 text-center text-white shadow">
 
 <div class="mt-3 text-lg font-semibold">
 
-Tables
+Dining Areas
 
 </div>
 
@@ -61,9 +75,9 @@ Tables
 
 <a
 
-href="/staff/ready.html"
+onclick="alert('Coming Soon')"
 
-class="rounded-2xl bg-green-600 p-6 text-center text-white shadow">
+class="rounded-2xl bg-orange-600 p-8 text-center text-white shadow transition active:scale-95">
 
 <div class="text-4xl">
 
@@ -81,9 +95,9 @@ Ready Items
 
 <a
 
-href="/staff/orders.html"
+href="#"
 
-class="rounded-2xl bg-orange-500 p-6 text-center text-white shadow">
+class="rounded-2xl bg-yellow-600 p-8 text-center text-white shadow transition active:scale-95">
 
 <div class="text-4xl">
 
@@ -99,43 +113,28 @@ Orders
 
 </a>
 
-<a
-
-href="/staff/profile.html"
-
-class="rounded-2xl bg-slate-700 p-6 text-center text-white shadow">
-
-<div class="text-4xl">
-
-👤
-
-</div>
-
-<div class="mt-3 text-lg font-semibold">
-
-Profile
-
-</div>
-
-</a>
-
-</div>
-
 </div>
 
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
-
+<script src="/js/staffAuth.js"></script>
 <script>
 
-if (!API.getToken()) {
+StaffAuth.requireLogin();
+document
 
-    window.location.href =
-        "/staff/login.html";
+    .getElementById("logoutBtn")
 
-}
+    .addEventListener(
+
+        "click",
+
+        () => StaffAuth.logout()
+
+    );
 
 </script>
+
 
 </body>
 

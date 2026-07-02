@@ -8,11 +8,6 @@ document.getElementById(
 ).textContent =
     staff.name;
 
-document
-.getElementById("logoutBtn")
-.onclick =
-() =>
-StaffAuth.logout();
 
 async function loadAreas() {
 
@@ -78,12 +73,6 @@ onclick="openArea(${area.id})"
 
 class="cursor-pointer rounded-xl bg-white p-6 shadow transition hover:shadow-xl">
 
-<div class="text-5xl">
-
-🍽️
-
-</div>
-
 <h2
 class="mt-4 text-2xl font-bold">
 
@@ -91,10 +80,31 @@ ${area.name}
 
 </h2>
 
-<p
-class="mt-2 text-slate-500">
+<div class="mt-4 space-y-1 text-sm text-slate-600">
 
-Tap to View Tables
+<div>
+
+🍽 ${area.total_tables} Tables
+
+</div>
+
+<div>
+
+🔴 ${area.occupied_tables} Occupied
+
+</div>
+
+<div>
+
+🟢 ${area.available_tables} Available
+
+</div>
+
+</div>
+
+<p class="mt-4 font-medium text-green-600">
+
+Tap to View Tables →
 
 </p>
 
@@ -105,20 +115,10 @@ Tap to View Tables
     });
 
 }
-
-// function openArea(
-//     areaId
-// ) {
-
-//     window.location.href =
-// `/waiter/tables.html?area=${areaId}`;
-
-// }
 function openArea(areaId) {
 
-    alert(
-        "Area : " + areaId
-    );
+    window.location.href =
+        `/waiter/tables.html?area=${areaId}`;
 
 }
 

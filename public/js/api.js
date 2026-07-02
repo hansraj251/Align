@@ -1,9 +1,18 @@
 const API = {
 
     getToken() {
-        return localStorage.getItem("token");
-    },
 
+    return (
+
+        localStorage.getItem("token")
+
+        ||
+
+        localStorage.getItem("staffToken")
+
+    );
+
+},
     async request(url, options = {}) {
 
         const headers = {

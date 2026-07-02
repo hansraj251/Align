@@ -148,6 +148,13 @@ exports.updateTicketStatus = async (
         status
 
     );
+    await kitchenRepository.updateOrderItemsStatus(
+
+    ticket.order_id,
+
+    status
+
+);
 
     if (status === "served") {
 

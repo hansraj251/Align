@@ -247,6 +247,26 @@ exports.getTicketById = async (
     );
 
 };
+exports.updateOrderItemsStatus = async (
+    orderId,
+    status
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE order_items
+        SET
+            status = ?
+        WHERE
+            order_id = ?
+        `,
+        [
+            status,
+            orderId
+        ]
+    );
+
+};
 
 exports.getActiveTicketCountByOrder = async (
     orderId
