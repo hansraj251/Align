@@ -1,6 +1,7 @@
 const kitchenService =
     require("../services/kitchenService");
-
+const service =
+    require("../services/kitchenService");
 exports.getKitchenOrders = async (
     req,
     res
@@ -49,6 +50,42 @@ exports.updateTicketStatus = async (
     } catch (err) {
 
         res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.updateTicketItemStatus = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await service.updateTicketItemStatus(
+
+                req.params.itemId,
+
+                req.body.status
+
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(400).json({
 
             success: false,
 

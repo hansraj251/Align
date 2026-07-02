@@ -837,15 +837,43 @@ ${item.variant_name || ""}
 
 </div>
 
-<div class="mt-2 text-sm">
+<div class="mt-2 text-sm space-y-1">
 
-Status :
+    ${
+        item.pending_count > 0
+        ? `
+        <div class="text-orange-600">
 
-<strong>
+            Pending : ${item.pending_count}
 
-${item.status}
+        </div>
+        `
+        : ""
+    }
 
-</strong>
+    ${
+        item.preparing_count > 0
+        ? `
+        <div class="text-yellow-600">
+
+            Preparing : ${item.preparing_count}
+
+        </div>
+        `
+        : ""
+    }
+
+    ${
+        item.ready_count > 0
+        ? `
+        <div class="text-green-600 font-medium">
+
+            Ready : ${item.ready_count}
+
+        </div>
+        `
+        : ""
+    }
 
 </div>
 

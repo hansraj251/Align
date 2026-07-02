@@ -55,6 +55,7 @@ exports.updateTicketNumber = async (
 
 exports.createTicketItem = async (
     ticketId,
+    orderItemId,
     menuItemId,
     itemName,
     variantName,
@@ -64,25 +65,38 @@ exports.createTicketItem = async (
 
     await db.runAsync(
         `
-        INSERT INTO kitchen_ticket_items
-        (
-            ticket_id,
-            menu_item_id,
-            item_name,
-            variant_name,
-            unit_price,
-            quantity
-        )
-        VALUES (?, ?, ?, ?, ?, ?)
+       INSERT INTO kitchen_ticket_items
+(
+    ticket_id,
+    order_item_id,
+    menu_item_id,
+    item_name,
+    variant_name,
+    unit_price,
+    quantity,
+    status
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
-            ticketId,
-            menuItemId,
-            itemName,
-            variantName,
-            unitPrice,
-            quantity
-        ]
+
+    ticketId,
+
+    orderItemId,
+
+    menuItemId,
+
+    itemName,
+
+    variantName,
+
+    unitPrice,
+
+    quantity,
+
+    "pending"
+
+]
     );
 
 };
@@ -165,19 +179,29 @@ exports.getTicketItems = async (
         `
         SELECT
 
-    item_name,
+            id,
 
-    variant_name,
+            ticket_id,
 
-    quantity,
+            order_item_id,
 
-    unit_price
+            menu_item_id,
 
-FROM kitchen_ticket_items
+            item_name,
 
-WHERE ticket_id = ?
+            variant_name,
 
-ORDER BY id
+            quantity,
+
+            unit_price,
+
+            status
+
+        FROM kitchen_ticket_items
+
+        WHERE ticket_id = ?
+
+        ORDER BY id
         `,
         [
             ticketId
@@ -185,6 +209,7 @@ ORDER BY id
     );
 
 };
+
 exports.updateTicketStatus = async (
     ticketId,
     status
@@ -314,6 +339,155 @@ exports.getLastKotNumberForToday = async () => {
         [
             `KOT-${date}-%`
         ]
+    );
+
+};
+exports.updateTicketStatusByOrder = async (
+    orderId,
+    status
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_tickets
+        SET
+            status = ?
+        WHERE
+            order_id = ?
+            AND status != 'served'
+        `,
+        [
+            status,
+            orderId
+        ]
+    );
+
+};
+
+exports.getTicketItem = async (
+    ticketItemId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            ticket_id,
+            status
+        FROM kitchen_ticket_items
+        WHERE id = ?
+        `,
+        [ticketItemId]
+    );
+
+};
+exports.getPendingTicketItems = async (
+    ticketId
+) => {
+
+    const row =
+        await db.getAsync(
+            `
+            SELECT
+                COUNT(*) AS total
+            FROM kitchen_ticket_items
+            WHERE
+                ticket_id = ?
+                AND status != 'ready'
+            `,
+            [ticketId]
+        );
+
+    return row.total;
+
+};
+exports.updateTicketItemsStatus = async (
+    ticketId,
+    status
+) => {
+
+    let query = `
+        UPDATE kitchen_ticket_items
+        SET
+            status = ?
+    `;
+
+    const params = [status];
+
+    if (status === "preparing") {
+
+        query += `,
+            started_at = CURRENT_TIMESTAMP`;
+
+    }
+
+    if (status === "ready") {
+
+        query += `,
+            ready_at = CURRENT_TIMESTAMP`;
+
+    }
+
+    query += `
+        WHERE ticket_id = ?
+    `;
+
+    params.push(ticketId);
+
+    await db.runAsync(
+        query,
+        params
+    );
+
+};
+exports.updateTicketItemStatus = async (
+    ticketItemId,
+    status
+) => {
+
+    let query = `
+        UPDATE kitchen_ticket_items
+        SET
+            status = ?
+    `;
+
+    const params = [
+        status
+    ];
+
+    if (status === "preparing") {
+
+        query += `,
+            started_at = CURRENT_TIMESTAMP
+        `;
+
+    }
+
+    if (status === "ready") {
+
+        query += `,
+            ready_at = CURRENT_TIMESTAMP
+        `;
+
+    }
+
+    if (status === "served") {
+
+        query += `,
+            served_at = CURRENT_TIMESTAMP
+        `;
+
+    }
+
+    query += `
+        WHERE id = ?
+    `;
+
+    params.push(ticketItemId);
+
+    await db.runAsync(
+        query,
+        params
     );
 
 };

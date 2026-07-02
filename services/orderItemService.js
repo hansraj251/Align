@@ -1,25 +1,23 @@
 const repository =
-    require("../repositories/orderItemRepository");
+    require("../repositories/orderItemRepository");    
+
+const kitchenRepository =
+    require("../repositories/kitchenRepository");
+
+const orderRepository =
+    require("../repositories/orderRepository");    
 
 exports.updateStatus = async (
-
     restaurantId,
-
     orderItemId,
-
     status
-
 ) => {
 
     const changes =
         await repository.updateStatus(
-
             restaurantId,
-
             orderItemId,
-
             status
-
         );
 
     if (!changes) {
@@ -30,12 +28,39 @@ exports.updateStatus = async (
 
     }
 
+    if (status === "ready") {
+
+        const order =
+            await repository.getOrderIdByOrderItem(
+                orderItemId
+            );
+
+        const pending =
+            await repository.getPendingItemsCount(
+                order.order_id
+            );
+
+        if (pending === 0) {
+
+            await kitchenRepository.updateTicketStatusByOrder(
+                order.order_id,
+                "ready"
+            );
+
+            await orderRepository.updateOrderStatus(
+                order.order_id,
+                "ready_for_billing"
+            );
+
+        }
+
+    }
+
     return {
 
         success: true,
 
-        message:
-            "Status updated"
+        message: "Status updated"
 
     };
 

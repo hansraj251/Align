@@ -9,6 +9,9 @@ const {
 } = require("../utils/numberGenerator");  
 const variantRepository =
     require("../repositories/menuVariantRepository");  
+const kitchenRepository =
+    require("../repositories/kitchenRepository");
+
 exports.checkout = async (restaurantId, body) => {
 
     const { table_id, items } = body;
@@ -158,30 +161,34 @@ if (existingItem) {
         newQuantity,
         newTotal
     );
+    item.order_item_id = existingItem.id;
 
 } else {
 
+    const orderItemId =
     await orderRepository.addOrderItem(
 
-    orderId,
+        orderId,
 
-    menu.id,
+        menu.id,
 
-    menu.name,
+        menu.name,
 
-    menu.food_type,
+        menu.food_type,
 
-    variant?.id || null,
+        variant?.id || null,
 
-    variant?.name || null,
+        variant?.name || null,
 
-    item.quantity,
+        item.quantity,
 
-    unitPrice,
+        unitPrice,
 
-    totalPrice
+        totalPrice
 
-);
+    );
+
+item.order_item_id = orderItemId;
 
 }
 
@@ -209,6 +216,7 @@ subtotal = totals.subtotal;
         table_id,
         "occupied"
     );
+    console.log("Items before kitchen:", JSON.stringify(items, null, 2));
 const kitchenTicket =
     await kitchenService.createKitchenTicket(
         orderId,

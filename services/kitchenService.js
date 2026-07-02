@@ -8,11 +8,12 @@ const {
     generateNumber
 } = require("../utils/numberGenerator");  
 const variantRepository =
-    require("../repositories/menuVariantRepository");  
+    require("../repositories/menuVariantRepository"); 
+
 exports.createKitchenTicket = async (
     orderId,
     items
-) => {
+) => {console.log("Kitchen items:", JSON.stringify(items, null, 2));
 
     const ticketId =
     await kitchenRepository.createTicket(
@@ -69,19 +70,21 @@ if (item.variant_id) {
 
     await kitchenRepository.createTicketItem(
 
-        ticketId,
+    ticketId,
 
-        menu.id,
+    item.order_item_id,
 
-        menu.name,
+    menu.id,
 
-        variant?.name || null,
+    menu.name,
 
-       variant?.price || menu.price,
+    variant?.name || null,
 
-        item.quantity
+    variant?.price || menu.price,
 
-    );
+    item.quantity
+
+);
 
 }
 
@@ -142,22 +145,36 @@ exports.updateTicketStatus = async (
     }
 
     await kitchenRepository.updateTicketStatus(
+    ticketId,
+    status
+);
+
+if (status === "preparing") {
+
+    await kitchenRepository.updateTicketItemsStatus(
+        ticketId,
+        "preparing"
+    );
+
+}
+
+if (status === "ready") {
+
+    await kitchenRepository.updateTicketItemsStatus(
+        ticketId,
+        "ready"
+    );
+
+}
+
+if (status === "served") {
+await kitchenRepository.updateTicketItemsStatus(
 
         ticketId,
 
-        status
+        "served"
 
     );
-    await kitchenRepository.updateOrderItemsStatus(
-
-    ticket.order_id,
-
-    status
-
-);
-
-    if (status === "served") {
-
     const activeTickets =
         await kitchenRepository.getActiveTicketCountByOrder(
             ticket.order_id
@@ -166,16 +183,62 @@ exports.updateTicketStatus = async (
     if (activeTickets === 0) {
 
         await orderRepository.updateOrderStatus(
-
             ticket.order_id,
-
             "ready_for_billing"
-
         );
 
     }
 
 }
+
+    return {
+
+        success: true
+
+    };
+
+};
+
+exports.updateTicketItemStatus = async (
+    ticketItemId,
+    status
+) => {
+
+    const item =
+        await kitchenRepository.getTicketItem(
+            ticketItemId
+        );
+
+    if (!item) {
+
+        throw new Error(
+            "Kitchen item not found"
+        );
+
+    }
+
+    await kitchenRepository.updateTicketItemStatus(
+        ticketItemId,
+        status
+    );
+
+    if (status === "ready") {
+
+        const pending =
+            await kitchenRepository.getPendingTicketItems(
+                item.ticket_id
+            );
+
+        if (pending === 0) {
+
+            await kitchenRepository.updateTicketStatus(
+                item.ticket_id,
+                "ready"
+            );
+
+        }
+
+    }
 
     return {
 

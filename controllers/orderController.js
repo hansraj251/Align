@@ -70,7 +70,7 @@ exports.getActiveOrder = async (req, res) => {
         });
 
     } catch (err) {
-
+console.error(err);
         res.status(500).json({
 
             success: false,
@@ -98,7 +98,7 @@ exports.getOrder = async (req, res) => {
         res.json(result);
 
     } catch (err) {
-
+console.error(err);
         res.status(404).json({
 
             success: false,
@@ -131,7 +131,7 @@ exports.getOrderHistory = async (
         res.json(result);
 
     } catch (err) {
-
+console.error(err);
         res.status(500).json({
 
             success: false,

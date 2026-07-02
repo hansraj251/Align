@@ -35,7 +35,9 @@ async function loadKitchenOrders() {
     data.tickets.forEach(ticket => {
         const itemsHtml = (ticket.items || [])
 .map(item => `
-    <div class="flex justify-between py-2">
+<div class="border-b py-3 last:border-b-0">
+
+    <div class="flex justify-between">
 
         <div>
 
@@ -57,15 +59,49 @@ async function loadKitchenOrders() {
                 : ""
             }
 
+            <div class="mt-1 text-xs">
+
+                ${
+                    item.status === "pending"
+                    ? `<span class="text-orange-600">Pending</span>`
+                    : item.status === "preparing"
+                    ? `<span class="text-yellow-600">Preparing</span>`
+                    : item.status === "ready"
+                    ? `<span class="text-green-600">Ready</span>`
+                    : `<span class="text-slate-500">${item.status}</span>`
+                }
+
+            </div>
+
         </div>
 
-        <strong>
+        <div class="text-right">
 
-            ×${item.quantity}
+            <div class="font-semibold">
 
-        </strong>
+                ×${item.quantity}
+
+            </div>
+
+            ${
+                item.status === "preparing"
+                ? `
+                <button
+                    onclick="markItemReady(${item.id})"
+                    class="mt-2 rounded bg-green-600 px-3 py-1 text-xs text-white">
+
+                    Ready
+
+                </button>
+                `
+                : ""
+            }
+
+        </div>
 
     </div>
+
+</div>
 `)
 .join("");
 
@@ -168,6 +204,37 @@ async function updateStatus(
         ? "Cooking started"
         : "Order is ready"
 );
+
+    loadKitchenOrders();
+
+}
+async function markItemReady(ticketItemId) {
+
+    const data = await API.patch(
+
+        `/api/kitchen/items/${ticketItemId}/status`,
+
+        {
+            status: "ready"
+        }
+
+    );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    Toast.show(
+        "Item Ready",
+        "success"
+    );
 
     loadKitchenOrders();
 

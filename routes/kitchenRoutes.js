@@ -14,4 +14,9 @@ router.patch(
     authMiddleware,
     kitchenController.updateTicketStatus
 );
+router.patch(
+    "/items/:itemId/status",
+    authMiddleware,
+    kitchenController.updateTicketItemStatus
+);
 module.exports = router;

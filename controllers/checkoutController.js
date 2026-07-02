@@ -2,6 +2,7 @@ const db = require("../db");
 const orderService =
 
     require("../services/orderService");
+    console.log(">>> CHECKOUT CONTROLLER HIT");
 exports.checkout = async (req, res) => {
 
     try {
@@ -15,7 +16,7 @@ exports.checkout = async (req, res) => {
         return res.json(result);
 
     } catch (err) {
-
+ console.error(err);
         return res.status(400).json({
 
             success: false,

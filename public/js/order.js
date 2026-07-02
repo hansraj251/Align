@@ -661,6 +661,7 @@ if (cartButton) {
                 "/api/orders/checkout",
                 payload
             );
+            console.log(data);
 
         if (!data.success) {
 

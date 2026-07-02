@@ -81,7 +81,7 @@ exports.addOrderItem = async (
     totalPrice
 ) => {
 
-    await db.runAsync(
+    const result = await db.runAsync(
         `
         INSERT INTO order_items
         (
@@ -102,7 +102,7 @@ exports.addOrderItem = async (
             orderId,
             menuItemId,
             itemName,
-            foodType,
+            itemName ? foodType : foodType,
             variantId,
             variantName,
             quantity,
@@ -110,6 +110,8 @@ exports.addOrderItem = async (
             totalPrice
         ]
     );
+
+    return result.lastID;
 
 };
 exports.updateOrderNumber = async (
@@ -177,38 +179,62 @@ exports.getActiveOrderByTable = async (
     }
 
     order.items =
-        await db.allAsync(
-            `
-            SELECT
+    await db.allAsync(
+        `
+        SELECT
 
-                id,
+            oi.id,
 
-                menu_item_id,
+            oi.menu_item_id,
 
-                item_name,
+            oi.item_name,
 
-                variant_name,
+            oi.variant_name,
 
-                quantity,
+            oi.quantity,
 
-                unit_price,
+            oi.unit_price,
 
-                total_price,
+            oi.total_price,
 
-                status,
+            oi.notes,
 
-                notes
+            (
+                SELECT COALESCE(SUM(quantity),0)
+                FROM kitchen_ticket_items kti
+                WHERE
+                    kti.order_item_id = oi.id
+                    AND kti.status = 'pending'
+            ) AS pending_count,
 
-            FROM order_items
+            (
+                SELECT COALESCE(SUM(quantity),0)
+                FROM kitchen_ticket_items kti
+                WHERE
+                    kti.order_item_id = oi.id
+                    AND kti.status = 'preparing'
+            ) AS preparing_count,
 
-            WHERE order_id = ?
+            (
+                SELECT COALESCE(SUM(quantity),0)
+                FROM kitchen_ticket_items kti
+                WHERE
+                    kti.order_item_id = oi.id
+                    AND kti.status = 'ready'
+            ) AS ready_count
 
-            ORDER BY id
-            `,
-            [
-                order.id
-            ]
-        );
+        FROM order_items oi
+
+        WHERE
+            oi.order_id = ?
+
+        ORDER BY
+            oi.id
+        `,
+        [
+            order.id
+        ]
+    );
 
     return order;
 
@@ -362,23 +388,53 @@ exports.getOrderItems = async (
         `
         SELECT
 
-            menu_item_id,
+            oi.id,
 
-            item_name AS name,
+            oi.menu_item_id,
 
-            variant_name,
+            oi.item_name AS name,
 
-            quantity,
+            oi.variant_name,
 
-            unit_price
+            oi.quantity,
 
-        FROM order_items
+            oi.unit_price,
 
-        WHERE order_id = ?
+            (
+                SELECT COUNT(*)
+                FROM kitchen_ticket_items kti
+                WHERE
+                    kti.order_item_id = oi.id
+                    AND kti.status = 'pending'
+            ) AS pending_count,
 
-        ORDER BY id
+            (
+                SELECT COUNT(*)
+                FROM kitchen_ticket_items kti
+                WHERE
+                    kti.order_item_id = oi.id
+                    AND kti.status = 'preparing'
+            ) AS preparing_count,
+
+            (
+                SELECT COUNT(*)
+                FROM kitchen_ticket_items kti
+                WHERE
+                    kti.order_item_id = oi.id
+                    AND kti.status = 'ready'
+            ) AS ready_count
+
+        FROM order_items oi
+
+        WHERE
+            oi.order_id = ?
+
+        ORDER BY
+            oi.id
         `,
-        [orderId]
+        [
+            orderId
+        ]
     );
 
 };

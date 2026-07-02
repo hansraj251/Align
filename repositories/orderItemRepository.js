@@ -145,3 +145,42 @@ exports.getReadyItems = async (
     );
 
 };
+exports.getPendingItemsCount = async (
+    orderId
+) => {
+
+    const row =
+        await db.getAsync(
+            `
+            SELECT
+                COUNT(*) AS total
+            FROM order_items
+            WHERE
+                order_id = ?
+                AND status != 'ready'
+            `,
+            [
+                orderId
+            ]
+        );
+
+    return row.total;
+
+};
+exports.getOrderIdByOrderItem = async (
+    orderItemId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            order_id
+        FROM order_items
+        WHERE id = ?
+        `,
+        [
+            orderItemId
+        ]
+    );
+
+};
