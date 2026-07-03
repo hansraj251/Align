@@ -2,25 +2,90 @@ const menuItemRepository =
     require("../repositories/menuItemRepository");
 const variantRepository =
     require("../repositories/menuVariantRepository");
+const menuCategoryRepository =
+    require("../repositories/menuCategoryRepository");
+
+const systemCategoryRepository =
+    require("../repositories/systemCategoryRepository");
+
 exports.createMenuItem = async (
+
     restaurantId,
+
     categoryId,
+
+    categoryType,
+
     name,
+
     price,
+
     foodType,
+
     description
+
 ) => {
+
+    if (categoryType === "system") {
+
+        let category =
+            await menuCategoryRepository.getSystemCategory(
+
+                restaurantId,
+
+                categoryId
+
+            );
+
+        if (!category) {
+
+            const systemCategory =
+                await systemCategoryRepository.getById(
+                    categoryId
+                );
+
+            if (!systemCategory) {
+
+                throw new Error(
+                    "Invalid system category"
+                );
+
+            }
+
+            categoryId =
+                await menuCategoryRepository.createSystemCategory(
+
+                    restaurantId,
+
+                    systemCategory
+
+                );
+
+        } else {
+
+            categoryId =
+                category.id;
+
+        }
+
+    }
 
     const itemId =
         await menuItemRepository.createMenuItem(
+
             restaurantId,
+
             categoryId,
+
             name,
+
             price,
+
             foodType,
+
             description
+
         );
-        
 
     return {
 

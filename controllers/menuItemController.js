@@ -12,6 +12,8 @@ exports.createMenuItem = async (req, res) => {
 
             category_id,
 
+            category_type,
+
             name,
 
             description,
@@ -55,6 +57,8 @@ exports.createMenuItem = async (req, res) => {
                 restaurantId,
 
                 category_id,
+
+                category_type,
 
                 name,
 

@@ -88,6 +88,18 @@ app.use(
     staffRoutes
 );
 app.use(
+    "/api/system/categories",
+    require("./routes/systemCategoryRoutes")
+);
+app.use(
+    "/api/category-search",
+    require("./routes/categorySearchRoutes")
+);
+app.use(
+"/api/system-menu-search",
+require("./routes/systemMenuItemRoutes")
+);
+app.use(
 
     "/api/menu/items",
 

@@ -186,6 +186,13 @@ async function saveMenuItem() {
 
         category_id:
             document.getElementById("category").value,
+        category_type:
+
+document.getElementById(
+
+"categoryType"
+
+).value,    
 
         name:
             document.getElementById("itemName").value.trim(),
@@ -357,6 +364,10 @@ function resetForm() {
 
     document.getElementById("cancelEditBtn")
         .classList.add("hidden");
+
+    document.getElementById(
+    "categorySearch"
+).value = "";    
 
 }
 function cancelEdit() {
@@ -833,8 +844,330 @@ document
     saveVariants
 
 );
+async function searchCategories(
+    keyword
+) {
 
+    const box =
+        document.getElementById(
+            "categoryResults"
+        );
 
-loadCategories();
+    if (!keyword.trim()) {
+
+        box.innerHTML = "";
+
+        box.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    const data =
+        await API.get(
+
+            `/api/category-search?q=${encodeURIComponent(keyword)}`
+
+        );
+
+    box.innerHTML = "";
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    if (data.categories.length === 0) {
+
+        box.innerHTML = `
+
+<div
+class="p-3 text-slate-500">
+
+No category found
+
+</div>
+
+`;
+
+        box.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    data.categories.forEach(category => {
+
+        box.innerHTML += `
+
+<div
+
+class="cursor-pointer border-b p-3 hover:bg-slate-100"
+
+onclick="selectCategory(
+
+${category.id},
+
+'${category.name.replace(/'/g, "\\'")}',
+
+${category.is_system}
+
+)">
+
+${category.name}
+
+</div>
+
+`;
+
+    });
+
+    box.classList.remove(
+        "hidden"
+
+    );
+
+}
+
+async function searchMenuItems(
+    keyword
+) {
+
+    const box =
+        document.getElementById(
+            "itemSuggestions"
+        );
+
+    if (!keyword.trim()) {
+
+        box.innerHTML = "";
+
+        box.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    const data =
+        await API.get(
+
+            `/api/system-menu-search?q=${encodeURIComponent(keyword)}`
+
+        );
+
+    box.innerHTML = "";
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    if (data.items.length === 0) {
+
+        box.innerHTML = `
+
+<div
+class="p-3 text-slate-500">
+
+No matching items
+
+</div>
+
+`;
+
+        box.classList.remove(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    data.items.forEach(item => {
+
+        box.innerHTML += `
+
+<div
+
+class="item-option cursor-pointer border-b p-3 hover:bg-slate-100"
+
+data-name="${item.name.replace(/"/g,"&quot;")}">
+
+${item.name}
+
+</div>
+
+`;
+
+    });
+
+    box.classList.remove(
+        "hidden"
+    );
+
+}
+document
+
+.getElementById(
+    "itemName"
+)
+
+.addEventListener(
+
+    "input",
+
+    e=>{
+
+        searchMenuItems(
+
+            e.target.value
+
+        );
+
+    }
+
+);
+
+document.addEventListener(
+
+    "click",
+
+    e=>{
+
+        const option =
+            e.target.closest(
+                ".item-option"
+            );
+
+        if(!option){
+
+            return;
+
+        }
+
+        document
+            .getElementById(
+                "itemName"
+            ).value=
+
+            option.dataset.name;
+
+        document
+            .getElementById(
+                "itemSuggestions"
+            )
+            .classList.add(
+                "hidden"
+            );
+
+    }
+
+);
+
+function selectCategory(
+
+    id,
+
+    name,
+    isSystem
+
+) {
+
+    document
+        .getElementById(
+            "category"
+        ).value = id;
+    document.getElementById(
+
+        "categoryType"
+
+    ).value=
+
+        isSystem
+
+        ? "system"
+
+        : "custom";    
+
+    document
+        .getElementById(
+            "categorySearch"
+        ).value = name;
+
+    document
+        .getElementById(
+            "categoryResults"
+        )
+        .classList.add(
+            "hidden"
+        );
+
+}
+
+document
+
+.getElementById(
+    "categorySearch"
+)
+
+.addEventListener(
+
+    "input",
+
+    e => {
+
+        document
+            .getElementById(
+                "category"
+            ).value = "";
+
+        searchCategories(
+
+            e.target.value
+
+        );
+
+    }
+
+);
+document.addEventListener(
+
+    "click",
+
+    e => {
+
+        if (
+
+            !e.target.closest(
+                ".relative"
+            )
+
+        ) {
+
+            document
+
+                .getElementById(
+                    "categoryResults"
+                )
+
+                .classList.add(
+                    "hidden"
+                );
+
+        }
+
+    }
+
+);
+
+// loadCategories();
 
 loadMenuItems();

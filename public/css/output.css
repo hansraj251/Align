@@ -235,6 +235,9 @@
   .fixed {
     position: fixed;
   }
+  .relative {
+    position: relative;
+  }
   .sticky {
     position: sticky;
   }
@@ -249,6 +252,9 @@
   }
   .top-\[76px\] {
     top: 76px;
+  }
+  .top-full {
+    top: 100%;
   }
   .right-0 {
     right: 0;
@@ -396,6 +402,12 @@
   }
   .h-screen {
     height: 100vh;
+  }
+  .max-h-60 {
+    max-height: calc(var(--spacing) * 60);
+  }
+  .max-h-64 {
+    max-height: calc(var(--spacing) * 64);
   }
   .max-h-\[50vh\] {
     max-height: 50vh;

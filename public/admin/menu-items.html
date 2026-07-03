@@ -33,31 +33,56 @@
                 Category
             </label>
 
-            <select
-                id="category"
-                class="w-full rounded-lg border p-3">
+            <div class="relative">
 
-                <option value="">
-                    Select Category
-                </option>
+    <input
+        id="categorySearch"
+        type="text"
+        autocomplete="off"
+        placeholder="Search category..."
+        class="w-full rounded-lg border p-3">
 
-            </select>
+    <input
+        id="category"
+        type="hidden">
+    <input
+    id="categoryType"
+    type="hidden">    
+
+    <div
+        id="categoryResults"
+        class="absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-60 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg">
+
+    </div>
+
+</div>
 
         </div>
 
         <div>
 
-            <label class="mb-2 block font-medium">
-                Item Name
-            </label>
+    <label class="mb-2 block font-medium">
+        Item Name
+    </label>
 
-            <input
-                id="itemName"
-                type="text"
-                class="w-full rounded-lg border p-3"
-                placeholder="Paneer Tikka">
+    <div class="relative">
+
+        <input
+            id="itemName"
+            type="text"
+            autocomplete="off"
+            class="w-full rounded-lg border p-3"
+            placeholder="Paneer Butter Masala">
+
+        <div
+            id="itemSuggestions"
+            class="absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-64 overflow-y-auto rounded-lg border border-slate-200 bg-white shadow-lg bg-white">
 
         </div>
+
+    </div>
+
+</div>
 
         <div>
 
