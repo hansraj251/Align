@@ -14,6 +14,17 @@ const params =
     new URLSearchParams(
         window.location.search
     );
+const areaId =
+
+    params.get("area"); 
+document
+    .getElementById("backBtn")
+    .onclick = () => {
+
+        window.location.href =
+            `/admin/area.html?id=${areaId}`;
+
+    };       
 
 const tableId =
     params.get("table");

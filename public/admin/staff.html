@@ -19,35 +19,41 @@
 
 <body class="bg-slate-100">
 
-<div class="flex">
+<main class="min-h-screen bg-slate-100 p-8">
+    <div class="mb-8 flex items-center justify-between">
 
-    <div id="sidebar"></div>
+    <div>
 
-    <main class="flex-1 p-8">
+        <h1 class="text-3xl font-bold">
 
-        <div
-            class="mb-8 flex items-center justify-between">
+            👥 Staff Management
 
-            <div>
+        </h1>
 
-                <h1
-                    class="text-3xl font-bold">
+    </div>
+    
 
-                    👥 Staff Management
+    <div class="flex items-center gap-3">
 
-                </h1>
+    <a
+        href="/admin/dashboard.html"
+        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
 
-            </div>
+        ← Dashboard
 
-            <button
-                id="addStaffBtn"
-                class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
+    </a>
 
-                + Add Staff
+    <button
+        id="addStaffBtn"
+        class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
 
-            </button>
+        + Add Staff
 
-        </div>
+    </button>
+
+</div>
+
+</div>
 
         <div
             class="mb-6 rounded-xl bg-white p-5 shadow">
@@ -74,8 +80,6 @@
 
     </main>
 
-</div>
-
 <div id="modalContainer"></div>
 
 <script src="/js/components.js"></script>
@@ -86,16 +90,9 @@
 
 <script src="/js/toast.js"></script>
 
-<script src="/js/sidebar.js"></script>
-
 <script>
 
 (async () => {
-
-    await loadComponent(
-        "sidebar",
-        "/components/sidebar.html"
-    );
 
     await loadComponent(
         "modalContainer",

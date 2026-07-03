@@ -237,7 +237,7 @@ function openDashboardOrder(
 ) {
 
     window.location.href =
-        `/admin/order.html?table=${tableId}`;
+        `/admin/order.html?table=${tableId}&area=${areaId}`;
 
 }
 loadArea();

@@ -21,42 +21,46 @@ async function loadCategories() {
     data.categories.forEach(category => {
 
         list.innerHTML += `
-<div class="mb-3 rounded-lg border bg-white p-4 flex items-center justify-between">
 
-    <div>
-        <h3 class="font-semibold text-lg">
-            ${category.name}
-        </h3>
+<div class="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
 
-        <p class="text-sm text-slate-500">
-            ${category.description || ""}
-        </p>
+    <h3 class="text-lg font-bold">
+
+        ${category.name}
+
+    </h3>
+
+    <p class="mt-2 min-h-[40px] text-sm text-slate-500">
+
+        ${category.description || "No description"}
+
+    </p>
+
+    <div class="mt-5 flex gap-2">
+
+        <button
+            class="edit-category flex-1 rounded-lg bg-amber-500 py-2 text-white transition hover:bg-amber-600"
+            data-id="${category.id}"
+            data-name="${encodeURIComponent(category.name)}"
+            data-description="${encodeURIComponent(category.description || "")}">
+
+            Edit
+
+        </button>
+
+        <button
+            class="delete-category flex-1 rounded-lg bg-red-600 py-2 text-white transition hover:bg-red-700"
+            data-id="${category.id}"
+            data-name="${encodeURIComponent(category.name)}">
+
+            Delete
+
+        </button>
+
     </div>
 
-    <div class="flex gap-2">
-
-    <button
-        class="edit-category rounded bg-amber-500 px-4 py-2 text-white hover:bg-amber-600"
-        data-id="${category.id}"
-        data-name="${encodeURIComponent(category.name)}"
-        data-description="${encodeURIComponent(category.description || "")}">
-
-        Edit
-
-    </button>
-
-    <button
-        class="delete-category rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
-        data-id="${category.id}"
-        data-name="${encodeURIComponent(category.name)}">
-
-        Delete
-
-    </button>
-
 </div>
 
-</div>
 `;
 
     });

@@ -101,16 +101,24 @@ exports.createMenuItem = async (
 };
 
 exports.getMenuItems = async (
-    restaurantId
+
+    restaurantId,
+
+    options
+
 ) => {
 
-    const items =
+    const result =
         await menuItemRepository.getMenuItems(
-            restaurantId
+
+            restaurantId,
+
+            options
+
         );
 
     const ids =
-        items.map(
+        result.items.map(
             item => item.id
         );
 
@@ -119,15 +127,12 @@ exports.getMenuItems = async (
             ids
         );
 
-    items.forEach(item => {
+    result.items.forEach(item => {
 
         item.variants =
             variants.filter(
                 variant =>
-
-                    variant.menu_item_id ===
-                    item.id
-
+                    variant.menu_item_id === item.id
             );
 
     });
@@ -136,7 +141,15 @@ exports.getMenuItems = async (
 
         success: true,
 
-        items
+        items: result.items,
+
+        page: result.page,
+
+        limit: result.limit,
+
+        total: result.total,
+
+        totalPages: result.totalPages
 
     };
 

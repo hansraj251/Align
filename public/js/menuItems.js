@@ -1,8 +1,10 @@
 let editingItemId = null;
 let allMenuItems = [];
 let currentVariantItemId = null;
-
 let currentVariantItemName = "";
+let currentPage = 1;
+const PAGE_SIZE = 40;
+let currentSearch = "";
 if (!API.getToken()) {
 
     window.location.href =
@@ -46,10 +48,25 @@ async function loadCategories() {
     });
 
 }
-async function loadMenuItems() {
+
+async function loadMenuItems(
+
+    page = 1,
+
+    search = ""
+
+) {
+
+    currentPage = page;
+
+    currentSearch = search;
 
     const data =
-        await API.get("/api/menu/items");
+        await API.get(
+
+            `/api/menu/items?page=${page}&limit=${PAGE_SIZE}&search=${encodeURIComponent(search)}`
+
+        );
 
     if (!data.success) {
 
@@ -60,16 +77,26 @@ async function loadMenuItems() {
 
     }
 
-    allMenuItems = data.items;
+    allMenuItems =
+        data.items;
 
-    renderMenuItems(allMenuItems);
+    renderMenuItems(
+        allMenuItems
+    );
+
+    renderPagination(
+
+        data.page,
+
+        data.totalPages
+
+    );
 
 }
 
-   function renderMenuItems(items) {
+function renderMenuItems(items) {
 
     const list =
-
         document.getElementById("itemList");
 
     list.innerHTML = "";
@@ -78,93 +105,144 @@ async function loadMenuItems() {
 
         list.innerHTML += `
 
-<div class="mb-3 flex items-center justify-between rounded-lg border bg-white p-4">
+<div class="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
 
-    <div>
+    <div class="mb-4 flex items-start justify-between">
 
-        <h3 class="text-lg font-semibold">
+        <div>
 
-            ${item.name}
+            <h3 class="text-base font-semibold leading-5">
+    ${item.name}
+</h3>
 
-        </h3>
+            <p class="mt-1 text-xs text-slate-500">
 
-        <p class="text-sm text-slate-500">
+    ${item.category}
 
-            ${item.category}
+</p>
 
-        </p>
+        </div>
 
-        <p class="text-sm text-slate-500">
+        <span class="rounded-full px-3 py-1 text-xs font-semibold ${
+            item.food_type === "veg"
+                ? "bg-green-100 text-green-700"
+                : item.food_type === "non_veg"
+                ? "bg-red-100 text-red-700"
+                : "bg-yellow-100 text-yellow-700"
+        }">
 
-            ₹${item.price}
+            ${
+                item.food_type === "veg"
+                    ? "Veg"
+                    : item.food_type === "non_veg"
+                    ? "Non Veg"
+                    : "Egg"
+            }
 
-            ·
-
-            ${item.food_type}
-
-        </p>
+        </span>
 
     </div>
 
-    <div class="flex gap-2">
+    <div class="mb-5 flex items-center justify-between">
+
+        <span class="text-slate-500">
+
+            Price
+
+        </span>
+
+       <span class="text-xl font-bold text-blue-600">
+
+    ${
+
+    item.variants.length > 0
+
+        ? `
+
+        <p class="text-sm font-medium text-indigo-600">
+
+            Variants
+
+        </p>
+
+        `
+
+        : `
+
+        <p class="text-xl font-bold text-blue-600">
+
+            ₹${item.price}
+
+        </p>
+
+        `
+
+}
+
+</span>
+
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
 
         <button
-
-            class="edit-item rounded bg-amber-500 px-4 py-2 text-white hover:bg-amber-600"
+            class="edit-item rounded-lg bg-amber-500 py-2 text-white transition hover:bg-amber-600"
 
             data-id="${item.id}"
-
             data-category="${item.category_id}"
-
+            data-category-name="${encodeURIComponent(item.category)}"
             data-name="${encodeURIComponent(item.name)}"
-
             data-price="${item.price}"
-
             data-food="${item.food_type}"
-
-            data-description="${encodeURIComponent(item.description || "")}">
+            >
 
             Edit
 
         </button>
 
         <button
-
-    class="variants-item rounded bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
-
-    data-id="${item.id}"
-
-    data-name="${encodeURIComponent(item.name)}">
-
-    Variants
-
-</button>
-
-        <button
-    class="toggle-item rounded px-4 py-2 text-white ${
-        item.is_available
-            ? "bg-green-600 hover:bg-green-700"
-            : "bg-slate-600 hover:bg-slate-700"
-    }"
-
-    data-id="${item.id}"
-
-    data-available="${item.is_available}">
-
-    ${
-        item.is_available
-            ? "Available"
-            : "Not Available"
-    }
-
-</button>
-
-        <button
-
-            class="delete-item rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+            class="variants-item rounded-lg bg-indigo-600 py-2 text-white transition hover:bg-indigo-700"
 
             data-id="${item.id}"
+            data-name="${encodeURIComponent(item.name)}">
 
+            Variants
+
+        </button>
+
+        <label class="flex items-center justify-between rounded-lg border p-2">
+
+    <span class="text-sm font-medium">
+
+        Available
+
+    </span>
+
+    <div class="relative">
+
+        <input
+            type="checkbox"
+            class="peer sr-only toggle-item"
+            data-id="${item.id}"
+            ${item.is_available ? "checked" : ""}>
+
+        <div class="h-6 w-11 rounded-full bg-slate-300 transition-colors peer-checked:bg-green-600">
+
+        </div>
+
+        <div
+            class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white transition-transform duration-200 peer-checked:translate-x-5">
+
+        </div>
+
+    </div>
+
+</label>
+
+        <button
+            class="delete-item rounded-lg bg-red-600 py-2 text-white transition hover:bg-red-700"
+
+            data-id="${item.id}"
             data-name="${encodeURIComponent(item.name)}">
 
             Delete
@@ -178,7 +256,8 @@ async function loadMenuItems() {
 `;
 
     });
-    }
+
+}
 
 async function saveMenuItem() {
 
@@ -202,9 +281,6 @@ document.getElementById(
 
         food_type:
             document.getElementById("foodType").value,
-
-        description:
-            document.getElementById("description").value.trim()
 
     };
 
@@ -300,13 +376,13 @@ function editMenuItem(
 
     categoryId,
 
+    categoryName,
+
     name,
 
     price,
 
-    foodType,
-
-    description
+    foodType
 
 ) {
 
@@ -317,6 +393,8 @@ function editMenuItem(
 
     document.getElementById("category").value =
         categoryId;
+    document.getElementById("categorySearch").value =
+    categoryName;    
 
     document.getElementById("itemName").value =
         name;
@@ -326,9 +404,6 @@ function editMenuItem(
 
     document.getElementById("foodType").value =
         foodType;
-
-    document.getElementById("description").value =
-        description;
 
     document.getElementById("saveItemBtn").textContent =
         "Update Item";
@@ -346,6 +421,7 @@ function resetForm() {
 
     document.getElementById("category").value =
         "";
+    document.getElementById("categorySearch").value = "";       
 
     document.getElementById("itemName").value =
         "";
@@ -356,18 +432,11 @@ function resetForm() {
     document.getElementById("foodType").value =
         "veg";
 
-    document.getElementById("description").value =
-        "";
-
     document.getElementById("saveItemBtn").textContent =
         "Save Item";
 
     document.getElementById("cancelEditBtn")
-        .classList.add("hidden");
-
-    document.getElementById(
-    "categorySearch"
-).value = "";    
+        .classList.add("hidden");   
 
 }
 function cancelEdit() {
@@ -384,23 +453,23 @@ document.addEventListener("click", async (e) => {
 
         editMenuItem(
 
-            Number(editBtn.dataset.id),
+    Number(editBtn.dataset.id),
 
-            Number(editBtn.dataset.category),
+    Number(editBtn.dataset.category),
 
-            decodeURIComponent(
-                editBtn.dataset.name
-            ),
+    decodeURIComponent(
+        editBtn.dataset.categoryName
+    ),
 
-            editBtn.dataset.price,
+    decodeURIComponent(
+        editBtn.dataset.name
+    ),
 
-            editBtn.dataset.food,
+    editBtn.dataset.price,
 
-            decodeURIComponent(
-                editBtn.dataset.description
-            )
+    editBtn.dataset.food
 
-        );
+);
 
         return;
 
@@ -444,24 +513,28 @@ if (variantBtn) {
         );
 
     }
-    const toggleBtn =
-    e.target.closest(".toggle-item");
+    document.addEventListener(
+    "change",
+    async e => {
 
-if (toggleBtn) {
+        if (
+            e.target.classList.contains(
+                "toggle-item"
+            )
+        ) {
 
-    await toggleAvailability(
+            await toggleAvailability(
 
-        Number(toggleBtn.dataset.id),
+                Number(e.target.dataset.id),
 
-        Number(toggleBtn.dataset.available)
-            ? 0
-            : 1
+                e.target.checked ? 1 : 0
 
-    );
+            );
 
-    return;
+        }
 
-}
+    }
+);
 
 });
 async function toggleAvailability(
@@ -747,37 +820,29 @@ modal.classList.add(
 );
 
 }
+let searchTimer;
+
 document
     .getElementById("menuSearch")
     .addEventListener("input", function () {
 
+        clearTimeout(searchTimer);
+
         const keyword =
-            this.value
-                .toLowerCase()
-                .trim();
+            this.value.trim();
 
-        const filtered =
-            allMenuItems.filter(item =>
+        searchTimer =
+            setTimeout(() => {
 
-                item.name
-                    .toLowerCase()
-                    .includes(keyword)
+                loadMenuItems(
 
-                ||
+                    1,
 
-                item.category
-                    .toLowerCase()
-                    .includes(keyword)
+                    keyword
 
-                ||
+                );
 
-                item.food_type
-                    .toLowerCase()
-                    .includes(keyword)
-
-            );
-
-        renderMenuItems(filtered);
+            }, 300);
 
     });
 
@@ -1167,6 +1232,103 @@ document.addEventListener(
     }
 
 );
+
+function renderPagination(
+
+    page,
+
+    totalPages
+
+) {
+
+    // baad me likhenge
+
+}
+
+function renderPagination(
+
+    page,
+
+    totalPages
+
+) {
+
+    const div =
+        document.getElementById(
+            "pagination"
+        );
+
+    div.innerHTML = "";
+
+    if (totalPages <= 1) {
+
+        return;
+
+    }
+
+    div.innerHTML += `
+
+<button
+
+class="rounded border px-4 py-2"
+
+${page === 1 ? "disabled" : ""}
+
+onclick="loadMenuItems(${page - 1}, '${currentSearch}')">
+
+Previous
+
+</button>
+
+`;
+
+    for (
+
+        let i = 1;
+
+        i <= totalPages;
+
+        i++
+
+    ) {
+
+        div.innerHTML += `
+
+<button
+
+class="rounded px-4 py-2 ${
+i === page
+? "bg-blue-600 text-white"
+: "border"
+}"
+
+onclick="loadMenuItems(${i}, '${currentSearch}')">
+
+${i}
+
+</button>
+
+`;
+
+    }
+
+    div.innerHTML += `
+
+<button
+
+class="rounded border px-4 py-2"
+
+${page === totalPages ? "disabled" : ""}
+
+onclick="loadMenuItems(${page + 1}, '${currentSearch}')">
+
+Next
+
+</button>
+
+`;
+
+}
 
 // loadCategories();
 

@@ -23,64 +23,107 @@ async function loadOrders() {
 
     if (!data.success) {
 
+        Toast.show(
+            "Unable to load orders",
+            "error"
+        );
+
         return;
 
     }
 
-    const tbody =
+    const container =
         document.getElementById("ordersTable");
 
-    tbody.innerHTML = "";
+    container.innerHTML = "";
+
+    if (!data.orders.length) {
+
+        container.innerHTML = `
+
+<div class="col-span-full rounded-xl bg-white p-10 text-center shadow">
+
+    <h3 class="text-xl font-semibold text-slate-600">
+
+        No Orders Found
+
+    </h3>
+
+</div>
+
+`;
+
+        return;
+
+    }
 
     data.orders.forEach(order => {
 
-        tbody.innerHTML += `
+        container.innerHTML += `
 
-<tr class="border-b hover:bg-slate-50">
+<div class="rounded-xl bg-white p-5 shadow transition hover:shadow-lg">
 
-<td class="p-3">
+    <div class="flex items-center justify-between">
 
-${order.order_number}
+        <h2 class="text-xl font-bold">
 
-</td>
+            Order #${order.order_number}
 
-<td class="p-3">
+        </h2>
 
-${order.table_name}
+        <span class="text-sm text-slate-500">
 
-</td>
+            ${new Date(order.paid_at).toLocaleString("en-IN")}
 
-<td class="p-3">
+        </span>
 
-₹${order.total.toFixed(2)}
+    </div>
 
-</td>
+    <div class="mt-5 space-y-3">
 
-<td class="p-3">
+        <div class="flex justify-between">
 
-${order.payment_method.toUpperCase()}
+            <span class="text-slate-500">
 
-</td>
+                Table
 
-<td class="p-3">
+            </span>
 
-${new Date(order.paid_at).toLocaleString("en-IN")}
+            <strong>
 
-</td>
+                ${order.table_name}
 
-<td class="p-3 text-center">
+            </strong>
 
-<button
-    onclick="printReceipt(${order.id})"
-    class="rounded bg-green-600 px-3 py-1 text-white">
+        </div>
 
-    Print
+        <div class="flex justify-between">
 
-</button>
+            <span class="text-slate-500">
 
-</td>
+                Amount
 
-</tr>
+            </span>
+
+            <strong>
+
+                ₹${Number(order.total).toFixed(2)}
+
+            </strong>
+
+        </div>
+
+    </div>
+
+    <button
+        onclick="printReceipt(${order.id})"
+        class="mt-6 w-full rounded-lg bg-green-600 py-3 font-semibold text-white transition hover:bg-green-700">
+
+        🖨 Print Receipt
+
+    </button>
+
+</div>
 
 `;
 

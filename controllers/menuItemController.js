@@ -90,9 +90,27 @@ exports.getMenuItems = async (req, res) => {
     try {
 
         const result =
-            await menuItemService.getMenuItems(
-                req.user.restaurantId
-            );
+    await menuItemService.getMenuItems(
+
+        req.user.restaurantId,
+
+        {
+
+            page:
+
+                Number(req.query.page) || 1,
+
+            limit:
+
+                Number(req.query.limit) || 24,
+
+            search:
+
+                req.query.search || ""
+
+        }
+
+    );
 
         return res.json(result);
 

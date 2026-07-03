@@ -16,23 +16,40 @@
 
 <body class="bg-slate-100">
 
-<div class="flex">
+<main class="min-h-screen bg-slate-100 p-8">
+    <div class="mb-8 flex items-center justify-between">
 
-    <div id="sidebar"></div>
+    <div>
 
-    <main class="flex-1 p-8">
+        <h1 class="text-3xl font-bold">
 
-        <div class="mb-8 flex items-center justify-between">
+            Floor Management
 
-            <button
-                id="addAreaBtn"
-                class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white">
+        </h1>
 
-                + Add Area
+    </div>
 
-            </button>
+    <div class="mb-8 flex justify-end gap-3">
 
-        </div>
+    <a
+        href="/admin/dashboard.html"
+        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+
+        ← Dashboard
+
+    </a>
+
+    <button
+        id="addAreaBtn"
+        class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
+
+        + Add Area
+
+    </button>
+
+</div>
+
+</div>
 
         <div
             id="areaList"
@@ -45,19 +62,12 @@
     </main>
     <div id="modalContainer"></div>
 
-</div>
-
 <script src="/js/components.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/toast.js"></script>
-<script src="/js/sidebar.js"></script>
 
 <script>
-loadComponent(
-    "sidebar",
-    "/components/sidebar.html"
-);
 
 loadComponent(
     "modalContainer",

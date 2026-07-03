@@ -10,18 +10,31 @@
 
 <body class="bg-slate-100">
 
-<div class="flex">
+<main class="min-h-screen bg-slate-100 p-8">
+    <div class="mb-8 flex items-center justify-between">
 
-    <div id="sidebar"></div>
+    <div>
 
-    <main class="flex-1 p-8">
+        <h1 class="text-3xl font-bold">
+
+            Restaurant Profile
+
+        </h1>
+
+    </div>
+
+    <a
+        href="/admin/dashboard.html"
+        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+
+        ← Dashboard
+
+    </a>
+
+</div>
         <div class="rounded-xl bg-white p-8 shadow">
 
 <!-- Restaurant Profile -->
-
-<h2 class="mb-4 text-xl font-semibold">
-    Restaurant Profile
-</h2>
 
 <label class="mb-2 block font-medium">
     Restaurant Name
@@ -199,8 +212,6 @@
 </div>
  </main>
 
-</div>
-
 <script src="/js/components.js"></script>
 
 <script src="/js/api.js"></script>
@@ -209,18 +220,7 @@
 
 <script src="/js/toast.js"></script>
 
-<script src="/js/sidebar.js"></script>
-
 <script src="/js/settings.js"></script>
-
-<script>
-
-loadComponent(
-    "sidebar",
-    "/components/sidebar.html"
-);
-
-</script>
 
 </body>
 </html>

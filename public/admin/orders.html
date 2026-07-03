@@ -19,124 +19,98 @@
 
 <body class="bg-slate-100">
 
-<div class="flex">
+<main class="min-h-screen bg-slate-100 p-8">
 
-    <div
-        id="sidebar">
-    </div>
+        <div class="sticky top-0 z-30 -mx-8 mb-6 bg-slate-100 px-8 pt-6 pb-4">
 
-    <main class="flex-1 p-8">
-
-        <h1 class="mb-6 text-3xl font-bold">
-
-            Order History
-
-        </h1>
-
-        <div class="rounded-xl bg-white p-6 shadow">
-
-    <div class="mb-6 flex items-end gap-4">
+    <div class="mb-6 flex items-center justify-between">
 
         <div>
 
-            <label class="mb-1 block text-sm font-medium">
+            <h1 class="text-3xl font-bold">
 
-                From
+                Orders
 
-            </label>
+            </h1>
 
-            <input
-                id="fromDate"
-                type="date"
-                class="rounded-lg border p-2">
+            <p class="mt-1 text-slate-500">
 
-        </div>
+                Manage all customer orders
 
-        <div>
-
-            <label class="mb-1 block text-sm font-medium">
-
-                To
-
-            </label>
-
-            <input
-                id="toDate"
-                type="date"
-                class="rounded-lg border p-2">
+            </p>
 
         </div>
 
-        <button
-            id="searchBtn"
-            class="rounded-lg bg-blue-600 px-5 py-2 text-white">
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700">
 
-            Search
+            ← Dashboard
 
-        </button>
+        </a>
 
     </div>
 
-    <table class="min-w-full">
+    <div class="rounded-xl bg-white p-6 shadow">
 
-        <thead>
+        <div class="flex flex-wrap items-end gap-4">
 
-            <tr class="border-b">
+            <div>
 
-                <th class="p-3 text-left">
-                    Order No
-                </th>
+                <label class="mb-1 block text-sm font-medium">
 
-                <th class="p-3 text-left">
-                    Table
-                </th>
+                    From
 
-                <th class="p-3 text-left">
-                    Amount
-                </th>
+                </label>
 
-                <th class="p-3 text-left">
-                    Payment
-                </th>
+                <input
+                    id="fromDate"
+                    type="date"
+                    class="rounded-lg border p-2">
 
-                <th class="p-3 text-left">
-                    Date
-                </th>
+            </div>
 
-                <th class="p-3 text-center">
-                    Action
-                </th>
+            <div>
 
-            </tr>
+                <label class="mb-1 block text-sm font-medium">
 
-        </thead>
+                    To
 
-        <tbody id="ordersTable">
+                </label>
 
-        </tbody>
+                <input
+                    id="toDate"
+                    type="date"
+                    class="rounded-lg border p-2">
 
-    </table>
+            </div>
+
+            <button
+                id="searchBtn"
+                class="rounded-lg bg-blue-600 px-5 py-2 text-white">
+
+                Search
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div
+    id="ordersTable"
+    class="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+</div>
 
 </div>
 
     </main>
 
-</div>
-
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/components.js"></script>
-<script src="/js/sidebar.js"></script>
-<script>
-
-Auth.requireLogin();
-
-loadComponent(
-    "sidebar",
-    "/components/sidebar.html"
-);
-
-</script>
 <script src="/js/orders.js"></script>
 
 </body>

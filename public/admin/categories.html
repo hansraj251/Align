@@ -15,63 +15,93 @@
 
 <body class="bg-slate-100">
 
-<div class="flex">
+<main class="min-h-screen bg-slate-100 p-8">
+    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4">
 
-    <div id="sidebar"></div>
+    <div class="mb-6 flex items-center justify-between">
 
-    <main class="flex-1 p-8">
+    <div>
+
+        <h1 class="text-3xl font-bold">
+
+            Categories
+
+        </h1>
+
+    </div>
+
+    <div class="flex items-center gap-3">
+
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+
+            ← Dashboard
+
+        </a>
+
+        <button
+            id="saveCategoryBtn"
+            class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+
+            Add Category
+
+        </button>
+
+        <button
+            id="cancelEditBtn"
+            class="hidden rounded-lg border border-slate-300 px-6 py-3 font-semibold transition hover:bg-slate-100">
+
+            Cancel
+
+        </button>
+
+    </div>
+
+</div>
+
+    <div class="rounded-xl bg-white p-6 shadow">
+
+       <div class="grid gap-4 md:grid-cols-2">
+
+    <input
+        id="categoryName"
+        type="text"
+        placeholder="Category Name"
+        class="rounded-lg border p-3">
+
+    <input
+        id="categoryDescription"
+        type="text"
+        placeholder="Description (Optional)"
+        class="rounded-lg border p-3">
+
+    <input
+        id="categoryId"
+        type="hidden">
+
+</div>
+
+    </div>
+
+</div>
 
         <div class="rounded-xl bg-white p-6 shadow">
-
-            <div class="grid gap-4">
-
-                <input
-                    id="categoryName"
-                    type="text"
-                    placeholder="Category Name"
-                    class="rounded-lg border p-3">
-
-                <textarea
-                    id="categoryDescription"
-                    placeholder="Description"
-                    class="rounded-lg border p-3"></textarea>
-<input
-    id="categoryId"
-    type="hidden">
-                <button
-                    id="saveCategoryBtn"
-                    class="rounded-lg bg-blue-600 p-3 font-semibold text-white hover:bg-blue-700">
-
-                    Add Category
-
-                </button>
-                <button
-    id="cancelEditBtn"
-    class="hidden rounded-lg border border-slate-300 p-3 font-semibold hover:bg-slate-100">
-
-    Cancel
-
-</button>
-
-            </div>
-
-        </div>
-
-        <div class="mt-8 rounded-xl bg-white p-6 shadow">
 
             <h2 class="mb-4 text-xl font-semibold">
                 Categories
             </h2>
 
-            <div id="categoryList">
+            <div
+    id="categoryList"
+    class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
 
-            </div>
+</div>
 
         </div>
 
     </main>
 <div id="modalContainer"></div>
-</div>
 
 <script src="/js/components.js"></script>
 <script src="/js/api.js"></script>
@@ -86,15 +116,7 @@ loadComponent(
 );
 </script>
 <script src="/js/categories.js"></script>
-<script src="/js/sidebar.js"></script>
-<script>
 
-loadComponent(
-    "sidebar",
-    "/components/sidebar.html"
-);
-
-</script>
 
 </body>
 

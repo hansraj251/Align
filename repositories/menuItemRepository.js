@@ -42,44 +42,152 @@ VALUES (?, ?, ?, ?, ?, ?, ?)
 };
 
 exports.getMenuItems = async (
-    restaurantId
+
+    restaurantId,
+
+    options
+
 ) => {
 
-    return await db.allAsync(
-        `
-        SELECT
+    const {
 
-            mi.id,
+        page,
 
-            mi.category_id,
+        limit,
 
-            mc.name AS category,
+        search
 
-            mi.name,
+    } = options;
 
-            mi.price,
+    const offset =
+        (page - 1) * limit;
 
-            mi.food_type,
+    const searchText =
+        `%${search.toLowerCase()}%`;
 
-            mi.description,
-             mi.is_available
+    const totalRow =
+        await db.getAsync(
 
-        FROM menu_items mi
+            `
+            SELECT
 
-        JOIN menu_categories mc
+                COUNT(*) AS total
 
-            ON mc.id = mi.category_id
+            FROM menu_items mi
 
-        WHERE
+            JOIN menu_categories mc
 
-            mi.restaurant_id = ?
+                ON mc.id = mi.category_id
 
-        ORDER BY
+            WHERE
 
-            mi.name
-        `,
-        [restaurantId]
-    );
+                mi.restaurant_id = ?
+
+                AND (
+
+                    LOWER(mi.name) LIKE ?
+
+                    OR LOWER(mc.name) LIKE ?
+
+                )
+            `,
+
+            [
+
+                restaurantId,
+
+                searchText,
+
+                searchText
+
+            ]
+
+        );
+
+    const items =
+        await db.allAsync(
+
+            `
+            SELECT
+
+                mi.id,
+
+                mi.category_id,
+
+                mc.name AS category,
+
+                mi.name,
+
+                mi.price,
+
+                mi.food_type,
+
+                mi.description,
+
+                mi.is_available
+
+            FROM menu_items mi
+
+            JOIN menu_categories mc
+
+                ON mc.id = mi.category_id
+
+            WHERE
+
+                mi.restaurant_id = ?
+
+                AND (
+
+                    LOWER(mi.name) LIKE ?
+
+                    OR LOWER(mc.name) LIKE ?
+
+                )
+
+            ORDER BY
+
+                mi.name
+
+            LIMIT ?
+
+            OFFSET ?
+            `,
+
+            [
+
+                restaurantId,
+
+                searchText,
+
+                searchText,
+
+                limit,
+
+                offset
+
+            ]
+
+        );
+
+    return {
+
+        items,
+
+        page,
+
+        limit,
+
+        total:
+
+            totalRow.total,
+
+        totalPages:
+
+            Math.ceil(
+                totalRow.total / limit
+            )
+
+    };
 
 };
 
