@@ -55,6 +55,13 @@ async function login() {
         data.staff
 
     );
+localStorage.setItem(
+
+    "restaurantName",
+
+    data.restaurant_name || ""
+
+);    
 
     switch (data.staff.role) {
 

@@ -25,11 +25,13 @@
 
     <div>
 
-        <h1 class="text-3xl font-bold">
+        <h1
+    id="pageTitle"
+    class="text-3xl font-bold">
 
-            Waiter Dashboard
+    Dashboard
 
-        </h1>
+</h1>
 
         <p class="mt-2 text-slate-500">
 
@@ -57,7 +59,7 @@
 
 href="/waiter/index.html"
 
-class="rounded-2xl bg-green-600 p-8 text-center text-white shadow transition active:scale-95">
+class="rounded-2xl bg-green-600 p-2 text-center text-white shadow transition active:scale-95">
 
 <div class="text-4xl">
 
@@ -77,7 +79,7 @@ Dining Areas
 
 onclick="alert('Coming Soon')"
 
-class="rounded-2xl bg-orange-600 p-8 text-center text-white shadow transition active:scale-95">
+class="rounded-2xl bg-orange-600 p-2 text-center text-white shadow transition active:scale-95">
 
 <div class="text-4xl">
 
@@ -97,7 +99,7 @@ Ready Items
 
 href="#"
 
-class="rounded-2xl bg-yellow-600 p-8 text-center text-white shadow transition active:scale-95">
+class="rounded-2xl bg-yellow-600 p-2 text-center text-white shadow transition active:scale-95">
 
 <div class="text-4xl">
 
@@ -119,20 +121,13 @@ Orders
 <script src="/js/auth.js"></script>
 <script src="/js/align.js"></script>
 <script src="/js/staffAuth.js"></script>
+
 <script>
 
 StaffAuth.requireLogin();
-document
 
-    .getElementById("logoutBtn")
-
-    .addEventListener(
-
-        "click",
-
-        () => StaffAuth.logout()
-
-    );
+document.getElementById("pageTitle").textContent =
+    localStorage.getItem("restaurantName") || "Dashboard";
 
 </script>
 

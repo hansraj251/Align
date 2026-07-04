@@ -23,61 +23,45 @@
 
     <!-- Header -->
 
-    <header
-    class="shrink-0 border-b bg-white p-4 shadow">
+    <header class="shrink-0 border-b bg-white px-3 py-2 shadow-sm">
 
-        <div
-            class="flex items-center justify-between">
+    <div class="flex items-center gap-2">
 
-            <a
-                href="javascript:history.back()"
-                class="rounded-lg bg-slate-200 px-3 py-2">
+        <a
+            href="javascript:history.back()"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white">
 
-                ←
+            ←
 
-            </a>
+        </a>
 
-            <div class="text-center">
+        <input
+            id="menuSearch"
+            type="text"
+            placeholder="🔍 Search menu..."
+            class="h-9 flex-1 rounded-lg border px-3 text-sm">
 
-                <h1
-                    id="tableTitle"
-                    class="text-xl font-bold">
+        <div class="min-w-[70px] text-right">
 
-                    Table
+            <h1
+                id="tableTitle"
+                class="truncate text-sm font-bold">
 
-                </h1>
+                Table
 
-                <p
-                    id="tableStatus"
-                    class="text-sm text-slate-500">
+            </h1>
 
-                </p>
+            <p
+                id="tableStatus"
+                class="text-[11px] text-slate-500">
 
-            </div>
-
-            <button
-                id="refreshBtn"
-                class="rounded-lg bg-blue-600 px-3 py-2 text-white">
-
-                ↻
-
-            </button>
+            </p>
 
         </div>
 
-    </header>
-
-    <!-- Search -->
-
-    <div class="shrink-0 bg-white p-4">
-
-        <input
-    id="menuSearch"
-    type="text"
-    placeholder="Search menu..."
-    class="w-full rounded-xl border p-3">
-
     </div>
+
+</header>
 
     <!-- Categories -->
 
@@ -86,12 +70,12 @@
 
     <div
         id="foodTypeList"
-        class="flex gap-2 overflow-x-auto whitespace-nowrap px-4 pt-3 pb-2">
+        class="flex gap-1.5 overflow-x-auto whitespace-nowrap px-3 pt-2 pb-2">
     </div>
 
     <div
         id="categoryList"
-        class="flex gap-2 overflow-x-auto whitespace-nowrap px-4 pb-3">
+        class="flex gap-1.5 overflow-x-auto whitespace-nowrap px-3 pt-2 pb-2">
     </div>
 
 </div>
@@ -99,16 +83,16 @@
     <!-- Scroll Area -->
 
 <div
-class="flex-1 overflow-y-auto pb-44">
+class="flex-1 overflow-y-auto pb-28">
 
     <div
         id="currentOrder"
-        class="hidden border-b bg-white p-4">
+        class="hidden border-b bg-white px-3 py-2">
     </div>
 
     <div
     id="menuList"
-    class="grid grid-cols-2 gap-3 p-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    class="grid grid-cols-1 gap-2 px-2 py-1.5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
         Loading...
 
@@ -123,10 +107,10 @@ class="flex-1 overflow-y-auto pb-44">
     <!-- Sticky Cart -->
 
     <div
-class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
+class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl">
 
         <div
-    class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
+    class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl">
 
     <div class="flex items-center justify-between">
 
@@ -134,7 +118,7 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
             <div
                 id="cartItems"
-                class="font-semibold">
+                class="text-sm font-semibold">
 
                 0 Items
 
@@ -142,7 +126,7 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
             <div
                 id="cartTotal"
-                class="text-sm text-slate-500">
+                class="text-xs text-slate-500">
 
                0
 
@@ -154,7 +138,7 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
             id="viewCartBtn"
 
-            class="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white">
+            class="rounded-xl bg-blue-600 px-5 py-2.5 text-xs text-sm font-semibold text-white">
 
             View Cart
 
@@ -175,9 +159,9 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
     <div
         class="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-hidden rounded-t-3xl bg-white">
 
-        <div class="flex items-center justify-between border-b p-4">
+        <div class="flex items-center justify-between border-b px-3 py-2">
 
-            <h2 class="text-xl font-bold">
+            <h2 class="text-lg font-bold">
 
                 Cart
 
@@ -187,7 +171,7 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
                 onclick="closeCart()"
 
-                class="rounded-lg bg-slate-200 px-3 py-2">
+                class="rounded-lg text-blue-600 transition hover:bg-red-200 hover:text-blue-700 px-3 py-2">
 
                 ✕
 
@@ -197,12 +181,12 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
         <div
     id="cartItemsList"
-    class="max-h-[60vh] space-y-3 overflow-y-auto p-4">
+    class="max-h-[60vh] space-y-3 overflow-y-auto px-3 py-2">
 </div>
 
-        <div class="border-t p-4">
+        <div class="border-t px-3 py-2">
 
-            <div class="mb-4 flex justify-between text-lg font-bold">
+            <div class="mb-4 flex justify-between text-base font-bold">
 
                 <span>Total</span>
 
@@ -218,7 +202,7 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
                 id="checkoutBtn"
 
-                class="w-full rounded-xl bg-green-600 py-4 text-lg font-semibold text-white">
+                class="w-full rounded-xl bg-green-600 py-3 text-base text-sm font-semibold text-white">
 
                 Send To Kitchen
 

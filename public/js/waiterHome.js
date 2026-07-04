@@ -3,10 +3,10 @@ StaffAuth.requireLogin();
 const staff =
     StaffAuth.staff();
 
-document.getElementById(
-    "staffName"
-).textContent =
-    staff.name;
+// document.getElementById(
+//     "staffName"
+// ).textContent =
+//     staff.name;
 
 
 async function loadAreas() {
@@ -121,5 +121,7 @@ function openArea(areaId) {
         `/waiter/tables.html?area=${areaId}`;
 
 }
+document.getElementById("pageTitle").textContent =
+    localStorage.getItem("restaurantName") || "Dashboard";
 
 loadAreas();

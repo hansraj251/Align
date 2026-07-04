@@ -26,6 +26,10 @@ async function loadRestaurant() {
     }
 
     const r = data.restaurant;
+    localStorage.setItem(
+    "restaurantName",
+    r.name || ""
+);
 
     if (r.logo) {
 
@@ -142,9 +146,12 @@ async function saveRestaurant() {
         return;
 
     }
-
+localStorage.setItem(
+    "restaurantName",
+    restaurantName.value
+);
     Toast.show(
-        "Restaurant profile saved"
+        "Profile saved"
     );
 
 }

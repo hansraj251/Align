@@ -84,23 +84,26 @@ exports.login = async (
 
     return {
 
-        success: true,
+    success: true,
 
-        token,
+    token,
 
-        staff: {
+    restaurant_name:
+        staff.restaurant_name,
 
-            id:
-                staff.id,
+    staff: {
 
-            name:
-                staff.name,
+        id:
+            staff.id,
 
-            role:
-                staff.role
+        name:
+            staff.name,
 
-        }
+        role:
+            staff.role
 
-    };
+    }
+
+};
 
 };

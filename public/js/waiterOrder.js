@@ -42,12 +42,7 @@ async function initialize() {
 
 initialize();
 console.count("initialize");
-document
-    .getElementById("refreshBtn")
-    .addEventListener(
-        "click",
-        initialize
-    );
+
 
 document
     .getElementById("menuSearch")
@@ -315,7 +310,7 @@ function renderCategories(
 
 class="${
 selectedCategory === "all"
-? "bg-blue-600 text-white"
+? "text-blue-600 transition hover:bg-blue-200 hover:text-blue-700"
 : "border bg-white"
 } flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium"
 
@@ -335,7 +330,7 @@ All
 
 class="${
 selectedCategory == category.id
-? "bg-blue-600 text-white"
+? "text-blue-600 transition hover:bg-blue-200 hover:text-blue-700"
 : "border bg-white"
 } flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium"
 
@@ -414,13 +409,13 @@ function renderMenu(items) {
 
     menu.innerHTML += `
 
-<div class="rounded-xl bg-white p-4 shadow">
+<div class="rounded-lg bg-white p-3 shadow-sm">
 
 <div class="flex items-center justify-between">
 
 <div>
 
-<h3 class="text-sm font-semibold">
+<h3 class="text-[15px] font-semibold leading-5">
 
 ${item.name}
 
@@ -437,7 +432,7 @@ ${
         ? `
         `
         : `
-        <p class="mt-1 text-base font-bold text-blue-600">
+        <p class="mt-1 text-base text-blue-600 transition hover:bg-blue-200 hover:text-blue-700">
 
            ${Align.formatCurrency(item.price)}
 
@@ -458,7 +453,7 @@ ${item.id},
 ${item.price}
 )"
 
-class="rounded-lg bg-blue-600 px-4 py-2 text-white">
+class="rounded-lg h-9 w-9 rounded-full text-blue-600 transition hover:bg-blue-200 hover:text-blue-700">
 
 +
 
@@ -473,7 +468,7 @@ ${
 hasVariants
 ? item.variants.map(v => `
 
-<div class="mt-3 flex items-center justify-between rounded-lg border p-2">
+<div class="mt-3 flex items-center justify-between rounded-lg border px-2 py-1.5">
 
 <div>
 
@@ -497,7 +492,7 @@ ${v.id},
 '${v.name.replace(/'/g,"\\'")}'
 )"
 
-class="rounded-lg bg-blue-600 px-3 py-1 text-white">
+class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 h-8 w-8 ">
 
 +
 
@@ -678,19 +673,19 @@ Cart is empty
 
         container.innerHTML += `
 
-<div class="rounded-xl border p-4">
+<div class="rounded-xl border px-3 py-2">
 
 <div class="flex justify-between">
 
 <div>
 
-<div class="font-semibold">
+<div class="text-sm font-semibold">
 
 ${item.item_name}
 
 </div>
 
-<div class="text-sm text-slate-500">
+<div class="text-xs text-slate-500">
 
 ${item.variant_name || ""}
 
@@ -718,7 +713,7 @@ ${item.variant_id ?? "null"}
 
 )"
 
-class="rounded-lg bg-slate-200 px-3 py-1">
+class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 px-3 py-1">
 
 −
 
@@ -740,7 +735,7 @@ ${item.variant_id ?? "null"}
 
 )"
 
-class="rounded-lg bg-blue-600 px-3 py-1 text-white">
+class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 px-3 py-1 ">
 
 +
 
@@ -836,7 +831,7 @@ async function loadCurrentOrder() {
 
     box.innerHTML = `
 
-<h2 class="mb-3 text-lg font-bold">
+<h2 class="mb-3 text-base font-bold">
 
 Current Order
 
@@ -987,7 +982,7 @@ function renderFoodTypes() {
 onclick="selectFoodType('${type.id}')"
 class="${
 selectedFoodType === type.id
-? "bg-blue-600 text-white"
+? "text-blue-600 transition hover:bg-blue-200 hover:text-blue-700"
 : "border bg-white"
 } flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium">
 

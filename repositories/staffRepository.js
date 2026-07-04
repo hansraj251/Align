@@ -206,27 +206,30 @@ exports.getByUsername = async (
         `
         SELECT
 
-            id,
+    s.id,
 
-            restaurant_id,
+    s.restaurant_id,
 
-            name,
+    s.name,
 
-            username,
+    s.username,
 
-            password,
+    s.password,
 
-            role,
+    s.role,
 
-            status
+    s.status,
 
-        FROM staff
+    r.name AS restaurant_name
 
-        WHERE
+FROM staff s
 
-            LOWER(username) = LOWER(?)
+JOIN restaurants r
+ON r.id = s.restaurant_id
 
-        LIMIT 1
+WHERE LOWER(s.username) = LOWER(?)
+
+LIMIT 1
         `,
         [
             username
