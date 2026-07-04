@@ -107,7 +107,7 @@ async function loadOrders() {
 
             <strong>
 
-                ₹${Number(order.total).toFixed(2)}
+              ${Align.formatCurrency(order.total, 2)}
 
             </strong>
 

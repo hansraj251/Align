@@ -103,20 +103,24 @@ async function sendToKitchen() {
     }
 
     const sendButton =
-        document.getElementById(
-            "sendKitchenBtn"
-        );
+    document.getElementById("sendKitchenBtn");
 
-    const cartButton =
-        document.getElementById(
-            "checkoutBtn"
-        );
+const cartButton =
+    document.getElementById("checkoutBtn");
+
+if (sendButton) {
 
     sendButton.disabled = true;
-    cartButton.disabled = true;
-
     sendButton.textContent = "Sending...";
+
+}
+
+if (cartButton) {
+
+    cartButton.disabled = true;
     cartButton.textContent = "Sending...";
+
+}
 
     try {
 
@@ -197,14 +201,21 @@ async function sendToKitchen() {
     }
     finally {
 
-        sendButton.disabled = false;
-        cartButton.disabled = false;
+        if (sendButton) {
 
-        sendButton.textContent =
-            "Send To Kitchen";
+    sendButton.disabled = false;
+    sendButton.textContent =
+        "Send To Kitchen";
 
-        cartButton.textContent =
-            "Send To Kitchen";
+}
+
+if (cartButton) {
+
+    cartButton.disabled = false;
+    cartButton.textContent =
+        "Send To Kitchen";
+
+}
 
     }
 
@@ -428,7 +439,7 @@ ${
         : `
         <p class="mt-1 text-base font-bold text-blue-600">
 
-            ₹${item.price}
+           ${Align.formatCurrency(item.price)}
 
         </p>
         `
@@ -470,7 +481,7 @@ ${v.name}
 
 <span class="ml-2 text-slate-500">
 
-₹${v.price}
+${Align.formatCurrency(v.price)}
 
 </span>
 
@@ -555,9 +566,12 @@ function updateCartSummary() {
         `${totalItems} Item${totalItems===1?"":"s"}`;
 
     document.getElementById(
-        "cartTotal"
-    ).textContent =
-        `₹${Align.Order.cart.total().toFixed(2)}`;
+    "cartTotal"
+).textContent =
+    Align.formatCurrency(
+        Align.Order.cart.total(),
+        2
+    );
 
 }
 function applyFilters() {
@@ -686,7 +700,7 @@ ${item.variant_name || ""}
 
 <div>
 
-₹${item.unit_price}
+${Align.formatCurrency(item.unit_price)}
 
 </div>
 
@@ -741,9 +755,12 @@ class="rounded-lg bg-blue-600 px-3 py-1 text-white">
     });
 
     document.getElementById(
-        "cartSheetTotal"
-    ).textContent =
-        `₹${Align.Order.cart.total().toFixed(2)}`;
+    "cartTotal"
+).textContent =
+    Align.formatCurrency(
+        Align.Order.cart.total(),
+        2
+    );
 
 }
 function increaseQty(

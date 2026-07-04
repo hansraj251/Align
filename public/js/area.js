@@ -180,9 +180,9 @@ table.status !== "available"
 
 <div class="mt-2 flex justify-between">
 
-<span>₹ Total</span>
+<span>Total</span>
 
-<strong>₹${Number(table.total || 0).toFixed(0)}</strong>
+<strong>${Align.formatCurrency(table.total || 0, 0)}</strong>
 
 </div>
 

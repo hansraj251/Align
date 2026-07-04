@@ -177,11 +177,11 @@ function renderMenuItems(items) {
 
         : `
 
-        <p class="text-xl font-bold text-blue-600">
+       <p class="text-xl font-bold text-blue-600">
 
-            ₹${item.price}
+    ${Align.formatCurrency(item.price)}
 
-        </p>
+</p>
 
         `
 

@@ -1,3 +1,8 @@
+const currency =
+    document.getElementById("currency");
+
+const timeZone =
+    document.getElementById("timeZone");
 async function loadRestaurant() {
 
     const token = localStorage.getItem("token");
@@ -171,10 +176,28 @@ async function loadSettings() {
         s.footer_message || "";
 
     cgst.value =
-        s.cgst || 2.5;
+        s.cgst || "";
 
     sgst.value =
-        s.sgst || 2.5;
+        s.sgst || "";
+    currency.value =
+    s.currency || "INR";
+
+timeZone.value =
+    s.time_zone || "Asia/Kolkata";  
+    Align.Settings = {
+
+    currency: s.currency || "INR",
+
+    timeZone: s.time_zone || "Asia/Kolkata"
+
+};
+
+localStorage.setItem(
+    "appSettings",
+    JSON.stringify(Align.Settings)
+);
+    
 
 }
 async function saveSettings() {
@@ -184,16 +207,22 @@ async function saveSettings() {
             "/api/settings",
             {
 
-                footer_message:
-                    footerMessage.value,
+    footer_message:
+        footerMessage.value,
 
-                cgst:
-                    Number(cgst.value),
+    cgst:
+        Number(cgst.value),
 
-                sgst:
-                    Number(sgst.value)
+    sgst:
+        Number(sgst.value),
 
-            }
+    currency:
+        currency.value,
+
+    time_zone:
+        timeZone.value
+
+}
         );
 
     if (!result.success) {
@@ -206,7 +235,18 @@ async function saveSettings() {
         return;
 
     }
+Align.Settings = {
 
+    currency: currency.value,
+
+    timeZone: timeZone.value
+
+};
+
+localStorage.setItem(
+    "appSettings",
+    JSON.stringify(Align.Settings)
+);
     Toast.show(
         "POS Settings Saved"
     );
@@ -284,45 +324,47 @@ async function uploadLogo() {
 
 }
 document
-    .getElementById("logo")
-    .addEventListener(
-        "change",
-        e => {
 
-            const file =
-                e.target.files[0];
+    .getElementById("logoPreview")
 
-            if (!file) return;
+    .addEventListener("click", () => {
 
-            const img =
-                document.getElementById(
-                    "logoPreview"
-                );
+        document
 
-            img.src =
-                URL.createObjectURL(file);
+            .getElementById("logo")
 
-            img.classList.remove(
-                "hidden"
-            );
+            .click();
 
-        }
-    );
-    document
-    .getElementById(
-        "uploadLogoBtn"
-    )
-    .addEventListener(
-        "click",
-        uploadLogo
-    );
+    });
+
+   
 document
     .getElementById("saveSettingsBtn")
     .addEventListener(
         "click",
         saveSettings
     );
+document
+    .getElementById("logo")
+    .addEventListener("change", async e => {
+
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        const img =
+            document.getElementById("logoPreview");
+
+        img.src =
+            URL.createObjectURL(file);
+
+        img.classList.remove("hidden");
+
+        await uploadLogo();
+
+    });
 loadRestaurant();
 
-loadSettings();    
+loadSettings();
+    
 

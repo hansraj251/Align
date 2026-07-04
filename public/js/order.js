@@ -139,7 +139,7 @@ class="variant-chip rounded-full border px-3 py-1 text-sm ${
 
 ${v.name}
 
-₹${v.price}
+${Align.formatCurrency(v.price)}
 
 </button>
 
@@ -427,7 +427,7 @@ function renderCart() {
 
     cartDiv.innerHTML = "No Items";
 
-    document.getElementById("total").textContent = "₹0";
+    document.getElementById("total").textContent = "0";
 
     return;
 
@@ -480,7 +480,7 @@ ${item.variant_name}
 
         <strong>
 
-            ₹${total}
+           ${Align.formatCurrency(total)}
 
         </strong>
 
@@ -538,7 +538,7 @@ ${item.variant_name}
 
             <p class="text-sm text-slate-500">
 
-                ₹${item.unit_price} each
+                ${Align.formatCurrency(item.unit_price)} each
 
             </p>
 
@@ -546,7 +546,7 @@ ${item.variant_name}
 
         <strong>
 
-            ₹${itemTotal}
+           ${Align.formatCurrency(itemTotal)}
 
         </strong>
 
@@ -590,7 +590,9 @@ ${item.variant_name}
     });
 
     document.getElementById("total").textContent =
-    `₹${Align.Order.cart.total()}`;
+    Align.formatCurrency(
+        Align.Order.cart.total()
+    );
         sessionStorage.setItem(
     cartKey,
     JSON.stringify(cart)

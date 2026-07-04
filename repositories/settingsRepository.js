@@ -4,11 +4,13 @@ exports.getSettings = async (restaurantId) => {
 
     return await db.getAsync(
     `
-    SELECT
-        footer_message,
-        cgst,
-        sgst
-    FROM restaurant_settings
+   SELECT
+    footer_message,
+    cgst,
+    sgst,
+    currency,
+    time_zone
+FROM restaurant_settings
     WHERE restaurant_id = ?
     `,
     [restaurantId]
@@ -34,28 +36,33 @@ SET
     footer_message=?,
     cgst=?,
     sgst=?,
+    currency=?,
+    time_zone=?,
     updated_at=CURRENT_TIMESTAMP
 
-            WHERE restaurant_id=?
+WHERE restaurant_id=?
             `,
             [
-
     settings.footer_message,
 
     settings.cgst,
 
     settings.sgst,
 
-    restaurantId
+    settings.currency,
 
+    settings.time_zone,
+
+    restaurantId
 ]
         );
+
 
     } else {
 
         await db.runAsync(
             `
-            INSERT INTO restaurant_settings(
+           INSERT INTO restaurant_settings(
 
     restaurant_id,
 
@@ -63,22 +70,28 @@ SET
 
     cgst,
 
-    sgst
+    sgst,
+
+    currency,
+
+    time_zone
 
 )
 
-VALUES(?,?,?,?)
+VALUES(?,?,?,?,?,?)
             `,
             [
-
     restaurantId,
 
     settings.footer_message,
 
     settings.cgst,
 
-    settings.sgst
+    settings.sgst,
 
+    settings.currency,
+
+    settings.time_zone
 ]
         );
 

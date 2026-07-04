@@ -12,13 +12,8 @@ async function loadDashboard() {
     }
 
     document.getElementById("todaySales").textContent =
-        `₹${data.todaySales}`;
+        `${Align.formatCurrency(data.todaySales)}`;
 
-    // document.getElementById("todayOrders").textContent =
-    //     data.todayOrders;
-
-    // document.getElementById("categoryCount").textContent =
-    //     data.categories;
 
     document.getElementById("menuItemCount").textContent =
         data.menuItems;
@@ -27,9 +22,6 @@ async function loadDashboard() {
 
     document.getElementById("pendingKitchen").textContent =
     data.pendingKitchen;
-
-    // document.getElementById("averageBill").textContent =
-    // `₹${data.averageBill}`;  
 
     await loadRestaurantFloor();  
 

@@ -43,13 +43,13 @@ const paidAt = paidDate.toLocaleString(
 ${item.variant_name ? ` (${item.variant_name})` : ""}
                 <br>
 
-                ${item.quantity} × ₹${item.unit_price}
+                ${item.quantity} ×${Align.formatCurrency(item.unit_price)}
 
             </span>
 
             <strong>
 
-                ₹${item.total_price}
+               ${Align.formatCurrency(item.total_price)}
 
             </strong>
 
@@ -141,7 +141,7 @@ Subtotal
 
 <strong>
 
-₹${o.subtotal.toFixed(2)}
+${Align.formatCurrency(o.subtotal, 2)}
 
 </strong>
 
@@ -157,7 +157,7 @@ GST
 
 <strong>
 
-₹${o.tax.toFixed(2)}
+${Align.formatCurrency(o.tax, 2)}
 
 </strong>
 
@@ -173,7 +173,7 @@ Discount
 
 <strong>
 
-₹${o.discount.toFixed(2)}
+${Align.formatCurrency(o.discount, 2)}
 
 </strong>
 
@@ -191,7 +191,7 @@ TOTAL
 
 <strong>
 
-₹${o.total.toFixed(2)}
+${Align.formatCurrency(o.total, 2)}
 
 </strong>
 

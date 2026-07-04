@@ -14,16 +14,18 @@ exports.getSettings = async (
 
         settings = {
 
-            restaurant_name: "",
-            address: "",
-            phone: "",
-            email: "",
-            gst_number: "",
-            footer_message: "Thank You! Visit Again.",
-            cgst: 2.5,
-            sgst: 2.5
+    restaurant_name: "",
+    address: "",
+    phone: "",
+    email: "",
+    gst_number: "",
+    footer_message: "Thank You! Visit Again.",
+    cgst: 2.5,
+    sgst: 2.5,
+    currency: "INR",
+    time_zone: "Asia/Kolkata"
 
-        };
+};
 
     }
 

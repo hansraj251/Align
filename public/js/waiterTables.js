@@ -129,7 +129,7 @@ table.status === "occupied"
 
 <div>
 
- ₹${Number(table.total || 0).toFixed(2)}
+${Align.formatCurrency(table.total || 0, 2)}
 
 </div>
 

@@ -54,9 +54,9 @@ async function loadBillingOrders() {
 
                 <p class="mt-4 text-2xl font-bold">
 
-                    ₹${order.total}
+    ${Align.formatCurrency(order.total)}
 
-                </p>
+</p>
 
                 <button
                     onclick="payOrder(${order.id})"
