@@ -275,6 +275,7 @@ AND variant_id = ?
     );
 
 };
+
 exports.updateOrderItem = async (
     orderItemId,
     quantity,

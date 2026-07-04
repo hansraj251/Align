@@ -132,12 +132,20 @@ function renderMenuItems(items) {
         }">
 
             ${
-                item.food_type === "veg"
-                    ? "Veg"
-                    : item.food_type === "non_veg"
-                    ? "Non Veg"
-                    : "Egg"
-            }
+    item.food_type === "veg"
+        ? "🟢 Veg"
+        : item.food_type === "non_veg"
+        ? "🔴 Non Veg"
+        : item.food_type === "egg"
+        ? "🥚 Egg"
+        : item.food_type === "vegan"
+        ? "🌱 Vegan"
+        : item.food_type === "jain"
+        ? "🟡 Jain"
+        : item.food_type === "satvik"
+        ? "🪷 Satvik"
+        : item.food_type
+}
 
         </span>
 

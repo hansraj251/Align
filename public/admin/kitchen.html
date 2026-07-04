@@ -17,31 +17,41 @@
 <body class="bg-slate-100">
 
 <main class="min-h-screen bg-slate-100 p-8">
-    <div class="mb-8 flex items-center justify-between">
+    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4 shadow-sm">
 
-    <div>
+    <div class="flex items-center gap-3">
 
-        <h1 class="text-3xl font-bold">
+        <button
+            id="backBtn"
+            class="hidden rounded-lg bg-slate-600 px-5 py-3 font-medium text-white hover:bg-slate-700">
 
-            Kitchen Pending Orders
+            ← Back
 
-        </h1>
+        </button>
+
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
+
+            ← Dashboard
+
+        </a>
+
+        <a
+            href="/admin/orders.html"
+            class="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700">
+
+            Billing
+
+        </a>
 
     </div>
-
-    <a
-        href="/admin/dashboard.html"
-        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
-
-        ← Dashboard
-
-    </a>
 
 </div>
 
         <div
             id="kitchenOrders"
-            class="grid grid-cols-3 gap-5">
+            class="grid grid-cols-4 gap-5">
 
         </div>
 

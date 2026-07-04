@@ -190,6 +190,38 @@ exports.getMenuItems = async (
     };
 
 };
+exports.getAllMenuItems = async (
+    restaurantId
+) => {
+
+    return await db.allAsync(
+
+        `
+        SELECT
+
+            mi.id,
+            mi.category_id,
+            mc.name AS category,
+            mi.name,
+            mi.price,
+            mi.food_type,
+            mi.is_available
+
+        FROM menu_items mi
+
+        JOIN menu_categories mc
+            ON mc.id = mi.category_id
+
+        WHERE mi.restaurant_id = ?
+
+        ORDER BY mc.name, mi.name
+        `,
+
+        [restaurantId]
+
+    );
+
+};
 
 exports.updateMenuItem = async (
     restaurantId,

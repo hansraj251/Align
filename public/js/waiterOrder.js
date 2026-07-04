@@ -27,8 +27,6 @@ async function initialize() {
 
 }
 
-    renderFoodTypes();
-
     await loadCategories();
 
     await loadMenu();
@@ -64,12 +62,19 @@ document
         "click",
         openCart
     );
-document
-    .getElementById("sendKitchenBtn")
-    .addEventListener(
+const sendKitchenBtn =
+    document.getElementById(
+        "sendKitchenBtn"
+    );
+
+if (sendKitchenBtn) {
+
+    sendKitchenBtn.addEventListener(
         "click",
         sendToKitchen
     );
+
+}
 
 document
     .getElementById("checkoutBtn")
@@ -349,9 +354,7 @@ function selectCategory(categoryId) {
 async function loadMenu() {
 
     const data =
-        await API.get(
-            "/api/menu/items"
-        );
+    await API.get("/api/menu/items/all");
 
     if (!data.success) {
 
@@ -366,7 +369,9 @@ async function loadMenu() {
 
     allMenuItems = data.items;
 
-    applyFilters();
+renderFoodTypes();
+
+applyFilters();
 
 }
 function renderMenu(items) {
@@ -404,17 +409,30 @@ function renderMenu(items) {
 
 <div>
 
-<h3 class="font-semibold">
+<h3 class="text-sm font-semibold">
 
 ${item.name}
 
 </h3>
 
-<p class="text-sm text-slate-500">
+<p class="text-xs text-slate-500">
 
 ${item.category}
 
 </p>
+
+${
+    hasVariants
+        ? `
+        `
+        : `
+        <p class="mt-1 text-base font-bold text-blue-600">
+
+            ₹${item.price}
+
+        </p>
+        `
+}
 
 </div>
 
@@ -891,57 +909,78 @@ function renderFoodTypes() {
             "foodTypeList"
         );
 
-    container.innerHTML = `
+    container.innerHTML = "";
+
+    const icons = {
+
+        veg: "🟢",
+
+        non_veg: "🔴",
+
+        egg: "🥚",
+
+        vegan: "🌱",
+
+        jain: "🟡",
+
+        satvik: "🪷"
+
+    };
+
+    const foodTypes = [
+
+        {
+            id: "all",
+            name: "All"
+        },
+
+        ...new Map(
+
+            allMenuItems.map(item => [
+
+                item.food_type,
+
+                {
+
+                    id: item.food_type,
+
+                    name:
+
+                        `${icons[item.food_type] || "🍽️"} ` +
+
+                        item.food_type
+
+                            .replace(/_/g, " ")
+
+                            .replace(/\b\w/g, c => c.toUpperCase())
+
+                }
+
+            ])
+
+        ).values()
+
+    ];
+
+    foodTypes.forEach(type => {
+
+        container.innerHTML += `
 
 <button
-onclick="selectFoodType('all')"
+onclick="selectFoodType('${type.id}')"
 class="${
-selectedFoodType === "all"
+selectedFoodType === type.id
 ? "bg-blue-600 text-white"
 : "border bg-white"
 } flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium">
 
-All
-
-</button>
-
-<button
-onclick="selectFoodType('veg')"
-class="${
-selectedFoodType === "veg"
-? "bg-green-600 text-white"
-: "border bg-white"
-} flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium">
-
-🥦 Veg
-
-</button>
-
-<button
-onclick="selectFoodType('non-veg')"
-class="${
-selectedFoodType === "non-veg"
-? "bg-red-600 text-white"
-: "border bg-white"
-} flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium">
-
-🍗 Non-Veg
-
-</button>
-
-<button
-onclick="selectFoodType('egg')"
-class="${
-selectedFoodType === "egg"
-? "bg-yellow-500 text-white"
-: "border bg-white"
-} flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium">
-
-🥚 Egg
+${type.name}
 
 </button>
 
 `;
+
+    });
 
 }
 function selectFoodType(foodType) {

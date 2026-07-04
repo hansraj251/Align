@@ -117,12 +117,6 @@ function renderRows(
 
 <div class="mb-8">
 
-<h2 class="mb-4 text-xl font-bold">
-
-Row ${row}
-
-</h2>
-
 <div class="flex gap-4 overflow-x-auto">
 
 ${
@@ -132,7 +126,7 @@ rowTables.length
 ? rowTables.map(table => `
 
 <div
-class="min-w-[220px] rounded-xl border bg-white p-5 shadow">
+class="flex min-w-[220px] flex-col rounded-xl border bg-white p-5 shadow">
 
 <div class="flex items-center justify-between">
 
@@ -168,6 +162,11 @@ ${
 table.status !== "available"
 
 ? `
+<div class="mt-2 font-medium text-red-600">
+
+    ⏱ ${table.minutes ?? 0} min
+
+</div>
 
 <div class="mt-3 rounded-lg bg-slate-50 p-3">
 
@@ -195,9 +194,11 @@ table.status !== "available"
 
 }
 
+<div class="mt-auto pt-4">
+
 <button
 onclick="openDashboardOrder(${table.id})"
-class="mt-4 w-full rounded-lg ${
+class="w-full rounded-lg ${
 table.status === "available"
 ? "bg-blue-600"
 : "bg-orange-600"
@@ -210,7 +211,7 @@ table.status === "available"
 }
 
 </button>
-
+</div>
 </div>
 
 `).join("")

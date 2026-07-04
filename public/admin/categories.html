@@ -16,33 +16,37 @@
 <body class="bg-slate-100">
 
 <main class="min-h-screen bg-slate-100 p-8">
-    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4">
-
-    <div class="mb-6 flex items-center justify-between">
-
-    <div>
-
-        <h1 class="text-3xl font-bold">
-
-            Categories
-
-        </h1>
-
-    </div>
+    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4 shadow-sm">
 
     <div class="flex items-center gap-3">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
 
             ← Dashboard
 
         </a>
 
+        <a
+            href="/admin/menu-items.html"
+            class="rounded-lg bg-indigo-600 px-5 py-3 font-medium text-white hover:bg-indigo-700">
+
+            Menu Items
+
+        </a>
+
+        <a
+            href="/admin/floor-management.html"
+            class="rounded-lg bg-emerald-600 px-5 py-3 font-medium text-white hover:bg-emerald-700">
+
+            Manage Areas
+
+        </a>
+
         <button
             id="saveCategoryBtn"
-            class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+            class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
 
             Add Category
 
@@ -50,7 +54,7 @@
 
         <button
             id="cancelEditBtn"
-            class="hidden rounded-lg border border-slate-300 px-6 py-3 font-semibold transition hover:bg-slate-100">
+            class="hidden rounded-lg border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-100">
 
             Cancel
 
@@ -58,39 +62,31 @@
 
     </div>
 
-</div>
+    <div class="mt-6 rounded-xl bg-white p-6 shadow">
 
-    <div class="rounded-xl bg-white p-6 shadow">
+        <div class="grid gap-4 md:grid-cols-2">
 
-       <div class="grid gap-4 md:grid-cols-2">
+            <input
+                id="categoryName"
+                type="text"
+                placeholder="Category Name"
+                class="rounded-lg border p-3">
 
-    <input
-        id="categoryName"
-        type="text"
-        placeholder="Category Name"
-        class="rounded-lg border p-3">
+            <input
+                id="categoryDescription"
+                type="text"
+                placeholder="Description (Optional)"
+                class="rounded-lg border p-3">
 
-    <input
-        id="categoryDescription"
-        type="text"
-        placeholder="Description (Optional)"
-        class="rounded-lg border p-3">
+            <input
+                id="categoryId"
+                type="hidden">
 
-    <input
-        id="categoryId"
-        type="hidden">
-
-</div>
+        </div>
 
     </div>
 
 </div>
-
-        <div class="rounded-xl bg-white p-6 shadow">
-
-            <h2 class="mb-4 text-xl font-semibold">
-                Categories
-            </h2>
 
             <div
     id="categoryList"

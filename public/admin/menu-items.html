@@ -19,27 +19,31 @@
 <main class="flex h-screen flex-col bg-slate-100 p-8">
 <div class="shrink-0">
 
-    <div class="mb-6 flex items-center justify-between gap-6">
+    <div class="mb-3 flex items-center justify-between gap-6">
 
-    <h1 class="shrink-0 text-3xl font-bold">
-
-        Menu Items
-
-    </h1>
-
-    <input
-        id="menuSearch"
-        type="text"
-        placeholder="Search menu items..."
-        class="w-full max-w-lg rounded-lg border border-slate-300 px-4 py-3">
-
-    <div class="flex shrink-0 items-center gap-3">
+    <div class="flex items-center gap-3">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
 
             ← Dashboard
+
+        </a>
+
+        <a
+            href="/admin/categories.html"
+            class="rounded-lg bg-indigo-600 px-5 py-3 font-medium text-white hover:bg-indigo-700">
+
+            Categories
+
+        </a>
+
+        <a
+            href="/admin/floor-management.html"
+            class="rounded-lg bg-emerald-600 px-5 py-3 font-medium text-white hover:bg-emerald-700">
+
+            Manage Areas
 
         </a>
 
@@ -49,7 +53,7 @@
 
         <button
             id="saveItemBtn"
-            class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+            class="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
 
             Save Item
 
@@ -57,13 +61,21 @@
 
         <button
             id="cancelEditBtn"
-            class="hidden rounded-lg border border-slate-300 px-6 py-3 font-semibold transition hover:bg-slate-100">
+            class="hidden rounded-lg border border-slate-300 px-6 py-3 font-semibold hover:bg-slate-100">
 
             Cancel
 
         </button>
 
     </div>
+
+    <input
+        id="menuSearch"
+        type="text"
+        placeholder="Search menu items..."
+        class="w-full max-w-md rounded-lg border border-slate-300 px-4 py-3">
+
+</div>
 
 </div>
 
@@ -145,46 +157,59 @@
 
         <div>
 
-            <label class="mb-2 block font-medium">
-                Food Type
-            </label>
+    <label class="mb-2 block font-medium">
+        Food Type
+    </label>
 
-            <select
-                id="foodType"
-                class="w-full rounded-lg border p-3">
+    <select
+        id="foodType"
+        class="w-full rounded-lg border p-3">
 
-                <option value="veg">
-                    Veg
-                </option>
+        <option value="veg">
+            🟢 Veg
+        </option>
 
-                <option value="non_veg">
-                    Non Veg
-                </option>
+        <option value="non_veg">
+            🔴 Non Veg
+        </option>
 
-                <option value="egg">
-                    Egg
-                </option>
+        <option value="egg">
+            🥚 Egg
+        </option>
 
-            </select>
+        <option value="vegan">
+            🌱 Vegan
+        </option>
 
-        </div>
+        <option value="jain">
+            🟡 Jain
+        </option>
+
+        <option value="satvik">
+            🪷 Satvik
+        </option>
+
+    </select>
+
+</div>
 
     </div>
 
 
 </div>
 </div>
-<div class="mt-6 min-h-0 flex-1 overflow-y-auto">
+<div class="mt-3 min-h-0 flex flex-1 flex-col">
 
     <div
         id="itemList"
-        class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-
+        class="grid flex-1 grid-cols-1 gap-5 overflow-y-auto md:grid-cols-2 xl:grid-cols-4">
     </div>
 
     <div
-    id="pagination"
-    class="mt-8 flex items-center justify-center gap-1.5">
+        id="pagination"
+        class="mt-0 shrink-0 bg-slate-100 py-4 flex items-center justify-center gap-2">
+    </div>
+
 </div>
 
 </div>
@@ -204,7 +229,7 @@ class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
 
 class="mx-4 w-full max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
 
-<div class="mb-6 flex items-center justify-between">
+<div class="mb-2 flex items-center justify-between">
 
 <h2 class="text-2xl font-bold">
 
@@ -228,7 +253,7 @@ class="rounded bg-red-600 px-3 py-2 text-white">
 
 id="variantItemName"
 
-class="mb-5 text-lg font-semibold">
+class="mb-3 text-lg font-semibold">
 
 </h3>
 
@@ -236,7 +261,7 @@ class="mb-5 text-lg font-semibold">
 
 </div>
 
-<div class="mt-5 flex gap-3">
+<div class="mt-4 flex gap-3">
 
 <button
 

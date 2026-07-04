@@ -17,6 +17,22 @@ const params =
 const areaId =
 
     params.get("area"); 
+const kitchenBtn =
+    document.getElementById("kitchenBtn");
+
+if (kitchenBtn) {
+
+    kitchenBtn.onclick = () => {
+
+        const areaName =
+    document.getElementById("areaTitle")?.textContent || "";
+
+window.location.href =
+    `/admin/kitchen.html?area=${areaId}&name=${encodeURIComponent(areaName)}`;
+
+    };
+
+}    
 document
     .getElementById("backBtn")
     .onclick = () => {
@@ -45,7 +61,7 @@ let existingItems = [];
 async function loadMenu() {
 
     const data =
-        await API.get("/api/menu/items");
+        await API.get("/api/menu/items/all");
 
     if (!data.success) {
 
@@ -813,7 +829,7 @@ function renderCategoryFilters() {
 
 onclick="selectCategory('${cat.id}')"
 
-class="category-chip rounded-full border px-4 py-2"
+class="category-chip flex h-10 items-center rounded-full border px-5 whitespace-nowrap"
 
 data-id="${cat.id}">
 
@@ -860,7 +876,7 @@ function updateCategorySelection() {
             } else {
 
                 btn.className =
-"category-chip rounded-full border px-4 py-2";
+"category-chip flex h-10 items-center rounded-full border px-5 whitespace-nowrap";
 
             }
 
@@ -879,17 +895,19 @@ function renderFoodFilters() {
 
     const icons = {
 
-        veg: "🟢",
+    veg: "🟢",
 
-        egg: "🥚",
+    egg: "🥚",
 
-        non_veg: "🔴",
+    non_veg: "🔴",
 
-        vegan: "🌱",
+    vegan: "🌱",
 
-        jain: "🟡"
+    jain: "🟡",
 
-    };
+    satvik: "🪷"
+
+};
 
     const foodTypes = [
 

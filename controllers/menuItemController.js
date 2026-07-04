@@ -278,3 +278,34 @@ async (req, res) => {
     }
 
 };
+exports.getAllMenuItems = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await menuItemService.getAllMenuItems(
+
+                req.user.restaurantId
+
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        res.status(500).json({
+
+            success:false,
+
+            message:err.message
+
+        });
+
+    }
+
+};

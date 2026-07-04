@@ -21,73 +21,33 @@
 
 <main class="min-h-screen bg-slate-100 p-8">
 
-        <div class="sticky top-0 z-30 -mx-8 mb-6 bg-slate-100 px-8 pt-6 pb-4">
+        <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4 shadow-sm">
 
-    <div class="mb-6 flex items-center justify-between">
-
-        <div>
-
-            <h1 class="text-3xl font-bold">
-
-                Orders
-
-            </h1>
-
-            <p class="mt-1 text-slate-500">
-
-                Manage all customer orders
-
-            </p>
-
-        </div>
+    <div class="flex items-center gap-4">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700">
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
 
             ← Dashboard
 
         </a>
 
-    </div>
+        <div class="ml-auto flex items-center gap-3">
 
-    <div class="rounded-xl bg-white p-6 shadow">
+            <input
+                id="fromDate"
+                type="date"
+                class="rounded-lg border px-3 py-2">
 
-        <div class="flex flex-wrap items-end gap-4">
-
-            <div>
-
-                <label class="mb-1 block text-sm font-medium">
-
-                    From
-
-                </label>
-
-                <input
-                    id="fromDate"
-                    type="date"
-                    class="rounded-lg border p-2">
-
-            </div>
-
-            <div>
-
-                <label class="mb-1 block text-sm font-medium">
-
-                    To
-
-                </label>
-
-                <input
-                    id="toDate"
-                    type="date"
-                    class="rounded-lg border p-2">
-
-            </div>
+            <input
+                id="toDate"
+                type="date"
+                class="rounded-lg border px-3 py-2">
 
             <button
                 id="searchBtn"
-                class="rounded-lg bg-blue-600 px-5 py-2 text-white">
+                class="rounded-lg bg-blue-600 px-5 py-2 text-white hover:bg-blue-700">
 
                 Search
 

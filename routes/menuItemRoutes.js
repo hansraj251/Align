@@ -35,4 +35,9 @@ router.patch(
     menuItemController.updateAvailability
 
 );
+router.get(
+    "/all",
+    authMiddleware,
+    menuItemController.getAllMenuItems
+);
 module.exports = router;

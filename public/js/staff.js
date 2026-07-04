@@ -124,7 +124,7 @@ function renderStaff(rows) {
 
             <p>
 
-                💰 ₹${item.basic_salary}
+                 ₹${item.basic_salary}
 
                 /
 

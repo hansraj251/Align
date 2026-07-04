@@ -17,40 +17,45 @@
 <body class="bg-slate-100">
 
 <main class="min-h-screen bg-slate-100 p-8">
-    <div class="mb-8 flex items-center justify-between">
+    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4 shadow-sm">
 
-    <div>
+    <div class="flex items-center gap-3">
 
-        <h1 class="text-3xl font-bold">
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
 
-            Floor Management
+            ← Dashboard
 
-        </h1>
+        </a>
+
+        <a
+            href="/admin/categories.html"
+            class="rounded-lg bg-indigo-600 px-5 py-3 font-medium text-white hover:bg-indigo-700">
+
+            Categories
+
+        </a>
+
+        <a
+            href="/admin/menu-items.html"
+            class="rounded-lg bg-emerald-600 px-5 py-3 font-medium text-white hover:bg-emerald-700">
+
+            Menu Items
+
+        </a>
+
+        <button
+            id="addAreaBtn"
+            class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
+
+            + Add Area
+
+        </button>
 
     </div>
 
-    <div class="mb-8 flex justify-end gap-3">
-
-    <a
-        href="/admin/dashboard.html"
-        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
-
-        ← Dashboard
-
-    </a>
-
-    <button
-        id="addAreaBtn"
-        class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
-
-        + Add Area
-
-    </button>
-
 </div>
-
-</div>
-
         <div
             id="areaList"
             class="space-y-6">

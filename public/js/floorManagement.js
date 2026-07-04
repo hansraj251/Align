@@ -73,7 +73,7 @@ function renderAreas(
             onclick="editArea(${area.id}, '${area.name}')"
             class="rounded bg-amber-500 px-3 py-2 text-white">
 
-            ✏️
+            ✏️ Edit
 
         </button>
 
@@ -99,15 +99,15 @@ function renderAreas(
 
 </div>
 
-<div class="space-y-3">
+<div class="grid grid-cols-2 gap-3 xl:grid-cols-4">
 
 </div>
 `;
 
         const list =
-            card.querySelector(
-                ".space-y-3"
-            );
+    card.querySelector(
+        ".grid"
+    );
 
         if (
             areaTables.length === 0
@@ -171,7 +171,7 @@ No tables found.
         onclick="editTable(${table.id})"
         class="rounded bg-amber-500 px-3 py-2 text-white">
 
-        ✏️
+        ✏️ Edit
 
     </button>
 

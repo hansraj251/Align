@@ -107,8 +107,8 @@ class="flex-1 overflow-y-auto pb-44">
     </div>
 
     <div
-        id="menuList"
-        class="space-y-3 p-4">
+    id="menuList"
+    class="grid grid-cols-2 gap-3 p-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
 
         Loading...
 
@@ -126,49 +126,43 @@ class="flex-1 overflow-y-auto pb-44">
 class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
         <div
-            class="mb-3 flex items-center justify-between">
+    class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
 
-            <div>
+    <div class="flex items-center justify-between">
 
-                <div
-                    id="cartItems"
-                    class="font-semibold">
+        <div>
 
-                    0 Items
+            <div
+                id="cartItems"
+                class="font-semibold">
 
-                </div>
-
-                <div
-                    id="cartTotal"
-                    class="text-slate-500">
-
-                    ₹0
-
-                </div>
+                0 Items
 
             </div>
 
-            <button
+            <div
+                id="cartTotal"
+                class="text-sm text-slate-500">
 
-                id="viewCartBtn"
+                ₹0
 
-                class="rounded-lg bg-slate-700 px-5 py-3 text-white">
-
-                View Cart
-
-            </button>
+            </div>
 
         </div>
 
         <button
 
-            id="sendKitchenBtn"
+            id="viewCartBtn"
 
-            class="w-full rounded-xl bg-green-600 py-4 text-lg font-semibold text-white">
+            class="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white">
 
-            Send To Kitchen
+            View Cart
 
         </button>
+
+    </div>
+
+</div>
 
     </div>
 
@@ -202,12 +196,9 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white p-4 shadow-2xl">
         </div>
 
         <div
-
-            id="cartItemsList"
-
-            class="max-h-60vh] overflow-y-auto p-4">
-
-        </div>
+    id="cartItemsList"
+    class="max-h-[60vh] space-y-3 overflow-y-auto p-4">
+</div>
 
         <div class="border-t p-4">
 

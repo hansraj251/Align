@@ -1,7 +1,56 @@
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
 
+const areaId =
+    params.get("area");
+
+const backBtn =
+    document.getElementById("backBtn");
+
+async function setupBackButton() {
+
+    if (!areaId) {
+        return;
+    }
+
+    backBtn.classList.remove("hidden");
+
+    const data =
+        await API.get(
+            "/api/dining-areas"
+        );
+
+    if (data.success) {
+
+        const area =
+            data.areas.find(
+                a => a.id == areaId
+            );
+
+        if (area) {
+
+            backBtn.textContent =
+                `← ${area.name}`;
+
+        }
+
+    }
+
+    backBtn.onclick = () => {
+
+        window.location.href =
+            `/admin/area.html?id=${areaId}`;
+
+    };
+
+}
+
+setupBackButton();
 async function loadKitchenOrders() {
 
     const data = await API.get("/api/kitchen");
@@ -21,7 +70,7 @@ async function loadKitchenOrders() {
     if (data.tickets.length === 0) {
 
         container.innerHTML = `
-            <div class="col-span-3 rounded-xl bg-white p-8 text-center shadow">
+            <div class="col-span-4 rounded-xl bg-white p-8 text-center shadow">
 
                  No Pending Orders
 
@@ -110,7 +159,7 @@ async function loadKitchenOrders() {
         ? "border-l-4 border-orange-500"
         : "border-l-4 border-green-500";
         container.innerHTML += `
-    <div class="${borderClass} rounded-xl bg-white p-6 shadow">
+    <div class="${borderClass} flex h-full flex-col rounded-xl bg-white p-6 shadow">
 
         <h2 class="text-xl font-bold">
             ${
@@ -133,12 +182,14 @@ async function loadKitchenOrders() {
             ₹${ticket.total}
         </p>
 
-        ${
+        <div class="mt-auto pt-5">
+
+${
 ticket.status === "new"
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'preparing')"
-    class="mt-5 w-full rounded-lg bg-orange-500 py-3 text-white">
+    class="w-full rounded-lg bg-orange-500 py-3 text-white">
 
     Start Preparing
 
@@ -148,7 +199,7 @@ ticket.status === "new"
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'ready')"
-    class="mt-5 w-full rounded-lg bg-green-600 py-3 text-white">
+    class="w-full rounded-lg bg-green-600 py-3 text-white">
 
     Mark Ready
 
@@ -158,7 +209,7 @@ ticket.status === "new"
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'served')"
-    class="mt-5 w-full rounded-lg bg-blue-600 py-3 text-white">
+    class="w-full rounded-lg bg-blue-600 py-3 text-white">
 
     Served
 
@@ -166,6 +217,8 @@ ticket.status === "new"
 `
 : ""
 }
+
+</div>
 
     </div>
 `;

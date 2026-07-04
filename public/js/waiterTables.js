@@ -123,13 +123,13 @@ table.status === "occupied"
 
 <div>
 
-🧾 ${table.total_items} Items
+ ${table.total_items} Items
 
 </div>
 
 <div>
 
-💰 ₹${Number(table.total || 0).toFixed(2)}
+ ₹${Number(table.total || 0).toFixed(2)}
 
 </div>
 

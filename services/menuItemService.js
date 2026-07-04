@@ -259,3 +259,40 @@ exports.updateAvailability = async (
     };
 
 };
+exports.getAllMenuItems = async (
+    restaurantId
+) => {
+
+    const items =
+        await menuItemRepository.getAllMenuItems(
+            restaurantId
+        );
+
+    const ids =
+        items.map(i => i.id);
+
+    const variants =
+        await variantRepository.getVariantsByMenuItems(
+            ids
+        );
+
+    items.forEach(item => {
+
+        item.variants =
+            variants.filter(
+                v =>
+
+                v.menu_item_id === item.id
+            );
+
+    });
+
+    return {
+
+        success: true,
+
+        items
+
+    };
+
+};
