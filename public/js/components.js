@@ -40,5 +40,26 @@ if (elementId === "sidebar") {
     }
 
 }
+if (elementId === "sidebar") {
+
+    if (typeof loadSidebarRestaurant === "function") {
+
+        loadSidebarRestaurant();
+
+    }
+
+    if (typeof initializeSidebar === "function") {
+
+        initializeSidebar();
+
+    }
+
+    if (typeof MobileSidebar !== "undefined") {
+
+        MobileSidebar.init();
+
+    }
+
+}
 
 }

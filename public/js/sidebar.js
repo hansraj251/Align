@@ -21,6 +21,18 @@ async function loadSidebarRestaurant() {
 
         const restaurant = data.restaurant;
 
+        const mobileName =
+    document.getElementById(
+        "mobileRestaurantName"
+    );
+
+if (mobileName) {
+
+    mobileName.textContent =
+        restaurant.name || "ALIGN";
+
+}
+
         const nameElement =
             document.getElementById(
                 "sidebarRestaurantName"
@@ -51,6 +63,7 @@ async function loadSidebarRestaurant() {
         console.error(err);
 
     }
+    
 
 }
 

@@ -5,7 +5,7 @@ let filteredMenuItems = [];
 let selectedCategory = "all";
 
 let selectedFoodType = "all";
-let selectedVariants = {};
+
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
@@ -33,14 +33,26 @@ window.location.href =
     };
 
 }    
+const goBack = () => {
+
+    window.location.href =
+        `/admin/area.html?id=${areaId}`;
+
+};
+
 document
     .getElementById("backBtn")
-    .onclick = () => {
+    ?.addEventListener(
+        "click",
+        goBack
+    );
 
-        window.location.href =
-            `/admin/area.html?id=${areaId}`;
-
-    };       
+document
+    .getElementById("backBtnMobile")
+    ?.addEventListener(
+        "click",
+        goBack
+    );   
 
 const tableId =
     params.get("table");
@@ -123,69 +135,96 @@ No menu items found
 }
 
         const variantsHtml =
-            item.variants.map(v => `
+(item.variants && item.variants.length)
+? item.variants.map(v => `
 
-<button
+<div class="mt-2 flex items-center justify-between rounded-lg border px-2 py-2">
 
-onclick="selectVariant(${item.id},${v.id})"
+    <div>
 
-class="variant-chip rounded-full border px-3 py-1 text-sm ${
-    selectedVariants[item.id] === v.id
-        ? "bg-blue-600 text-white"
-        : ""
-}"
+        <div class="text-sm font-medium">
 
->
+            ${v.name}
 
-${v.name}
+        </div>
 
-${Align.formatCurrency(v.price)}
+        <div class="text-xs text-slate-500">
 
-</button>
+            ${Align.formatCurrency(v.price)}
 
-`).join("");
+        </div>
+
+    </div>
+
+    <button
+    onclick="addItem(
+        ${item.id},
+        '${item.name.replace(/'/g,"\\'")}',
+        ${v.price},
+        ${v.id},
+        '${v.name.replace(/'/g,"\\'")}'
+    )"
+    class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700">
+
+        +
+
+    </button>
+
+</div>
+
+`).join("")
+: "";
 
         menu.innerHTML += `
 
-<div class="rounded-xl border bg-white p-4">
+<div
+class="rounded-xl border bg-white p-2.5 shadow-sm transition hover:shadow-md lg:p-4">
 
-<div class="flex items-start justify-between">
+<div class="min-w-0">
 
-<div>
-
-<h3 class="font-semibold">
+<h3 class="truncate text-sm font-semibold lg:text-base">
 
 ${item.name}
 
 </h3>
 
-<p class="mt-1 text-sm text-slate-500">
+<p class="mt-1 text-xs text-slate-500 lg:text-sm">
 
 ${item.category}
 
 </p>
 
+${
+!item.variants || item.variants.length === 0
+? `
+<div class="mt-2 flex items-center justify-between">
+
+<div class="text-sm font-semibold text-blue-600">
+
+${Align.formatCurrency(item.price)}
+
 </div>
 
 <button
-
-onclick="addSelectedVariant(${item.id})"
-
-class="rounded-lg bg-blue-600 px-4 py-2 text-white">
+onclick="addItem(
+${item.id},
+'${item.name.replace(/'/g,"\\'")}',
+${item.price}
+)"
+class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700">
 
 +
 
 </button>
 
 </div>
-
-<div
-
-class="mt-3 flex flex-wrap gap-2">
-
-${variantsHtml}
+`
+: ""
+}
 
 </div>
+
+${variantsHtml}
 
 </div>
 
@@ -194,74 +233,23 @@ ${variantsHtml}
     });
 
 }
-function selectVariant(
-    menuItemId,
-    variantId
-) {
 
-    selectedVariants[
-        menuItemId
-    ] = variantId;
 
-    renderMenu(
-        filteredMenuItems
-    );
-
-}
-function addSelectedVariant(menuItemId) {
-
-    const item =
-        allMenuItems.find(
-            i => i.id === menuItemId
-        );
-
-    if (!item) {
-        return;
-    }
-
-    // No variants
-    if (
-        !item.variants ||
-        item.variants.length === 0
-    ) {
-
-        addItem(
-            item.id,
-            item.name,
-            item.price
-        );
-
-        return;
-    }
-
-    let variant =
-        item.variants.find(
-            v =>
-                v.id ===
-                selectedVariants[menuItemId]
-        );
-
-    if (!variant) {
-        variant = item.variants[0];
-    }
-
-    addItem(
-        item.id,
-        item.name,
-        variant?.price || menu.price,
-        variant?.id || null,
-        variant?.name || null
-    );
-
-}
 function applyFilters() {
 
-    const keyword =
-        document
-            .getElementById("menuSearch")
-            .value
-            .toLowerCase()
-            .trim();
+    const desktopSearch =
+    document.getElementById("menuSearch");
+
+const mobileSearch =
+    document.getElementById("menuSearchMobile");
+
+const keyword = (
+    desktopSearch?.value ||
+    mobileSearch?.value ||
+    ""
+)
+.toLowerCase()
+.trim();
 
     filteredMenuItems =
         allMenuItems.filter(item => {
@@ -327,6 +315,8 @@ async function initialize() {
     renderCart();
 
 }
+
+
 
 document
     .getElementById("sendKitchenBtn")
@@ -429,7 +419,32 @@ function renderCart() {
 
     document.getElementById("total").textContent = "0";
 
+    const mobileBar =
+        document.getElementById("mobileCartBar");
+
+    if (mobileBar) {
+
+        mobileBar.classList.add("hidden");
+
+    }
+
+    document.getElementById("mobileItemCount").textContent =
+        "0 Items";
+
+    document.getElementById("mobileTotal").textContent =
+        Align.formatCurrency(0);
+
     return;
+
+}
+const cartSheet =
+    document.getElementById(
+        "cartItemsList"
+    );
+
+if (cartSheet) {
+
+    cartSheet.innerHTML = "";
 
 }
 
@@ -445,6 +460,7 @@ function renderCart() {
 
         </h3>
     `;
+    
 
     existingItems.forEach(item => {
 
@@ -586,6 +602,91 @@ ${item.variant_name}
 
 </div>
 `;
+if (cartSheet) {
+
+    cartSheet.innerHTML += `
+
+<div class="mb-3 rounded-lg border p-3">
+
+    <div class="flex items-center justify-between">
+
+        <div>
+
+            <h4 class="font-semibold">
+
+                ${item.item_name}
+
+                ${
+
+                    item.variant_name
+
+                    ? `
+
+<p class="text-xs text-blue-600">
+
+${item.variant_name}
+
+</p>
+
+`
+
+                    : ""
+
+                }
+
+            </h4>
+
+            <p class="text-sm text-slate-500">
+
+                ${Align.formatCurrency(item.unit_price)} each
+
+            </p>
+
+        </div>
+
+        <strong>
+
+            ${Align.formatCurrency(itemTotal)}
+
+        </strong>
+
+    </div>
+
+    <div class="mt-3 flex items-center gap-3">
+
+        <button
+
+            onclick="decreaseQty(${item.menu_item_id}, ${item.variant_id || "null"})"
+
+            class="h-9 w-9 rounded bg-red-500 text-white">
+
+            -
+
+        </button>
+
+        <span class="text-lg font-semibold">
+
+            ${item.quantity}
+
+        </span>
+
+        <button
+
+            onclick="increaseQty(${item.menu_item_id}, ${item.variant_id || "null"})"
+
+            class="h-9 w-9 rounded bg-green-600 text-white">
+
+            +
+
+        </button>
+
+    </div>
+
+</div>
+
+`;
+
+}
 
     });
 
@@ -597,6 +698,59 @@ ${item.variant_name}
     cartKey,
     JSON.stringify(cart)
 );
+const totalItems =
+    cart.reduce(
+
+        (sum, item) =>
+
+            sum + item.quantity,
+
+        0
+
+    );
+
+const mobileBar =
+    document.getElementById(
+        "mobileCartBar"
+    );
+
+if (mobileBar) {
+
+    if (totalItems === 0) {
+
+        mobileBar.classList.add(
+            "hidden"
+        );
+
+    } else {
+
+        mobileBar.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+document.getElementById(
+    "mobileItemCount"
+).textContent =
+`${totalItems} Item${totalItems === 1 ? "" : "s"}`;
+
+document.getElementById(
+    "mobileTotal"
+).textContent =
+Align.formatCurrency(
+    Align.Order.cart.total()
+);
+
+document.getElementById("mobileItemCount").textContent =
+    `${totalItems} Item${totalItems === 1 ? "" : "s"}`;
+
+document.getElementById("mobileTotal").textContent =
+    Align.formatCurrency(
+        Align.Order.cart.total()
+    );
 
 }
 function increaseQty(
@@ -624,6 +778,23 @@ function decreaseQty(
     );
 
     renderCart();
+
+}
+function openCart() {
+
+    document
+        .getElementById("cartSheet")
+        .classList.remove("hidden");
+
+    renderCart();
+
+}
+
+function closeCart() {
+
+    document
+        .getElementById("cartSheet")
+        .classList.add("hidden");
 
 }
 async function sendToKitchen() {
@@ -831,7 +1002,7 @@ function renderCategoryFilters() {
 
 onclick="selectCategory('${cat.id}')"
 
-class="category-chip flex h-10 items-center rounded-full border px-5 whitespace-nowrap"
+class="category-chip flex h-8 items-center rounded-full border px-3 text-xs whitespace-nowrap lg:h-10 lg:px-5 lg:text-sm"
 
 data-id="${cat.id}">
 
@@ -873,12 +1044,12 @@ function updateCategorySelection() {
             ) {
 
                 btn.className =
-"category-chip rounded-full bg-blue-600 px-4 py-2 text-white";
+"category-chip rounded-full bg-blue-600 px-3 py-1.5 text-xs text-white lg:px-4 lg:py-2 lg:text-sm";
 
             } else {
 
                 btn.className =
-"category-chip flex h-10 items-center rounded-full border px-5 whitespace-nowrap";
+"category-chip flex h-8 items-center rounded-full border px-3 text-xs whitespace-nowrap lg:h-10 lg:px-5 lg:text-sm";;
 
             }
 
@@ -957,7 +1128,7 @@ function renderFoodFilters() {
 
 onclick="selectFoodType('${type.id}')"
 
-class="food-chip rounded-full border px-4 py-2"
+class="food-chip rounded-full border px-3 py-1.5 text-xs lg:px-4 lg:py-2 lg:text-sm"
 
 data-id="${type.id}">
 
@@ -997,26 +1168,58 @@ function updateFoodSelection() {
             ) {
 
                 btn.className =
-"food-chip rounded-full bg-blue-600 px-4 py-2 text-white";
+"food-chip rounded-full bg-blue-600 px-3 py-1.5 text-xs text-white lg:px-4 lg:py-2 lg:text-sm";
 
             }
 
             else {
 
                 btn.className =
-"food-chip rounded-full border px-4 py-2";
+"food-chip rounded-full border px-3 py-1.5 text-xs lg:px-4 lg:py-2 lg:text-sm";
 
             }
 
         });
 
 }
+const desktopSearch =
+    document.getElementById("menuSearch");
+
+const mobileSearch =
+    document.getElementById("menuSearchMobile");
 document
-.getElementById("menuSearch")
-.addEventListener(
+    .getElementById("mobileViewCartBtn")
+    ?.addEventListener(
+        "click",
+        openCart
+    );    
 
-"input",
+desktopSearch?.addEventListener("input", () => {
 
-applyFilters
+    if (mobileSearch) {
 
-);
+        mobileSearch.value =
+            desktopSearch.value;
+
+    }
+
+    applyFilters();
+
+});
+
+mobileSearch?.addEventListener("input", () => {
+
+    if (desktopSearch) {
+
+        desktopSearch.value =
+            mobileSearch.value;
+
+    }
+    
+
+
+    applyFilters();
+    
+
+});
+
