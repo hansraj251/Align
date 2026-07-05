@@ -460,6 +460,17 @@ if (cartSheet) {
 
         </h3>
     `;
+    if (cartSheet) {
+
+    cartSheet.innerHTML += `
+<h3 class="mb-3 text-lg font-bold">
+
+    Current Order
+
+</h3>
+`;
+
+}
     
 
     existingItems.forEach(item => {
@@ -480,7 +491,7 @@ if (cartSheet) {
 
 <small class="block text-slate-500">
 
-${item.variant_name}
+${item.variant_name || ""}
 
 </small>
 
@@ -504,6 +515,47 @@ ${item.variant_name}
 
 </div>
 `;
+if (cartSheet) {
+
+    cartSheet.innerHTML += `
+<div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+
+    <div class="flex justify-between">
+
+        <div>
+
+            <h4 class="font-semibold">
+
+                ${item.name}
+
+                <small class="block text-slate-500">
+
+                    ${item.variant_name}
+
+                </small>
+
+            </h4>
+
+            <p class="text-sm text-slate-500">
+
+                Qty : ${item.quantity}
+
+            </p>
+
+        </div>
+
+        <strong>
+
+            ${Align.formatCurrency(total)}
+
+        </strong>
+
+    </div>
+
+</div>
+`;
+
+}
 
     });
 
@@ -515,6 +567,19 @@ ${item.variant_name}
 
         </h3>
     `;
+    if (cartSheet) {
+
+    cartSheet.innerHTML += `
+<hr class="my-4">
+
+<h3 class="mb-3 text-lg font-bold">
+
+    New Items
+
+</h3>
+`;
+
+}
 
 }
 
@@ -716,7 +781,10 @@ const mobileBar =
 
 if (mobileBar) {
 
-    if (totalItems === 0) {
+    if (
+        totalItems === 0 &&
+        existingItems.length === 0
+    ) {
 
         mobileBar.classList.add(
             "hidden"

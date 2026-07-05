@@ -21,8 +21,8 @@ const MobileSidebar = {
         header.innerHTML = `
 
 <div
-    class="fixed top-0 left-0 right-0 z-[60] flex h-14 items-center border-b bg-white shadow">
-
+    class="fixed top-0 left-0 right-0 z-[60] flex h-14 items-center border-b bg-white shadow xl:hidden">
+    
     <button
         id="mobileMenuBtn"
         class="ml-3 rounded-lg p-2">
@@ -65,17 +65,15 @@ const MobileSidebar = {
             !closeBtn
         ) return;
 
-        function isPortrait() {
+        function isMobileLayout() {
 
-            return window.matchMedia(
-                "(orientation: portrait)"
-            ).matches;
+    return window.innerWidth < 812;
 
-        }
+}
 
         function openSidebar() {
 
-            if (!isPortrait()) return;
+            if (!isMobileLayout()) return;
 
             drawer.classList.remove(
                 "-translate-x-full"
@@ -126,10 +124,9 @@ const MobileSidebar = {
 
        function updateLayout() {
 
-    const portrait =
-        window.matchMedia("(orientation: portrait)").matches;
+    const mobile = isMobileLayout();
 
-    if (portrait) {
+    if (mobile) {
 
         // Drawer Mode
         drawer.classList.remove(
@@ -171,6 +168,9 @@ const MobileSidebar = {
         drawer.classList.add(
             "relative"
         );
+        drawer.classList.remove(
+    "hidden"
+);
 
         overlay.classList.add(
             "hidden"
