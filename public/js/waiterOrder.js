@@ -803,6 +803,7 @@ async function loadCurrentOrder() {
         await API.get(
             `/api/orders/table/${tableId}`
         );
+        
 
     const box =
         document.getElementById(
@@ -906,6 +907,53 @@ ${item.variant_name || ""}
     }
 
 </div>
+<div class="mt-3 flex gap-2">
+
+${
+
+item.pending_count > 0
+
+?
+
+`
+
+<button
+    onclick="cancelItem(${item.pending_ticket_item_id})"
+    class="rounded-lg bg-red-600 px-3 py-1 text-xs font-semibold text-white">
+
+    Cancel
+
+</button>
+
+`
+
+: ""
+
+}
+
+${
+
+item.ready_count > 0
+
+?
+
+`
+
+<button
+    onclick="serveItem(${item.ready_ticket_item_id})"
+    class="rounded-lg bg-green-600 px-3 py-1 text-xs font-semibold text-white">
+
+    Served
+
+</button>
+
+`
+
+: ""
+
+}
+
+</div>
 
 </div>
 
@@ -914,6 +962,7 @@ ${item.variant_name || ""}
 `;
 
 }
+
 function renderFoodTypes() {
 
     const container =
@@ -993,6 +1042,99 @@ ${type.name}
 `;
 
     });
+
+}
+async function cancelItem(ticketItemId) {
+
+    if (!confirm("Cancel this item?")) {
+
+        return;
+
+    }
+
+    try {
+
+        const data =
+            await API.patch(
+                `/api/kitchen/items/${ticketItemId}/cancel`
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Toast.show(
+            "Item cancelled",
+            "success"
+        );
+
+        await loadCurrentOrder();
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
+async function serveItem(ticketItemId) {
+
+    if (!confirm("Mark this item as served?")) {
+
+        return;
+
+    }
+
+    try {
+
+        const data =
+            await API.patch(
+                `/api/kitchen/items/${ticketItemId}/status`,
+                {
+                    status: "served"
+                }
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Toast.show(
+            "Item served",
+            "success"
+        );
+
+        await loadCurrentOrder();
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
 
 }
 function selectFoodType(foodType) {

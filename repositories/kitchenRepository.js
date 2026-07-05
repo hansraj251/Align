@@ -381,6 +381,7 @@ exports.getTicketItem = async (
     );
 
 };
+
 exports.getPendingTicketItems = async (
     ticketId
 ) => {
@@ -427,12 +428,44 @@ exports.updateTicketItemsStatus = async (
             ready_at = CURRENT_TIMESTAMP`;
 
     }
+    if (status === "served") {
+
+    query += `,
+        served_at = CURRENT_TIMESTAMP`;
+
+}
 
     query += `
-        WHERE ticket_id = ?
+    WHERE
+        ticket_id = ?
+`;
+
+params.push(ticketId);
+
+if (status === "preparing") {
+
+    query += `
+        AND status = 'pending'
     `;
 
-    params.push(ticketId);
+}
+
+if (status === "ready") {
+
+    query += `
+        AND status = 'preparing'
+    `;
+
+}
+if (status === "served") {
+
+    query += `
+
+        AND status = 'ready'
+
+    `;
+
+}
 
     await db.runAsync(
         query,
@@ -488,6 +521,24 @@ exports.updateTicketItemStatus = async (
     await db.runAsync(
         query,
         params
+    );
+
+};
+
+exports.cancelTicketItem = async (
+    ticketItemId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_ticket_items
+        SET
+            status = 'cancelled'
+        WHERE
+            id = ?
+            AND status = 'pending'
+        `,
+        [ticketItemId]
     );
 
 };

@@ -67,7 +67,7 @@ const MobileSidebar = {
 
         function isMobileLayout() {
 
-    return window.innerWidth < 812;
+    return window.innerWidth < 1024;
 
 }
 

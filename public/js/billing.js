@@ -52,24 +52,118 @@ async function loadBillingOrders() {
 
                 </p>
 
-                <p class="mt-4 text-2xl font-bold">
+                <div class="mt-4 space-y-2">
 
-    ${Align.formatCurrency(order.total)}
+    <div class="flex justify-between text-sm">
 
-</p>
+        <span>Subtotal</span>
+
+        <strong>
+
+            ${Align.formatCurrency(order.subtotal)}
+
+        </strong>
+
+    </div>
+
+    <div class="flex items-center justify-between">
+
+        <label class="text-sm">
+
+            Discount %
+
+        </label>
+
+        <input
+
+            id="discount-${order.id}"
+
+            type="number"
+
+            min="0"
+
+            max="100"
+
+            value="${order.discount}"
+
+            class="w-20 rounded border px-2 py-1 text-right"
+
+        >
+
+    </div>
+
+    <div class="flex justify-between text-sm">
+
+        <span>GST</span>
+
+        <strong>
+
+            ${Align.formatCurrency(order.tax)}
+
+        </strong>
+
+    </div>
+
+    <div class="flex justify-between text-lg font-bold">
+
+        <span>Total</span>
+
+        <span>
+
+            ${Align.formatCurrency(order.total)}
+
+        </span>
+
+    </div>
+
+</div>
 
                 <button
                     onclick="payOrder(${order.id})"
                     class="mt-6 w-full rounded-lg bg-green-600 py-3 text-white">
 
-                    Receive Payment
+                    Mark Paid
 
                 </button>
 
             </div>
         `;
 
+    const input =
+    document.getElementById(
+        `discount-${order.id}`
+    );
+
+input.onchange = async () => {
+
+    const discount =
+        Number(input.value || 0);
+
+    const result =
+        await API.patch(
+            `/api/orders/${order.id}/discount`,
+            {
+                discount
+            }
+        );
+
+    if (!result.success) {
+
+        Toast.show(
+            result.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    loadBillingOrders();
+
+};    
+
     });
+    
 
 }
 

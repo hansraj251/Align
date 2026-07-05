@@ -200,6 +200,40 @@ exports.getActiveOrderByTable = async (
             oi.notes,
 
             (
+    SELECT id
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status = 'pending'
+    LIMIT 1
+) AS pending_ticket_item_id,
+
+(
+    SELECT id
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status = 'ready'
+    LIMIT 1
+) AS ready_ticket_item_id,
+
+(
+    SELECT COUNT(*)
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status = 'cancelled'
+) AS cancelled_count,
+
+(
+    SELECT COUNT(*)
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status = 'served'
+) AS served_count,
+
+            (
                 SELECT COALESCE(SUM(quantity),0)
                 FROM kitchen_ticket_items kti
                 WHERE
@@ -352,7 +386,9 @@ exports.getReceipt = async (restaurantId, orderId) => {
     o.order_number,
     o.subtotal,
     o.tax,
-    o.discount,
+    o.discount,(
+    o.subtotal * o.discount / 100
+) AS discountAmount,
     o.total,
     o.payment_method,
     o.paid_at,
@@ -447,21 +483,33 @@ exports.getReceiptItems = async (
         `
         SELECT
 
-            item_name,
+    oi.item_name,
 
-            variant_name,
+    oi.variant_name,
 
-            quantity,
+    oi.quantity,
 
-            unit_price,
+    oi.unit_price,
 
-            total_price
+    oi.total_price
 
-        FROM order_items
+FROM order_items oi
 
-        WHERE order_id = ?
+WHERE
+    oi.order_id = ?
+    AND NOT EXISTS (
 
-        ORDER BY id
+        SELECT 1
+
+        FROM kitchen_ticket_items kti
+
+        WHERE
+            kti.order_item_id = oi.id
+            AND kti.status = 'cancelled'
+
+    )
+
+ORDER BY oi.id
         `,
         [orderId]
     );
@@ -615,6 +663,49 @@ exports.saveReceiptSnapshot = async (
 
             orderId
 
+        ]
+    );
+
+};
+
+exports.updateDiscount = async (
+    orderId,
+    discount
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE orders
+        SET
+            discount = ?
+        WHERE id = ?
+        `,
+        [
+            discount,
+            orderId
+        ]
+    );
+
+};
+exports.updateOrderTotals = async (
+    orderId,
+    totals
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE orders
+        SET
+            subtotal = ?,
+            tax = ?,
+            total = ?
+        WHERE id = ?
+        `,
+        [
+            totals.subtotal,
+            totals.tax,
+            totals.total,
+            orderId
         ]
     );
 

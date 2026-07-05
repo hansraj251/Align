@@ -126,11 +126,11 @@ rowTables.length
 ? rowTables.map(table => `
 
 <div
-class="flex min-w-[220px] flex-col rounded-xl border bg-white p-5 shadow">
+class="flex min-w-[150px] flex-col rounded-lg border bg-white p-3 shadow md:min-w-[220px] md:rounded-xl md:p-5">
 
 <div class="flex items-center justify-between">
 
-<h3 class="text-lg font-bold">
+<h3 class="text-base font-bold md:text-lg">
 
  ${table.name}
 
@@ -152,7 +152,7 @@ ${
 
 </div>
 
-<p class="mt-3 text-slate-500">
+<p class="mt-2 text-xs text-slate-500 md:mt-3 md:text-sm">
 
 👥 ${table.capacity} Seats
 
@@ -162,13 +162,13 @@ ${
 table.status !== "available"
 
 ? `
-<div class="mt-2 font-medium text-red-600">
+<div class="mt-2 text-sm font-medium text-red-600 md:text-base">
 
     ⏱ ${table.minutes ?? 0} min
 
 </div>
 
-<div class="mt-3 rounded-lg bg-slate-50 p-3">
+<div class="mt-3 hidden rounded-lg bg-slate-50 p-3 md:block">
 
 <div class="flex justify-between">
 
@@ -202,7 +202,7 @@ class="w-full rounded-lg ${
 table.status === "available"
 ? "bg-blue-600"
 : "bg-orange-600"
-} py-2 text-white">
+} py-2 text-sm md:text-base text-white">
 
 ${
 table.status === "available"

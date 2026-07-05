@@ -96,3 +96,35 @@ exports.updateTicketItemStatus = async (
     }
 
 };
+
+exports.cancelTicketItem = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await service.cancelTicketItem(
+                req.params.itemId
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

@@ -9,7 +9,8 @@ const {
 } = require("../utils/numberGenerator");  
 const variantRepository =
     require("../repositories/menuVariantRepository"); 
-
+const orderCalculationService =
+    require("./orderCalculationService");
 exports.createKitchenTicket = async (
     orderId,
     items
@@ -221,6 +222,7 @@ exports.updateTicketItemStatus = async (
         ticketItemId,
         status
     );
+    
 
     if (status === "ready") {
 
@@ -239,6 +241,65 @@ exports.updateTicketItemStatus = async (
         }
 
     }
+
+    return {
+
+        success: true
+
+    };
+
+};
+exports.cancelTicketItem = async (
+    ticketItemId
+) => {
+
+    const item =
+        await kitchenRepository.getTicketItem(
+            ticketItemId
+        );
+
+    if (!item) {
+
+        throw new Error(
+            "Kitchen item not found"
+        );
+
+    }
+
+    if (item.status !== "pending") {
+
+        throw new Error(
+            "Only pending items can be cancelled"
+        );
+
+    }
+
+    await kitchenRepository.cancelTicketItem(
+        ticketItemId
+    );
+    const ticket =
+
+        await kitchenRepository.getTicketById(
+
+            item.ticket_id
+
+        );
+
+    const totals =
+
+        await orderCalculationService.calculateOrderTotals(
+
+            ticket.order_id
+
+        );
+
+    await orderRepository.updateOrderTotals(
+
+        ticket.order_id,
+
+        totals
+
+    );
 
     return {
 

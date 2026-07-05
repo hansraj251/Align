@@ -178,10 +178,6 @@ async function loadKitchenOrders() {
 
         </div>
 
-        <p class="mt-4 text-lg font-semibold">
-    ${Align.formatCurrency(ticket.total)}
-</p>
-
         <div class="mt-auto pt-5">
 
 ${

@@ -8,6 +8,8 @@ const settingsRepository =
 
 const orderRepository =
     require("../repositories/orderRepository");
+const orderCalculationService =
+    require("./orderCalculationService");    
 exports.receivePayment = async (
     restaurantId,
     orderId,
@@ -88,6 +90,27 @@ sgst:
     settings?.sgst ?? 2.5
 
     }
+);
+const totals =
+    await orderCalculationService.calculateOrderTotals(
+        orderId
+    );
+
+await db.runAsync(
+    `
+    UPDATE orders
+    SET
+        subtotal = ?,
+        tax = ?,
+        total = ?
+    WHERE id = ?
+    `,
+    [
+        totals.subtotal,
+        totals.tax,
+        totals.total,
+        orderId
+    ]
 );
         await db.runAsync(
             `

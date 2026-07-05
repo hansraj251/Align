@@ -167,13 +167,16 @@ ${Align.formatCurrency(o.tax, 2)}
 
 <span>
 
-Discount
+Discount (${o.discount}%)
 
 </span>
 
 <strong>
 
-${Align.formatCurrency(o.discount, 2)}
+-${Align.formatCurrency(
+    o.discountAmount,
+    2
+)}
 
 </strong>
 

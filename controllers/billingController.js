@@ -7,11 +7,22 @@ exports.getReadyOrders = (req, res) => {
     db.all(
         `
         SELECT
-            o.id,
-            o.order_number,
-            o.total,
-            o.created_at,
-            t.name AS table_name
+
+    o.id,
+
+    o.order_number,
+
+    o.subtotal,
+
+    o.discount,
+
+    o.tax,
+
+    o.total,
+
+    o.created_at,
+
+    t.name AS table_name
         FROM orders o
         JOIN tables t
             ON t.id = o.table_id

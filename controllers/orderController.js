@@ -1,6 +1,10 @@
 const db = require("../db");
 const orderService =
     require("../services/orderService");
+const orderRepository =
+    require("../repositories/orderRepository"); 
+const orderCalculationService =
+    require("../services/orderCalculationService");       
 exports.createOrder = (req, res) => {
 
     const restaurantId = req.user.restaurantId;
@@ -138,6 +142,43 @@ console.error(err);
 
             message: err.message
 
+        });
+
+    }
+
+};
+exports.updateDiscount = async (
+    req,
+    res
+) => {
+
+    try {
+
+        await orderRepository.updateDiscount(
+            req.params.id,
+            req.body.discount
+        );
+
+        const totals =
+            await orderCalculationService.calculateOrderTotals(
+                req.params.id
+            );
+
+        await orderRepository.updateOrderTotals(
+            req.params.id,
+            totals
+        );
+
+        res.json({
+            success: true,
+            totals
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            success: false,
+            message: err.message
         });
 
     }

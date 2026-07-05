@@ -530,7 +530,7 @@ if (cartSheet) {
 
                 <small class="block text-slate-500">
 
-                    ${item.variant_name}
+                    ${item.variant_name || ""}
 
                 </small>
 

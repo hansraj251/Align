@@ -38,6 +38,10 @@ router.get(
     authMiddleware,
     orderController.getOrder
 );
-
+router.patch(
+    "/:id/discount",
+    authMiddleware,
+    orderController.updateDiscount
+);
 
 module.exports = router;

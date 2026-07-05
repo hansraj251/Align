@@ -19,4 +19,9 @@ router.patch(
     authMiddleware,
     kitchenController.updateTicketItemStatus
 );
+router.patch(
+    "/items/:itemId/cancel",
+    authMiddleware,
+    kitchenController.cancelTicketItem
+);
 module.exports = router;

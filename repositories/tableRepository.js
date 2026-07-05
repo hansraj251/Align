@@ -88,7 +88,7 @@ exports.getAll = async (restaurantId) => {
             a.name AS area_name,
 
             o.id AS order_id,
-            o.total,
+            o.subtotal AS total,
 
             COALESCE(
                 SUM(oi.quantity),
@@ -118,7 +118,18 @@ exports.getAll = async (restaurantId) => {
             )
 
         LEFT JOIN order_items oi
-            ON oi.order_id = o.id
+    ON oi.order_id = o.id
+    AND NOT EXISTS (
+
+        SELECT 1
+
+        FROM kitchen_ticket_items kti
+
+        WHERE
+            kti.order_item_id = oi.id
+            AND kti.status = 'cancelled'
+
+    )
 
         WHERE
             t.restaurant_id = ?
