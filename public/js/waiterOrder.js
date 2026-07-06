@@ -426,6 +426,138 @@ function getMenuQty(
     return qty;
 
 }
+function renderMenuControls(
+    item
+) {
+
+    const qty =
+        getMenuQty(item.id);
+
+    return `
+
+<div
+id="menu-controls-${item.id}"
+class="flex items-center gap-2">
+
+${
+qty > 0
+? `
+<button
+onclick="decreaseMenuQty(${item.id})"
+class="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white">
+
+−
+
+</button>
+
+<span class="w-6 text-center font-semibold">
+
+${qty}
+
+</span>
+`
+: ""
+}
+
+<button
+
+onclick="addItem(
+${item.id},
+'${item.name.replace(/'/g,"\\'")}',
+${item.price}
+)"
+
+class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white">
+
++
+
+</button>
+
+</div>
+
+`;
+
+}
+function renderVariantControls(
+    item,
+    variant
+) {
+
+    const qty =
+        getMenuQty(
+            item.id,
+            variant.id
+        );
+
+    return `
+
+<div
+id="variant-controls-${item.id}-${variant.id}"
+class="flex items-center gap-2">
+
+${
+qty > 0
+? `
+<button
+onclick="decreaseQty(${item.id}, ${variant.id})"
+class="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white">
+
+−
+
+</button>
+
+<span class="w-6 text-center font-semibold">
+
+${qty}
+
+</span>
+`
+: ""
+}
+
+<button
+
+onclick="addItem(
+${item.id},
+'${item.name.replace(/'/g,"\\'")}',
+${variant.price},
+${variant.id},
+'${variant.name.replace(/'/g,"\\'")}'
+)"
+
+class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
+
++
+
+</button>
+
+</div>
+
+`;
+
+}
+function updateMenuControls(
+    menuItemId
+) {
+
+    const item =
+        allMenuItems.find(
+            i => i.id === menuItemId
+        );
+
+    if (!item) return;
+
+    const controls =
+        document.getElementById(
+            `menu-controls-${menuItemId}`
+        );
+
+    if (!controls) return;
+
+    controls.outerHTML =
+        renderMenuControls(item);
+
+}
 function renderMenu(items) {
 
     const menu =
@@ -460,7 +592,9 @@ function renderMenu(items) {
 
     html += `
 
-<div class="rounded-lg bg-white p-3 shadow-sm">
+<div
+id="menu-card-${item.id}"
+class="rounded-lg bg-white p-3 shadow-sm">
 
 <div class="flex items-center justify-between">
 
@@ -495,47 +629,7 @@ ${
 
 ${
 !hasVariants
-? `
-<div class="flex items-center gap-2">
-
-${
-qty > 0
-? `
-<button
-
-onclick="decreaseMenuQty(${item.id})"
-
-class="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white">
-
-−
-
-</button>
-
-<span class="w-6 text-center font-semibold">
-
-${qty}
-
-</span>
-`
-: ""
-}
-
-<button
-
-onclick="addItem(
-${item.id},
-'${item.name.replace(/'/g,"\\'")}',
-${item.price}
-)"
-
-class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white">
-
-+
-
-</button>
-
-</div>
-`
+? renderMenuControls(item)
 : ""
 }
 
@@ -550,7 +644,9 @@ hasVariants
 
     return `
 
-<div class="mt-3 flex items-center justify-between rounded-lg border px-2 py-1.5">
+<div
+id="variant-${item.id}-${v.id}"
+class="mt-3 flex items-center justify-between rounded-lg border px-2 py-1.5">
 
 <div>
 
@@ -564,47 +660,7 @@ ${Align.formatCurrency(v.price)}
 
 </div>
 
-<div class="flex items-center gap-2">
-
-${
-variantQty > 0
-? `
-<button
-
-onclick="decreaseQty(${item.id}, ${v.id})"
-
-class="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white">
-
-−
-
-</button>
-
-<span class="w-6 text-center font-semibold">
-
-${variantQty}
-
-</span>
-`
-: ""
-}
-
-<button
-
-onclick="addItem(
-${item.id},
-'${item.name.replace(/'/g,"\\'")}',
-${v.price},
-${v.id},
-'${v.name.replace(/'/g,"\\'")}'
-)"
-
-class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
-
-+
-
-</button>
-
-</div>
+${renderVariantControls(item, v)}
 
 </div>
 
@@ -620,6 +676,39 @@ class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-wh
 });
 
 menu.innerHTML = html;
+
+}
+function updateVariantControls(
+    menuItemId,
+    variantId
+) {
+
+    const item =
+        allMenuItems.find(
+            i => i.id === menuItemId
+        );
+
+    if (!item) return;
+
+    const variant =
+        item.variants.find(
+            v => v.id === variantId
+        );
+
+    if (!variant) return;
+
+    const controls =
+        document.getElementById(
+            `variant-controls-${menuItemId}-${variantId}`
+        );
+
+    if (!controls) return;
+
+    controls.outerHTML =
+        renderVariantControls(
+            item,
+            variant
+        );
 
 }
 function addItem(
@@ -654,7 +743,21 @@ renderCart();
 
 updateCartSummary();
 
-renderMenu(filteredMenuItems);
+if (variantId) {
+
+    updateVariantControls(
+        menuItemId,
+        variantId
+    );
+
+}
+else {
+
+    updateMenuControls(
+        menuItemId
+    );
+
+}
 
 }
 function updateCartSummary() {
@@ -918,11 +1021,25 @@ function increaseQty(
 
 }
 
-    renderCart();
+renderCart();
 
 updateCartSummary();
 
-renderMenu(filteredMenuItems);
+if (variantId) {
+
+    updateVariantControls(
+        menuItemId,
+        variantId
+    );
+
+}
+else {
+
+    updateMenuControls(
+        menuItemId
+    );
+
+}
 
 }
 
@@ -942,9 +1059,25 @@ function decreaseQty(
 
 }
 
-    renderCart();
+renderCart();
+
 updateCartSummary();
-renderMenu(filteredMenuItems);
+
+if (variantId) {
+
+    updateVariantControls(
+        menuItemId,
+        variantId
+    );
+
+}
+else {
+
+    updateMenuControls(
+        menuItemId
+    );
+
+}
 
 }
 function decreaseMenuQty(
@@ -1063,6 +1196,29 @@ ${item.variant_name || ""}
         `
         : ""
     }
+    ${
+    item.cancelled_count > 0
+    ? `
+    <div class="text-red-600 font-medium">
+
+        Cancelled
+
+    </div>
+    `
+    : ""
+}
+
+${
+    item.served_count > 0
+    ? `
+    <div class="text-blue-600 font-medium">
+
+        Served
+
+    </div>
+    `
+    : ""
+}
 
 </div>
 <div class="mt-3 flex gap-2">
@@ -1118,6 +1274,136 @@ item.ready_count > 0
 `).join("")}
 
 `;
+const actionBox =
+    document.getElementById(
+        "orderAction"
+    );
+
+actionBox.classList.add("hidden");
+actionBox.innerHTML = "";
+
+const items =
+    data.order.items;
+
+const pending =
+    items.some(
+        i => i.pending_count > 0
+    );
+
+const preparing =
+    items.some(
+        i => i.preparing_count > 0
+    );
+
+const ready =
+    items.some(
+        i => i.ready_count > 0
+    );
+
+const served =
+    items.some(
+        i => i.served_count > 0
+    );
+
+const cancelled =
+    items.some(
+        i => i.cancelled_count > 0
+    );
+
+actionBox.innerHTML = "";
+actionBox.classList.add("hidden");
+
+if (
+    data.order.status ===
+    "ready_for_billing"
+) {
+
+    actionBox.classList.remove(
+        "hidden"
+    );
+
+    actionBox.innerHTML = `
+
+<button
+    disabled
+    class="w-full rounded-xl bg-amber-500 py-3 font-semibold text-white cursor-not-allowed opacity-80">
+
+    Billing Under Process
+
+</button>
+
+`;
+
+    return;
+
+}
+
+if (
+    !pending &&
+    !preparing &&
+    !ready &&
+    served
+) {
+
+    actionBox.classList.remove("hidden");
+
+    actionBox.innerHTML = `
+
+<button
+    id="sendBillingBtn"
+    class="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white">
+
+    Send To Billing
+
+</button>
+
+`;
+document
+    .getElementById("sendBillingBtn")
+    .addEventListener(
+        "click",
+        () => sendToBilling(
+            data.order.id
+        )
+    );
+
+}
+
+else if (
+
+    !pending &&
+    !preparing &&
+    !ready &&
+    !served &&
+    cancelled
+
+) {
+
+    actionBox.classList.remove("hidden");
+
+    actionBox.innerHTML = `
+
+<button
+    id="closeOrderBtn"
+    class="w-full rounded-xl bg-red-600 py-3 font-semibold text-white">
+
+    Close Order
+
+</button>
+
+`;
+document
+    .getElementById(
+        "closeOrderBtn"
+    )
+    .addEventListener(
+        "click",
+        () => closeCancelledOrder(
+    data.order.ticket_id
+)
+    );
+
+}    
 
 }
 
@@ -1293,6 +1579,114 @@ async function serveItem(ticketItemId) {
         );
 
     }
+
+}
+async function sendToBilling(
+    orderId
+) {
+
+    const button =
+        document.getElementById(
+            "sendBillingBtn"
+        );
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+            "Processing...";
+
+    }
+
+    try {
+
+        const data =
+            await API.patch(
+                `/api/orders/${orderId}/send-to-billing`
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        if (data.alreadyProcessed) {
+
+            await loadCurrentOrder();
+
+            return;
+
+        }
+
+        Toast.show(
+            "Sent To Billing",
+            "success"
+        );
+
+        await loadCurrentOrder();
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+    finally {
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "Send To Billing";
+
+        }
+
+    }
+
+}
+async function closeCancelledOrder(
+    orderId
+) {
+
+    const data =
+        await API.patch(
+            `/api/kitchen/${orderId}/close-cancelled`
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    Toast.show(
+    "Order Closed",
+    "success"
+);
+
+setTimeout(() => {
+
+    window.location.reload();
+
+}, 500);
 
 }
 function selectFoodType(foodType) {

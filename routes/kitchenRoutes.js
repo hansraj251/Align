@@ -24,4 +24,9 @@ router.patch(
     authMiddleware,
     kitchenController.cancelTicketItem
 );
+router.patch(
+    "/:ticketId/close-cancelled",
+    authMiddleware,
+    kitchenController.closeCancelledTicket
+);
 module.exports = router;

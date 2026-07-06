@@ -43,5 +43,10 @@ router.patch(
     authMiddleware,
     orderController.updateDiscount
 );
+router.patch(
+    "/:orderId/send-to-billing",
+    authMiddleware,
+    orderController.sendToBilling
+);
 
 module.exports = router;

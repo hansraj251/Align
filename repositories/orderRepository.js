@@ -177,6 +177,29 @@ exports.getActiveOrderByTable = async (
         return null;
 
     }
+    order.ticket_id =
+(
+    await db.getAsync(
+        `
+        SELECT
+            id
+        FROM kitchen_tickets
+        WHERE
+            order_id = ?
+            AND status IN
+            (
+                'new',
+                'preparing',
+                'ready'
+            )
+        ORDER BY id DESC
+        LIMIT 1
+        `,
+        [
+            order.id
+        ]
+    )
+)?.id || null;
 
     order.items =
     await db.allAsync(
@@ -532,6 +555,38 @@ exports.updateOrderStatus = async (
             orderId
         ]
     );
+
+};
+exports.getActiveOrdersByTable = async (
+    tableId,
+    excludeOrderId
+) => {
+
+    const row =
+        await db.getAsync(
+            `
+            SELECT
+                COUNT(*) AS total
+            FROM orders
+            WHERE
+                table_id = ?
+                AND id != ?
+                AND status IN
+                (
+                    'open',
+                    'sent_to_kitchen',
+                    'preparing',
+                    'ready',
+                    'ready_for_billing'
+                )
+            `,
+            [
+                tableId,
+                excludeOrderId
+            ]
+        );
+
+    return row.total;
 
 };
 exports.getLastOrderNumberForToday = async () => {

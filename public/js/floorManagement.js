@@ -1,5 +1,6 @@
 let floorTables = [];
 let floorAreas = [];
+let selectedAreaId = null;
 async function loadFloorManagement() {
 
     const areaResponse =
@@ -23,182 +24,202 @@ async function loadFloorManagement() {
     }
 floorAreas = areaResponse.areas;
 
-    floorTables = tableResponse.tables;
-    renderAreas(
+floorTables = tableResponse.tables;
 
-        areaResponse.areas,
+if (
 
-        tableResponse.tables
+    !selectedAreaId &&
 
-    );
+    floorAreas.length
+
+) {
+
+    selectedAreaId =
+        floorAreas[0].id;
 
 }
 
-function renderAreas(
-    areas,
-    tables
-) {
+renderAreas();
 
-    const container =
-        document.getElementById("areaList");
+}
 
-    container.innerHTML = "";
+function renderAreas() {
 
-    areas.forEach(area => {
+    const tabContainer =
+        document.getElementById("areaTabs");
 
-        const areaTables =
-            tables.filter(
-                table =>
-                    table.area_id === area.id
-            );
+    const tableContainer =
+        document.getElementById("tableList");
 
-        const card =
+    tabContainer.innerHTML = "";
+    tableContainer.innerHTML = "";
+
+    // Area Tabs
+    floorAreas.forEach(area => {
+
+        tabContainer.innerHTML += `
+
+<button
+    onclick="selectArea(${area.id})"
+    class="rounded-lg px-4 py-2 font-medium ${
+        selectedAreaId === area.id
+            ? "bg-blue-600 text-white"
+            : "border bg-white"
+    }">
+
+    ${area.name}
+
+</button>
+
+`;
+
+    });
+
+    // Selected Area Tables
+    const areaTables =
+        floorTables.filter(
+            table =>
+                table.area_id === selectedAreaId
+        );
+
+    if (areaTables.length === 0) {
+
+        tableContainer.innerHTML = `
+
+<div class="col-span-full rounded-xl bg-white p-8 text-center shadow">
+
+    No tables found.
+
+</div>
+
+`;
+
+        return;
+
+    }
+
+    areaTables.forEach(table => {
+
+        const row =
             document.createElement("div");
 
-        card.className =
-            "rounded-xl bg-white p-6 shadow";
+        row.className =
+            "rounded-lg border bg-white p-4 shadow";
 
-        card.innerHTML = `
-<div class="mb-5 flex items-center justify-between">
+        row.innerHTML = `
 
-    <h2 class="text-xl font-bold">
+<div class="space-y-3">
 
-        ${area.name}
+    <div class="flex items-center justify-between">
 
-    </h2>
+        <div>
 
-    <div class="flex gap-2">
+            <h3 class="text-lg font-semibold">
+
+                ${table.name}
+
+            </h3>
+
+            <p class="mt-1 text-sm text-slate-500">
+
+                👥 ${table.capacity} Seats
+
+            </p>
+
+        </div>
+
+        <span class="${
+            table.status === "available"
+                ? "text-green-600"
+                : "text-red-600"
+        } font-medium">
+
+            ${
+                table.status === "available"
+                    ? "🟢 Available"
+                    : "🔴 Occupied"
+            }
+
+        </span>
+
+    </div>
+
+    <div class="flex flex-wrap gap-2">
 
         <button
-            onclick="editArea(${area.id}, '${area.name}')"
-            class="rounded bg-amber-500 px-3 py-2 text-white">
+            onclick="editTable(${table.id})"
+            class="flex-1 rounded bg-amber-500 px-3 py-2 text-white">
 
             ✏️ Edit
 
         </button>
 
         <button
-            onclick="deleteArea(${area.id})"
-            class="rounded bg-red-600 px-3 py-2 text-white">
+            onclick="deleteTable(${table.id})"
+            class="flex-1 rounded bg-red-600 px-3 py-2 text-white">
 
-            🗑
+            🗑 Delete
 
         </button>
 
-        <button
+    </div>
 
-    onclick="openAddTableModal(${area.id}, '${area.name}')"
+</div>
 
+`;
+
+const actionContainer =
+    document.getElementById(
+        "areaActions"
+    );
+
+const currentArea =
+    floorAreas.find(
+        area =>
+            area.id === selectedAreaId
+    );
+
+actionContainer.innerHTML = `
+
+<button
+    onclick="editArea(${currentArea.id}, '${currentArea.name}')"
+    class="rounded bg-amber-500 px-4 py-2 text-white">
+
+    ✏️ Edit Area
+
+</button>
+
+<button
+    onclick="deleteArea(${currentArea.id})"
+    class="rounded bg-red-600 px-4 py-2 text-white">
+
+    🗑 Delete Area
+
+</button>
+
+<button
+    onclick="openAddTableModal(${currentArea.id}, '${currentArea.name}')"
     class="rounded bg-blue-600 px-4 py-2 text-white">
 
     + Add Table
 
 </button>
 
-    </div>
-
-</div>
-
-<div class="grid grid-cols-2 gap-3 xl:grid-cols-4">
-
-</div>
 `;
 
-        const list =
-    card.querySelector(
-        ".grid"
-    );
-
-        if (
-            areaTables.length === 0
-        ) {
-
-            list.innerHTML =
-                `
-<p class="text-slate-500">
-
-No tables found.
-
-</p>
-`;
-
-        } else {
-
-            areaTables.forEach(table => {
-
-                const row =
-                    document.createElement(
-                        "div"
-                    );
-
-                row.className =
-                    "flex items-center justify-between rounded-lg border p-4";
-
-                row.innerHTML = `
-<div>
-
-    <h3 class="font-semibold">
-
-         ${table.name}
-
-    </h3>
-
-    <p class="mt-1 text-sm text-slate-500">
-
-        👥 ${table.capacity} Seats
-
-    </p>
-
-</div>
-
-<div class="flex items-center gap-3">
-
-    <span class="${
-        table.status === "available"
-            ? "text-green-600"
-            : "text-red-600"
-    }">
-
-        ${
-            table.status === "available"
-                ? " Available"
-                : " Occupied"
-        }
-
-    </span>
-
-    <button
-        onclick="editTable(${table.id})"
-        class="rounded bg-amber-500 px-3 py-2 text-white">
-
-        ✏️ Edit
-
-    </button>
-
-    <button
-        onclick="deleteTable(${table.id})"
-        class="rounded bg-red-600 px-3 py-2 text-white">
-
-        🗑
-
-    </button>
-
-</div>
-`;
-
-                list.appendChild(
-                    row
-                );
-
-            });
-
-        }
-
-        container.appendChild(
-            card
-        );
+        tableContainer.appendChild(row);
 
     });
+
+    
+    
+
+}
+function selectArea(id) {
+
+    selectedAreaId = id;
+
+    renderAreas();
 
 }
 document

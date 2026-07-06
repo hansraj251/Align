@@ -184,3 +184,34 @@ exports.updateDiscount = async (
     }
 
 };
+exports.sendToBilling = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await orderService.sendToBilling(
+                req.params.orderId
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

@@ -305,3 +305,55 @@ exports.getOrderHistory = async (
     };
 
 };
+exports.sendToBilling = async (
+    orderId
+) => {
+
+    const activeTickets =
+        await kitchenRepository.getActiveTicketsByOrder(
+            orderId
+        );
+        console.log("orderId =", orderId);
+
+    // Pehle hi process ho chuka hai
+    if (activeTickets.length === 0) {
+
+        return {
+
+            success: true,
+
+            alreadyProcessed: true
+
+        };
+
+    }
+
+    for (const ticket of activeTickets) {
+
+        // Ready items ko served karo
+        await kitchenRepository.updateTicketItemsStatus(
+            ticket.id,
+            "served"
+        );
+
+        // Ticket close karo
+        await kitchenRepository.updateTicketStatus(
+            ticket.id,
+            "served"
+        );
+
+    }
+
+    // Order billing me bhejo
+    await orderRepository.updateOrderStatus(
+        orderId,
+        "ready_for_billing"
+    );
+
+    return {
+
+        success: true
+
+    };
+
+};

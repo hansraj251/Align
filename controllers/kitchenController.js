@@ -128,3 +128,34 @@ exports.cancelTicketItem = async (
     }
 
 };
+exports.closeCancelledTicket = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await service.closeCancelledTicket(
+                req.params.ticketId
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

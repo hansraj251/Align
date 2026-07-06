@@ -259,15 +259,43 @@ exports.getTicketById = async (
 
     return await db.getAsync(
         `
-        SELECT
-            id,
-            order_id,
-            status
-        FROM kitchen_tickets
-        WHERE id = ?
+       SELECT
+    kt.id,
+    kt.order_id,
+    kt.status,
+    o.table_id
+FROM kitchen_tickets kt
+JOIN orders o
+    ON o.id = kt.order_id
+WHERE kt.id = ?
         `,
         [
             ticketId
+        ]
+    );
+
+};
+exports.getActiveTicketsByOrder = async (
+    orderId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+            id
+        FROM kitchen_tickets
+        WHERE
+            order_id = ?
+            AND status IN (
+    'new',
+    'preparing',
+    'ready',
+    'served'
+)
+        ORDER BY id
+        `,
+        [
+            orderId
         ]
     );
 
@@ -539,6 +567,22 @@ exports.cancelTicketItem = async (
             AND status = 'pending'
         `,
         [ticketItemId]
+    );
+
+};
+exports.closeTicket = async (
+    ticketId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_tickets
+        SET
+            status = 'closed'
+        WHERE
+            id = ?
+        `,
+        [ticketId]
     );
 
 };

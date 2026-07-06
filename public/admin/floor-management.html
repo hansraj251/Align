@@ -16,22 +16,22 @@
 
 <body class="bg-slate-100">
 
-<main class="min-h-screen bg-slate-100 p-8">
-    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4 shadow-sm">
+<main class="min-h-screen bg-slate-100 p-3 sm:p-5 lg:p-8">
+    <div class="sticky top-0 z-30 -mx-3 sm:-mx-5 lg:-mx-8 -mt-3 sm:-mt-5 lg:-mt-8 mb-4 bg-slate-100 px-3 sm:px-5 lg:px-8 pt-3 sm:pt-5 lg:pt-8 pb-4 shadow-sm">
 
-    <div class="flex items-center gap-3">
+    <div class="flex flex-wrap gap-2">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-slate-800">
 
-            ← Dashboard
+            Dashboard
 
         </a>
 
         <a
             href="/admin/categories.html"
-            class="rounded-lg bg-indigo-600 px-5 py-3 font-medium text-white hover:bg-indigo-700">
+            class="rounded-lg bg-indigo-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-indigo-700">
 
             Categories
 
@@ -39,7 +39,7 @@
 
         <a
             href="/admin/menu-items.html"
-            class="rounded-lg bg-emerald-600 px-5 py-3 font-medium text-white hover:bg-emerald-700">
+            class="rounded-lg bg-emerald-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-emerald-700">
 
             Menu Items
 
@@ -47,9 +47,9 @@
 
         <button
             id="addAreaBtn"
-            class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white hover:bg-blue-700">
+            class="rounded-lg bg-blue-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white hover:bg-blue-700">
 
-            + Add Area
+            Add Area
 
         </button>
 
@@ -57,12 +57,27 @@
 
 </div>
         <div
-            id="areaList"
-            class="space-y-6">
+    id="areaTabs"
+    class="mb-4 flex flex-wrap gap-2">
 
-            Loading...
+</div>
+<div
+    id="areaActions"
+    class="mb-4 flex flex-wrap gap-2">
 
-        </div>
+</div>
+
+<div
+    id="tableList"
+    class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+
+</div>
+
+<div
+    id="tableList"
+    class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+
+</div>
 
     </main>
     <div id="modalContainer"></div>

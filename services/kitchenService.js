@@ -4,6 +4,8 @@ const menuRepository =
     require("../repositories/menuRepository");    
 const orderRepository =
     require("../repositories/orderRepository");
+const tableRepository =
+    require("../repositories/tableRepository");    
 const {
     generateNumber
 } = require("../utils/numberGenerator");  
@@ -176,19 +178,19 @@ await kitchenRepository.updateTicketItemsStatus(
         "served"
 
     );
-    const activeTickets =
-        await kitchenRepository.getActiveTicketCountByOrder(
-            ticket.order_id
-        );
+    // const activeTickets =
+    //     await kitchenRepository.getActiveTicketCountByOrder(
+    //         ticket.order_id
+    //     );
 
-    if (activeTickets === 0) {
+    // if (activeTickets === 0) {
 
-        await orderRepository.updateOrderStatus(
-            ticket.order_id,
-            "ready_for_billing"
-        );
+    //     await orderRepository.updateOrderStatus(
+    //         ticket.order_id,
+    //         "ready_for_billing"
+    //     );
 
-    }
+    // }
 
 }
 
@@ -300,6 +302,53 @@ exports.cancelTicketItem = async (
         totals
 
     );
+
+    return {
+
+        success: true
+
+    };
+
+};
+exports.closeCancelledTicket = async (
+    ticketId
+) => {
+
+    const ticket =
+        await kitchenRepository.getTicketById(
+            ticketId
+        );
+
+    if (!ticket) {
+
+        throw new Error(
+            "Kitchen ticket not found"
+        );
+
+    }
+
+    await kitchenRepository.closeTicket(
+        ticketId
+    );
+
+    const activeTickets =
+    await kitchenRepository.getActiveTicketCountByOrder(
+        ticket.order_id
+    );
+
+if (activeTickets === 0) {
+
+    await orderRepository.updateOrderStatus(
+        ticket.order_id,
+        "closed"
+    );
+
+    await tableRepository.updateStatus(
+        ticket.table_id,
+        "available"
+    );
+
+}
 
     return {
 

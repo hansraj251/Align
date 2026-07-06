@@ -143,11 +143,24 @@ function printReceipt(orderId) {
 
 }
 
-document
-    .getElementById("searchBtn")
-    .addEventListener(
-        "click",
-        loadOrders
+const fromDate =
+    document.getElementById(
+        "fromDate"
     );
+
+const toDate =
+    document.getElementById(
+        "toDate"
+    );
+
+fromDate.addEventListener(
+    "change",
+    loadOrders
+);
+
+toDate.addEventListener(
+    "change",
+    loadOrders
+);
 
 loadOrders();

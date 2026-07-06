@@ -82,6 +82,23 @@ async function loadKitchenOrders() {
     }
 
     data.tickets.forEach(ticket => {
+    const pendingItems =
+    (ticket.items || []).filter(
+        item => item.status === "pending"
+    ).length;
+
+const cancelledItems =
+    (ticket.items || []).filter(
+        item => item.status === "cancelled"
+    ).length;
+
+const totalItems =
+    (ticket.items || []).length;
+
+const allCancelled =
+    totalItems > 0 &&
+    cancelledItems === totalItems;
+
         const itemsHtml = (ticket.items || [])
 .map(item => `
 <div class="border-b py-3 last:border-b-0">
@@ -159,33 +176,34 @@ async function loadKitchenOrders() {
         ? "border-l-4 border-orange-500"
         : "border-l-4 border-green-500";
         container.innerHTML += `
-    <div class="${borderClass} flex h-full flex-col rounded-xl bg-white p-6 shadow">
+    <div class="${borderClass} flex flex-col rounded-xl bg-white p-4 lg:p-5 shadow max-h-[520px]">
 
-        <h2 class="text-xl font-bold">
+        <h2 class="text-lg sm:text-lg lg:text-xl xl:text-2xl font-bold">
             ${
                 ticket.ticket_number ||
                 ("Order #" + ticket.id)
             }
         </h2>
 
-        <p class="mt-2 text-slate-500">
+        <p class="mt-2 text-sm lg:text-base text-slate-500">
              ${ticket.table_name}
         </p>
 
-        <div class="mt-4 border-t border-b py-3">
+        <div class="mt-4 flex-1 overflow-y-auto border-t border-b py-3">
 
-            ${itemsHtml}
+    ${itemsHtml}
 
-        </div>
+</div>
 
-        <div class="mt-auto pt-5">
+        <div class="mt-1 text-sm lg:text-base">
 
 ${
-ticket.status === "new"
+ticket.status === "new" &&
+pendingItems > 0
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'preparing')"
-    class="w-full rounded-lg bg-orange-500 py-3 text-white">
+    class="w-full rounded-lg bg-orange-500 py-2.5 sm:py-3 text-sm sm:text-base text-white">
 
     Start Preparing
 
@@ -195,24 +213,16 @@ ticket.status === "new"
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'ready')"
-    class="w-full rounded-lg bg-green-600 py-3 text-white">
+    class="w-full rounded-lg bg-green-600 py-2.5 sm:py-3 text-sm sm:text-base text-white">
 
     Mark Ready
 
 </button>
 `
-: ticket.status === "ready"
-? `
-<button
-    onclick="updateStatus(${ticket.id}, 'served')"
-    class="w-full rounded-lg bg-blue-600 py-3 text-white">
 
-    Served
-
-</button>
-`
 : ""
 }
+
 
 </div>
 
@@ -224,6 +234,34 @@ ticket.status === "new"
 }
 
 loadKitchenOrders();
+async function closeCancelledTicket(
+    ticketId
+) {
+
+    const data =
+        await API.patch(
+            `/api/kitchen/${ticketId}/close-cancelled`
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    Toast.show(
+        "Cancelled KOT closed",
+        "success"
+    );
+
+    loadKitchenOrders();
+
+}
 
 setInterval(
     loadKitchenOrders,
@@ -248,10 +286,27 @@ async function updateStatus(
 
     }
 
-    Toast.show(
-    status === "preparing"
-        ? "Cooking started"
-        : "Order is ready"
+    let message = "";
+
+if (status === "preparing") {
+
+    message = "Cooking started";
+
+}
+else if (status === "ready") {
+
+    message = "Order is ready";
+
+}
+else if (status === "served") {
+
+    message = "Sent to Billing";
+
+}
+
+Toast.show(
+    message,
+    "success"
 );
 
     loadKitchenOrders();
