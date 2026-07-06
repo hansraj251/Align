@@ -122,7 +122,7 @@ async function loadBillingOrders() {
                     onclick="payOrder(${order.id})"
                     class="mt-6 w-full rounded-lg bg-green-600 py-3 text-white">
 
-                    Mark Paid
+                    Print Bill
 
                 </button>
 

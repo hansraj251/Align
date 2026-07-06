@@ -107,39 +107,49 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl
         <div
     class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl">
 
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between gap-2">
 
-        <div>
+    <div>
 
-            <div
-                id="cartItems"
-                class="text-sm font-semibold">
+        <div
+            id="cartItems"
+            class="text-sm font-semibold">
 
-                0 Items
-
-            </div>
-
-            <div
-                id="cartTotal"
-                class="text-xs text-slate-500">
-
-               0
-
-            </div>
+            0 Items
 
         </div>
 
+        <div
+            id="cartTotal"
+            class="text-xs text-slate-500">
+
+            ₹0
+
+        </div>
+
+    </div>
+
+    <div class="flex gap-2">
+
         <button
-
             id="viewCartBtn"
+            class="rounded-xl bg-slate-700 px-4 py-2.5 text-sm font-semibold text-white">
 
-            class="rounded-xl bg-blue-600 px-5 py-2.5 text-xs text-sm font-semibold text-white">
+            View Order
 
-            View Cart
+        </button>
+
+        <button
+            id="sendKitchenBtnBottom"
+            class="rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white">
+
+            Send To Kitchen
 
         </button>
 
     </div>
+
+</div>
 
 </div>
 
@@ -181,12 +191,12 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl
         class="hidden border-b px-3 py-3">
     </div>
 
-    <div
+    <!-- <div
         id="cartItemsList"
         class="space-y-3 px-3 py-2">
-    </div>
+    </div> -->
 
-</div>
+<!-- </div>
 
         <div class="border-t px-3 py-2">
 
@@ -216,7 +226,7 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl
 
     </div>
 
-</div>
+</div> -->
 
 <script src="/js/api.js"></script>
 <script src="/js/toast.js"></script>

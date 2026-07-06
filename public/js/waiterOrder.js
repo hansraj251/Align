@@ -41,7 +41,7 @@ async function initialize() {
 
 
 initialize();
-console.count("initialize");
+
 
 
 document
@@ -70,13 +70,26 @@ if (sendKitchenBtn) {
     );
 
 }
+const sendKitchenBtnBottom =
+    document.getElementById(
+        "sendKitchenBtnBottom"
+    );
 
-document
-    .getElementById("checkoutBtn")
-    .addEventListener(
+if (sendKitchenBtnBottom) {
+
+    sendKitchenBtnBottom.addEventListener(
         "click",
         sendToKitchen
-    );    
+    );
+
+}
+
+// document
+//     .getElementById("checkoutBtn")
+//     .addEventListener(
+//         "click",
+//         sendToKitchen
+//     );    
 setInterval(
 
     loadCurrentOrder,
@@ -98,10 +111,14 @@ async function sendToKitchen() {
     }
 
     const sendButton =
-    document.getElementById("sendKitchenBtn");
+    document.getElementById(
+        "sendKitchenBtnBottom"
+    );
 
 const cartButton =
-    document.getElementById("checkoutBtn");
+    document.getElementById(
+        "checkoutBtn"
+    );
 
 if (sendButton) {
 
@@ -156,34 +173,35 @@ if (cartButton) {
 
         Align.Order.cart.clear();
 
-        if (typeof updateCartSummary === "function") {
+renderCart();
 
-    updateCartSummary();
+updateCartSummary();
 
-}
+renderMenu(filteredMenuItems);
 
-        if (typeof closeCart === "function") {
+if (typeof closeCart === "function") {
 
     closeCart();
 
 }
 
-        if (typeof loadCurrentOrder === "function") {
+if (typeof loadCurrentOrder === "function") {
 
     await loadCurrentOrder();
 
 }
 
-        if (typeof loadTable === "function") {
+if (typeof loadTable === "function") {
 
     await loadTable();
 
 }
 
-        Toast.show(
-            "Order sent successfully",
-            "success"
-        );
+Toast.show(
+    "Order sent successfully",
+    "success"
+);
+        
 
     }
     catch (err) {
@@ -380,6 +398,34 @@ renderFoodTypes();
 applyFilters();
 
 }
+function getMenuQty(
+    menuItemId,
+    variantId = null
+) {
+
+    let qty = 0;
+
+    Align.Order.state.cart.forEach(item => {
+
+        if (
+
+            item.menu_item_id === menuItemId
+
+            &&
+
+            (item.variant_id || null) === (variantId || null)
+
+        ) {
+
+            qty += item.quantity;
+
+        }
+
+    });
+
+    return qty;
+
+}
 function renderMenu(items) {
 
     const menu =
@@ -388,26 +434,31 @@ function renderMenu(items) {
         );
 
     menu.innerHTML = "";
+    let html = "";
 
     if (!items.length) {
 
-        menu.innerHTML = `
+    menu.innerHTML = `
         <div class="rounded-xl bg-white p-6 text-center">
+
             No menu items
+
         </div>
-        `;
+    `;
 
-        return;
+    return;
 
-    }
+}
 
    items.forEach(item => {
+    
 
     const hasVariants =
         item.variants &&
         item.variants.length;
+        const qty = getMenuQty(item.id);
 
-    menu.innerHTML += `
+    html += `
 
 <div class="rounded-lg bg-white p-3 shadow-sm">
 
@@ -445,6 +496,30 @@ ${
 ${
 !hasVariants
 ? `
+<div class="flex items-center gap-2">
+
+${
+qty > 0
+? `
+<button
+
+onclick="decreaseMenuQty(${item.id})"
+
+class="flex h-9 w-9 items-center justify-center rounded-full bg-red-600 text-white">
+
+−
+
+</button>
+
+<span class="w-6 text-center font-semibold">
+
+${qty}
+
+</span>
+`
+: ""
+}
+
 <button
 
 onclick="addItem(
@@ -453,11 +528,13 @@ ${item.id},
 ${item.price}
 )"
 
-class="rounded-lg h-9 w-9 rounded-full text-blue-600 transition hover:bg-blue-200 hover:text-blue-700">
+class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white">
 
 +
 
 </button>
+
+</div>
 `
 : ""
 }
@@ -466,7 +543,12 @@ class="rounded-lg h-9 w-9 rounded-full text-blue-600 transition hover:bg-blue-20
 
 ${
 hasVariants
-? item.variants.map(v => `
+? item.variants.map(v => {
+
+    const variantQty =
+        getMenuQty(item.id, v.id);
+
+    return `
 
 <div class="mt-3 flex items-center justify-between rounded-lg border px-2 py-1.5">
 
@@ -482,6 +564,30 @@ ${Align.formatCurrency(v.price)}
 
 </div>
 
+<div class="flex items-center gap-2">
+
+${
+variantQty > 0
+? `
+<button
+
+onclick="decreaseQty(${item.id}, ${v.id})"
+
+class="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-white">
+
+−
+
+</button>
+
+<span class="w-6 text-center font-semibold">
+
+${variantQty}
+
+</span>
+`
+: ""
+}
+
 <button
 
 onclick="addItem(
@@ -492,7 +598,7 @@ ${v.id},
 '${v.name.replace(/'/g,"\\'")}'
 )"
 
-class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 h-8 w-8 ">
+class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
 
 +
 
@@ -500,7 +606,10 @@ class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700
 
 </div>
 
-`).join("")
+</div>
+
+`;
+}).join("")
 : ""
 }
 
@@ -509,6 +618,8 @@ class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700
 `;
 
 });
+
+menu.innerHTML = html;
 
 }
 function addItem(
@@ -540,6 +651,10 @@ function addItem(
 }
 
 renderCart();
+
+updateCartSummary();
+
+renderMenu(filteredMenuItems);
 
 }
 function updateCartSummary() {
@@ -644,118 +759,147 @@ function closeCart() {
         .classList.add("hidden");
 
 }
+// function renderCart() {
+
+//     const container =
+//         document.getElementById(
+//             "cartItemsList"
+//         );
+
+//     container.innerHTML = "";
+
+//     if (
+//         !Align.Order.state.cart.length
+//     ) {
+
+//         container.innerHTML = `
+
+// <div class="rounded-xl border border-dashed p-6 text-center text-slate-500">
+
+// Cart is empty
+
+// </div>
+
+// `;
+
+//     }
+
+//     Align.Order.state.cart.forEach(item => {
+
+//         container.innerHTML += `
+
+// <div class="rounded-xl border px-3 py-2">
+
+// <div class="flex justify-between">
+
+// <div>
+
+// <div class="text-sm font-semibold">
+
+// ${item.item_name}
+
+// </div>
+
+// <div class="text-xs text-slate-500">
+
+// ${item.variant_name || ""}
+
+// </div>
+
+// </div>
+
+// <div>
+
+// ${Align.formatCurrency(item.unit_price)}
+
+// </div>
+
+// </div>
+
+// <div class="mt-4 flex items-center justify-between">
+
+// <button
+
+// onclick="decreaseQty(
+
+// ${item.menu_item_id},
+
+// ${item.variant_id ?? "null"}
+
+// )"
+
+// class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 px-3 py-1">
+
+// −
+
+// </button>
+
+// <strong>
+
+// ${item.quantity}
+
+// </strong>
+
+// <button
+
+// onclick="increaseQty(
+
+// ${item.menu_item_id},
+
+// ${item.variant_id ?? "null"}
+
+// )"
+
+// class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 px-3 py-1 ">
+
+// +
+
+// </button>
+
+// </div>
+
+// </div>
+
+// `;
+
+//     });
+
+//     document.getElementById(
+//     "cartTotal"
+// ).textContent =
+//     Align.formatCurrency(
+//         Align.Order.cart.total(),
+//         2
+//     );
+
+// }
 function renderCart() {
 
-    const container =
-        document.getElementById(
-            "cartItemsList"
-        );
+    const cartTotal =
+        document.getElementById("cartTotal");
 
-    container.innerHTML = "";
+    if (cartTotal) {
 
-    if (
-        !Align.Order.state.cart.length
-    ) {
-
-        container.innerHTML = `
-
-<div class="rounded-xl border border-dashed p-6 text-center text-slate-500">
-
-Cart is empty
-
-</div>
-
-`;
+        cartTotal.textContent =
+            Align.formatCurrency(
+                Align.Order.cart.total(),
+                2
+            );
 
     }
 
-    Align.Order.state.cart.forEach(item => {
+    const cartSheetTotal =
+        document.getElementById("cartSheetTotal");
 
-        container.innerHTML += `
+    if (cartSheetTotal) {
 
-<div class="rounded-xl border px-3 py-2">
+        cartSheetTotal.textContent =
+            Align.formatCurrency(
+                Align.Order.cart.total(),
+                2
+            );
 
-<div class="flex justify-between">
-
-<div>
-
-<div class="text-sm font-semibold">
-
-${item.item_name}
-
-</div>
-
-<div class="text-xs text-slate-500">
-
-${item.variant_name || ""}
-
-</div>
-
-</div>
-
-<div>
-
-${Align.formatCurrency(item.unit_price)}
-
-</div>
-
-</div>
-
-<div class="mt-4 flex items-center justify-between">
-
-<button
-
-onclick="decreaseQty(
-
-${item.menu_item_id},
-
-${item.variant_id ?? "null"}
-
-)"
-
-class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 px-3 py-1">
-
-−
-
-</button>
-
-<strong>
-
-${item.quantity}
-
-</strong>
-
-<button
-
-onclick="increaseQty(
-
-${item.menu_item_id},
-
-${item.variant_id ?? "null"}
-
-)"
-
-class="rounded-lg text-blue-600 transition hover:bg-blue-200 hover:text-blue-700 px-3 py-1 ">
-
-+
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-    });
-
-    document.getElementById(
-    "cartTotal"
-).textContent =
-    Align.formatCurrency(
-        Align.Order.cart.total(),
-        2
-    );
+    }
 
 }
 function increaseQty(
@@ -776,6 +920,10 @@ function increaseQty(
 
     renderCart();
 
+updateCartSummary();
+
+renderMenu(filteredMenuItems);
+
 }
 
 function decreaseQty(
@@ -795,8 +943,18 @@ function decreaseQty(
 }
 
     renderCart();
+updateCartSummary();
+renderMenu(filteredMenuItems);
 
 }
+function decreaseMenuQty(
+    menuItemId
+) {
+
+    decreaseQty(menuItemId);
+
+}
+
 async function loadCurrentOrder() {
 
     const data =
