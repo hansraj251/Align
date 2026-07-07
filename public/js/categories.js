@@ -1,4 +1,5 @@
 let editingCategoryId = null;
+let allCategories = [];
 const token = localStorage.getItem("token");
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
@@ -11,14 +12,27 @@ async function loadCategories() {
 
     const list = document.getElementById("categoryList");
 
+    if (!data.success) {
+
+    list.innerHTML = "<p>Unable to load categories.</p>";
+
+    return;
+
+}
+
+allCategories = data.categories;
+
+renderCategories(allCategories);
+
+}
+function renderCategories(categories) {
+
+    const list =
+        document.getElementById("categoryList");
+
     list.innerHTML = "";
 
-    if (!data.success) {
-        list.innerHTML = "<p>Unable to load categories.</p>";
-        return;
-    }
-
-    data.categories.forEach(category => {
+    categories.forEach(category => {
 
         list.innerHTML += `
 
@@ -255,3 +269,28 @@ document
         "click",
         cancelEdit
     );
+
+document
+    .getElementById("categorySearch")
+    .addEventListener(
+        "input",
+        e => {
+
+            const search =
+                e.target.value
+                    .toLowerCase()
+                    .trim();
+
+            const filtered =
+                allCategories.filter(category =>
+                    category.name
+                        .toLowerCase()
+                        .includes(search)
+                );
+
+            renderCategories(
+                filtered
+            );
+
+        }
+    );    

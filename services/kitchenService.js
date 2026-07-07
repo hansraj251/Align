@@ -178,19 +178,19 @@ await kitchenRepository.updateTicketItemsStatus(
         "served"
 
     );
-    // const activeTickets =
-    //     await kitchenRepository.getActiveTicketCountByOrder(
-    //         ticket.order_id
-    //     );
+    const activeTickets =
+        await kitchenRepository.getActiveTicketCountByOrder(
+            ticket.order_id
+        );
 
-    // if (activeTickets === 0) {
+    if (activeTickets === 0) {
 
-    //     await orderRepository.updateOrderStatus(
-    //         ticket.order_id,
-    //         "ready_for_billing"
-    //     );
+        await orderRepository.updateOrderStatus(
+            ticket.order_id,
+            "ready_for_billing"
+        );
 
-    // }
+    }
 
 }
 

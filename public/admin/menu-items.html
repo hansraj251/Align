@@ -19,16 +19,15 @@
 <main class="min-h-screen bg-slate-100 p-3 sm:p-5 lg:p-8">
 <div class="sticky top-0 z-30 -mx-3 sm:-mx-5 lg:-mx-8 -mt-3 sm:-mt-5 lg:-mt-8 mb-4 bg-slate-100 px-3 sm:px-5 lg:px-8 pt-3 sm:pt-5 lg:pt-8 pb-4 shadow-sm">
 
-    <div class="mb-4 space-y-3">
+    <div class="mb-4">
 
-    <!-- Row 1 -->
-    <div class="flex flex-wrap gap-2">
+    <div class="flex flex-wrap items-center gap-2">
 
         <a
             href="/admin/dashboard.html"
             class="rounded-lg bg-slate-700 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-slate-800">
 
-            Dashboard
+            ←
 
         </a>
 
@@ -36,46 +35,17 @@
             href="/admin/categories.html"
             class="rounded-lg bg-indigo-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-indigo-700">
 
-            Categories
-
-        </a>
-
-        <a
-            href="/admin/floor-management.html"
-            class="rounded-lg bg-emerald-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-emerald-700">
-
-            Manage Areas
+            ← Categories
 
         </a>
 
         <input
-            id="itemId"
-            type="hidden">
-
-        <button
-            id="saveItemBtn"
-            class="rounded-lg bg-blue-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white hover:bg-blue-700">
-
-            Save Item
-
-        </button>
-
-        <button
-            id="cancelEditBtn"
-            class="hidden rounded-lg border border-slate-300 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold hover:bg-slate-100">
-
-            Cancel
-
-        </button>
+            id="menuSearch"
+            type="text"
+            placeholder="Search menu items..."
+            class="min-w-[220px] flex-1 rounded-lg border border-slate-300 px-4 py-3">
 
     </div>
-
-    <!-- Row 2 -->
-    <input
-        id="menuSearch"
-        type="text"
-        placeholder="Search menu items..."
-        class="w-full rounded-lg border border-slate-300 px-4 py-3">
 
 </div>
 
@@ -194,12 +164,37 @@
     </select>
 
 </div>
+<div class="col-span-2 lg:col-span-4 flex gap-2">
+
+        <button
+            id="saveItemBtn"
+            class="flex-1 rounded-lg bg-blue-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold text-white hover:bg-blue-700">
+
+            Save Item
+
+        </button>
+        <input
+            id="itemId"
+            type="hidden">
+
+        <button
+            id="cancelEditBtn"
+            class="hidden flex-1 rounded-lg border border-slate-300 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-semibold hover:bg-slate-100">
+
+            Cancel
+
+        </button>
+        </div>
+
 
     </div>
 
 
 </div>
+
 </div>
+
+
 <div class="mt-3 min-h-0 flex flex-1 flex-col">
 
     <div

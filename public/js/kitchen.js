@@ -35,7 +35,7 @@ async function setupBackButton() {
         if (area) {
 
             backBtn.textContent =
-                `← ${area.name}`;
+                ` ${area.name}`;
 
         }
 

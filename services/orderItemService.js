@@ -47,10 +47,10 @@ exports.updateStatus = async (
                 "ready"
             );
 
-            // await orderRepository.updateOrderStatus(
-            //     order.order_id,
-            //     "ready_for_billing"
-            // );
+            await orderRepository.updateOrderStatus(
+                order.order_id,
+                "ready_for_billing"
+            );
 
         }
 

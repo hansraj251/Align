@@ -105,7 +105,9 @@ function renderMenuItems(items) {
 
         list.innerHTML += `
 
-<div class="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
+<div 
+id="menu-card-${item.id}"
+class="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
 
     <div class="mb-4 flex items-start justify-between">
 
@@ -552,16 +554,10 @@ async function toggleAvailability(
 
     const data =
         await API.patch(
-
             `/api/menu/items/${id}/availability`,
-
             {
-
-                is_available:
-                    value
-
+                is_available: value
             }
-
         );
 
     if (!data.success) {
@@ -575,7 +571,27 @@ async function toggleAvailability(
 
     }
 
-    await loadMenuItems();
+    const item =
+        allMenuItems.find(
+            i => i.id === id
+        );
+
+    if (item) {
+
+        item.is_available = value;
+
+    }
+
+    renderMenuItems(
+        allMenuItems
+    );
+
+    Toast.show(
+        value
+            ? "Item Available"
+            : "Item Unavailable",
+        "success"
+    );
 
 }
 function deleteMenuItem(

@@ -43,7 +43,10 @@ const staffRoutes =
 const menuVariantRoutes =
     require("./routes/menuVariantRoutes");    
 const orderItemRoutes =
-    require("./routes/orderItemRoutes");      
+    require("./routes/orderItemRoutes");   
+const reportRoutes =
+
+    require("./routes/reportRoutes");       
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -111,6 +114,13 @@ app.use(
     "/api/order-items",
 
     orderItemRoutes
+
+);
+app.use(
+
+    "/api/reports",
+
+    reportRoutes
 
 );
 app.get("/", (req, res) => {
