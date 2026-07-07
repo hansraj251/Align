@@ -51,6 +51,7 @@ async function setupBackButton() {
 }
 
 setupBackButton();
+
 async function loadKitchenOrders() {
 
     const data = await API.get("/api/kitchen");
@@ -124,6 +125,7 @@ const allCancelled =
                 `
                 : ""
             }
+            
 
             <div class="mt-1 text-xs">
 
@@ -148,20 +150,29 @@ const allCancelled =
                 ×${item.quantity}
 
             </div>
+            
 
             ${
-                item.status === "preparing"
-                ? `
-                <button
-                    onclick="markItemReady(${item.id})"
-                    class="mt-2 rounded bg-green-600 px-3 py-1 text-xs text-white">
 
-                    Ready
+item.status === "preparing"
 
-                </button>
-                `
-                : ""
-            }
+? `
+
+<button
+
+    onclick="markItemReady(${item.id})"
+
+    class="mt-2 rounded bg-green-600 px-3 py-1 text-xs text-white">
+
+    Ready
+
+</button>
+
+`
+
+: ""
+
+}
 
         </div>
 
@@ -171,6 +182,15 @@ const allCancelled =
 `)
 .join("");
 
+const preparingItems =
+(ticket.items || []).filter(
+    item => item.status === "preparing"
+).length;
+
+const readyItems =
+(ticket.items || []).filter(
+    i => i.status === "ready"
+).length;
     const borderClass =
     ticket.status === "sent_to_kitchen"
         ? "border-l-4 border-orange-500"
@@ -196,24 +216,26 @@ const allCancelled =
 </div>
 
         <div class="mt-1 text-sm lg:text-base">
+        
 
 ${
-ticket.status === "new" &&
 pendingItems > 0
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'preparing')"
-    class="w-full rounded-lg bg-orange-500 py-2.5 sm:py-3 text-sm sm:text-base text-white">
+    class="w-full rounded-lg bg-orange-500 py-3 text-white">
 
     Start Preparing
 
 </button>
 `
-: ticket.status === "preparing"
+
+: preparingItems > 0
+
 ? `
 <button
     onclick="updateStatus(${ticket.id}, 'ready')"
-    class="w-full rounded-lg bg-green-600 py-2.5 sm:py-3 text-sm sm:text-base text-white">
+    class="w-full rounded-lg bg-green-600 py-3 text-white">
 
     Mark Ready
 

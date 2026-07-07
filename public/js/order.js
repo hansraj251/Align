@@ -5,6 +5,7 @@ let filteredMenuItems = [];
 let selectedCategory = "all";
 
 let selectedFoodType = "all";
+let currentOrder = null;
 
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
@@ -348,7 +349,7 @@ async function loadExistingOrder() {
     const active =
         await API.get(
             `/api/orders/table/${tableId}`
-        );
+        );    
 
     if (!active.hasActiveOrder) {
         return;
@@ -358,6 +359,17 @@ async function loadExistingOrder() {
         await API.get(
             `/api/orders/${active.order.id}`
         );
+    currentOrder =
+    order.order;
+
+    currentOrder = {
+
+    ...order.order,
+
+    ticket_id:
+        active.order.ticket_id
+
+};
 
     existingItems = order.items.map(item => ({
 
@@ -369,9 +381,38 @@ async function loadExistingOrder() {
 
     price: item.unit_price,
 
-    quantity: item.quantity
+    quantity: item.quantity,
+
+    order_item_id: item.id,
+
+    pending_ticket_item_id:
+        item.pending_ticket_item_id,
+
+    ready_ticket_item_id:
+        item.ready_ticket_item_id,
+
+    active_ticket_item_id:
+        item.active_ticket_item_id,
+
+    pending_count:
+        item.pending_count || 0,
+
+    preparing_count:
+        item.preparing_count || 0,
+
+    ready_count:
+        item.ready_count || 0,
+
+    cancelled_count:
+        item.cancelled_count || 0,
+
+    served_count:
+        item.served_count || 0
 
 }));
+console.log(order.items);
+
+console.log(order.items[0]);
 
 renderCart();
 
@@ -402,6 +443,7 @@ function addItem(
     renderCart();
 
 }
+
 
 function renderCart() {
     const cart =
@@ -502,6 +544,27 @@ ${item.variant_name || ""}
                 Qty : ${item.quantity}
 
             </p>
+            ${renderItemStatus(item)}
+
+            ${canCancelItem(item) ? `
+<button
+    onclick="cancelOrderItem(${item.active_ticket_item_id})"
+    class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
+
+    Cancel Item
+
+</button>
+` : ""}
+
+${canServeItem(item) ? `
+<button
+    onclick="serveOrderItem(${item.ready_ticket_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700">
+
+    Served
+
+</button>
+` : ""}
 
         </div>
 
@@ -541,6 +604,28 @@ if (cartSheet) {
                 Qty : ${item.quantity}
 
             </p>
+
+            ${renderItemStatus(item)}
+
+            ${canCancelItem(item) ? `
+<button
+    onclick="cancelOrderItem(${item.active_ticket_item_id})"
+    class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white">
+
+    Cancel Item
+
+</button>
+` : ""}
+
+            ${canServeItem(item) ? `
+<button
+    onclick="serveOrderItem(${item.ready_ticket_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white">
+
+    Served
+
+</button>
+` : ""}
 
         </div>
 
@@ -805,12 +890,14 @@ document.getElementById(
 ).textContent =
 `${totalItems} Item${totalItems === 1 ? "" : "s"}`;
 
+updateOrderAction();
 document.getElementById(
     "mobileTotal"
 ).textContent =
 Align.formatCurrency(
     Align.Order.cart.total()
 );
+
 
 document.getElementById("mobileItemCount").textContent =
     `${totalItems} Item${totalItems === 1 ? "" : "s"}`;
@@ -821,6 +908,173 @@ document.getElementById("mobileTotal").textContent =
     );
 
 }
+function updateOrderAction() {
+
+    const boxes = [
+
+        document.getElementById(
+            "orderAction"
+        ),
+
+        document.getElementById(
+            "mobileOrderAction"
+        )
+
+    ].filter(Boolean);
+
+    if (
+        boxes.length === 0 ||
+        !currentOrder
+    ) {
+
+        return;
+
+    }
+
+    boxes.forEach(box => {
+
+        box.classList.add(
+            "hidden"
+        );
+
+        box.innerHTML = "";
+
+    });
+
+    if (existingItems.length === 0) {
+
+        return;
+
+    }
+
+    const pending =
+        existingItems.some(
+            i => i.pending_count > 0
+        );
+
+    const preparing =
+        existingItems.some(
+            i => i.preparing_count > 0
+        );
+
+    const ready =
+        existingItems.some(
+            i => i.ready_count > 0
+        );
+
+    const served =
+        existingItems.some(
+            i => i.served_count > 0
+        );
+
+    const cancelled =
+        existingItems.some(
+            i => i.cancelled_count > 0
+        );
+
+    let html = "";
+    let handler = null;
+
+    // Billing Under Process
+
+    if (
+        currentOrder.status ===
+        "ready_for_billing"
+    ) {
+
+        html = `
+<button
+    disabled
+    class="w-full cursor-not-allowed rounded-xl bg-amber-500 py-3 font-semibold text-white opacity-80">
+
+    Billing Under Process
+
+</button>
+`;
+
+    }
+
+    // Send To Billing
+
+    else if (
+
+        !pending &&
+        !preparing &&
+        !ready &&
+        served
+
+    ) {
+
+        html = `
+<button
+    class="action-btn w-full rounded-xl bg-blue-600 py-3 font-semibold text-white">
+
+    Send To Billing
+
+</button>
+`;
+
+        handler = () =>
+            sendToBilling(
+                currentOrder.id
+            );
+
+    }
+
+    // Close Order
+
+    else if (
+
+        !pending &&
+        !preparing &&
+        !ready &&
+        !served &&
+        cancelled
+
+    ) {
+
+        html = `
+<button
+    class="action-btn w-full rounded-xl bg-red-600 py-3 font-semibold text-white">
+
+    Close Order
+
+</button>
+`;
+
+        handler = () =>
+            closeCancelledOrder(
+                currentOrder.ticket_id
+            );
+
+    }
+
+    if (!html) {
+
+        return;
+
+    }
+
+    boxes.forEach(box => {
+
+        box.classList.remove(
+            "hidden"
+        );
+
+        box.innerHTML = html;
+
+        if (handler) {
+
+            box.querySelector(
+                ".action-btn"
+            ).onclick = handler;
+
+        }
+
+    });
+
+}
+
 function increaseQty(
     menuItemId,
     variantId = null
@@ -1291,3 +1545,71 @@ mobileSearch?.addEventListener("input", () => {
 
 });
 
+async function sendToBilling(orderId) {
+
+    try {
+
+        const data =
+            await API.patch(
+                `/api/orders/${orderId}/send-to-billing`
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Toast.show(
+            "Sent To Billing",
+            "success"
+        );
+
+        await loadExistingOrder();
+
+        renderCart();
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
+async function closeCancelledOrder(ticketId) {
+
+    const data =
+        await API.patch(
+            `/api/kitchen/${ticketId}/close-cancelled`
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    Toast.show(
+        "Order Closed",
+        "success"
+    );
+
+    window.location.href =
+        `/admin/area.html?id=${areaId}`;
+
+}

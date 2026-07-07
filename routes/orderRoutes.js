@@ -48,5 +48,9 @@ router.patch(
     authMiddleware,
     orderController.sendToBilling
 );
-
+router.patch(
+    "/order-items/:id/serve",
+    authMiddleware,
+    orderController.serveOrderItem
+);
 module.exports = router;

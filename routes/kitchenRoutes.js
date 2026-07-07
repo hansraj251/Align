@@ -25,6 +25,11 @@ router.patch(
     kitchenController.cancelTicketItem
 );
 router.patch(
+    "/admin/items/:itemId/cancel",
+    authMiddleware,
+    kitchenController.adminCancelTicketItem
+);
+router.patch(
     "/:ticketId/close-cancelled",
     authMiddleware,
     kitchenController.closeCancelledTicket

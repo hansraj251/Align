@@ -1,7 +1,9 @@
 const tableRepository =
     require("../repositories/tableRepository");
 const diningAreaRepository =
-    require("../repositories/diningAreaRepository");    
+    require("../repositories/diningAreaRepository");  
+const orderRepository =
+    require("../repositories/orderRepository");      
 
 exports.getAll = async (
     restaurantId
@@ -92,6 +94,20 @@ exports.delete = async (
     tableId
 ) => {
 
+    const activeOrders =
+        await orderRepository.getActiveOrdersByTable(
+            tableId,
+            0
+        );
+
+    if (activeOrders > 0) {
+
+        throw new Error(
+            "Cannot delete table with an active order"
+        );
+
+    }
+
     const result =
         await tableRepository.delete(
 
@@ -119,6 +135,7 @@ exports.delete = async (
     };
 
 };
+
 exports.update = async (
     restaurantId,
     tableId,

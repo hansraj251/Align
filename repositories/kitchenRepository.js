@@ -418,13 +418,39 @@ exports.getPendingTicketItems = async (
         await db.getAsync(
             `
             SELECT
-                COUNT(*) AS total
-            FROM kitchen_ticket_items
-            WHERE
-                ticket_id = ?
-                AND status != 'ready'
+    COUNT(*) AS total
+FROM kitchen_ticket_items
+WHERE
+    ticket_id = ?
+    AND status IN (
+        'pending',
+        'preparing'
+    )
             `,
             [ticketId]
+        );
+
+    return row.total;
+
+};
+exports.getReadyTicketItems = async (
+    ticketId
+) => {
+
+    const row =
+        await db.getAsync(
+
+            `
+SELECT
+    COUNT(*) AS total
+FROM kitchen_ticket_items
+WHERE
+    ticket_id = ?
+    AND status = 'ready'
+`,
+
+            [ticketId]
+
         );
 
     return row.total;
@@ -568,6 +594,30 @@ exports.cancelTicketItem = async (
         `,
         [ticketItemId]
     );
+
+};
+exports.adminCancelTicketItem = async (
+    ticketItemId
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            UPDATE kitchen_ticket_items
+            SET
+                status = 'cancelled'
+            WHERE
+                id = ?
+                AND status IN (
+                    'pending',
+                    'preparing',
+                    'ready'
+                )
+            `,
+            [ticketItemId]
+        );
+
+    return result.changes;
 
 };
 exports.closeTicket = async (

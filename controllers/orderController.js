@@ -215,3 +215,43 @@ exports.sendToBilling = async (
     }
 
 };
+exports.serveOrderItem = async (req, res) => {
+
+    try {
+
+        const result =
+            await orderRepository.serveOrderItem(
+
+                Number(req.params.id)
+
+            );
+
+        if (!result.success) {
+
+            return res.json(result);
+
+        }
+
+        res.json({
+
+            success: true
+
+        });
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

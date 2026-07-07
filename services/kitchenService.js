@@ -13,6 +13,7 @@ const variantRepository =
     require("../repositories/menuVariantRepository"); 
 const orderCalculationService =
     require("./orderCalculationService");
+
 exports.createKitchenTicket = async (
     orderId,
     items
@@ -243,6 +244,26 @@ exports.updateTicketItemStatus = async (
         }
 
     }
+    if (status === "served") {
+
+    const readyItems =
+        await kitchenRepository.getReadyTicketItems(
+            item.ticket_id
+        );
+
+    if (readyItems === 0) {
+
+        await kitchenRepository.updateTicketStatus(
+
+            item.ticket_id,
+
+            "served"
+
+        );
+
+    }
+
+}
 
     return {
 
@@ -349,6 +370,72 @@ if (activeTickets === 0) {
     );
 
 }
+
+    return {
+
+        success: true
+
+    };
+
+};
+exports.adminCancelTicketItem = async (
+    ticketItemId
+) => {
+
+    const item =
+        await kitchenRepository.getTicketItem(
+            ticketItemId
+        );
+
+    if (!item) {
+
+        throw new Error(
+            "Kitchen item not found"
+        );
+
+    }
+
+    if (
+
+        item.status === "served" ||
+
+        item.status === "cancelled"
+
+    ) {
+
+        throw new Error(
+            "Item cannot be cancelled"
+        );
+
+    }
+
+    const changes =
+    await kitchenRepository.adminCancelTicketItem(
+        ticketItemId
+    );
+
+if (changes === 0) {
+
+    throw new Error(
+        "Item could not be cancelled"
+    );
+
+}
+
+    const ticket =
+        await kitchenRepository.getTicketById(
+            item.ticket_id
+        );
+
+    const totals =
+        await orderCalculationService.calculateOrderTotals(
+            ticket.order_id
+        );
+
+    await orderRepository.updateOrderTotals(
+        ticket.order_id,
+        totals
+    );
 
     return {
 

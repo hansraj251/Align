@@ -241,6 +241,25 @@ exports.getActiveOrderByTable = async (
 ) AS ready_ticket_item_id,
 
 (
+    SELECT id
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status IN (
+            'pending',
+            'preparing',
+            'ready'
+        )
+    ORDER BY
+        CASE
+            WHEN kti.status = 'ready' THEN 3
+            WHEN kti.status = 'preparing' THEN 2
+            WHEN kti.status = 'pending' THEN 1
+        END DESC
+    LIMIT 1
+) AS active_ticket_item_id,
+
+(
     SELECT COUNT(*)
     FROM kitchen_ticket_items kti
     WHERE
@@ -459,6 +478,59 @@ exports.getOrderItems = async (
             oi.quantity,
 
             oi.unit_price,
+
+            (
+    SELECT id
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status = 'pending'
+    LIMIT 1
+) AS pending_ticket_item_id,
+
+(
+    SELECT id
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status = 'ready'
+    LIMIT 1
+) AS ready_ticket_item_id,
+
+(
+    SELECT id
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status IN (
+            'pending',
+            'preparing',
+            'ready'
+        )
+    ORDER BY
+        CASE
+            WHEN kti.status='ready' THEN 3
+            WHEN kti.status='preparing' THEN 2
+            WHEN kti.status='pending' THEN 1
+        END DESC
+    LIMIT 1
+) AS active_ticket_item_id,
+
+(
+    SELECT COUNT(*)
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status='cancelled'
+) AS cancelled_count,
+
+(
+    SELECT COUNT(*)
+    FROM kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status='served'
+) AS served_count,
 
             (
                 SELECT COUNT(*)
@@ -765,3 +837,35 @@ exports.updateOrderTotals = async (
     );
 
 };
+
+// exports.serveOrderItem = async function(orderItemId) {
+
+//     const db =
+//         getDb();
+
+//     await db.run(
+
+//         `
+// UPDATE order_items
+
+// SET
+
+// status='served'
+
+// WHERE
+
+// id=?
+
+// `,
+
+//         [orderItemId]
+
+//     );
+
+//     return {
+
+//         success: true
+
+//     };
+
+// };
