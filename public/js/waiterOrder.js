@@ -84,12 +84,6 @@ if (sendKitchenBtnBottom) {
 
 }
 
-// document
-//     .getElementById("checkoutBtn")
-//     .addEventListener(
-//         "click",
-//         sendToKitchen
-//     );    
 setInterval(
 
     loadCurrentOrder,
@@ -1377,13 +1371,13 @@ ${type.name}
 }
 async function cancelItem(ticketItemId) {
 
-    if (!confirm("Cancel this item?")) {
+    Modal.confirm(
 
-        return;
+    "Cancel Item",
 
-    }
+    "Are you sure you want to cancel this item?",
 
-    try {
+    async () => {
 
         const data =
             await API.patch(
@@ -1408,64 +1402,72 @@ async function cancelItem(ticketItemId) {
 
         await loadCurrentOrder();
 
+        Modal.close();
+
+    },
+
+    {
+
+        buttonText: "Cancel Item",
+
+        buttonClass: "bg-red-600"
+
     }
 
-    catch (err) {
-
-        Toast.show(
-            err.message,
-            "error"
-        );
-
-    }
+);
 
 }
 async function serveItem(ticketItemId) {
 
-    if (!confirm("Mark this item as served?")) {
+    Modal.confirm(
 
-        return;
+        "Serve Item",
 
-    }
+        "Mark this item as served?",
 
-    try {
+        async () => {
 
-        const data =
-            await API.patch(
-                `/api/kitchen/items/${ticketItemId}/status`,
-                {
-                    status: "served"
-                }
-            );
+            const data =
+                await API.patch(
+                    `/api/kitchen/items/${ticketItemId}/status`,
+                    {
+                        status: "served"
+                    }
+                );
 
-        if (!data.success) {
+            if (!data.success) {
+
+                Toast.show(
+                    data.message,
+                    "error"
+                );
+
+                return;
+
+            }
+
+            Modal.close();
 
             Toast.show(
-                data.message,
-                "error"
+                "Item Served",
+                "success"
             );
 
-            return;
+            await loadCurrentOrder();
+
+        },
+
+        {
+
+            buttonText: "Serve",
+
+            buttonClass: "bg-green-600",
+
+            loadingText: "Serving..."
 
         }
 
-        Toast.show(
-            "Item served",
-            "success"
-        );
-
-        await loadCurrentOrder();
-
-    }
-
-    catch (err) {
-
-        Toast.show(
-            err.message,
-            "error"
-        );
-
-    }
+    );
 
 }
 async function sendToBilling(

@@ -334,6 +334,9 @@
   .z-\[70\] {
     z-index: 70;
   }
+  .z-\[100\] {
+    z-index: 100;
+  }
   .col-span-1 {
     grid-column: span 1 / span 1;
   }
@@ -860,6 +863,10 @@
   .border-b {
     border-bottom-style: var(--tw-border-style);
     border-bottom-width: 1px;
+  }
+  .border-l {
+    border-left-style: var(--tw-border-style);
+    border-left-width: 1px;
   }
   .border-l-4 {
     border-left-style: var(--tw-border-style);
@@ -1919,6 +1926,11 @@
   .lg\:grid-cols-5 {
     @media (width >= 64rem) {
       grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+  .lg\:flex-col {
+    @media (width >= 64rem) {
+      flex-direction: column;
     }
   }
   .lg\:flex-row {

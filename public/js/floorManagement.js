@@ -81,6 +81,44 @@ function renderAreas() {
             table =>
                 table.area_id === selectedAreaId
         );
+    const actionContainer =
+    document.getElementById(
+        "areaActions"
+    );
+
+const currentArea =
+    floorAreas.find(
+        area =>
+            area.id === selectedAreaId
+    );
+
+actionContainer.innerHTML = `
+
+<button
+    onclick="editArea(${currentArea.id}, '${currentArea.name}')"
+    class="rounded bg-amber-500 px-4 py-2 text-white">
+
+    ✏️ Edit Area
+
+</button>
+
+<button
+    onclick="deleteArea(${currentArea.id})"
+    class="rounded bg-red-600 px-4 py-2 text-white">
+
+    🗑 Delete Area
+
+</button>
+
+<button
+    onclick="openAddTableModal(${currentArea.id}, '${currentArea.name}')"
+    class="rounded bg-blue-600 px-4 py-2 text-white">
+
+    + Add Table
+
+</button>
+
+`;    
 
     if (areaTables.length === 0) {
 
@@ -165,45 +203,6 @@ function renderAreas() {
     </div>
 
 </div>
-
-`;
-
-const actionContainer =
-    document.getElementById(
-        "areaActions"
-    );
-
-const currentArea =
-    floorAreas.find(
-        area =>
-            area.id === selectedAreaId
-    );
-
-actionContainer.innerHTML = `
-
-<button
-    onclick="editArea(${currentArea.id}, '${currentArea.name}')"
-    class="rounded bg-amber-500 px-4 py-2 text-white">
-
-    ✏️ Edit Area
-
-</button>
-
-<button
-    onclick="deleteArea(${currentArea.id})"
-    class="rounded bg-red-600 px-4 py-2 text-white">
-
-    🗑 Delete Area
-
-</button>
-
-<button
-    onclick="openAddTableModal(${currentArea.id}, '${currentArea.name}')"
-    class="rounded bg-blue-600 px-4 py-2 text-white">
-
-    + Add Table
-
-</button>
 
 `;
 

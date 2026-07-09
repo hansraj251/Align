@@ -493,180 +493,7 @@ if (cartSheet) {
     let total = 0;
 
     cartDiv.innerHTML = "";
-    if (existingItems.length > 0) {
-
-    cartDiv.innerHTML += `
-        <h3 class="mb-3 text-lg font-bold">
-
-            Current Order
-
-        </h3>
-    `;
-    if (cartSheet) {
-
-    cartSheet.innerHTML += `
-<h3 class="mb-3 text-lg font-bold">
-
-    Current Order
-
-</h3>
-`;
-
-}
     
-
-    existingItems.forEach(item => {
-
-        const total =
-            item.price * item.quantity;
-
-        cartDiv.innerHTML += `
-<div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
-
-    <div class="flex justify-between">
-
-        <div>
-
-            <h4 class="font-semibold">
-
-               ${item.name}
-
-<small class="block text-slate-500">
-
-${item.variant_name || ""}
-
-</small>
-
-            </h4>
-
-            <p class="text-sm text-slate-500">
-
-                Qty : ${item.quantity}
-
-            </p>
-            ${renderItemStatus(item)}
-
-            ${canCancelItem(item) ? `
-<button
-    onclick="cancelOrderItem(${item.active_ticket_item_id})"
-    class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
-
-    Cancel Item
-
-</button>
-` : ""}
-
-${canServeItem(item) ? `
-<button
-    onclick="serveOrderItem(${item.ready_ticket_item_id})"
-    class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700">
-
-    Served
-
-</button>
-` : ""}
-
-        </div>
-
-        <strong>
-
-           ${Align.formatCurrency(total)}
-
-        </strong>
-
-    </div>
-
-</div>
-`;
-if (cartSheet) {
-
-    cartSheet.innerHTML += `
-<div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
-
-    <div class="flex justify-between">
-
-        <div>
-
-            <h4 class="font-semibold">
-
-                ${item.name}
-
-                <small class="block text-slate-500">
-
-                    ${item.variant_name || ""}
-
-                </small>
-
-            </h4>
-
-            <p class="text-sm text-slate-500">
-
-                Qty : ${item.quantity}
-
-            </p>
-
-            ${renderItemStatus(item)}
-
-            ${canCancelItem(item) ? `
-<button
-    onclick="cancelOrderItem(${item.active_ticket_item_id})"
-    class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white">
-
-    Cancel Item
-
-</button>
-` : ""}
-
-            ${canServeItem(item) ? `
-<button
-    onclick="serveOrderItem(${item.ready_ticket_item_id})"
-    class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white">
-
-    Served
-
-</button>
-` : ""}
-
-        </div>
-
-        <strong>
-
-            ${Align.formatCurrency(total)}
-
-        </strong>
-
-    </div>
-
-</div>
-`;
-
-}
-
-    });
-
-    cartDiv.innerHTML += `
-        <hr class="my-4">
-        <h3 class="mb-3 text-lg font-bold">
-
-            New Items
-
-        </h3>
-    `;
-    if (cartSheet) {
-
-    cartSheet.innerHTML += `
-<hr class="my-4">
-
-<h3 class="mb-3 text-lg font-bold">
-
-    New Items
-
-</h3>
-`;
-
-}
-
-}
 
     cart.forEach(item => {
 
@@ -839,6 +666,181 @@ ${item.variant_name}
 }
 
     });
+
+if (existingItems.length > 0) {
+
+    // cartDiv.innerHTML += `
+    //     <h3 class="mb-3 text-lg font-bold">
+
+    //         Current Order
+
+    //     </h3>
+    // `;
+    if (cartSheet) {
+
+//     cartSheet.innerHTML += `
+// <h3 class="mb-3 text-lg font-bold">
+
+//     Current Order
+
+// </h3>
+// `;
+
+}
+    
+
+    existingItems.forEach(item => {
+
+        const total =
+            item.price * item.quantity;
+
+        cartDiv.innerHTML += `
+<div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+
+    <div class="flex justify-between">
+
+        <div>
+
+            <h4 class="font-semibold">
+
+               ${item.name}
+
+<small class="block text-slate-500">
+
+${item.variant_name || ""}
+
+</small>
+
+            </h4>
+
+            <p class="text-sm text-slate-500">
+
+                Qty : ${item.quantity}
+
+            </p>
+            ${renderItemStatus(item)}
+
+            ${canCancelItem(item) ? `
+<button
+    onclick="cancelOrderItem(${item.active_ticket_item_id})"
+    class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
+
+    Cancel Item
+
+</button>
+` : ""}
+
+${canServeItem(item) ? `
+<button
+    onclick="serveOrderItem(${item.ready_ticket_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700">
+
+    Served
+
+</button>
+` : ""}
+
+        </div>
+
+        <strong>
+
+           ${Align.formatCurrency(total)}
+
+        </strong>
+
+    </div>
+
+</div>
+`;
+if (cartSheet) {
+
+    cartSheet.innerHTML += `
+<div class="mb-3 rounded-lg border border-blue-200 bg-blue-50 p-3">
+
+    <div class="flex justify-between">
+
+        <div>
+
+            <h4 class="font-semibold">
+
+                ${item.name}
+
+                <small class="block text-slate-500">
+
+                    ${item.variant_name || ""}
+
+                </small>
+
+            </h4>
+
+            <p class="text-sm text-slate-500">
+
+                Qty : ${item.quantity}
+
+            </p>
+
+            ${renderItemStatus(item)}
+
+            ${canCancelItem(item) ? `
+<button
+    onclick="cancelOrderItem(${item.active_ticket_item_id})"
+    class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white">
+
+    Cancel Item
+
+</button>
+` : ""}
+
+            ${canServeItem(item) ? `
+<button
+    onclick="serveOrderItem(${item.ready_ticket_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white">
+
+    Served
+
+</button>
+` : ""}
+
+        </div>
+
+        <strong>
+
+            ${Align.formatCurrency(total)}
+
+        </strong>
+
+    </div>
+
+</div>
+`;
+
+}
+
+    });
+
+    // cartDiv.innerHTML += `
+    //     <hr class="my-4">
+    //     <h3 class="mb-3 text-lg font-bold">
+
+    //         New Items
+
+    //     </h3>
+    // `;
+    if (cartSheet) {
+
+//     cartSheet.innerHTML += `
+// <hr class="my-4">
+
+// <h3 class="mb-3 text-lg font-bold">
+
+//     New Items
+
+// </h3>
+// `;
+
+}
+
+}    
 
     document.getElementById("total").textContent =
     Align.formatCurrency(
@@ -1587,6 +1589,7 @@ async function sendToBilling(orderId) {
 
 }
 async function closeCancelledOrder(ticketId) {
+    
 
     const data =
         await API.patch(

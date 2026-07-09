@@ -1,54 +1,3 @@
-// const Auth = {
-
-//     requireLogin() {
-
-//         const token =
-//             localStorage.getItem("token");
-
-//         if (!token) {
-
-//             window.location.href =
-//                 "/admin/login.html";
-
-//             return false;
-
-//         }
-
-//         return true;
-
-//     },
-
-//     logout() {
-
-//     localStorage.removeItem("token");
-
-//     sessionStorage.clear();
-
-//     window.location.replace(
-//         "/admin/login.html"
-//     );
-
-// },
-
-//     isLoggedIn() {
-
-//         return !!localStorage.getItem("token");
-
-//     },
-
-//     redirectIfLoggedIn() {
-
-//         if (this.isLoggedIn()) {
-
-//             window.location.href =
-//                 "/admin/dashboard.html";
-
-//         }
-
-//     }
-
-// };
-
 const Auth = {
 
     requireLogin() {
@@ -69,16 +18,16 @@ const Auth = {
 
     logout() {
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("staffToken");
-        localStorage.removeItem("staff");
-        localStorage.removeItem("restaurantName");
+    localStorage.removeItem("token");
+    localStorage.removeItem("staffToken");
+    localStorage.removeItem("staff");
+    localStorage.removeItem("restaurantName");
 
-        sessionStorage.clear();
+    sessionStorage.clear();
 
-        window.location.replace("/login.html");
+    window.location.replace("/login.html");
 
-    },
+},
 
     isLoggedIn() {
 

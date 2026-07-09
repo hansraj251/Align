@@ -1,139 +1,139 @@
-if (!API.getToken()) {
-    window.location.href = "/admin/login.html";
-}
+// if (!API.getToken()) {
+//     window.location.href = "/admin/login.html";
+// }
 
-async function loadTables() {
+// async function loadTables() {
 
-    const data = await API.get("/api/tables");
+//     const data = await API.get("/api/tables");
 
-    const list = document.getElementById("tableList");
+//     const list = document.getElementById("tableList");
 
-    list.innerHTML = "";
+//     list.innerHTML = "";
 
-    if (!data.success) {
+//     if (!data.success) {
 
-        Toast.show(data.message, "error");
-        return;
+//         Toast.show(data.message, "error");
+//         return;
 
-    }
+//     }
 
-    data.tables.forEach(table => {
+//     data.tables.forEach(table => {
 
-        list.innerHTML += `
-<div class="rounded-xl bg-white p-5 shadow">
+//         list.innerHTML += `
+// <div class="rounded-xl bg-white p-5 shadow">
 
-    <h3 class="text-xl font-bold">
-         ${table.name}
-    </h3>
+//     <h3 class="text-xl font-bold">
+//          ${table.name}
+//     </h3>
 
-    <p class="mt-3 text-slate-500">
-        👥 Capacity : ${table.capacity}
-    </p>
+//     <p class="mt-3 text-slate-500">
+//         👥 Capacity : ${table.capacity}
+//     </p>
 
-    <p class="mt-2">
+//     <p class="mt-2">
 
-        ${
-            table.status === "available"
-                ? '<span class="rounded-full bg-green-100 px-3 py-1 text-green-700"> Available</span>'
-                : '<span class="rounded-full bg-red-100 px-3 py-1 text-red-700"> Occupied</span>'
-        }
+//         ${
+//             table.status === "available"
+//                 ? '<span class="rounded-full bg-green-100 px-3 py-1 text-green-700"> Available</span>'
+//                 : '<span class="rounded-full bg-red-100 px-3 py-1 text-red-700"> Occupied</span>'
+//         }
 
-    </p>
+//     </p>
 
-    <div class="mt-5 flex gap-2">
+//     <div class="mt-5 flex gap-2">
 
-        <button
-            onclick="openOrder(${table.id})"
-            class="flex-1 rounded bg-blue-600 px-3 py-2 text-white">
+//         <button
+//             onclick="openOrder(${table.id})"
+//             class="flex-1 rounded bg-blue-600 px-3 py-2 text-white">
 
-             Open Order
+//              Open Order
 
-        </button>
+//         </button>
 
-        <button
-            onclick="deleteTable(${table.id})"
-            class="rounded bg-red-600 px-3 py-2 text-white">
+//         <button
+//             onclick="deleteTable(${table.id})"
+//             class="rounded bg-red-600 px-3 py-2 text-white">
 
-            Delete
+//             Delete
 
-        </button>
+//         </button>
 
-    </div>
+//     </div>
 
-</div>
-`;
+// </div>
+// `;
 
-    });
+//     });
 
-}
+// }
 
-async function createTable() {
+// async function createTable() {
 
-    const name =
-        document.getElementById("tableName").value.trim();
+//     const name =
+//         document.getElementById("tableName").value.trim();
 
-    const capacity =
-        document.getElementById("capacity").value;
+//     const capacity =
+//         document.getElementById("capacity").value;
 
-    if (!name) {
+//     if (!name) {
 
-        Toast.show("Table name is required", "error");
-        return;
+//         Toast.show("Table name is required", "error");
+//         return;
 
-    }
+//     }
 
-    const data = await API.post(
-        "/api/tables",
-        {
-            name,
-            capacity
-        }
-    );
+//     const data = await API.post(
+//         "/api/tables",
+//         {
+//             name,
+//             capacity
+//         }
+//     );
 
-    if (!data.success) {
+//     if (!data.success) {
 
-        Toast.show(data.message, "error");
-        return;
+//         Toast.show(data.message, "error");
+//         return;
 
-    }
+//     }
 
-    document.getElementById("tableName").value = "";
-    document.getElementById("capacity").value = 4;
+//     document.getElementById("tableName").value = "";
+//     document.getElementById("capacity").value = 4;
 
-    Toast.show("Table created successfully");
+//     Toast.show("Table created successfully");
 
-    loadTables();
+//     loadTables();
 
-}
+// }
 
-document
-    .getElementById("saveTableBtn")
-    .addEventListener("click", createTable);
+// document
+//     .getElementById("saveTableBtn")
+//     .addEventListener("click", createTable);
 
-loadTables();
-async function deleteTable(id) {
+// loadTables();
+// async function deleteTable(id) {
 
-    if (!confirm("Delete this table?")) {
-        return;
-    }
+//     if (!confirm("Delete this table?")) {
+//         return;
+//     }
 
-    const data = await API.delete(
-        `/api/tables/${id}`
-    );
+//     const data = await API.delete(
+//         `/api/tables/${id}`
+//     );
 
-    if (!data.success) {
-        Toast.show(data.message, "error");
-        return;
-    }
+//     if (!data.success) {
+//         Toast.show(data.message, "error");
+//         return;
+//     }
 
-    Toast.show("Table deleted");
+//     Toast.show("Table deleted");
 
-    loadTables();
+//     loadTables();
 
-}
-function openOrder(tableId) {
+// }
+// function openOrder(tableId) {
 
-    window.location.href =
-        `/admin/order.html?table=${tableId}`;
+//     window.location.href =
+//         `/admin/order.html?table=${tableId}`;
 
-}
+// }

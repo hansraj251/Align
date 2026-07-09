@@ -137,35 +137,7 @@ if (item.variant_id) {
 
         subtotal += totalPrice;
 
-        const existingItem =
-    await orderRepository.getOrderItem(
-
-        orderId,
-
-        menu.id,
-
-        variant?.id || null
-
-    );
-
-if (existingItem) {
-
-    const newQuantity =
-        existingItem.quantity + item.quantity;
-
-    const newTotal =
-        newQuantity * unitPrice;
-
-    await orderRepository.updateOrderItem(
-        existingItem.id,
-        newQuantity,
-        newTotal
-    );
-    item.order_item_id = existingItem.id;
-
-} else {
-
-    const orderItemId =
+        const orderItemId =
     await orderRepository.addOrderItem(
 
         orderId,
@@ -189,8 +161,6 @@ if (existingItem) {
     );
 
 item.order_item_id = orderItemId;
-
-}
 
     }
 const totals =

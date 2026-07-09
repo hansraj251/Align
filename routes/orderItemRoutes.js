@@ -6,6 +6,8 @@ const router =
 
 const auth =
     require("../middlewares/authMiddleware");
+const adminMiddleware =
+    require("../middlewares/adminMiddleware");    
 
 const controller =
     require("../controllers/orderItemController");
@@ -25,6 +27,7 @@ router.patch(
     "/:id/status",
 
     auth,
+     adminMiddleware,
 
     controller.updateStatus
 
@@ -32,6 +35,7 @@ router.patch(
 router.get(
     "/kitchen",
     auth,
+     adminMiddleware,
     controller.getKitchenItems
 );
 

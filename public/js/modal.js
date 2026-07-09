@@ -1,46 +1,130 @@
 const Modal = {
 
+    saveHandler: null,
+
     open(
-    title,
-    bodyHtml,
-    onSave,
-    options = {}
-) {
+        title,
+        bodyHtml,
+        onSave,
+        options = {}
+    ) {
 
-    document
-        .getElementById("modalTitle")
-        .textContent = title;
+        document.getElementById("modalTitle").textContent =
+            title;
 
-    document
-        .getElementById("modalBody")
-        .innerHTML = bodyHtml;
+        document.getElementById("modalBody").innerHTML =
+            bodyHtml;
 
-    const overlay =
-        document.getElementById(
-            "modalOverlay"
+        const overlay =
+            document.getElementById("modalOverlay");
+
+        overlay.classList.remove("hidden");
+        overlay.classList.add("flex");
+
+        const saveBtn =
+            document.getElementById("modalSave");
+
+        saveBtn.disabled = false;
+
+        saveBtn.textContent =
+            options.buttonText ?? "Save";
+
+        saveBtn.className =
+            `rounded-lg px-5 py-2 text-white ${
+                options.buttonClass ?? "bg-blue-600"
+            }`;
+
+        this.saveHandler = async () => {
+
+            if (saveBtn.disabled) {
+
+                return;
+
+            }
+
+            saveBtn.disabled = true;
+
+            const originalText =
+                saveBtn.textContent;
+
+            saveBtn.textContent =
+                options.loadingText ??
+                "Processing...";
+
+            try {
+
+                await onSave();
+
+            }
+
+            catch (err) {
+
+                console.error(err);
+
+            }
+
+            finally {
+
+                if (
+                    !document
+                        .getElementById("modalOverlay")
+                        .classList.contains("hidden")
+                ) {
+
+                    saveBtn.disabled = false;
+
+                    saveBtn.textContent =
+                        originalText;
+
+                }
+
+            }
+
+        };
+
+        saveBtn.onclick =
+            this.saveHandler;
+
+    },
+
+    confirm(
+        title,
+        message,
+        onConfirm,
+        options = {}
+    ) {
+
+        this.open(
+
+            title,
+
+            `
+<p class="text-slate-600">
+${message}
+</p>
+`,
+
+            onConfirm,
+
+            {
+
+                buttonText:
+                    options.buttonText ??
+                    "Confirm",
+
+                buttonClass:
+                    options.buttonClass ??
+                    "bg-blue-600",
+
+                loadingText:
+                    options.loadingText ??
+                    "Processing..."
+
+            }
+
         );
 
-    overlay.classList.remove("hidden");
-
-    overlay.classList.add("flex");
-
-    const saveBtn =
-        document.getElementById(
-            "modalSave"
-        );
-
-    saveBtn.textContent =
-        options.buttonText || "Save";
-
-    saveBtn.className =
-        `rounded-lg px-5 py-2 text-white ${
-            options.buttonClass ||
-            "bg-blue-600"
-        }`;
-
-    saveBtn.onclick = onSave;
-
-},
+    },
 
     close() {
 
@@ -49,13 +133,11 @@ const Modal = {
                 "modalOverlay"
             );
 
-        overlay.classList.add(
-            "hidden"
-        );
+        overlay.classList.add("hidden");
 
-        overlay.classList.remove(
-            "flex"
-        );
+        overlay.classList.remove("flex");
+
+        this.saveHandler = null;
 
     }
 
@@ -74,33 +156,51 @@ document.addEventListener(
 
         }
 
-    }
-);
-Modal.confirm = function (
-    title,
-    message,
-    onConfirm
-) {
+        if (
+            e.target.id ===
+            "modalOverlay"
+        ) {
 
-    Modal.open(
+            Modal.close();
 
-        title,
-
-        `
-<p class="text-slate-600">
-
-${message}
-
-</p>
-`,
-
-        onConfirm,
-
-        {
-            buttonText: "Delete",
-            buttonClass: "bg-red-600"
         }
 
-    );
+    }
+);
 
-};
+document.addEventListener(
+    "keydown",
+    e => {
+
+        const overlay =
+            document.getElementById(
+                "modalOverlay"
+            );
+
+        if (
+            overlay.classList.contains("hidden")
+        ) {
+
+            return;
+
+        }
+
+        if (e.key === "Escape") {
+
+            Modal.close();
+
+        }
+
+        if (
+            e.key === "Enter" &&
+            Modal.saveHandler
+        ) {
+
+            e.preventDefault();
+
+            Modal.saveHandler();
+
+        }
+
+    }
+);

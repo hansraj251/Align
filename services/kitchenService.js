@@ -348,9 +348,10 @@ exports.closeCancelledTicket = async (
 
     }
 
-    await kitchenRepository.closeTicket(
-        ticketId
-    );
+    
+    await kitchenRepository.closeAllTicketsByOrder(
+    ticket.order_id
+);
 
     const activeTickets =
     await kitchenRepository.getActiveTicketCountByOrder(

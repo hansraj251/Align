@@ -837,35 +837,3 @@ exports.updateOrderTotals = async (
     );
 
 };
-
-// exports.serveOrderItem = async function(orderItemId) {
-
-//     const db =
-//         getDb();
-
-//     await db.run(
-
-//         `
-// UPDATE order_items
-
-// SET
-
-// status='served'
-
-// WHERE
-
-// id=?
-
-// `,
-
-//         [orderItemId]
-
-//     );
-
-//     return {
-
-//         success: true
-
-//     };
-
-// };

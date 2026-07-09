@@ -6,7 +6,8 @@ const router =
 
 const authMiddleware =
     require("../middlewares/authMiddleware");
-
+const adminMiddleware =
+    require("../middlewares/adminMiddleware");
 const controller =
     require("../controllers/menuVariantController");
 
@@ -24,6 +25,8 @@ router.put(
     "/:id/variants",
 
     authMiddleware,
+
+    adminMiddleware,
 
     controller.replaceVariants
 

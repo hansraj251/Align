@@ -134,13 +134,7 @@ db.run(
 
     }
 );
-        // return res.json({
-        //     success: true,
-        //     message: "Restaurant Created",
-        //     restaurantId: this.lastID
-        // });
-        
-
+       
     }
 );
 

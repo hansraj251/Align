@@ -104,51 +104,7 @@ exports.downloadExcel = async (
     workbook.title =
         "Restaurant Report";
 
-    // // Info Sheet
-    // const info =
-    //     workbook.addWorksheet(
-    //         "Info"
-    //     );
 
-    // info.columns = [
-
-    //     {
-    //         header: "Field",
-    //         key: "field",
-    //         width: 30
-    //     },
-
-    //     {
-    //         header: "Value",
-    //         key: "value",
-    //         width: 40
-    //     }
-
-    // ];
-
-    // info.addRows([
-
-    //     {
-    //         field: "Software",
-    //         value: "Align POS"
-    //     },
-
-    //     {
-    //         field: "Generated On",
-    //         value: new Date().toLocaleString()
-    //     },
-
-    //     {
-    //         field: "Date From",
-    //         value: from
-    //     },
-
-    //     {
-    //         field: "Date To",
-    //         value: to
-    //     }
-
-    // ]);
     const sales =
     await reportRepository.getSalesSummary(
 

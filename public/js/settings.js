@@ -21,9 +21,18 @@ async function loadRestaurant() {
     const data = await response.json();
 
     if (!data.success) {
-        alert(data.message);
-        return;
-    }
+
+    Toast.show(
+
+        data.message,
+
+        "error"
+
+    );
+
+    return;
+
+}
 
     const r = data.restaurant;
     localStorage.setItem(

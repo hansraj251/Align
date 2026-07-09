@@ -3,18 +3,10 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middlewares/authMiddleware");
+const adminMiddleware =
+    require("../middlewares/adminMiddleware");
 const orderController = require("../controllers/orderController");
-router.get(
-    "/test",
-    (req, res) => {
 
-        res.json({
-            success: true,
-            message: "Order route working"
-        });
-
-    }
-);
 router.post(
     "/",
     authMiddleware,
@@ -24,6 +16,7 @@ router.post(
 router.get(
     "/history",
     authMiddleware,
+    adminMiddleware,
     orderController.getOrderHistory
 );
 
@@ -41,16 +34,19 @@ router.get(
 router.patch(
     "/:id/discount",
     authMiddleware,
+    adminMiddleware,
     orderController.updateDiscount
 );
 router.patch(
     "/:orderId/send-to-billing",
     authMiddleware,
+    adminMiddleware,
     orderController.sendToBilling
 );
 router.patch(
     "/order-items/:id/serve",
     authMiddleware,
+    adminMiddleware,
     orderController.serveOrderItem
 );
 module.exports = router;

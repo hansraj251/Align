@@ -636,3 +636,23 @@ exports.closeTicket = async (
     );
 
 };
+exports.closeAllTicketsByOrder = async (
+    orderId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_tickets
+        SET status = 'closed'
+        WHERE
+            order_id = ?
+            AND status IN (
+                'new',
+                'preparing',
+                'ready'
+            )
+        `,
+        [orderId]
+    );
+
+};

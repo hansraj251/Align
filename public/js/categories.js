@@ -89,7 +89,43 @@ async function saveCategory() {
         document.getElementById("categoryDescription").value.trim();
 
     if (!name) {
-        alert("Category name is required.");
+
+        Modal.open(
+
+            "Validation",
+
+            `
+
+<p class="text-slate-600">
+
+Category name is required.
+
+</p>
+
+`,
+
+            () => {
+
+                Modal.close();
+
+                document
+
+                    .getElementById("categoryName")
+
+                    .focus();
+
+            },
+
+            {
+
+                buttonText: "OK",
+
+                buttonClass: "bg-blue-600"
+
+            }
+
+        );
+
         return;
     }
 

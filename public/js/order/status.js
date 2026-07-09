@@ -6,7 +6,7 @@ function renderItemStatus(item) {
 
         html += `
 <div class="mt-1 text-xs font-medium text-orange-600">
-🟠 Pending : ${item.pending_count}
+🟠 Pending
 </div>
 `;
     }
@@ -15,7 +15,7 @@ function renderItemStatus(item) {
 
         html += `
 <div class="text-xs font-medium text-yellow-600">
-🟡 Preparing : ${item.preparing_count}
+🟡 Preparing
 </div>
 `;
     }
@@ -24,7 +24,7 @@ function renderItemStatus(item) {
 
         html += `
 <div class="text-xs font-medium text-green-600">
-🟢 Ready : ${item.ready_count}
+🟢 Ready
 </div>
 `;
     }
@@ -33,7 +33,7 @@ function renderItemStatus(item) {
 
     html += `
 <div class="text-xs font-medium text-red-600">
-🔴 Cancelled : ${item.cancelled_count}
+🔴 Cancelled
 </div>
 `;
 
@@ -43,7 +43,7 @@ if ((item.served_count || 0) > 0) {
 
     html += `
 <div class="text-xs font-medium text-blue-600">
-🔵 Served : ${item.served_count}
+🔵 Served
 </div>
 `;
 
@@ -68,32 +68,54 @@ function canCancelItem(item) {
 }
 async function cancelOrderItem(ticketItemId) {
 
-    const data =
-        await API.patch(
+    Modal.confirm(
 
-            `/api/kitchen/admin/items/${ticketItemId}/cancel`
+        "Cancel Item",
 
-        );
+        "Are you sure you want to cancel this item?",
 
-    if (!data.success) {
+        async () => {
 
-        Toast.show(
-            data.message,
-            "error"
-        );
+            const data =
+                await API.patch(
+                    `/api/kitchen/admin/items/${ticketItemId}/cancel`
+                );
 
-        return;
+            if (!data.success) {
 
-    }
+                Toast.show(
+                    data.message,
+                    "error"
+                );
 
-    Toast.show(
-        "Item Cancelled",
-        "success"
+                return;
+
+            }
+
+            Modal.close();
+
+            Toast.show(
+                "Item Cancelled",
+                "success"
+            );
+
+            await loadExistingOrder();
+
+            renderCart();
+
+        },
+
+        {
+
+            buttonText: "Cancel Item",
+
+            buttonClass: "bg-red-600",
+
+            loadingText: "Cancelling..."
+
+        }
+
     );
-
-    await loadExistingOrder();
-
-    renderCart();
 
 }
 function canServeItem(item) {
@@ -103,37 +125,59 @@ function canServeItem(item) {
 }
 async function serveOrderItem(ticketItemId) {
 
-    const data =
-        await API.patch(
+    Modal.confirm(
 
-            `/api/kitchen/items/${ticketItemId}/status`,
+        "Serve Item",
 
-            {
+        "Mark this item as served?",
 
-                status: "served"
+        async () => {
+
+            const data =
+                await API.patch(
+
+                    `/api/kitchen/items/${ticketItemId}/status`,
+
+                    {
+                        status: "served"
+                    }
+
+                );
+
+            if (!data.success) {
+
+                Toast.show(
+                    data.message,
+                    "error"
+                );
+
+                return;
 
             }
 
-        );
+            Modal.close();
 
-    if (!data.success) {
+            Toast.show(
+                "Item Served",
+                "success"
+            );
 
-        Toast.show(
-            data.message,
-            "error"
-        );
+            await loadExistingOrder();
 
-        return;
+            renderCart();
 
-    }
+        },
 
-    Toast.show(
-        "Item Served",
-        "success"
+        {
+
+            buttonText: "Serve",
+
+            buttonClass: "bg-green-600",
+
+            loadingText: "Serving..."
+
+        }
+
     );
-
-    await loadExistingOrder();
-
-    renderCart();
 
 }
