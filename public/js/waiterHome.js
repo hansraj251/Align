@@ -1,13 +1,8 @@
-StaffAuth.requireLogin();
+Auth.requireLogin();
 
-const staff =
-    StaffAuth.staff();
-
-// document.getElementById(
-//     "staffName"
-// ).textContent =
-//     staff.name;
-
+const staff = JSON.parse(
+    localStorage.getItem("staff") || "{}"
+);
 
 async function loadAreas() {
 

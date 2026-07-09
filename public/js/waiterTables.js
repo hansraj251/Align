@@ -1,4 +1,4 @@
-StaffAuth.requireLogin();
+Auth.requireLogin();
 
 const params =
     new URLSearchParams(

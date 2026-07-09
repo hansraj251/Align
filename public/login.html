@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Align Login</title>
+
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="min-h-screen bg-slate-100">
+
+<div class="min-h-screen grid grid-cols-2">
+
+    <div class="bg-blue-700 flex items-center justify-center">
+
+        <div class="text-center text-white">
+
+            <h1 class="text-6xl font-bold mb-4">
+                ALIGN
+            </h1>
+
+            <p class="text-xl">
+                Smart Restaurant Operating System
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="flex items-center justify-center">
+
+        <div class="w-full max-w-md rounded-2xl bg-white p-10 shadow-xl">
+
+            <h2 class="mb-2 text-3xl font-bold">
+                Welcome Back
+            </h2>
+
+            <p class="mb-8 text-gray-500">
+                Login to your restaurant account
+            </p>
+
+            <input
+    id="loginId"
+    type="text"
+    placeholder="Username or Email"
+    class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+
+            <input
+                id="password"
+                type="password"
+                placeholder="Password"
+                class="mb-6 w-full rounded-lg border border-gray-300 p-3">
+
+            <button
+                id="loginBtn"
+                class="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700">
+
+                Login
+
+            </button>
+<div class="mt-6 text-center">
+
+    <span class="text-gray-600">
+        Don't have an account?
+    </span>
+
+    <a
+        href="/admin/signup.html"
+        class="ml-1 font-semibold text-blue-600 hover:underline">
+
+        Create Account
+
+    </a>
+
+</div>
+            <div
+                id="result"
+                class="mt-6 text-red-600">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/login.js"></script>
+
+</body>
+</html>
