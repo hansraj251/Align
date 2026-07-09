@@ -1,82 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Align Login</title>
 
-    <link rel="stylesheet" href="/css/output.css">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>ALIGN Login</title>
+
+<link rel="stylesheet" href="/css/output.css">
+
 </head>
 
 <body class="min-h-screen bg-slate-100">
 
-<div class="min-h-screen grid grid-cols-2">
+<div class="min-h-screen lg:grid lg:grid-cols-2">
 
-    <div class="bg-blue-700 flex items-center justify-center">
+    <!-- Left Branding Panel (Desktop Only) -->
+    <div class="hidden lg:flex items-center justify-center bg-blue-700">
 
-        <div class="text-center text-white">
+        <div class="text-center text-white px-10">
 
-            <h1 class="text-6xl font-bold mb-4">
-                ALIGN
+            <img
+                src="/images/logo.png"
+                alt="ALIGN Logo"
+                class="mx-auto mb-8 h-40 w-40 object-contain">
+
+            <h1 class="text-5xl font-bold">
+
+                ALIGn
+
             </h1>
 
-            <p class="text-xl">
-                Smart Restaurant Operating System
+            <p class="mt-4 text-xl opacity-90">
+
+                Smart OS
+
             </p>
 
         </div>
 
     </div>
 
-    <div class="flex items-center justify-center">
+    <!-- Login Card -->
+    <div class="flex min-h-screen items-center justify-center p-6">
 
-        <div class="w-full max-w-md rounded-2xl bg-white p-10 shadow-xl">
+        <div class="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
 
-            <h2 class="mb-2 text-3xl font-bold">
+            <!-- Mobile Logo -->
+            <div class="mb-8 text-center lg:hidden">
+
+                <img
+                    src="/images/logo.png"
+                    alt="ALIGN Logo"
+                    class="mx-auto mb-4 h-24 w-24 object-contain">
+
+                <h1 class="text-3xl font-bold text-slate-800">
+
+                    ALIGn
+
+                </h1>
+
+                <p class="mt-2 text-slate-500">
+
+                    Smart OS
+
+                </p>
+
+            </div>
+
+            <h2 class="mb-2 text-3xl font-bold text-slate-800">
+
                 Welcome Back
+
             </h2>
 
-            <p class="mb-8 text-gray-500">
-                Login to your restaurant account
+            <p class="mb-8 text-slate-500">
+
+                Sign in to continue
+
             </p>
 
             <input
-    id="loginId"
-    type="text"
-    placeholder="Username or Email"
-    class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+                id="loginId"
+                type="text"
+                placeholder="Username or Email"
+                class="mb-4 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
             <input
                 id="password"
                 type="password"
                 placeholder="Password"
-                class="mb-6 w-full rounded-lg border border-gray-300 p-3">
+                class="mb-6 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
             <button
                 id="loginBtn"
-                class="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700">
+                class="w-full rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 active:scale-95">
 
                 Login
 
             </button>
-<div class="mt-6 text-center">
 
-    <span class="text-gray-600">
-        Don't have an account?
-    </span>
+            <div class="mt-6 text-center">
 
-    <a
-        href="/admin/signup.html"
-        class="ml-1 font-semibold text-blue-600 hover:underline">
+                <span class="text-gray-600">
 
-        Create Account
+                    Don't have an account?
 
-    </a>
+                </span>
 
-</div>
+                <a
+                    href="/admin/signup.html"
+                    class="ml-1 font-semibold text-blue-600 hover:underline">
+
+                    Create Account
+
+                </a>
+
+            </div>
+
             <div
                 id="result"
-                class="mt-6 text-red-600">
+                class="mt-5 text-center font-medium text-red-600">
+
             </div>
 
         </div>
@@ -90,4 +138,5 @@
 <script src="/js/login.js"></script>
 
 </body>
+
 </html>

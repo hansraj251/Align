@@ -5,35 +5,39 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Align Signup</title>
+    <title>ALIGN Signup</title>
 
-    <link
-        rel="stylesheet"
-        href="/css/output.css">
+    <link rel="stylesheet"
+          href="/css/output.css">
 
 </head>
 
 <body class="min-h-screen bg-slate-100">
 
-<div class="grid min-h-screen grid-cols-2">
+<div class="min-h-screen lg:grid lg:grid-cols-2">
 
-    <div class="flex items-center justify-center bg-blue-700">
+    <!-- Desktop Branding -->
+    <div class="hidden lg:flex items-center justify-center bg-blue-700">
 
-        <div class="text-center text-white">
+        <div class="text-center text-white px-10">
 
-            <h1 class="mb-4 text-6xl font-bold">
+            <img
+                src="/images/logo.png"
+                alt="ALIGN Logo"
+                class="mx-auto mb-8 h-40 w-40 object-contain">
 
-                ALIGN
+            <h1 class="text-5xl font-bold">
+
+                ALIGn
 
             </h1>
 
-            <p class="text-xl">
+            <p class="mt-4 text-xl">
 
-                Smart Restaurant Operating System
+                Smart OS
 
             </p>
 
@@ -41,9 +45,34 @@
 
     </div>
 
-    <div class="flex items-center justify-center">
+    <!-- Signup Card -->
 
-        <div class="w-full max-w-md rounded-2xl bg-white p-10 shadow-xl">
+    <div class="flex min-h-screen items-center justify-center p-6">
+
+        <div class="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl">
+
+            <!-- Mobile Logo -->
+
+            <div class="mb-8 text-center lg:hidden">
+
+                <img
+                    src="/images/logo.png"
+                    alt="ALIGN Logo"
+                    class="mx-auto mb-4 h-24 w-24 object-contain">
+
+                <h1 class="text-3xl font-bold text-slate-800">
+
+                    ALIGn
+
+                </h1>
+
+                <p class="mt-2 text-slate-500">
+
+                    Smart OS
+
+                </p>
+
+            </div>
 
             <h2 class="mb-2 text-3xl font-bold">
 
@@ -51,58 +80,62 @@
 
             </h2>
 
-            <p class="mb-8 text-gray-500">
+            <p class="mb-8 text-slate-500">
 
-                Start managing your restaurant with Align
+                Start your business with ALIGn
 
             </p>
-<form id="signupForm">
-            <input
-                id="restaurantName"
-                type="text"
-                placeholder="Restaurant Name"
-                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
 
-            <input
-                id="ownerName"
-                type="text"
-                placeholder="Owner Name"
-                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+            <form id="signupForm">
 
-            <input
-                id="email"
-                type="email"
-                placeholder="Email Address"
-                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+                <input
+                    id="restaurantName"
+                    type="text"
+                    placeholder="Restaurant / Cafe Name"
+                    class="mb-4 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
-            <input
-                id="mobile"
-                type="tel"
-                placeholder="Mobile Number"
-                class="mb-4 w-full rounded-lg border border-gray-300 p-3">
+                <input
+                    id="ownerName"
+                    type="text"
+                    placeholder="Owner Name"
+                    class="mb-4 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
-            <input
-                id="password"
-                type="password"
-                autocomplete="new-password"
-                placeholder="Password"
-                class="mb-6 w-full rounded-lg border border-gray-300 p-3">
+                <input
+                    id="email"
+                    type="email"
+                    placeholder="Email Address"
+                    class="mb-4 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
-            <button
-    id="signupBtn"
-    type="submit"
-    class="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white hover:bg-blue-700">
+                <input
+                    id="mobile"
+                    type="tel"
+                    placeholder="Mobile Number"
+                    class="mb-4 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
-    Create Account
+                <input
+                    id="password"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="Password"
+                    class="mb-6 w-full rounded-xl border border-gray-300 p-4 text-lg focus:border-blue-600 focus:outline-none">
 
-</button>
-</form>
-            <div class="mt-6 text-center text-sm text-gray-600">
+                <button
+                    id="signupBtn"
+                    type="submit"
+                    class="w-full rounded-xl bg-blue-600 py-4 text-lg font-semibold text-white transition hover:bg-blue-700 active:scale-95">
+
+                    Create Account
+
+                </button>
+
+            </form>
+
+            <div class="mt-6 text-center text-gray-600">
 
                 Already have an account?
 
                 <a
-                    href="/admin/login.html"
+                    href="/login.html"
                     class="font-semibold text-blue-600 hover:underline">
 
                     Login
@@ -113,7 +146,7 @@
 
             <div
                 id="result"
-                class="mt-6 text-center text-red-600">
+                class="mt-5 text-center font-medium text-red-600">
 
             </div>
 
