@@ -8,18 +8,18 @@ function playNotificationSound() {
 
 function showSocketNotification(title, message) {
 
-    if (typeof Toast !== "undefined") {
+    if (typeof Toast === "undefined") {
 
-        Toast.show(
-            `${title}\n${message}`,
-            "success"
-        );
+        console.warn("Toast not loaded");
 
-    } else {
-
-        alert(`${title}\n${message}`);
+        return;
 
     }
+
+    Toast.show(
+        `${title}\n${message}`,
+        "success"
+    );
 
 }
 const socket = io();
