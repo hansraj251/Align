@@ -136,6 +136,8 @@ initializeDatabase()
 
 const PORT = process.env.PORT || 3000;
 
+console.log("🚀 SOCKET VERSION: 2026-07-10-V3");
+
 socket.init(server);
 
 server.listen(PORT, () => {
