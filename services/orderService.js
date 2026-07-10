@@ -342,7 +342,7 @@ exports.sendToBilling = async (
 
 const io = getIO();
 
-io.to(`kitchen_${restaurantId}`).emit(
+io.to(`billing_${order.restaurant_id}`).emit(
     "ready-for-billing",
     {
         orderId: order.id,

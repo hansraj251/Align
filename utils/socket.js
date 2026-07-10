@@ -26,7 +26,7 @@ socket.on("joinKitchen", (restaurantId) => {
     socket.join(`kitchen_${restaurantId}`);
 
     console.log(
-        `Kitchen joined kitchen_${restaurantId}`
+        `✅ Kitchen joined kitchen_${restaurantId} (${socket.id})`
     );
 
 });

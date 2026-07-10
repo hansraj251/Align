@@ -33,23 +33,32 @@ socket.on("connect", () => {
 
     if (!restaurantId) return;
 
+    // Common restaurant room
     socket.emit("joinRestaurant", restaurantId);
 
     const path = window.location.pathname;
 
-    if (path.startsWith("/kitchen")) {
+    console.log("PATH =", path);
+
+    if (path.includes("kitchen")) {
+
+        console.log("➡️ Joining Kitchen");
 
         socket.emit("joinKitchen", restaurantId);
 
     }
 
-    else if (path.startsWith("/waiter")) {
+    else if (path.includes("waiter")) {
+
+        console.log("➡️ Joining Waiter");
 
         socket.emit("joinWaiter", restaurantId);
 
     }
 
-    else if (path.startsWith("/cashier")) {
+    else if (path.includes("cashier")) {
+
+        console.log("➡️ Joining Billing");
 
         socket.emit("joinBilling", restaurantId);
 
