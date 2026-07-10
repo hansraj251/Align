@@ -55,6 +55,14 @@ async function login() {
             "token",
             data.token
         );
+        const payload = JSON.parse(
+    atob(data.token.split(".")[1])
+);
+
+localStorage.setItem(
+    "restaurant_id",
+    payload.restaurantId
+);
 
         window.location.href =
             "/admin/dashboard.html";
