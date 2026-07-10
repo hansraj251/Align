@@ -410,9 +410,6 @@ async function loadExistingOrder() {
         item.served_count || 0
 
 }));
-console.log(order.items);
-
-console.log(order.items[0]);
 
 renderCart();
 
@@ -977,26 +974,27 @@ function updateOrderAction() {
     let html = "";
     let handler = null;
 
-    // Billing Under Process
+    // Print Bill
 
-    if (
-        currentOrder.status ===
-        "ready_for_billing"
-    ) {
+if (
+    currentOrder.status ===
+    "ready_for_billing"
+) {
 
-        html = `
+    html = `
 <button
-    disabled
-    class="w-full cursor-not-allowed rounded-xl bg-amber-500 py-3 font-semibold text-white opacity-80">
+    class="action-btn w-full rounded-xl bg-green-600 py-3 font-semibold text-white">
 
-    Billing Under Process
+    🖨️ Print Bill
 
 </button>
 `;
 
-    }
+    handler = () =>
+        printBill(currentOrder.id);
 
-    // Send To Billing
+}
+
 
     else if (
 
@@ -1007,19 +1005,18 @@ function updateOrderAction() {
 
     ) {
 
-        html = `
+       html = `
 <button
-    class="action-btn w-full rounded-xl bg-blue-600 py-3 font-semibold text-white">
+    class="action-btn w-full rounded-xl bg-green-600 py-3 font-semibold text-white">
 
-    Send To Billing
+    🖨️ Print Bill
 
 </button>
 `;
 
-        handler = () =>
-            sendToBilling(
-                currentOrder.id
-            );
+handler = () =>
+    printBill(currentOrder.id);
+
 
     }
 
@@ -1076,6 +1073,8 @@ function updateOrderAction() {
     });
 
 }
+
+
 
 function increaseQty(
     menuItemId,
@@ -1546,6 +1545,43 @@ mobileSearch?.addEventListener("input", () => {
     
 
 });
+
+async function printBill(orderId) {
+
+    try {
+
+        const data =
+            await API.patch(
+                `/api/orders/${orderId}/send-to-billing`
+            );
+            console.log(data);
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        window.location.href =
+            `/admin/billing.html?order=${orderId}`;
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
 
 async function sendToBilling(orderId) {
 
