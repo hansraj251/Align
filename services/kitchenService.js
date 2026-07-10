@@ -170,6 +170,18 @@ if (status === "ready") {
         "ready"
     );
 
+    const io = getIO();
+
+    io.to(`waiter_${ticket.restaurant_id}`).emit(
+        "ticket-ready",
+        {
+            orderId: ticket.order_id,
+            ticketId: ticket.id,
+            tableName: ticket.table_name,
+            ticketNumber: ticket.ticket_number
+        }
+    );
+
 }
 
 if (status === "served") {
@@ -229,33 +241,33 @@ exports.updateTicketItemStatus = async (
 
     if (status === "ready") {
 
-        const pending =
-            await kitchenRepository.getPendingTicketItems(
-                item.ticket_id
-            );
+    const io = getIO();
 
-        if (pending === 0) {
-
-            await kitchenRepository.updateTicketStatus(
-                item.ticket_id,
-                "ready"
-            );
-
-            const io = getIO();
-
-           io.to(`waiter_${item.restaurant_id}`).emit(
-                "ticket-ready",
-                {
-                    orderId: item.order_id,
-                    ticketId: item.ticket_id,
-                    tableName: item.table_name,
-                    ticketNumber: item.ticket_number
-                }
-            );
-
+    io.to(`waiter_${item.restaurant_id}`).emit(
+        "ticket-ready",
+        {
+            orderId: item.order_id,
+            ticketId: item.ticket_id,
+            tableName: item.table_name,
+            ticketNumber: item.ticket_number
         }
+    );
+
+    const pending =
+        await kitchenRepository.getPendingTicketItems(
+            item.ticket_id
+        );
+
+    if (pending === 0) {
+
+        await kitchenRepository.updateTicketStatus(
+            item.ticket_id,
+            "ready"
+        );
 
     }
+
+}
 
     if (status === "served") {
 

@@ -259,15 +259,28 @@ exports.getTicketById = async (
 
     return await db.getAsync(
         `
-       SELECT
-    kt.id,
-    kt.order_id,
-    kt.status,
-    o.table_id
-FROM kitchen_tickets kt
-JOIN orders o
-    ON o.id = kt.order_id
-WHERE kt.id = ?
+        SELECT
+
+            kt.id,
+
+            kt.order_id,
+
+            kt.ticket_number,
+
+            kt.status,
+
+            o.restaurant_id,
+
+            o.table_id,
+
+            o.table_name
+
+        FROM kitchen_tickets kt
+
+        JOIN orders o
+            ON o.id = kt.order_id
+
+        WHERE kt.id = ?
         `,
         [
             ticketId
