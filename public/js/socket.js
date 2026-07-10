@@ -31,15 +31,27 @@ socket.on("connect", () => {
     const restaurantId =
         localStorage.getItem("restaurant_id");
 
-    if (restaurantId) {
+    if (!restaurantId) return;
 
-        console.log("Joining Restaurant:", restaurantId);
+    socket.emit("joinRestaurant", restaurantId);
 
-        socket.emit(
-            "joinRestaurant",
-            restaurantId
-        );
-         console.log("joinRestaurant emitted");
+    const path = window.location.pathname;
+
+    if (path.startsWith("/kitchen")) {
+
+        socket.emit("joinKitchen", restaurantId);
+
+    }
+
+    else if (path.startsWith("/waiter")) {
+
+        socket.emit("joinWaiter", restaurantId);
+
+    }
+
+    else if (path.startsWith("/cashier")) {
+
+        socket.emit("joinBilling", restaurantId);
 
     }
 

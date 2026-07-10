@@ -197,7 +197,7 @@ const kitchenTicket =
 
 const io = getIO();
 
-io.to(`restaurant_${restaurantId}`).emit(
+io.to(`kitchen_${restaurantId}`).emit(
     "new-order",
     {
         orderId,
@@ -342,7 +342,7 @@ exports.sendToBilling = async (
 
 const io = getIO();
 
-io.to(`restaurant_${order.restaurant_id}`).emit(
+io.to(`kitchen_${restaurantId}`).emit(
     "ready-for-billing",
     {
         orderId: order.id,

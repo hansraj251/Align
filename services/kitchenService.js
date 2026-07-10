@@ -243,7 +243,7 @@ exports.updateTicketItemStatus = async (
 
             const io = getIO();
 
-            io.to(`restaurant_${item.restaurant_id}`).emit(
+           io.to(`waiter_${item.restaurant_id}`).emit(
                 "ticket-ready",
                 {
                     orderId: item.order_id,

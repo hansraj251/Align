@@ -17,22 +17,39 @@ function init(server) {
 
         socket.on("joinRestaurant", (restaurantId) => {
 
-            socket.join(`restaurant_${restaurantId}`);
-            socket.join(`kitchen_${restaurantId}`);
-            socket.join(`waiter_${restaurantId}`);
-            socket.join(`billing_${restaurantId}`);
+    socket.join(`restaurant_${restaurantId}`);
 
-            console.log(
-                `Socket ${socket.id} joined restaurant_${restaurantId}`
-            );
+});
 
-        });
+socket.on("joinKitchen", (restaurantId) => {
 
-        socket.on("disconnect", () => {
+    socket.join(`kitchen_${restaurantId}`);
 
-            console.log("❌ Client Disconnected:", socket.id);
+    console.log(
+        `Kitchen joined kitchen_${restaurantId}`
+    );
 
-        });
+});
+
+socket.on("joinWaiter", (restaurantId) => {
+
+    socket.join(`waiter_${restaurantId}`);
+
+    console.log(
+        `Waiter joined waiter_${restaurantId}`
+    );
+
+});
+
+socket.on("joinBilling", (restaurantId) => {
+
+    socket.join(`billing_${restaurantId}`);
+
+    console.log(
+        `Billing joined billing_${restaurantId}`
+    );
+
+});
 
     });
 
