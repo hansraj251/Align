@@ -1,14 +1,18 @@
 require("dotenv").config();
+const http = require("http");
+
 require("./db");
 const path = require("path");
 const initializeDatabase = require("./database/init");
 console.log("initializeDatabase =", initializeDatabase);
 console.log("type =", typeof initializeDatabase);
 const express = require("express");
+const socket = require("./utils/socket");
 
 const cors = require("cors");
 
 const app = express();
+const server = http.createServer(app);
 
 app.use(cors());
 app.use(express.json());
@@ -132,8 +136,8 @@ initializeDatabase()
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+socket.init(server);
 
-  console.log(`🚀 Align Server running on http://localhost:${PORT}`);
-
+server.listen(PORT, () => {
+    console.log(`🚀 Align Server running on http://localhost:${PORT}`);
 });

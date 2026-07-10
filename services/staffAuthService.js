@@ -88,20 +88,14 @@ exports.login = async (
 
     token,
 
-    restaurant_name:
-        staff.restaurant_name,
+    restaurant_id: staff.restaurant_id,
+
+    restaurant_name: staff.restaurant_name,
 
     staff: {
-
-        id:
-            staff.id,
-
-        name:
-            staff.name,
-
-        role:
-            staff.role
-
+        id: staff.id,
+        name: staff.name,
+        role: staff.role
     }
 
 };

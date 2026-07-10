@@ -13,6 +13,7 @@ const variantRepository =
     require("../repositories/menuVariantRepository"); 
 const orderCalculationService =
     require("./orderCalculationService");
+const { getIO } = require("../utils/socket");    
 
 exports.createKitchenTicket = async (
     orderId,
@@ -225,7 +226,6 @@ exports.updateTicketItemStatus = async (
         ticketItemId,
         status
     );
-    
 
     if (status === "ready") {
 
@@ -241,29 +241,39 @@ exports.updateTicketItemStatus = async (
                 "ready"
             );
 
+            const io = getIO();
+
+            io.to(`restaurant_${item.restaurant_id}`).emit(
+                "ticket-ready",
+                {
+                    orderId: item.order_id,
+                    ticketId: item.ticket_id,
+                    tableName: item.table_name,
+                    ticketNumber: item.ticket_number
+                }
+            );
+
         }
 
     }
+
     if (status === "served") {
 
-    const readyItems =
-        await kitchenRepository.getReadyTicketItems(
-            item.ticket_id
-        );
+        const readyItems =
+            await kitchenRepository.getReadyTicketItems(
+                item.ticket_id
+            );
 
-    if (readyItems === 0) {
+        if (readyItems === 0) {
 
-        await kitchenRepository.updateTicketStatus(
+            await kitchenRepository.updateTicketStatus(
+                item.ticket_id,
+                "served"
+            );
 
-            item.ticket_id,
-
-            "served"
-
-        );
+        }
 
     }
-
-}
 
     return {
 

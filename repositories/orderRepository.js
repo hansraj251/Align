@@ -419,6 +419,34 @@ exports.getOrderDetails = async (
     );
 
 };
+exports.getOrderDetailsById = async (
+    orderId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            id,
+
+            restaurant_id,
+
+            table_id,
+
+            table_name,
+
+            order_number,
+
+            status
+
+        FROM orders
+
+        WHERE id = ?
+        `,
+        [orderId]
+    );
+
+};
 exports.getReceipt = async (restaurantId, orderId) => {
 
     return await db.getAsync(

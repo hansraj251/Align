@@ -11,6 +11,8 @@ const variantRepository =
     require("../repositories/menuVariantRepository");  
 const kitchenRepository =
     require("../repositories/kitchenRepository");
+const { getIO } =
+    require("../utils/socket");    
 
 exports.checkout = async (restaurantId, body) => {
 
@@ -192,6 +194,19 @@ const kitchenTicket =
         orderId,
         items
     );
+
+const io = getIO();
+
+io.to(`restaurant_${restaurantId}`).emit(
+    "new-order",
+    {
+        orderId,
+        tableId: table_id,
+        kitchenTicketId: kitchenTicket.ticketId,
+        ticketNumber: kitchenTicket.ticketNumber,
+        time: Date.now()
+    }
+);
     return {
         success: true,
         message: "Order sent to kitchen",
@@ -202,6 +217,7 @@ const kitchenTicket =
     };
 
 });
+
 
 };
 exports.getActiveOrderByTable = async (
@@ -319,6 +335,22 @@ exports.sendToBilling = async (
         orderId,
         "ready_for_billing"
     );
+    const order =
+    await orderRepository.getOrderDetailsById(
+        orderId
+    );
+
+const io = getIO();
+
+io.to(`restaurant_${order.restaurant_id}`).emit(
+    "ready-for-billing",
+    {
+        orderId: order.id,
+        orderNumber: order.order_number,
+        tableId: order.table_id,
+        tableName: order.table_name
+    }
+);
 
     return {
 

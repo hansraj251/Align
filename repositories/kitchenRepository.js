@@ -399,11 +399,32 @@ exports.getTicketItem = async (
     return await db.getAsync(
         `
         SELECT
-            id,
-            ticket_id,
-            status
-        FROM kitchen_ticket_items
-        WHERE id = ?
+
+            kti.id,
+
+            kti.ticket_id,
+
+            kti.item_name,
+
+            kti.status,
+
+            kt.ticket_number,
+
+            kt.order_id,
+
+            o.restaurant_id,
+
+            o.table_name
+
+        FROM kitchen_ticket_items kti
+
+        JOIN kitchen_tickets kt
+            ON kt.id = kti.ticket_id
+
+        JOIN orders o
+            ON o.id = kt.order_id
+
+        WHERE kti.id = ?
         `,
         [ticketItemId]
     );
