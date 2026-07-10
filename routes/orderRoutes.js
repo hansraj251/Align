@@ -40,7 +40,6 @@ router.patch(
 router.patch(
     "/:orderId/send-to-billing",
     authMiddleware,
-    adminMiddleware,
     orderController.sendToBilling
 );
 router.patch(

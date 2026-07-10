@@ -101,14 +101,19 @@ socket.on("ticket-ready", async data => {
 
     showSocketNotification(
         "🍽️ KOT Ready",
-        `${data.tableName}
-${data.ticketNumber}`
+        `${data.tableName}\n${data.ticketNumber}`
     );
 
     if (typeof loadCurrentOrder === "function") {
-
         await loadCurrentOrder();
+    }
 
+    if (typeof loadExistingOrder === "function") {
+        await loadExistingOrder();
+    }
+
+    if (typeof renderCart === "function") {
+        renderCart();
     }
 
 });
