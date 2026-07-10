@@ -33,7 +33,8 @@ socket.on("connect", () => {
 
     if (!restaurantId) return;
 
-    // Common restaurant room
+    console.log("Joining Restaurant:", restaurantId);
+
     socket.emit("joinRestaurant", restaurantId);
 
     const path = window.location.pathname;
@@ -143,6 +144,24 @@ socket.on("billing-updated", data => {
     if (typeof loadCurrentOrder === "function") {
 
         loadCurrentOrder();
+
+    }
+
+});
+
+socket.on("order-updated", async data => {
+
+    console.log("🔄 Order Updated", data);
+
+    if (typeof loadExistingOrder === "function") {
+
+        await loadExistingOrder();
+
+    }
+
+    if (typeof renderCart === "function") {
+
+        renderCart();
 
     }
 

@@ -252,11 +252,19 @@ exports.updateTicketItemStatus = async (
             ticketNumber: item.ticket_number
         }
     );
+        io.to(`restaurant_${item.restaurant_id}`).emit(
+        "order-updated",
+        {
+            orderId: item.order_id,
+            ticketId: item.ticket_id
+        }
+    );
 
     const pending =
         await kitchenRepository.getPendingTicketItems(
             item.ticket_id
         );
+        
 
     if (pending === 0) {
 

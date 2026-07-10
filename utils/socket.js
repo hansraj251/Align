@@ -57,6 +57,7 @@ socket.on("joinBilling", (restaurantId) => {
 
 }
 
+
 function getIO() {
 
     if (!io) {
