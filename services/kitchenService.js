@@ -131,87 +131,90 @@ exports.getKitchenTickets = async (
 
 };
 
-exports.updateTicketStatus = async (
-    ticketId,
-    status
-) => {
+exports.updateTicketStatus = async (ticketId, status) => {
 
     const ticket =
-        await kitchenRepository.getTicketById(
-            ticketId
-        );
+        await kitchenRepository.getTicketById(ticketId);
 
     if (!ticket) {
 
-        throw new Error(
-            "Ticket not found"
-        );
+        throw new Error("Ticket not found");
 
     }
-
-    await kitchenRepository.updateTicketStatus(
-    ticketId,
-    status
-);
-
-if (status === "preparing") {
-
-    await kitchenRepository.updateTicketItemsStatus(
-        ticketId,
-        "preparing"
-    );
-
-}
-
-if (status === "ready") {
-
-    await kitchenRepository.updateTicketItemsStatus(
-        ticketId,
-        "ready"
-    );
 
     const io = getIO();
 
-    io.to(`waiter_${ticket.restaurant_id}`).emit(
-        "ticket-ready",
-        {
-            orderId: ticket.order_id,
-            ticketId: ticket.id,
-            tableName: ticket.table_name,
-            ticketNumber: ticket.ticket_number
-        }
-    );
-
-}
-
-if (status === "served") {
-await kitchenRepository.updateTicketItemsStatus(
-
+    // 1. Ticket status update
+    await kitchenRepository.updateTicketStatus(
         ticketId,
-
-        "served"
-
+        status
     );
-    const activeTickets =
-        await kitchenRepository.getActiveTicketCountByOrder(
-            ticket.order_id
-        );
 
-    if (activeTickets === 0) {
+    // 2. Saare items update
+    if (status === "preparing") {
 
-        await orderRepository.updateOrderStatus(
-            ticket.order_id,
-            "ready_for_billing"
+        await kitchenRepository.updateTicketItemsStatus(
+            ticketId,
+            "preparing"
         );
 
     }
 
-}
+    if (status === "ready") {
+
+        await kitchenRepository.updateTicketItemsStatus(
+            ticketId,
+            "ready"
+        );
+
+        // Waiter notification
+        io.to(`waiter_${ticket.restaurant_id}`).emit(
+            "ticket-ready",
+            {
+                orderId: ticket.order_id,
+                ticketId: ticket.id,
+                tableName: ticket.table_name,
+                ticketNumber: ticket.ticket_number
+            }
+        );
+
+    }
+
+    if (status === "served") {
+
+        await kitchenRepository.updateTicketItemsStatus(
+            ticketId,
+            "served"
+        );
+
+        const activeTickets =
+            await kitchenRepository.getActiveTicketCountByOrder(
+                ticket.order_id
+            );
+
+        if (activeTickets === 0) {
+
+            await orderRepository.updateOrderStatus(
+                ticket.order_id,
+                "ready_for_billing"
+            );
+
+        }
+
+    }
+
+    // 3. SABSE LAST ME ADMIN KO UPDATE BHEJO
+    io.to(`restaurant_${ticket.restaurant_id}`).emit(
+        "order-updated",
+        {
+            orderId: ticket.order_id,
+            ticketId: ticket.id,
+            status
+        }
+    );
 
     return {
-
         success: true
-
     };
 
 };
@@ -239,9 +242,27 @@ exports.updateTicketItemStatus = async (
         status
     );
 
-    if (status === "ready") {
-
     const io = getIO();
+
+// Admin pages ko har status change par update bhejo
+
+io.to(`restaurant_${item.restaurant_id}`).emit(
+
+    "order-updated",
+
+    {
+
+        orderId: item.order_id,
+
+        ticketId: item.ticket_id,
+
+        status
+
+    }
+
+);
+
+    if (status === "ready") {
 
     io.to(`waiter_${item.restaurant_id}`).emit(
         "ticket-ready",
@@ -252,13 +273,6 @@ exports.updateTicketItemStatus = async (
             ticketNumber: item.ticket_number
         }
     );
-        io.to(`restaurant_${item.restaurant_id}`).emit(
-        "order-updated",
-        {
-            orderId: item.order_id,
-            ticketId: item.ticket_id
-        }
-    );
 
     const pending =
         await kitchenRepository.getPendingTicketItems(
@@ -267,6 +281,7 @@ exports.updateTicketItemStatus = async (
         
 
     if (pending === 0) {
+        
 
         await kitchenRepository.updateTicketStatus(
             item.ticket_id,

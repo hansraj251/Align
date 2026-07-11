@@ -188,7 +188,7 @@ subtotal = totals.subtotal;
         table_id,
         "occupied"
     );
-    console.log("Items before kitchen:", JSON.stringify(items, null, 2));
+    
 const kitchenTicket =
     await kitchenService.createKitchenTicket(
         orderId,
@@ -299,7 +299,7 @@ exports.sendToBilling = async (
         await kitchenRepository.getActiveTicketsByOrder(
             orderId
         );
-        console.log("orderId =", orderId);
+        
 
     // Pehle hi process ho chuka hai
     if (activeTickets.length === 0) {

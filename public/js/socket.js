@@ -155,11 +155,17 @@ socket.on("order-updated", async data => {
 
     if (typeof loadExistingOrder === "function") {
 
+        console.log("Calling loadExistingOrder");
+
         await loadExistingOrder();
+
+        console.log("loadExistingOrder finished");
 
     }
 
     if (typeof renderCart === "function") {
+
+        console.log("Rendering cart");
 
         renderCart();
 

@@ -446,6 +446,21 @@ function renderCart() {
     const cart =
 
     Align.Order.state.cart;
+    const hasNewItems = cart.length > 0;
+
+document
+    .getElementById("newCartSection")
+    ?.classList.toggle(
+        "hidden",
+        !hasNewItems
+    );
+
+document
+    .getElementById("mobileNewCartSection")
+    ?.classList.toggle(
+        "hidden",
+        !hasNewItems
+    );
 
     const cartDiv = document.getElementById("cart");
 
