@@ -6,6 +6,7 @@ let selectedCategory = "all";
 
 let selectedFoodType = "all";
 let currentOrder = null;
+let isTakeAway = false;
 
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
@@ -36,6 +37,15 @@ window.location.href =
 }    
 const goBack = () => {
 
+    if (isTakeAway) {
+
+        window.location.href =
+            "/admin/dashboard.html";
+
+        return;
+
+    }
+
     window.location.href =
         `/admin/area.html?id=${areaId}`;
 
@@ -57,6 +67,7 @@ document
 
 const tableId =
     params.get("table");
+
 
 const orderId =
     params.get("order");
@@ -412,12 +423,33 @@ const searchMatch =
 
 async function initialize() {
 
+    const takeaway =
+        await API.get(
+            "/api/tables/takeaway"
+        );
+
+    isTakeAway =
+        takeaway.success &&
+        takeaway.table &&
+        Number(takeaway.table.id) === Number(tableId);
+
+    if (isTakeAway) {
+
+        document
+            .getElementById("backBtn")
+            ?.classList.add("hidden");
+
+        document
+            .getElementById("backBtnMobile")
+            ?.classList.add("hidden");
+
+    }
+
     await loadMenu();
 
     await loadExistingOrder();
 
     renderCart();
-
 }
 
 
