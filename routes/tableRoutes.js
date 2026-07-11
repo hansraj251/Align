@@ -6,6 +6,12 @@ const adminMiddleware = require("../middlewares/adminMiddleware");
 
 const tableController = require("../controllers/tableController");
 
+router.get(
+    "/takeaway",
+    authMiddleware,
+    tableController.getTakeAwayTable
+);
+
 router.post(
     "/",
     authMiddleware,
@@ -32,5 +38,7 @@ router.put(
     adminMiddleware,
     tableController.updateTable
 );
+
+
 
 module.exports = router;

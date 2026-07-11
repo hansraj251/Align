@@ -7,6 +7,7 @@ exports.getAll = async (restaurantId) => {
         SELECT
             da.id,
             da.name,
+            da.system_key,
             da.display_order,
 
             COUNT(t.id) AS total_tables,
@@ -36,11 +37,20 @@ AS available_tables
 
             ON t.area_id = da.id
 
-        WHERE da.restaurant_id = ?
+        WHERE
+
+    da.restaurant_id = ?
+
+    AND
+    (
+        da.system_key IS NULL
+        OR da.system_key != 'takeaway'
+    )
 
         GROUP BY
             da.id,
             da.name,
+            da.system_key,
             da.display_order
 
         ORDER BY

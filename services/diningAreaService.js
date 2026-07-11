@@ -94,6 +94,13 @@ exports.remove = async (
     restaurantId,
     areaId
 ) => {
+   if (area.system_key === "takeaway") {
+
+    throw new Error(
+        "Default Take Away area cannot be deleted."
+    );
+
+} 
 
     const tableCount =
         await diningAreaRepository.getTableCount(

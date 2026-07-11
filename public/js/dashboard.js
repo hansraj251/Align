@@ -48,12 +48,36 @@ async function loadRestaurantFloor() {
     }
 
     floorAreas =
-        areaResponse.areas;
+    areaResponse.areas.filter(
+        area =>
+            area.system_key !== "takeaway"
+    );
 
-    floorTables =
-        tableResponse.tables;
+floorTables =
+    tableResponse.tables;
 
-    renderRestaurantFloor();
+const takeawayBtn =
+    document.getElementById(
+        "takeawayBtn"
+    );
+
+const takeawayResponse =
+    await API.get(
+        "/api/tables/takeaway"
+    );
+
+if (
+    takeawayBtn &&
+    takeawayResponse.success &&
+    takeawayResponse.table
+) {
+
+    takeawayBtn.href =
+        `/admin/order.html?table=${takeawayResponse.table.id}&area=${takeawayResponse.table.area_id}`;
+
+}
+
+renderRestaurantFloor();
 
 }
 function renderRestaurantFloor() {
@@ -74,6 +98,7 @@ function renderRestaurantFloor() {
             table =>
                 table.area_id == area.id
         );
+        
 
     const occupied =
         areaTables.filter(

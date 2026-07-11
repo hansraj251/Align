@@ -159,6 +159,8 @@ function renderStaff(rows) {
 
             data-role="${encodeURIComponent(item.role)}"
 
+            data-username="${item.username || ""}"
+
             data-salarytype="${item.salary_type}"
 
             data-salary="${item.basic_salary}"
@@ -216,11 +218,11 @@ function openStaffModal(staff = null) {
         `
 <div class="grid grid-cols-2 gap-4">
 
-    <div>
+    <div id="nameGroup">
 
-        <label class="mb-2 block font-medium">
-            Name
-        </label>
+    <label class="mb-2 block font-medium">
+        Name
+    </label>
 
         <input
             id="staffName"
@@ -229,11 +231,11 @@ function openStaffModal(staff = null) {
 
     </div>
 
-    <div>
+    <div id="mobileGroup">
 
-        <label class="mb-2 block font-medium">
-            Mobile
-        </label>
+    <label class="mb-2 block font-medium">
+        Mobile
+    </label>
 
         <input
             id="staffMobile"
@@ -251,7 +253,7 @@ function openStaffModal(staff = null) {
         <input
             id="staffUsername"
             value="${staff?.username || ""}"
-            placeholder="waiter1"
+            placeholder=""
             class="w-full rounded-lg border p-3">
 
     </div>
@@ -266,23 +268,22 @@ function openStaffModal(staff = null) {
             id="staffRole"
             class="w-full rounded-lg border p-3">
 
-            <option value="owner" ${staff?.role==="owner"?"selected":""}>Owner</option>
-
             <option value="manager" ${staff?.role==="manager"?"selected":""}>Manager</option>
 
             <option value="waiter" ${staff?.role==="waiter"?"selected":""}>Waiter</option>
 
+            <option value="device" ${staff?.role==="device"?"selected":""}>📱 Device</option>
+
             <option value="kitchen" ${staff?.role==="kitchen"?"selected":""}>Kitchen</option>
 
             <option value="cashier" ${staff?.role==="cashier"?"selected":""}>Cashier</option>
-
         </select>
 
     </div>
 
-    ${!staff ? `
+   ${!staff ? `
 
-    <div>
+<div id="passwordGroup">
 
         <label class="mb-2 block font-medium">
             Password
@@ -298,11 +299,11 @@ function openStaffModal(staff = null) {
 
     ` : `<div></div>`}
 
-    <div>
+    <div id="salaryTypeGroup">
 
-        <label class="mb-2 block font-medium">
-            Salary Type
-        </label>
+    <label class="mb-2 block font-medium">
+        Salary Type
+    </label>
 
         <select
             id="salaryType"
@@ -320,11 +321,11 @@ function openStaffModal(staff = null) {
 
     </div>
 
-    <div>
+   <div id="salaryGroup">
 
-        <label class="mb-2 block font-medium">
-            Basic Salary
-        </label>
+    <label class="mb-2 block font-medium">
+        Basic Salary
+    </label>
 
         <input
             id="basicSalary"
@@ -334,11 +335,11 @@ function openStaffModal(staff = null) {
 
     </div>
 
-    <div>
+   <div id="joiningGroup">
 
-        <label class="mb-2 block font-medium">
-            Joining Date
-        </label>
+    <label class="mb-2 block font-medium">
+        Joining Date
+    </label>
 
         <input
             id="joiningDate"
@@ -348,7 +349,9 @@ function openStaffModal(staff = null) {
 
     </div>
 
-    <div class="col-span-2">
+    <div
+    id="addressGroup"
+    class="col-span-2">
 
         <label class="mb-2 block font-medium">
             Address
@@ -360,11 +363,11 @@ function openStaffModal(staff = null) {
 
     </div>
 
-    <div>
+    <div id="emergencyGroup">
 
-        <label class="mb-2 block font-medium">
-            Emergency Contact
-        </label>
+    <label class="mb-2 block font-medium">
+        Emergency Contact
+    </label>
 
         <input
             id="emergencyContact"
@@ -401,55 +404,120 @@ function openStaffModal(staff = null) {
         saveStaff
 
     );
+    const roleSelect =
+
+    document.getElementById(
+
+        "staffRole"
+
+    );
+
+roleSelect.addEventListener(
+
+    "change",
+
+    toggleStaffFields
+
+);
+
+toggleStaffFields();
+
+}
+function toggleStaffFields() {
+
+    const isDevice =
+        document.getElementById(
+            "staffRole"
+        ).value === "device";
+
+    [
+
+        "mobileGroup",
+        "salaryTypeGroup",
+        "salaryGroup",
+        "joiningGroup",
+        "addressGroup",
+        "emergencyGroup"
+
+    ].forEach(id => {
+
+        const el =
+            document.getElementById(id);
+
+        if (el) {
+
+            el.style.display =
+                isDevice
+                    ? "none"
+                    : "";
+
+        }
+
+    });
 
 }
 async function saveStaff() {
     
-    const usernameInput =
+   const usernameInput =
     document.getElementById("staffUsername");
 
 const passwordInput =
     document.getElementById("staffPassword");
 
-    const body = {
+const role =
+    document.getElementById("staffRole").value.trim();
 
-        name:
-            document.getElementById("staffName").value.trim(),
+const isDevice =
+    role === "device";
 
-        mobile:
-            document.getElementById("staffMobile").value.trim(),
+const body = {
 
-        role:
-            document.getElementById("staffRole").value.trim(),
-        username:
-    usernameInput.value
-        .trim()
-        .toLowerCase(),
+    name:
+        document.getElementById("staffName").value.trim(),
 
-password:
-    passwordInput
-        ? passwordInput.value
-        : undefined,
+    mobile:
+        isDevice
+            ? ""
+            : document.getElementById("staffMobile").value.trim(),
 
-        salary_type:
-            document.getElementById("salaryType").value,
+    role:
+        role,
 
-        basic_salary:
-            Number(
-                document.getElementById("basicSalary").value
-            ),
+    username:
+        usernameInput.value.trim().toLowerCase(),
 
-        joining_date:
-            document.getElementById("joiningDate").value,
+    password:
+        passwordInput
+            ? passwordInput.value
+            : undefined,
 
-        address:
-            document.getElementById("staffAddress").value.trim(),
+    salary_type:
+        isDevice
+            ? null
+            : document.getElementById("salaryType").value,
 
-        emergency_contact:
-            document.getElementById("emergencyContact").value.trim(),
+    basic_salary:
+        isDevice
+            ? 0
+            : Number(document.getElementById("basicSalary").value),
 
-        status:
-            document.getElementById("staffStatus").value
+    joining_date:
+        isDevice
+            ? null
+            : document.getElementById("joiningDate").value,
+
+    address:
+        isDevice
+            ? ""
+            : document.getElementById("staffAddress").value.trim(),
+
+    emergency_contact:
+        isDevice
+            ? ""
+            : document.getElementById("emergencyContact").value.trim(),
+
+    status:
+        document.getElementById("staffStatus").value
 
     };
 
@@ -567,6 +635,17 @@ if (
 document
     .getElementById("addStaffBtn")
     .onclick = () => openStaffModal(null);
+const addStaffBtnMobile =
+    document.getElementById(
+        "addStaffBtnMobile"
+    );
+
+if (addStaffBtnMobile) {
+
+    addStaffBtnMobile.onclick = () =>
+        openStaffModal(null);
+
+}    
 
 loadStaff();
 
@@ -582,6 +661,8 @@ document.addEventListener("click", e => {
 
         openStaffModal({
 
+            
+
             name:
                 decodeURIComponent(
                     editBtn.dataset.name
@@ -594,6 +675,8 @@ document.addEventListener("click", e => {
                 decodeURIComponent(
                     editBtn.dataset.role
                 ),
+            username:
+    editBtn.dataset.username,    
 
             salary_type:
                 editBtn.dataset.salarytype,
@@ -618,6 +701,7 @@ document.addEventListener("click", e => {
                 editBtn.dataset.status
 
         });
+        
 
         return;
 

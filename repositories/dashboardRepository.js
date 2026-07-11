@@ -38,18 +38,26 @@ exports.getDashboardSummary = async (restaurantId) => {
             ) AS todayOrders,
 
             (
-                SELECT COUNT(*)
-                FROM tables
-                WHERE
-                    restaurant_id = ?
-                    AND status = 'occupied'
-            ) AS occupiedTables,
-
-            (
     SELECT COUNT(*)
     FROM tables
     WHERE
         restaurant_id = ?
+        AND status = 'occupied'
+        AND (
+            system_key IS NULL
+            OR system_key != 'takeaway'
+        )
+) AS occupiedTables,
+
+           (
+    SELECT COUNT(*)
+    FROM tables
+    WHERE
+        restaurant_id = ?
+        AND (
+            system_key IS NULL
+            OR system_key != 'takeaway'
+        )
 ) AS totalTables,
 
             (

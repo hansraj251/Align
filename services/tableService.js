@@ -93,6 +93,19 @@ exports.delete = async (
     restaurantId,
     tableId
 ) => {
+   const table =
+    await tableRepository.getById(
+        restaurantId,
+        tableId
+    );
+
+if (table.system_key === "takeaway") {
+
+    throw new Error(
+        "Default Take Away table cannot be deleted."
+    );
+
+} 
 
     const activeOrders =
         await orderRepository.getActiveOrdersByTable(
@@ -235,5 +248,15 @@ if (
             "Table updated successfully"
 
     };
+
+};
+
+exports.getTakeAwayTable = async (
+    restaurantId
+) => {
+
+    return await tableRepository.getTakeAwayTable(
+        restaurantId
+    );
 
 };

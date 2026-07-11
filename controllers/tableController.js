@@ -119,3 +119,34 @@ exports.updateTable = async (req, res) => {
     }
 
 };
+
+exports.getTakeAwayTable = async (req, res) => {
+
+    try {
+
+        const table =
+            await tableService.getTakeAwayTable(
+                req.user.restaurantId
+            );
+
+        res.json({
+
+            success: true,
+
+            table
+
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

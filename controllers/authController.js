@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../db");
+const defaultSetupService =
+require("../services/defaultSetupService");
 exports.signup = async (req, res) => {
 
     const {
@@ -159,18 +161,37 @@ db.run(
                     });
 
                 }
+                
+   defaultSetupService
+    .ensureDefaultTakeAway(
+        restaurantId
+    )
+    .then(() => {
 
-                return res.json({
+        return res.json({
 
-                    success: true,
+            success: true,
 
-                    message: "Signup Successful",
+            message: "Signup Successful",
 
-                    restaurantId,
+            restaurantId,
 
-                    userId
+            userId
 
-                });
+        });
+
+    })
+    .catch(err => {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    });
 
             }
         );
@@ -240,6 +261,9 @@ if (!passwordMatched) {
         message: "Invalid email or password"
     });
 }
+await defaultSetupService.ensureDefaultTakeAway(
+    user.restaurant_id
+);
 
             const token = jwt.sign(
     {

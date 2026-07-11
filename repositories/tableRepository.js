@@ -83,6 +83,7 @@ exports.getAll = async (restaurantId) => {
             t.capacity,
             t.status,
             t.area_id,
+             t.system_key,
             t.display_row,
             t.display_order,
             a.name AS area_name,
@@ -131,11 +132,18 @@ exports.getAll = async (restaurantId) => {
 
     )
 
-        WHERE
-            t.restaurant_id = ?
+       WHERE
+
+    t.restaurant_id = ?
+
+    AND
+    (
+        t.system_key IS NULL
+        OR t.system_key != 'takeaway'
+    )
 
         GROUP BY
-            t.id
+            t.id,  t.system_key
 
         ORDER BY
 
@@ -184,6 +192,7 @@ exports.getById = async (
     name,
     capacity,
     area_id,
+    system_key,
     display_row,
     display_order
         FROM tables
@@ -281,6 +290,30 @@ exports.getTableDetails = async (
             tableId,
             restaurantId
         ]
+    );
+
+};
+
+exports.getTakeAwayTable = async (restaurantId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            id,
+            area_id
+
+        FROM tables
+
+        WHERE
+
+            restaurant_id = ?
+
+            AND system_key = 'takeaway'
+
+        LIMIT 1
+        `,
+        [restaurantId]
     );
 
 };
