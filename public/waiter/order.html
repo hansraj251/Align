@@ -35,12 +35,6 @@
 
         </a>
 
-        <input
-            id="menuSearch"
-            type="text"
-            placeholder="🔍 Search menu..."
-            class="h-9 flex-1 rounded-lg border px-3 text-sm">
-
         <div class="min-w-[70px] text-right">
 
             <h1
@@ -68,28 +62,68 @@
     <!-- Filters -->
 <div class="shrink-0 border-b bg-white">
 
-    <div
-        id="foodTypeList"
-        class="flex gap-1.5 overflow-x-auto whitespace-nowrap px-3 pt-2 pb-2">
-    </div>
+    <div class="flex flex-col gap-2 px-3 pt-2 pb-2 lg:flex-row lg:items-center">
 
     <div
-        id="categoryList"
-        class="flex gap-1.5 overflow-x-auto whitespace-nowrap px-3 pt-2 pb-2">
-    </div>
+    id="foodTypeList"
+    class="flex gap-1.5 overflow-x-auto whitespace-nowrap lg:flex-1">
+</div>
+
+    <input
+    id="menuSearch"
+    type="text"
+    placeholder="Search..."
+    class="h-9 w-full rounded-lg border px-3 text-sm lg:w-56 lg:shrink-0">
+
+</div>
+
+   <div
+    id="categoryList"
+    class="flex gap-1.5 overflow-x-auto whitespace-nowrap px-3 pt-2 pb-2 lg:hidden">
+</div>
 
 </div>
 
     <!-- Scroll Area -->
 
-<div
-class="flex-1 overflow-y-auto pb-28">
+<div class="mt-3 flex-1 min-h-0 overflow-hidden">
+
+    <!-- Desktop -->
+
+    <div class="hidden h-full min-h-0 lg:grid lg:grid-cols-[220px_1fr] lg:gap-5">
+
+        <!-- Categories -->
+
+        <div class="mt-1 flex h-full min-h-0 flex-col rounded-xl border bg-white">
+
+            <div class="shrink-0 border-b px-4 py-3 font-semibold">
+
+                Categories
+
+            </div>
+
+            <div
+    id="categoryListDesktop"
+    class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3 pt-2 space-y-2">
+
+            </div>
+
+        </div>
+
+        <!-- Menu -->
+
+       <div
+    id="menuList"
+    class="grid auto-rows-max h-full min-h-0 grid-cols-3 gap-3 overflow-y-auto pb-2 xl:grid-cols-4">
+        </div>
+
+    </div>
+
+    <!-- Mobile -->
 
     <div
-    id="menuList"
-    class="grid grid-cols-1 gap-2 px-2 py-1.5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
-        Loading...
+    id="menuListMobile"
+    class="h-full overflow-y-auto grid auto-rows-max grid-cols-1 gap-2 px-2 py-1.5 md:grid-cols-2 lg:hidden">
 
     </div>
 
@@ -132,17 +166,15 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl
     <div class="flex gap-2">
 
         <button
-            id="viewCartBtn"
-            class="rounded-xl bg-slate-700 px-4 py-2.5 text-sm font-semibold text-white">
-
+    id="viewCartBtn"
+    class="hidden rounded-xl bg-slate-700 px-4 py-2.5 text-sm font-semibold text-white">
             View Order
 
         </button>
 
         <button
-            id="sendKitchenBtnBottom"
-            class="rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white">
-
+    id="sendKitchenBtnBottom"
+    class="hidden rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white">
             Send To Kitchen
 
         </button>
@@ -183,17 +215,23 @@ class="fixed bottom-0 left-0 right-0 z-40 border-t bg-white px-3 py-2 shadow-2xl
             </button>
 
         </div>
-<div
-    class="max-h-[60vh] overflow-y-auto">
+<div class="flex max-h-[75vh] flex-col">
 
     <div
-        id="currentOrder"
-        class="hidden border-b px-3 py-3">
+        class="min-h-0 flex-1 overflow-y-auto">
+
+        <div
+            id="currentOrder"
+            class="hidden px-3 py-3">
+        </div>
+
     </div>
+
     <div
-    id="orderAction"
-    class="hidden border-t px-3 py-3">
-    
+        id="orderAction"
+        class="hidden shrink-0 border-t bg-white px-3 py-3">
+    </div>
+
 </div>
 <div id="modalContainer"></div>
     

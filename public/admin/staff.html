@@ -19,45 +19,76 @@
 
 <body class="bg-slate-100">
 
-<main class="min-h-screen bg-slate-100 p-8">
-    <div class="mb-8 flex items-center justify-between">
+<main
+class="min-h-screen bg-slate-100
+p-4
+pt-20
+md:p-6
+md:pt-6
+xl:p-8
+xl:pt-8">
 
-    <div>
+<!-- Mobile Header -->
 
-        <h1 class="text-3xl font-bold">
+<div
+class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
 
-            👥 Staff
+    <div class="flex items-center justify-between">
 
-        </h1>
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-3 py-2 text-white">
+
+            ← Dashboard
+
+        </a>
+
+        <button
+            id="addStaffBtnMobile"
+            class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white">
+
+            + Add
+
+        </button>
 
     </div>
-    
+
+</div>
+
+<!-- Desktop Header -->
+
+<div class="mb-8 hidden items-center justify-between md:flex">
 
     <div class="flex items-center gap-3">
 
-    <a
-        href="/admin/dashboard.html"
-        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
 
-        Dashboard
+            Dashboard
 
-    </a>
+        </a>
 
-    <button
-        id="addStaffBtn"
-        class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
+        <button
+            id="addStaffBtn"
+            class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
 
-        + Add Staff
+            + Add Staff
 
-    </button>
+        </button>
 
-</div>
+    </div>
+
+    <h1 class="text-3xl font-bold">
+
+        👥 Staff
+
+    </h1>
 
 </div>
 
         <div
-            class="mb-6 rounded-xl bg-white p-5 shadow">
-
+    class="mb-5 rounded-xl bg-white p-4 shadow md:p-5">
             <input
 
                 id="searchStaff"
@@ -66,7 +97,7 @@
 
                 placeholder="Search by name, mobile or role..."
 
-                class="w-full rounded-lg border p-3">
+                class="w-full rounded-lg border px-4 py-3">
 
         </div>
 

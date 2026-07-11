@@ -88,8 +88,18 @@ async function loadMenu() {
     }
 
     allMenuItems =
-        data.items.filter(
+    data.items
+        .filter(
             item => item.is_available == 1
+        )
+        .sort((a, b) =>
+            a.name.localeCompare(
+                b.name,
+                undefined,
+                {
+                    sensitivity: "base"
+                }
+            )
         );
 
     renderCategoryFilters();
@@ -102,11 +112,12 @@ async function loadMenu() {
 function renderMenu(items) {
 
     const menu =
-        document.getElementById(
-            "menuList"
-        );
+    window.innerWidth >= 1024
+        ? document.getElementById("menuList")
+        : document.getElementById("menuListMobile");   
 
     menu.innerHTML = "";
+    let html = "";
 
     if (items.length === 0) {
 
@@ -176,7 +187,7 @@ No menu items found
 `).join("")
 : "";
 
-        menu.innerHTML += `
+        html += `
 
 <div
 class="rounded-xl border border-slate-200 border-l-4
@@ -247,6 +258,7 @@ ${variantsHtml}
 `;
 
     });
+    menu.innerHTML = html;
 
 }
 function matchesMenuSearch(item, keyword) {
@@ -534,6 +546,7 @@ function addItem(
 
 
 function renderCart() {
+
     const cart =
 
     Align.Order.state.cart;
@@ -772,22 +785,8 @@ ${item.variant_name}
 
 if (existingItems.length > 0) {
 
-    // cartDiv.innerHTML += `
-    //     <h3 class="mb-3 text-lg font-bold">
-
-    //         Current Order
-
-    //     </h3>
-    // `;
+   
     if (cartSheet) {
-
-//     cartSheet.innerHTML += `
-// <h3 class="mb-3 text-lg font-bold">
-
-//     Current Order
-
-// </h3>
-// `;
 
 }
     
@@ -921,25 +920,8 @@ if (cartSheet) {
 
     });
 
-    // cartDiv.innerHTML += `
-    //     <hr class="my-4">
-    //     <h3 class="mb-3 text-lg font-bold">
-
-    //         New Items
-
-    //     </h3>
-    // `;
     if (cartSheet) {
 
-//     cartSheet.innerHTML += `
-// <hr class="my-4">
-
-// <h3 class="mb-3 text-lg font-bold">
-
-//     New Items
-
-// </h3>
-// `;
 
 }
 

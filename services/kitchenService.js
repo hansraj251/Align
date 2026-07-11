@@ -18,7 +18,7 @@ const { getIO } = require("../utils/socket");
 exports.createKitchenTicket = async (
     orderId,
     items
-) => {console.log("Kitchen items:", JSON.stringify(items, null, 2));
+) => {
 
     const ticketId =
     await kitchenRepository.createTicket(

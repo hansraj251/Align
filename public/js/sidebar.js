@@ -46,17 +46,39 @@ if (mobileName) {
         }
 
         const img =
-            document.getElementById(
-                "sidebarLogo"
-            );
+    document.getElementById(
+        "sidebarLogo"
+    );
 
-        if (img && restaurant.logo) {
+if (img) {
 
-            img.src = restaurant.logo;
+    if (restaurant.logo) {
+
+        img.onload = () => {
 
             img.classList.remove("hidden");
 
-        }
+        };
+
+        img.onerror = () => {
+
+            img.classList.add("hidden");
+
+            img.removeAttribute("src");
+
+        };
+
+        img.src = restaurant.logo;
+
+    } else {
+
+        img.classList.add("hidden");
+
+        img.removeAttribute("src");
+
+    }
+
+}
 
     } catch (err) {
 

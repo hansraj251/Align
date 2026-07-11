@@ -27,8 +27,6 @@ async function initialize() {
 
 }
 
-    await loadCategories();
-
     await loadMenu();
 
     if (typeof loadCurrentOrder === "function") {
@@ -91,6 +89,194 @@ setInterval(
     5000
 
 );
+function renderCategoryFilters() {
+
+    const itemsForCategories =
+        selectedFoodType === "all"
+            ? allMenuItems
+            : allMenuItems.filter(
+                  item => item.food_type === selectedFoodType
+              );
+
+    const categories = [
+
+        {
+            id: "all",
+            name: "All"
+        },
+
+        ...new Map(
+
+            itemsForCategories.map(item => [
+
+                item.category_id,
+
+                {
+                    id: item.category_id,
+                    name: item.category
+                }
+
+            ])
+
+        ).values()
+
+    ];
+
+    const containers = [
+
+    document.getElementById("categoryList"),
+    document.getElementById("categoryListDesktop")
+
+].filter(Boolean);
+
+    containers.forEach(container => {
+
+        container.innerHTML = "";
+
+       categories.forEach(cat => {
+        const sampleItem =
+    itemsForCategories.find(
+        item => item.category_id == cat.id
+    );
+
+let borderColor = "border-l-4 border-blue-600";
+
+if (selectedFoodType !== "all") {
+
+    borderColor =
+        getFoodTypeColor(
+            sampleItem?.food_type
+        );
+
+}
+
+    const isDesktop =
+        container.id === "categoryListDesktop";
+
+            const count =
+                cat.id === "all"
+                    ? itemsForCategories.length
+                    : itemsForCategories.filter(
+                          item => item.category_id == cat.id
+                      ).length;
+
+            container.innerHTML += `
+<button
+onclick="selectCategory('${cat.id}')"
+class="category-chip ${
+    isDesktop
+        ? `flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 ${borderColor}`
+        : `flex-shrink-0 rounded-full border px-4 py-2 text-sm font-medium ${borderColor}`
+}"
+data-id="${cat.id}">
+
+<span>${cat.name}</span>
+
+${
+isDesktop
+? `
+<span
+class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+${count}
+</span>
+`
+: ""
+}
+
+</button>
+`;
+
+        });
+
+    });
+
+    updateCategorySelection();
+
+}
+function updateCategorySelection() {
+
+    document
+        .querySelectorAll(".category-chip")
+        .forEach(btn => {
+
+            const active =
+                btn.dataset.id == selectedCategory;
+
+            const parent =
+                btn.parentElement;
+
+            const isDesktop =
+                parent?.id === "categoryListDesktop";
+
+            let activeClass =
+                "bg-blue-600 border-blue-600 text-white";
+
+            if (selectedFoodType === "veg") {
+
+                activeClass =
+                    "bg-green-600 border-green-600 text-white";
+
+            }
+
+            else if (selectedFoodType === "non_veg") {
+
+                activeClass =
+                    "bg-red-600 border-red-600 text-white";
+
+            }
+
+            else if (selectedFoodType === "egg") {
+
+                activeClass =
+                    "bg-yellow-500 border-yellow-500 text-white";
+
+            }
+
+            else if (selectedFoodType === "jain") {
+
+                activeClass =
+                    "bg-orange-500 border-orange-500 text-white";
+
+            }
+
+            else if (selectedFoodType === "vegan") {
+
+                activeClass =
+                    "bg-emerald-600 border-emerald-600 text-white";
+
+            }
+
+            else if (selectedFoodType === "satvik") {
+
+                activeClass =
+                    "bg-purple-600 border-purple-600 text-white";
+
+            }
+
+            btn.className =
+                isDesktop
+
+                ? "category-chip flex w-full items-center justify-between rounded-lg border px-3 py-2 text-sm transition hover:bg-slate-50"
+
+                : "category-chip flex-shrink-0 rounded-full border px-4 py-2 text-sm font-medium";
+
+            if (active) {
+
+                btn.className +=
+                    ` ${activeClass}`;
+
+            }
+
+            else {
+
+                btn.className +=
+                    " border-slate-200 bg-white text-slate-700";
+
+            }
+
+        });
+
+}
 async function sendToKitchen() {
 
     if (Align.Order.state.cart.length === 0) {
@@ -284,86 +470,13 @@ if (typeof updateCartSummary === "function") {
 }    
 
 }
-let allCategories = [];
-async function loadCategories() {
 
-    const data =
-        await API.get(
-            "/api/menu/categories"
-        );
 
-    if (!data.success) {
-
-        return;
-
-    }
-
-    allCategories = data.categories;
-
-renderCategories(
-    allCategories
-);
-
-}
-function renderCategories(
-    categories
-) {
-
-    const container =
-        document.getElementById(
-            "categoryList"
-        );
-
-    container.innerHTML = "";
-
-    container.innerHTML += `
-
-<button
-
-class="${
-selectedCategory === "all"
-? "text-blue-600 transition hover:bg-blue-200 hover:text-blue-700"
-: "border bg-white"
-} flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium"
-
-onclick="selectCategory('all')">
-
-All
-
-</button>
-
-`;
-
-    categories.forEach(category => {
-
-        container.innerHTML += `
-
-<button
-
-class="${
-selectedCategory == category.id
-? "text-blue-600 transition hover:bg-blue-200 hover:text-blue-700"
-: "border bg-white"
-} flex-shrink-0 rounded-full px-4 py-2 text-sm font-medium"
-
-onclick="selectCategory(${category.id})">
-
-${category.name}
-
-</button>
-
-`;
-
-    });
-
-}
 function selectCategory(categoryId) {
 
     selectedCategory = categoryId;
 
-    renderCategories(
-        allCategories
-    );
+    updateCategorySelection();
 
     applyFilters();
 
@@ -385,9 +498,19 @@ async function loadMenu() {
 
     }
 
-    allMenuItems = data.items;
+  allMenuItems = data.items.sort((a, b) =>
+    a.name.localeCompare(
+        b.name,
+        undefined,
+        {
+            sensitivity: "base"
+        }
+    )
+);
 
 renderFoodTypes();
+
+renderCategoryFilters();
 
 applyFilters();
 
@@ -552,12 +675,40 @@ function updateMenuControls(
         renderMenuControls(item);
 
 }
+function getFoodTypeColor(foodType) {
+
+    switch (foodType) {
+
+        case "veg":
+            return "border-l-4 border-green-600";
+
+        case "non_veg":
+            return "border-l-4 border-red-600";
+
+        case "egg":
+            return "border-l-4 border-yellow-500";
+
+        case "vegan":
+            return "border-l-4 border-emerald-500";
+
+        case "jain":
+            return "border-l-4 border-orange-500";
+
+        case "satvik":
+            return "border-l-4 border-purple-500";
+
+        default:
+            return "border-l-4 border-slate-300";
+
+    }
+
+}
 function renderMenu(items) {
 
-    const menu =
-        document.getElementById(
-            "menuList"
-        );
+   const menu =
+    window.innerWidth >= 1024
+        ? document.getElementById("menuList")
+        : document.getElementById("menuListMobile");  
 
     menu.innerHTML = "";
     let html = "";
@@ -588,7 +739,7 @@ function renderMenu(items) {
 
 <div
 id="menu-card-${item.id}"
-class="rounded-lg bg-white p-3 shadow-sm">
+class="rounded-lg bg-white p-3 shadow-sm ${getFoodTypeColor(item.food_type)}">
 
 <div class="flex items-center justify-between">
 
@@ -779,8 +930,123 @@ function updateCartSummary() {
         Align.Order.cart.total(),
         2
     );
+    const sendBtn =
+    document.getElementById(
+        "sendKitchenBtnBottom"
+    );
+
+if (sendBtn) {
+
+    sendBtn.classList.toggle(
+        "hidden",
+        totalItems === 0
+    );
 
 }
+const viewBtn =
+    document.getElementById(
+        "viewCartBtn"
+    );
+
+const hasCurrentOrder =
+    !document
+        .getElementById("currentOrder")
+        ?.classList.contains("hidden");
+
+if (viewBtn) {
+
+    viewBtn.classList.toggle(
+        "hidden",
+        !hasCurrentOrder
+    );
+
+}
+
+}
+function matchesMenuSearch(item, keyword) {
+
+    if (!keyword) return true;
+
+    keyword = keyword
+        .toLowerCase()
+        .trim();
+
+    const name =
+        item.name.toLowerCase();
+
+    const category =
+        item.category.toLowerCase();
+
+    if (
+        name.includes(keyword) ||
+        category.includes(keyword)
+    ) {
+        return true;
+    }
+
+    const words =
+        name.split(/\s+/);
+
+    // PBM
+    const initials =
+        words
+            .map(w => w[0])
+            .join("");
+
+    if (
+        initials.startsWith(keyword)
+    ) {
+        return true;
+    }
+
+    // paneerbuttermasala
+    const compact =
+        words.join("");
+
+    if (
+        compact.includes(
+            keyword.replace(/\s+/g, "")
+        )
+    ) {
+        return true;
+    }
+
+    // pabu / pnbm
+    const abbreviation =
+        words
+            .map(w => w.substring(0, 2))
+            .join("");
+
+    if (
+        abbreviation.startsWith(
+            keyword.replace(/\s+/g, "")
+        )
+    ) {
+        return true;
+    }
+
+    // paneer but
+    const parts =
+        keyword.split(/\s+/);
+
+    if (parts.length > 1) {
+
+        return parts.every(part =>
+
+            words.some(word =>
+
+                word.startsWith(part)
+
+            )
+
+        );
+
+    }
+
+    return false;
+
+}
+
 function applyFilters() {
 
     const keyword =
@@ -794,16 +1060,10 @@ function applyFilters() {
         allMenuItems.filter(item => {
 
             const searchMatch =
-
-                item.name
-                    .toLowerCase()
-                    .includes(keyword)
-
-                ||
-
-                item.category
-                    .toLowerCase()
-                    .includes(keyword);
+    matchesMenuSearch(
+        item,
+        keyword
+    );
             const foodMatch =
 
     selectedFoodType === "all"
@@ -993,6 +1253,9 @@ async function loadCurrentOrder() {
         box.classList.add(
             "hidden"
         );
+    document
+    .getElementById("viewCartBtn")
+    ?.classList.add("hidden");    
 
         return;
 
@@ -1001,7 +1264,9 @@ async function loadCurrentOrder() {
     box.classList.remove(
         "hidden"
     );
-
+    document
+    .getElementById("viewCartBtn")
+    ?.classList.remove("hidden");
     box.innerHTML = `
 
 <h2 class="mb-3 text-base font-bold">
@@ -1582,7 +1847,26 @@ function selectFoodType(foodType) {
 
     selectedFoodType = foodType;
 
+    if (selectedCategory !== "all") {
+
+        const exists = allMenuItems.some(item =>
+
+            item.food_type === selectedFoodType &&
+            item.category_id == selectedCategory
+
+        );
+
+        if (!exists) {
+
+            selectedCategory = "all";
+
+        }
+
+    }
+
     renderFoodTypes();
+
+    renderCategoryFilters();
 
     applyFilters();
 

@@ -165,6 +165,8 @@ async function serveOrderItem(ticketItemId) {
             await loadExistingOrder();
 
             renderCart();
+            
+            
 
         },
 

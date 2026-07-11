@@ -10,26 +10,54 @@
 
 <body class="bg-slate-100">
 
-<main class="min-h-screen bg-slate-100 p-8">
-    <div class="sticky top-0 z-30 -mx-8 -mt-8 mb-6 bg-slate-100 px-8 pt-8 pb-4 shadow-sm">
+<main
+class="min-h-screen bg-slate-100
+p-4
+pt-20
+md:p-6
+md:pt-6
+xl:p-8
+xl:pt-8">
+
+<div
+class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
 
     <div class="flex items-center justify-between">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-3 py-2 text-white">
 
-            Dashboard
+            ← Dashboard
 
         </a>
 
-        <h1 class="text-3xl font-bold">
+        <h1 class="text-lg font-bold">
 
             Profile
 
         </h1>
 
     </div>
+
+</div>
+
+<div
+class="mb-6 hidden items-center justify-between md:flex">
+
+    <a
+        href="/admin/dashboard.html"
+        class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white hover:bg-slate-800">
+
+        Dashboard
+
+    </a>
+
+    <h1 class="text-3xl font-bold">
+
+        Profile
+
+    </h1>
 
 </div>
         <div class="rounded-xl bg-white p-8 shadow">
