@@ -179,8 +179,23 @@ No menu items found
         menu.innerHTML += `
 
 <div
-class="rounded-xl border bg-white p-2.5 shadow-sm transition hover:shadow-md lg:p-4">
-
+class="rounded-xl border border-slate-200 border-l-4
+${
+    item.food_type === "veg"
+        ? "border-l-green-600"
+    : item.food_type === "non_veg"
+        ? "border-l-red-600"
+    : item.food_type === "egg"
+        ? "border-l-yellow-500"
+    : item.food_type === "jain"
+        ? "border-l-orange-500"
+    : item.food_type === "vegan"
+        ? "border-l-emerald-500"
+    : item.food_type === "satvik"
+        ? "border-l-indigo-500"
+    : "border-l-slate-300"
+}
+bg-white p-2.5 shadow-sm transition hover:shadow-md lg:p-4">
 <div class="min-w-0">
 
 <h3 class="truncate text-sm font-semibold lg:text-base">
@@ -234,7 +249,89 @@ ${variantsHtml}
     });
 
 }
+function matchesMenuSearch(item, keyword) {
 
+    if (!keyword) return true;
+
+    keyword = keyword
+        .toLowerCase()
+        .trim();
+
+    const name =
+        item.name.toLowerCase();
+
+    const category =
+        item.category.toLowerCase();
+
+    if (
+        name.includes(keyword) ||
+        category.includes(keyword)
+    ) {
+        return true;
+    }
+
+    const words =
+        name.split(/\s+/);
+
+    const initials =
+        words
+            .map(w => w[0])
+            .join("");
+
+    if (
+        initials.startsWith(keyword)
+    ) {
+        return true;
+    }
+
+    const compact =
+        words.join("");
+
+    if (
+        compact.includes(
+            keyword.replace(/\s+/g, "")
+        )
+    ) {
+        return true;
+    }
+
+    // pnbm
+    const abbreviation =
+        words
+            .map(w => w.substring(0,2))
+            .join("");
+
+    if (
+        abbreviation.startsWith(
+            keyword.replace(/\s+/g,"")
+        )
+    ) {
+        return true;
+    }
+
+    // paneer but
+    const parts =
+        keyword.split(/\s+/);
+
+    if (
+        parts.length > 1
+    ) {
+
+        return parts.every(part =>
+
+            words.some(word =>
+
+                word.startsWith(part)
+
+            )
+
+        );
+
+    }
+
+    return false;
+
+}
 
 function applyFilters() {
 
@@ -255,17 +352,11 @@ const keyword = (
     filteredMenuItems =
         allMenuItems.filter(item => {
 
-            const searchMatch =
-
-                item.name
-                    .toLowerCase()
-                    .includes(keyword)
-
-                ||
-
-                item.category
-                    .toLowerCase()
-                    .includes(keyword);
+const searchMatch =
+    matchesMenuSearch(
+        item,
+        keyword
+    );
 
             const categoryMatch =
 
@@ -1295,35 +1386,34 @@ if (cartButton) {
 
 function renderCategoryFilters() {
 
-    const container =
-        document.getElementById(
-            "categoryFilters"
-        );
+    const itemsForCategories =
 
-    container.innerHTML = "";
+        selectedFoodType === "all"
+
+            ? allMenuItems
+
+            : allMenuItems.filter(
+
+                item => item.food_type === selectedFoodType
+
+            );
 
     const categories = [
 
         {
-
             id: "all",
-
             name: "All"
-
         },
 
         ...new Map(
 
-            allMenuItems.map(item => [
+            itemsForCategories.map(item => [
 
                 item.category_id,
 
                 {
-
                     id: item.category_id,
-
                     name: item.category
-
                 }
 
             ])
@@ -1332,25 +1422,92 @@ function renderCategoryFilters() {
 
     ];
 
-    categories.forEach(cat => {
+    const containers = [
 
-        container.innerHTML += `
+        document.getElementById("categoryFilters"),
+        document.getElementById("categoryFiltersDesktop")
+
+    ].filter(Boolean);
+
+    containers.forEach(container => {
+
+        container.innerHTML = "";
+
+        categories.forEach(cat => {
+            const sampleItem = itemsForCategories.find(
+    item => item.category_id == cat.id
+);
+
+let borderColor = "border-l-blue-600";
+
+if (selectedFoodType !== "all") {
+
+    borderColor =
+        sampleItem?.food_type === "veg"
+            ? "border-l-green-600"
+        : sampleItem?.food_type === "non_veg"
+            ? "border-l-red-600"
+        : sampleItem?.food_type === "egg"
+            ? "border-l-yellow-500"
+        : sampleItem?.food_type === "jain"
+            ? "border-l-orange-500"
+        : sampleItem?.food_type === "vegan"
+            ? "border-l-emerald-500"
+        : sampleItem?.food_type === "satvik"
+            ? "border-l-indigo-500"
+        : "border-l-blue-600";
+
+}
+
+            container.innerHTML += `
 
 <button
 
 onclick="selectCategory('${cat.id}')"
 
-class="category-chip flex h-8 items-center rounded-full border px-3 text-xs whitespace-nowrap lg:h-10 lg:px-5 lg:text-sm"
+class="category-chip flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50"
 
-data-id="${cat.id}">
+data-id="${cat.id}"
+data-color="${borderColor}">
 
-${cat.name}
+
+<span>${cat.name}</span>
+
+<span
+class="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+
+${
+    cat.id === "all"
+        ? itemsForCategories.length
+        : itemsForCategories.filter(
+              item => item.category_id == cat.id
+          ).length
+}
+
+</span>
 
 </button>
 
 `;
 
+        });
+
     });
+
+    // Agar selected category available nahi hai,
+    // to automatically "All" select kar do
+
+    const exists = categories.some(
+
+        c => String(c.id) === String(selectedCategory)
+
+    );
+
+    if (!exists) {
+
+        selectedCategory = "all";
+
+    }
 
     updateCategorySelection();
 
@@ -1382,12 +1539,12 @@ function updateCategorySelection() {
             ) {
 
                 btn.className =
-"category-chip rounded-full bg-blue-600 px-3 py-1.5 text-xs text-white lg:px-4 lg:py-2 lg:text-sm";
+`category-chip flex items-center justify-between rounded-lg border border-slate-200 border-l-4 ${btn.dataset.color} bg-slate-100 px-3 py-2 text-sm font-medium`;
 
             } else {
 
                 btn.className =
-"category-chip flex h-8 items-center rounded-full border px-3 text-xs whitespace-nowrap lg:h-10 lg:px-5 lg:text-sm";;
+"category-chip flex items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50";
 
             }
 
@@ -1485,7 +1642,11 @@ function selectFoodType(id) {
 
     selectedFoodType = id;
 
+    selectedCategory = "all";
+
     updateFoodSelection();
+
+    renderCategoryFilters();
 
     applyFilters();
 
