@@ -19,7 +19,22 @@ const runMigrations =
     require("../migrations");    
 const createStaffTable =
 
-    require("./schema/staff");    
+    require("./schema/staff");
+const createSuperAdminTable =
+    require("./schema/superAdmin");     
+const seedSuperAdmin =
+    require("./seed/superAdminSeed");    
+const createPlansTable =
+    require("./schema/plans");       
+const seedPlans =
+    require("./seed/planSeed");  
+const createPlanPricingTable =
+    require("./schema/planPricing");      
+const createPlanLimitsTable =
+    require("./schema/planLimits");
+
+const seedPlanLimits =
+    require("./seed/planLimitSeed");    
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
@@ -37,6 +52,14 @@ await createMenuItemsTable();
 
 await createStaffTable();
 
+await createPlansTable();
+
+await createPlanPricingTable();
+
+await createPlanLimitsTable();
+
+await createSuperAdminTable();
+
 await createOrdersTable();
 
 await createOrderItemsTable();
@@ -44,6 +67,12 @@ await createOrderItemsTable();
 await createKitchenTables();
 
 await runMigrations();
+
+await seedPlans();
+
+await seedPlanLimits();
+
+await seedSuperAdmin();
 
 
     console.log("✅ Database initialization completed.");

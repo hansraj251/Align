@@ -21,7 +21,14 @@
         localStorage.getItem("staff") || "{}"
     );
 
-    if (staff.role !== "waiter") {
+    const allowedRoles = [
+        "waiter",
+        "device"
+    ];
+
+    if (
+        !allowedRoles.includes(staff.role)
+    ) {
 
         window.location.replace("/login.html");
         return;

@@ -272,7 +272,7 @@ function openStaffModal(staff = null) {
 
             <option value="waiter" ${staff?.role==="waiter"?"selected":""}>Waiter</option>
 
-            <option value="device" ${staff?.role==="device"?"selected":""}>📱 Device</option>
+            <option value="device" ${staff?.role==="device"?"selected":""}>Device</option>
 
             <option value="kitchen" ${staff?.role==="kitchen"?"selected":""}>Kitchen</option>
 

@@ -112,3 +112,22 @@ exports.updateLogo = async (
     );
 
 };
+
+exports.getPlanDetails = async (restaurantId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            plan_id,
+            subscription_status,
+            plan_start,
+            plan_end
+
+        FROM restaurants
+        WHERE id = ?
+        `,
+        [restaurantId]
+    );
+
+};

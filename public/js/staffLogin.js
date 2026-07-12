@@ -61,8 +61,11 @@ localStorage.setItem(
 
     data.restaurant_name || ""
 
-);    
+);    alert(JSON.stringify(data));
 
+alert("ROLE = " + data.staff.role);
+
+alert(typeof data.staff.role);
     switch (data.staff.role) {
 
         case "owner":
@@ -75,11 +78,14 @@ localStorage.setItem(
             break;
 
         case "waiter":
+case "device":
 
     window.location.href =
         "/waiter/dashboard.html";
 
     break;
+
+    
 
         case "kitchen":
 

@@ -122,8 +122,12 @@ localStorage.setItem(
                 break;
 
             case "waiter":
-                window.location.href = "/waiter/dashboard.html";
-                break;
+            case "device":
+
+    window.location.href =
+        "/waiter/dashboard.html";
+
+    break;
 
             case "kitchen":
                 window.location.href = "/kitchen/index.html";

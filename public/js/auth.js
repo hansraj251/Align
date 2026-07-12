@@ -16,7 +16,38 @@ const Auth = {
 
     },
 
-    logout() {
+   async logout() {
+
+    const staffToken =
+        localStorage.getItem("staffToken");
+
+    if (staffToken) {
+
+        try {
+
+            await fetch("/api/staff-auth/logout", {
+
+                method: "POST",
+
+                headers: {
+
+                    Authorization:
+                        "Bearer " + staffToken
+
+                }
+
+            });
+
+        } catch (err) {
+
+            console.error(
+                "Logout API failed:",
+                err
+            );
+
+        }
+
+    }
 
     localStorage.removeItem("token");
     localStorage.removeItem("staffToken");
@@ -63,8 +94,12 @@ const Auth = {
                     break;
 
                 case "waiter":
-                    window.location.href = "/waiter/dashboard.html";
-                    break;
+case "device":
+
+    window.location.href =
+        "/waiter/dashboard.html";
+
+    break;
 
                 case "kitchen":
                     window.location.href = "/kitchen/index.html";

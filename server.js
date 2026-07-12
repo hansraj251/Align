@@ -49,8 +49,9 @@ const menuVariantRoutes =
 const orderItemRoutes =
     require("./routes/orderItemRoutes");   
 const reportRoutes =
-
-    require("./routes/reportRoutes");       
+    require("./routes/reportRoutes");  
+const superAdminRoutes =
+    require("./routes/superAdminRoutes");         
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -126,6 +127,10 @@ app.use(
 
     reportRoutes
 
+);
+app.use(
+    "/api/super-admin",
+    superAdminRoutes
 );
 app.get("/", (req, res) => {
     res.redirect("/admin/login.html");

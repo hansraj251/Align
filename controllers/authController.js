@@ -76,21 +76,40 @@ console.log("Hashed Password:", hashedPassword);
 
 db.run(
     `INSERT INTO restaurants
+(
+    name,
+    owner_name,
+    email,
+    mobile,
+    status,
+    plan_id,
+    subscription_status,
+    plan_start,
+    plan_end,
+    trial_used
+)
+VALUES
+(
+    ?, ?, ?, ?, ?,
     (
-        name,
-        owner_name,
-        email,
-        mobile,
-        status
-    )
-    VALUES (?, ?, ?, ?, ?)`,
+        SELECT id
+        FROM plans
+        WHERE name = 'plus'
+    ),
+    ?,
+    DATE('now'),
+    DATE('now', '+30 days'),
+    ?
+)`,
     [
-        restaurantName,
-        ownerName,
-        email,
-        mobile,
-        "active"
-    ],
+    restaurantName,
+    ownerName,
+    email,
+    mobile,
+    "active",
+    "trial",
+    1
+],
     function (err) {
 
         if (err) {
@@ -102,6 +121,32 @@ db.run(
 
         console.log("Restaurant ID:", this.lastID);
 const restaurantId = this.lastID;
+const restaurantCode =
+    `ALN${String(restaurantId).padStart(6, "0")}`;
+
+db.run(
+    `
+    UPDATE restaurants
+    SET restaurant_code = ?
+    WHERE id = ?
+    `,
+    [
+        restaurantCode,
+        restaurantId
+    ],
+    function (err) {
+
+        if (err) {
+
+            return res.status(500).json({
+                success: false,
+                message: err.message
+            });
+
+        }
+
+    }
+);
 db.run(
     `INSERT INTO users
     (

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Restaurants</title>
+
+    <link rel="stylesheet"
+          href="/css/output.css">
+
+</head>
+
+<body>
+
+<script src="/js/superAdminAuth.js"></script>
+<script src="/js/superAdminLayout.js"></script>
+<script src="/js/superAdminRestaurants.js"></script>
+
+<script>
+
+loadSuperAdminLayout("Restaurants");
+
+document.getElementById("pageContent").innerHTML = `
+
+<div class="rounded-2xl bg-white shadow overflow-hidden">
+
+<table class="w-full">
+
+<thead class="bg-slate-100">
+
+<tr>
+
+<th class="p-4 text-left">Code</th>
+
+<th class="p-4 text-left">Restaurant</th>
+
+<th class="p-4 text-left">Owner</th>
+
+<th class="p-4 text-left">Plan</th>
+
+<th class="p-4 text-left">Status</th>
+
+<th class="p-4 text-left">Action</th>
+
+</tr>
+
+</thead>
+
+<tbody id="restaurantTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+`;
+
+loadRestaurants();
+
+</script>
+
+</body>
+
+</html>

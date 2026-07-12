@@ -6,6 +6,9 @@ const jwt =
 
 const staffRepository =
     require("../repositories/staffRepository");
+const staffSessionService =
+    require("./staffSessionService"); 
+       
 
 exports.login = async (
     username,
@@ -52,9 +55,32 @@ exports.login = async (
 
     }
 
-    await staffRepository.updateLastLogin(
-        staff.id
-    );
+   let sessionId = null;
+
+if (staff.role === "waiter" || staff.role === "device") {
+
+    const allowed =
+        await staffSessionService.canCreateWaiterSession(
+            staff.restaurant_id
+        );
+
+    if (!allowed) {
+        throw new Error("Maximum waiter devices limit reached.");
+    }
+}
+
+await staffRepository.updateLastLogin(staff.id);
+
+if (staff.role === "waiter" || staff.role === "device") {
+
+    sessionId =
+        await staffSessionService.createSession({
+            restaurant_id: staff.restaurant_id,
+            staff_id: staff.id,
+            role: staff.role
+        });
+
+}    
 
     const token =
         jwt.sign(
@@ -68,7 +94,9 @@ exports.login = async (
                     staff.restaurant_id,
 
                 role:
-                    staff.role
+                    staff.role,
+
+                sessionId    
 
             },
 

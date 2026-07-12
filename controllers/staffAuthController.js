@@ -1,5 +1,7 @@
 const staffAuthService =
     require("../services/staffAuthService");
+const staffSessionService =
+    require("../services/staffSessionService");    
 
 exports.login = async (req, res) => {
 
@@ -21,6 +23,70 @@ exports.login = async (req, res) => {
     catch (err) {
 
         res.status(401).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.heartbeat = async (req, res) => {
+
+    try {
+
+        if (!req.user.sessionId) {
+
+            return res.json({
+                success: true
+            });
+
+        }
+
+        await staffSessionService.updateHeartbeat(
+            req.user.sessionId
+        );
+
+        res.json({
+            success: true
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.logout = async (req, res) => {
+
+    try {
+
+        if (req.user.sessionId) {
+
+            await staffSessionService.closeSession(
+                req.user.sessionId
+            );
+
+        }
+
+        return res.json({
+
+            success: true
+
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
 
             success: false,
 
