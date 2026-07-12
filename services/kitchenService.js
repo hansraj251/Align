@@ -270,7 +270,11 @@ io.to(`restaurant_${item.restaurant_id}`).emit(
 
     if (status === "ready") {
 
-    io.to(`waiter_${item.restaurant_id}`).emit(
+    if (item.created_by_staff_id) {
+
+    io.to(
+        `staff_${item.created_by_staff_id}`
+    ).emit(
         "ticket-ready",
         {
             orderId: item.order_id,
@@ -279,6 +283,8 @@ io.to(`restaurant_${item.restaurant_id}`).emit(
             ticketNumber: item.ticket_number
         }
     );
+
+}
 
     const pending =
         await kitchenRepository.getPendingTicketItems(
