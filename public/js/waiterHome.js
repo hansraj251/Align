@@ -22,8 +22,13 @@ async function loadAreas() {
 
     }
 
+    const visibleAreas =
+        data.areas.filter(
+            area => area.system_key !== "takeaway"
+        );
+
     renderAreas(
-        data.areas
+        visibleAreas
     );
 
 }
