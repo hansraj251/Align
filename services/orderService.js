@@ -1,6 +1,8 @@
 const orderRepository = require("../repositories/orderRepository");
 const menuRepository = require("../repositories/menuRepository");
 const tableRepository = require("../repositories/tableRepository");
+const settingsRepository =
+    require("../repositories/settingsRepository");  
 const kitchenService =
 
     require("./kitchenService");
@@ -15,6 +17,9 @@ const { getIO } =
     require("../utils/socket");    
 const defaultSetupService =
     require("./defaultSetupService");    
+const orderCalculationService =
+    require("./orderCalculationService");    
+  
 
 exports.checkout = async (restaurantId, body) => {
 
@@ -59,6 +64,10 @@ if (!table) {
     );
 
 }
+const settings =
+    await settingsRepository.getSettings(
+        restaurantId
+    );
 
 orderId =
     await orderRepository.createOrder(
@@ -69,7 +78,11 @@ orderId =
 
         table.name,
 
-        table.area_name
+        table.area_name,
+
+        settings.cgst,
+
+        settings.sgst
 
     );
 
@@ -168,23 +181,18 @@ item.order_item_id = orderItemId;
 
     }
 const totals =
-    await orderRepository.getOrderSubtotal(
+    await orderCalculationService.calculateOrderTotals(
         orderId
     );
 
-subtotal = totals.subtotal;
-    const tax = subtotal * 0.05;
-    const discount = 0;
-    const total = subtotal + tax - discount;
-
-    await orderRepository.updateTotals(
-        orderId,
-        subtotal,
-        tax,
-        discount,
-        total,
-        "sent_to_kitchen"
-    );
+await orderRepository.updateTotals(
+    orderId,
+    totals.subtotal,
+    totals.tax,
+    totals.discountPercent,
+    totals.total,
+    "sent_to_kitchen"
+);
 
     await tableRepository.updateStatus(
     table_id,
@@ -224,13 +232,13 @@ io.to(`kitchen_${restaurantId}`).emit(
     }
 );
     return {
-        success: true,
-        message: "Order sent to kitchen",
-        orderId,
-        subtotal,
-        tax,
-        total
-    };
+    success: true,
+    message: "Order sent to kitchen",
+    orderId,
+    subtotal: totals.subtotal,
+    tax: totals.tax,
+    total: totals.total
+};
 
 });
 

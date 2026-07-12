@@ -154,9 +154,32 @@ exports.updateDiscount = async (
 
     try {
 
+        let discount =
+            Number(req.body.discount);
+
+        if (isNaN(discount)) {
+            discount = 0;
+        }
+
+        if (discount < 0 || discount > 100) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Discount must be between 0 and 100."
+
+            });
+
+        }
+
         await orderRepository.updateDiscount(
+
             req.params.id,
-            req.body.discount
+
+            discount
+
         );
 
         const totals =

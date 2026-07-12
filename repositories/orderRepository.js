@@ -8,7 +8,11 @@ exports.createOrder = async (
 
     tableName,
 
-    areaName
+   areaName,
+
+    cgst,
+
+    sgst
 
 ) => {
 
@@ -20,16 +24,20 @@ exports.createOrder = async (
     table_id,
     table_name,
     area_name,
-    status
+    status,
+    cgst,
+    sgst
 )
-VALUES (?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?)
         `,
         [
     restaurantId,
     tableId,
     tableName,
     areaName,
-    "open"
+    "open",
+    cgst,
+    sgst
 ]
     );
 
@@ -846,6 +854,7 @@ exports.updateOrderTotals = async (
     orderId,
     totals
 ) => {
+    
 
     await db.runAsync(
         `

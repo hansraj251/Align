@@ -21,7 +21,7 @@ async function loadBillingOrders() {
     if (data.orders.length === 0) {
 
         container.innerHTML = `
-            <div class="col-span-3 rounded-xl bg-white p-8 text-center shadow">
+            <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
 
                 No Ready Orders
 
@@ -136,8 +136,19 @@ async function loadBillingOrders() {
 
 input.onchange = async () => {
 
-    const discount =
-        Number(input.value || 0);
+    let discount =
+    Number(input.value || 0);
+
+if (isNaN(discount)) {
+    discount = 0;
+}
+
+discount = Math.max(
+    0,
+    Math.min(100, discount)
+);
+
+input.value = discount;
 
     const result =
         await API.patch(

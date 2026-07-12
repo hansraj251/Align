@@ -196,6 +196,7 @@ exports.getById = async (
         SELECT
             id,
             name,
+            system_key,
             card_color
         FROM dining_areas
         WHERE
