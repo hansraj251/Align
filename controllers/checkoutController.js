@@ -8,10 +8,11 @@ exports.checkout = async (req, res) => {
     try {
 
         const result =
-            await orderService.checkout(
-                req.user.restaurantId,
-                req.body
-            );
+    await orderService.checkout(
+        req.user.restaurantId,
+        req.body,
+        req.user.staffId
+    );
 
         return res.json(result);
 

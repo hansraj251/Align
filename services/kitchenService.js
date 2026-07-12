@@ -167,16 +167,22 @@ exports.updateTicketStatus = async (ticketId, status) => {
             "ready"
         );
 
-        // Waiter notification
-        io.to(`waiter_${ticket.restaurant_id}`).emit(
-            "ticket-ready",
-            {
-                orderId: ticket.order_id,
-                ticketId: ticket.id,
-                tableName: ticket.table_name,
-                ticketNumber: ticket.ticket_number
-            }
-        );
+       // Waiter notification
+if (ticket.created_by_staff_id) {
+
+    io.to(
+        `staff_${ticket.created_by_staff_id}`
+    ).emit(
+        "ticket-ready",
+        {
+            orderId: ticket.order_id,
+            ticketId: ticket.id,
+            tableName: ticket.table_name,
+            ticketNumber: ticket.ticket_number
+        }
+    );
+
+}
 
     }
 

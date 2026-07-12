@@ -8,11 +8,13 @@ exports.createOrder = async (
 
     tableName,
 
-   areaName,
+    areaName,
 
     cgst,
 
-    sgst
+    sgst,
+
+    createdByStaffId
 
 ) => {
 
@@ -22,17 +24,19 @@ exports.createOrder = async (
 (
     restaurant_id,
     table_id,
+    created_by_staff_id,
     table_name,
     area_name,
     status,
     cgst,
     sgst
 )
-VALUES (?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
     restaurantId,
     tableId,
+    createdByStaffId,
     tableName,
     areaName,
     "open",

@@ -21,7 +21,11 @@ const orderCalculationService =
     require("./orderCalculationService");    
   
 
-exports.checkout = async (restaurantId, body) => {
+exports.checkout = async (
+    restaurantId,
+    body,
+    staffId
+) => {
 
     const { table_id, items } = body;
 
@@ -82,7 +86,9 @@ orderId =
 
         settings.cgst,
 
-        settings.sgst
+        settings.sgst,
+
+        staffId
 
     );
 

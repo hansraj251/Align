@@ -31,12 +31,14 @@ socket.on("joinKitchen", (restaurantId) => {
 
 });
 
-socket.on("joinWaiter", (restaurantId) => {
+socket.on("joinWaiter", ({ restaurantId, staffId }) => {
 
     socket.join(`waiter_${restaurantId}`);
 
+    socket.join(`staff_${staffId}`);
+
     console.log(
-        `Waiter joined waiter_${restaurantId}`
+        `Waiter ${staffId} joined`
     );
 
 });

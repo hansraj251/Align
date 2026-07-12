@@ -271,6 +271,8 @@ exports.getTicketById = async (
 
             o.restaurant_id,
 
+            o.created_by_staff_id,
+
             o.table_id,
 
             o.table_name
@@ -426,6 +428,8 @@ exports.getTicketItem = async (
             kt.order_id,
 
             o.restaurant_id,
+
+            o.created_by_staff_id,
 
             o.table_name
 

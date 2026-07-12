@@ -53,7 +53,14 @@ socket.on("connect", () => {
 
         console.log("➡️ Joining Waiter");
 
-        socket.emit("joinWaiter", restaurantId);
+        const staff = JSON.parse(
+    localStorage.getItem("staff") || "{}"
+);
+
+socket.emit("joinWaiter", {
+    restaurantId,
+    staffId: staff.id
+});
 
     }
 
