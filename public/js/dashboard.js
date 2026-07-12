@@ -72,8 +72,8 @@ if (
     takeawayResponse.table
 ) {
 
-    takeawayBtn.href =
-        `/admin/order.html?table=${takeawayResponse.table.id}&area=${takeawayResponse.table.area_id}`;
+   takeawayBtn.href =
+`/admin/area.html?id=${takeawayResponse.table.area_id}`;
 
 }
 
@@ -89,28 +89,71 @@ function renderRestaurantFloor() {
 
     container.innerHTML = "";
     container.className =
-    "grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3";
+        "grid grid-cols-1 gap-6 pt-2 md:grid-cols-2 xl:grid-cols-3";
+
+    const colors = {
+
+        blue: {
+            bg: "bg-blue-50",
+            border: "border-blue-200",
+            hover: "hover:border-blue-500 hover:bg-blue-100"
+        },
+
+        emerald: {
+            bg: "bg-emerald-50",
+            border: "border-emerald-200",
+            hover: "hover:border-emerald-500 hover:bg-emerald-100"
+        },
+
+        orange: {
+            bg: "bg-orange-50",
+            border: "border-orange-200",
+            hover: "hover:border-orange-500 hover:bg-orange-100"
+        },
+
+        violet: {
+            bg: "bg-violet-50",
+            border: "border-violet-200",
+            hover: "hover:border-violet-500 hover:bg-violet-100"
+        },
+
+        rose: {
+            bg: "bg-rose-50",
+            border: "border-rose-200",
+            hover: "hover:border-rose-500 hover:bg-rose-100"
+        },
+
+        slate: {
+            bg: "bg-slate-100",
+            border: "border-slate-300",
+            hover: "hover:border-slate-500 hover:bg-slate-200"
+        }
+
+    };
 
     floorAreas.forEach(area => {
 
-    const areaTables =
-        floorTables.filter(
-            table =>
-                table.area_id == area.id
-        );
-        
+        const color =
+            colors[area.card_color] ||
+            colors.blue;
 
-    const occupied =
-        areaTables.filter(
-            table =>
-                table.status !== "available"
-        ).length;
+        const areaTables =
+            floorTables.filter(
+                table =>
+                    table.area_id == area.id
+            );
 
-    container.innerHTML += `
+        const occupied =
+            areaTables.filter(
+                table =>
+                    table.status !== "available"
+            ).length;
+
+        container.innerHTML += `
 
 <div
     onclick="openArea(${area.id})"
-    class="cursor-pointer rounded-2xl bg-white p-6 shadow transition hover:shadow-xl">
+    class="cursor-pointer rounded-2xl border ${color.border} ${color.bg} p-6 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] ${color.hover} hover:shadow-2xl active:scale-[0.99]">
 
     <div class="flex items-center justify-between">
 
@@ -118,34 +161,27 @@ function renderRestaurantFloor() {
 
             <h2 class="text-2xl font-bold">
 
-                 ${area.name}
+                ${area.name}
 
             </h2>
 
             <p class="mt-3 text-slate-500">
 
-                 ${areaTables.length} Tables
+                ${areaTables.length} Tables
 
             </p>
 
             <p class="mt-1 text-slate-500">
 
-                 ${occupied} Occupied
+                ${occupied} Occupied
 
             </p>
 
             <p class="mt-1 text-slate-500">
 
-                 ${areaTables.length - occupied} Available
+                ${areaTables.length - occupied} Available
 
             </p>
-
-        </div>
-
-        <div
-            class="rounded-xl bg-blue-600 px-5 py-3 font-semibold text-white">
-
-            View
 
         </div>
 
@@ -155,7 +191,7 @@ function renderRestaurantFloor() {
 
 `;
 
-});
+    });
 
 }
 function openDashboardOrder(tableId) {

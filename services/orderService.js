@@ -13,6 +13,8 @@ const kitchenRepository =
     require("../repositories/kitchenRepository");
 const { getIO } =
     require("../utils/socket");    
+const defaultSetupService =
+    require("./defaultSetupService");    
 
 exports.checkout = async (restaurantId, body) => {
 
@@ -185,9 +187,23 @@ subtotal = totals.subtotal;
     );
 
     await tableRepository.updateStatus(
-        table_id,
-        "occupied"
+    table_id,
+    "occupied"
+);
+
+const table =
+    await tableRepository.getById(
+        restaurantId,
+        table_id
     );
+
+if (table.system_key === "takeaway") {
+
+    await defaultSetupService.ensureNextTakeAwayTable(
+        restaurantId
+    );
+
+}
     
 const kitchenTicket =
     await kitchenService.createKitchenTicket(

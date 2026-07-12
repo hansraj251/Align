@@ -85,7 +85,8 @@ exports.update = async (req, res) => {
 
                 req.params.id,
 
-                req.body.name
+                req.body.name,
+                req.body.card_color
 
             );
 

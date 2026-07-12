@@ -1,5 +1,11 @@
 const db = require("../db");
 
+const tableRepository =
+    require("../repositories/tableRepository");
+
+const diningAreaRepository =
+    require("../repositories/diningAreaRepository");
+
 exports.ensureDefaultTakeAway = async (restaurantId) => {
 
     let area = await db.getAsync(
@@ -83,5 +89,67 @@ exports.ensureDefaultTakeAway = async (restaurantId) => {
         );
 
     }
+
+};
+
+exports.ensureNextTakeAwayTable =
+async (restaurantId) => {
+
+    const available =
+        await tableRepository.getAvailableTakeAwayCount(
+            restaurantId
+        );
+
+    if (available.total > 0) {
+        return;
+    }
+
+    const area =
+        await diningAreaRepository.getTakeAwayArea(
+            restaurantId
+        );
+
+    if (!area) {
+        return;
+    }
+
+    const lastTable =
+        await tableRepository.getLastTakeAwayTable(
+            restaurantId
+        );
+
+    let nextNumber = 2;
+
+if (lastTable) {
+
+    if (lastTable.name === "Take Away") {
+
+        nextNumber = 2;
+
+    } else {
+
+        const match =
+            lastTable.name.match(/\d+$/);
+
+        if (match) {
+
+            nextNumber =
+                Number(match[0]) + 1;
+
+        }
+
+    }
+
+}
+
+    await tableRepository.createTakeAwayTable(
+
+        restaurantId,
+
+        area.id,
+
+        `Take Away ${nextNumber}`
+
+    );
 
 };

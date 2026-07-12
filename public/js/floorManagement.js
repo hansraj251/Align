@@ -22,20 +22,31 @@ async function loadFloorManagement() {
         return;
 
     }
-floorAreas = areaResponse.areas;
+floorAreas =
+    areaResponse.areas.filter(
+        area =>
+            area.system_key !==
+            "takeaway"
+    );
 
-floorTables = tableResponse.tables;
+floorTables =
+    tableResponse.tables.filter(
+        table =>
+            table.system_key !==
+            "takeaway"
+    );
 
 if (
-
-    !selectedAreaId &&
-
-    floorAreas.length
-
+    !floorAreas.some(
+        area =>
+            area.id === selectedAreaId
+    )
 ) {
 
     selectedAreaId =
-        floorAreas[0].id;
+        floorAreas.length
+            ? floorAreas[0].id
+            : null;
 
 }
 
@@ -95,7 +106,7 @@ const currentArea =
 actionContainer.innerHTML = `
 
 <button
-    onclick="editArea(${currentArea.id}, '${currentArea.name}')"
+    onclick="editArea(${currentArea.id})"
     class="rounded bg-amber-500 px-4 py-2 text-white">
 
     ✏️ Edit Area
@@ -267,10 +278,10 @@ Area Name
             }
 
             const data =
-                await API.post(
-                    "/api/dining-areas",
-                    { name }
-                );
+    await API.post(
+        "/api/dining-areas",
+        { name }
+    );
 
             if (!data.success) {
 
@@ -296,22 +307,57 @@ Area Name
     );
 
 }
-function editArea(id, currentName) {
+function editArea(id) {
+
+    const currentArea =
+        floorAreas.find(
+            area => area.id == id
+        );
+
+    if (!currentArea) {
+
+        Toast.show(
+            "Area not found",
+            "error"
+        );
+
+        return;
+
+    }
 
     Modal.open(
 
     "Edit Dining Area",
 
     `
-<label class="mb-2 block font-medium">
+<label class="mt-4 mb-2 block font-medium">
+Card Color
+</label>
+
+<select
+    id="editAreaColor"
+    class="w-full rounded-lg border p-3">
+
+    <option value="blue">🔵 Blue</option>
+    <option value="emerald">🟢 Green</option>
+    <option value="orange">🟠 Orange</option>
+    <option value="violet">🟣 Purple</option>
+    <option value="rose">🔴 Rose</option>
+    <option value="slate">⚫ Slate</option>
+
+</select>
+
+    <label class="mt-2 mb-2 block font-medium">
 
     Area Name
 
 </label>
 
+
+
 <input
     id="editAreaName"
-    value="${currentName}"
+    value="${currentArea.name}"
     class="w-full rounded-lg border p-3">
 `,
 
@@ -335,10 +381,16 @@ function editArea(id, currentName) {
         }
 
         const data =
-            await API.put(
-                `/api/dining-areas/${id}`,
-                { name }
-            );
+    await API.put(
+        `/api/dining-areas/${id}`,
+        {
+            name,
+            card_color:
+                document.getElementById(
+                    "editAreaColor"
+                ).value
+        }
+    );
 
         if (!data.success) {
 
@@ -370,6 +422,15 @@ function editArea(id, currentName) {
     }
 
 );
+setTimeout(() => {
+
+    document.getElementById(
+        "editAreaColor"
+    ).value =
+        currentArea.card_color || "blue";
+
+}, 0);
+
 
 }
 function deleteArea(id) {

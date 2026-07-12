@@ -43,7 +43,7 @@ if ((item.served_count || 0) > 0) {
 
     html += `
 <div class="text-xs font-medium text-blue-600">
-🔵 Served
+${isTakeAway ? " Handed Over" : "🔵 Served"}
 </div>
 `;
 
@@ -125,11 +125,15 @@ function canServeItem(item) {
 }
 async function serveOrderItem(ticketItemId) {
 
-    Modal.confirm(
+   Modal.confirm(
 
-        "Serve Item",
+    isTakeAway
+        ? "Hand Over Item"
+        : "Serve Item",
 
-        "Mark this item as served?",
+    isTakeAway
+        ? "Mark this item as handed over?"
+        : "Mark this item as served?",
 
         async () => {
 
@@ -158,9 +162,11 @@ async function serveOrderItem(ticketItemId) {
             Modal.close();
 
             Toast.show(
-                "Item Served",
-                "success"
-            );
+    isTakeAway
+        ? "Item Handed Over"
+        : "Item Served",
+    "success"
+);
 
             await loadExistingOrder();
 
@@ -172,11 +178,23 @@ async function serveOrderItem(ticketItemId) {
 
         {
 
-            buttonText: "Serve",
+            buttonText:
+
+    isTakeAway
+
+        ? "Hand Over"
+
+        : "Serve",
 
             buttonClass: "bg-green-600",
 
-            loadingText: "Serving..."
+            loadingText:
+
+    isTakeAway
+
+        ? "Handing Over..."
+
+        : "Serving..."
 
         }
 

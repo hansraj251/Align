@@ -37,15 +37,6 @@ window.location.href =
 }    
 const goBack = () => {
 
-    if (isTakeAway) {
-
-        window.location.href =
-            "/admin/dashboard.html";
-
-        return;
-
-    }
-
     window.location.href =
         `/admin/area.html?id=${areaId}`;
 
@@ -429,21 +420,16 @@ async function initialize() {
         );
 
     isTakeAway =
-        takeaway.success &&
-        takeaway.table &&
-        Number(takeaway.table.id) === Number(tableId);
 
-    if (isTakeAway) {
+    takeaway.success &&
 
-        document
-            .getElementById("backBtn")
-            ?.classList.add("hidden");
+    takeaway.table &&
 
-        document
-            .getElementById("backBtnMobile")
-            ?.classList.add("hidden");
+    Number(takeaway.table.area_id) === Number(areaId);
 
-    }
+        console.log("isTakeAway =", isTakeAway);
+console.log("tableId =", tableId);
+console.log("takeawayTableId =", takeaway.table?.id);
 
     await loadMenu();
 
@@ -869,7 +855,7 @@ ${canServeItem(item) ? `
     onclick="serveOrderItem(${item.ready_ticket_item_id})"
     class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700">
 
-    Served
+     ${isTakeAway ? " Handed Over" : " Served"}
 
 </button>
 ` : ""}
@@ -930,7 +916,7 @@ if (cartSheet) {
     onclick="serveOrderItem(${item.ready_ticket_item_id})"
     class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white">
 
-    Served
+    ${isTakeAway ? " Handed Over" : " Served"}
 
 </button>
 ` : ""}

@@ -74,6 +74,13 @@ function renderRows(
         );
 
     container.innerHTML = "";
+    areas = areas.filter(
+
+        area =>
+
+            area.system_key !== "takeaway"
+
+    );
 
     areas.forEach(area => {
 
@@ -127,7 +134,8 @@ rowTables.length
 ? rowTables.map(table => `
 
 <div
-class="flex min-w-[150px] flex-col rounded-lg border bg-white p-3 shadow md:min-w-[220px] md:rounded-xl md:p-5">
+onclick="openDashboardOrder(${table.id}, ${table.area_id})"
+class="mt-2.5 ml-1 flex min-w-[150px] cursor-pointer flex-col rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
 
 <div class="flex items-center justify-between">
 
@@ -195,24 +203,6 @@ table.status !== "available"
 
 }
 
-<div class="mt-auto pt-4">
-
-<button
-onclick="openDashboardOrder(${table.id}, ${table.area_id})"
-class="w-full rounded-lg ${
-table.status === "available"
-? "bg-blue-600"
-: "bg-orange-600"
-} py-2 text-sm md:text-base text-white">
-
-${
-table.status === "available"
-? "Open Order"
-: "Resume Order"
-}
-
-</button>
-</div>
 </div>
 
 `).join("")

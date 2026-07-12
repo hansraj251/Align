@@ -113,13 +113,6 @@ ${o.order_number}
 
 <div>
 
-Table :
-${o.table_name}
-
-</div>
-
-<div>
-
 Date :
 ${paidAt}
 

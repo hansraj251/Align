@@ -5,12 +5,18 @@ exports.getAll = async (restaurantId) => {
     return await db.allAsync(
         `
         SELECT
-            da.id,
-            da.name,
-            da.system_key,
-            da.display_order,
 
-            COUNT(t.id) AS total_tables,
+    da.id,
+
+    da.name,
+
+    da.system_key,
+
+    da.display_order,
+
+    da.card_color,
+
+    COUNT(t.id) AS total_tables,
 
             SUM(
                 CASE
@@ -40,12 +46,6 @@ AS available_tables
         WHERE
 
     da.restaurant_id = ?
-
-    AND
-    (
-        da.system_key IS NULL
-        OR da.system_key != 'takeaway'
-    )
 
         GROUP BY
             da.id,
@@ -110,26 +110,40 @@ exports.create = async (
 };
 
 exports.update = async (
+
     areaId,
+
     restaurantId,
-    name
+
+    name,
+
+    cardColor
+
 ) => {
 
     await db.runAsync(
         `
         UPDATE dining_areas
-        SET
-            name = ?,
-            updated_at = CURRENT_TIMESTAMP
+SET
+
+    name = ?,
+
+    card_color = ?,
+
+    updated_at = CURRENT_TIMESTAMP
         WHERE
             id = ?
             AND restaurant_id = ?
         `,
         [
-            name,
-            areaId,
-            restaurantId
-        ]
+    name,
+
+    cardColor,
+
+    areaId,
+
+    restaurantId
+]
     );
 
 };
@@ -181,7 +195,8 @@ exports.getById = async (
         `
         SELECT
             id,
-            name
+            name,
+            card_color
         FROM dining_areas
         WHERE
             id = ?
@@ -215,6 +230,24 @@ exports.getByNameExcludingId = async (
             name,
             areaId
         ]
+    );
+
+};
+
+exports.getTakeAwayArea =
+async (restaurantId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id
+        FROM dining_areas
+        WHERE
+            restaurant_id = ?
+            AND system_key = 'takeaway'
+        LIMIT 1
+        `,
+        [restaurantId]
     );
 
 };

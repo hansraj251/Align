@@ -136,12 +136,6 @@ exports.getAll = async (restaurantId) => {
 
     t.restaurant_id = ?
 
-    AND
-    (
-        t.system_key IS NULL
-        OR t.system_key != 'takeaway'
-    )
-
         GROUP BY
             t.id,  t.system_key
 
@@ -315,5 +309,74 @@ exports.getTakeAwayTable = async (restaurantId) => {
         `,
         [restaurantId]
     );
+
+};
+exports.getAvailableTakeAwayCount =
+async (restaurantId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            COUNT(*) AS total
+        FROM tables
+        WHERE
+            restaurant_id = ?
+            AND system_key = 'takeaway'
+            AND status = 'available'
+        `,
+        [restaurantId]
+    );
+
+};
+exports.getLastTakeAwayTable =
+async (restaurantId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            name
+        FROM tables
+        WHERE
+            restaurant_id = ?
+            AND system_key = 'takeaway'
+        ORDER BY id DESC
+        LIMIT 1
+        `,
+        [restaurantId]
+    );
+
+};
+exports.createTakeAwayTable =
+async (
+    restaurantId,
+    areaId,
+    name
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            INSERT INTO tables
+            (
+                restaurant_id,
+                name,
+                capacity,
+                area_id,
+                display_row,
+                display_order,
+                status,
+                system_key
+            )
+            VALUES
+            (?, ?, 1, ?, 1, 1, 'available', 'takeaway')
+            `,
+            [
+                restaurantId,
+                name,
+                areaId
+            ]
+        );
+
+    return result.lastID;
 
 };

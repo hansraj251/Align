@@ -58,26 +58,32 @@ exports.create = async (
 exports.update = async (
     restaurantId,
     areaId,
-    name
+    name,
+    cardColor
 ) => {
 
-    name = (name || "").trim();
+name = (name || "").trim();
 
-    if (!name) {
-        throw new Error(
-            "Dining area name is required"
-        );
-    }
+cardColor =
+    cardColor || "blue";
+
+if (!name) {
+    throw new Error(
+        "Dining area name is required"
+    );
+}
 
     await diningAreaRepository.update(
 
-        areaId,
+    areaId,
 
-        restaurantId,
+    restaurantId,
 
-        name
+    name,
 
-    );
+    cardColor
+
+);
 
     return {
 
