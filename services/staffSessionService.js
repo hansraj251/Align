@@ -63,9 +63,9 @@ exports.closeSession = async (sessionId) => {
 
 };
 
-exports.updateHeartbeat = async (sessionId) => {
+exports.getSessionById = async (sessionId) => {
 
-    return await staffSessionRepository.updateHeartbeat(
+    return await staffSessionRepository.getSessionById(
         sessionId
     );
 

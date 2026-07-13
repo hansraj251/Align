@@ -29,21 +29,7 @@ exports.createSession = async (session) => {
 
 };
 
-exports.updateHeartbeat = async (sessionId) => {
 
-    await db.runAsync(
-        `
-        UPDATE staff_sessions
-        SET
-            last_seen = CURRENT_TIMESTAMP
-        WHERE
-            id = ?
-            AND is_active = 1
-        `,
-        [sessionId]
-    );
-
-};
 
 // Close one session
 exports.closeSession = async (sessionId) => {
@@ -142,22 +128,51 @@ exports.getActiveSessions = async (restaurantId) => {
         SELECT
 
     ss.id,
+
     ss.staff_id,
+
     s.name AS staff_name,
+
     ss.role,
+
     ss.login_at,
+
     ss.last_seen,
+
     ss.device_info,
+
     ss.ip_address
+
 FROM staff_sessions ss
-JOIN staff s
+
+INNER JOIN staff s
     ON s.id = ss.staff_id
+
 WHERE
+
     ss.restaurant_id = ?
+
     AND ss.is_active = 1
+
 ORDER BY ss.login_at;
         `,
         [restaurantId]
+    );
+
+};
+
+exports.getSessionById = async (sessionId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            is_active,
+            last_seen
+        FROM staff_sessions
+        WHERE id = ?
+        `,
+        [sessionId]
     );
 
 };

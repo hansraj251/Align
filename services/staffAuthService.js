@@ -8,6 +8,8 @@ const staffRepository =
     require("../repositories/staffRepository");
 const staffSessionService =
     require("./staffSessionService"); 
+const restaurantRepository =
+    require("../repositories/restaurantRepository");    
        
 
 exports.login = async (
@@ -55,7 +57,70 @@ exports.login = async (
 
     }
 
+await subscriptionService
+    .validateRestaurant(
+        staff.restaurant_id
+    );
+
+if (!restaurant) {
+
+    throw new Error(
+        "Restaurant not found."
+    );
+
+}
+
+// Auto Expire
+
+if (
+
+    restaurant.plan_end &&
+
+    new Date(restaurant.plan_end) <
+    new Date() &&
+
+    restaurant.subscription_status !==
+    "expired"
+
+) {
+
+    await restaurantRepository
+        .expireSubscription(
+            staff.restaurant_id
+        );
+
+    restaurant.subscription_status =
+        "expired";
+
+}
+
+// Block Login
+
+if (
+    restaurant.subscription_status ===
+    "expired"
+) {
+
+    throw new Error(
+        "Restaurant subscription has expired."
+    );
+
+}
+
+if (
+    restaurant.subscription_status ===
+    "suspended"
+) {
+
+    throw new Error(
+        "Restaurant subscription is suspended."
+    );
+
+}    
+
    let sessionId = null;
+
+   
 
 if (staff.role === "waiter" || staff.role === "device") {
 

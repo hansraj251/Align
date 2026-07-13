@@ -160,6 +160,16 @@ exports.deleteStaff = async (
     staffId
 ) => {
 
+    // Delete staff sessions first
+    await db.runAsync(
+        `
+        DELETE FROM staff_sessions
+        WHERE staff_id = ?
+        `,
+        [staffId]
+    );
+
+    // Delete staff
     const result = await db.runAsync(
         `
         DELETE

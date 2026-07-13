@@ -45,7 +45,7 @@ const SuperAdminAuth = {
         );
 
         location.href =
-            "/super-admin/login.html";
+    "/login.html";
 
     }
 

@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
+const staffSessionService =
+    require("../services/staffSessionService");
+
+module.exports = async (req, res, next) => {
 
     const authHeader = req.headers.authorization;
 
@@ -19,6 +22,24 @@ module.exports = (req, res, next) => {
             token,
             process.env.JWT_SECRET
         );
+
+        if (decoded.sessionId) {
+
+            const session =
+                await staffSessionService.getSessionById(
+                    decoded.sessionId
+                );
+
+            if (!session || !session.is_active) {
+
+                return res.status(401).json({
+                    success: false,
+                    message: "Session expired"
+                });
+
+            }
+
+        }
 
         req.user = decoded;
 

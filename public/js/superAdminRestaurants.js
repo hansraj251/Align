@@ -30,7 +30,19 @@ async function loadRestaurants() {
 
         if (!data.success) {
 
-            alert(data.message);
+            if (data.success) {
+
+    Notify.success(
+        data.message
+    );
+
+} else {
+
+    Notify.error(
+        data.message
+    );
+
+}
 
             return;
 
@@ -69,16 +81,38 @@ async function loadRestaurants() {
         ${r.subscription_status}
     </td>
 
-    <td class="p-4">
+   <td class="p-4">
 
-        <button
-            class="rounded bg-blue-600 px-3 py-2 text-white">
+    <button
 
-            View
+        onclick="openActiveDevices(${r.id})"
 
-        </button>
+        class="rounded-full px-3 py-1 text-sm font-semibold
+        ${
+            r.active_devices > 0
+                ? "bg-green-100 text-green-700"
+                : "bg-slate-200 text-slate-600"
+        }">
 
-    </td>
+        ${r.active_devices} Active
+
+    </button>
+
+</td>
+
+<td class="p-4">
+
+    <button
+
+        onclick="location.href='/super-admin/restaurant.html?id=${r.id}'"
+
+        class="rounded bg-blue-600 px-3 py-2 text-white hover:bg-blue-700">
+
+        Manage
+
+    </button>
+
+</td>
 
 </tr>
 
@@ -91,5 +125,12 @@ async function loadRestaurants() {
         console.error(err);
 
     }
+
+}
+function openActiveDevices(restaurantId) {
+
+    location.href =
+        "/super-admin/active-devices.html?restaurant=" +
+        restaurantId;
 
 }

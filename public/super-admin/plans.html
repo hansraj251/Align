@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Plans</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body>
+
+<script src="/js/superAdminAuth.js"></script>
+<script src="/js/superAdminLayout.js"></script>
+<script src="/js/notify.js"></script>
+<script src="/js/superAdminPlans.js"></script>
+
+<script>
+
+loadSuperAdminLayout({
+
+    title: "Plans",
+
+    active: "plans"
+
+});
+
+document.getElementById("pageContent").innerHTML = `
+
+<div class="rounded-2xl bg-white shadow overflow-hidden">
+
+<table class="w-full">
+
+<thead class="bg-slate-100">
+
+<tr>
+
+<th class="p-4 text-left">
+
+Plan
+
+</th>
+
+<th class="p-4 text-left">
+
+Description
+
+</th>
+
+<th class="p-4 text-left">
+
+Waiter Devices
+
+</th>
+
+<th class="p-4 text-left">
+
+Status
+
+</th>
+
+<th class="p-4 text-left">
+
+Action
+
+</th>
+
+</tr>
+
+</thead>
+
+<tbody id="plansTable">
+
+<tr>
+
+<td
+colspan="5"
+class="p-6 text-center">
+
+Loading...
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+`;
+
+loadPlans();
+
+</script>
+
+</body>
+
+</html>

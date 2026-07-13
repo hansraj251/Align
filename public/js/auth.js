@@ -2,10 +2,20 @@ const Auth = {
 
     requireLogin() {
 
-        const adminToken = localStorage.getItem("token");
-        const staffToken = localStorage.getItem("staffToken");
+        const adminToken =
+    localStorage.getItem("token");
 
-        if (!adminToken && !staffToken) {
+const staffToken =
+    localStorage.getItem("staffToken");
+
+const superAdminToken =
+    localStorage.getItem("superAdminToken");
+
+       if (
+    !adminToken &&
+    !staffToken &&
+    !superAdminToken
+) {
 
             window.location.href = "/login.html";
             return false;
@@ -53,6 +63,13 @@ const Auth = {
     localStorage.removeItem("staffToken");
     localStorage.removeItem("staff");
     localStorage.removeItem("restaurantName");
+    localStorage.removeItem(
+    "superAdminToken"
+);
+
+localStorage.removeItem(
+    "superAdmin"
+);
 
     sessionStorage.clear();
 
@@ -63,13 +80,30 @@ const Auth = {
     isLoggedIn() {
 
         return !!(
-            localStorage.getItem("token") ||
-            localStorage.getItem("staffToken")
-        );
 
+    localStorage.getItem("token") ||
+
+    localStorage.getItem("staffToken") ||
+
+    localStorage.getItem("superAdminToken")
+
+);
     },
 
     redirectIfLoggedIn() {
+
+        if (
+    localStorage.getItem(
+        "superAdminToken"
+    )
+) {
+
+    window.location.href =
+        "/super-admin/dashboard.html";
+
+    return;
+
+}
 
         if (localStorage.getItem("token")) {
 

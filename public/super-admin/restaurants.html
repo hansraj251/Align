@@ -19,11 +19,18 @@
 
 <script src="/js/superAdminAuth.js"></script>
 <script src="/js/superAdminLayout.js"></script>
+<script src="/js/notify.js"></script>
 <script src="/js/superAdminRestaurants.js"></script>
 
 <script>
 
-loadSuperAdminLayout("Restaurants");
+loadSuperAdminLayout({
+
+    title: "Restaurants",
+
+    active: "restaurants"
+
+});
 
 document.getElementById("pageContent").innerHTML = `
 
@@ -44,6 +51,8 @@ document.getElementById("pageContent").innerHTML = `
 <th class="p-4 text-left">Plan</th>
 
 <th class="p-4 text-left">Status</th>
+
+<th class="p-4 text-left">Active Devices</th>
 
 <th class="p-4 text-left">Action</th>
 

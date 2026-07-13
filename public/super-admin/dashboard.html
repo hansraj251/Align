@@ -19,11 +19,18 @@
 
 <script src="/js/superAdminAuth.js"></script>
 <script src="/js/superAdminLayout.js"></script>
+<script src="/js/notify.js"></script>
 <script src="/js/superAdminDashboard.js"></script>
 
 <script>
 
-loadSuperAdminLayout("Dashboard");
+loadSuperAdminLayout({
+
+    title: "Dashboard",
+
+    active: "dashboard"
+
+});
 
 document.getElementById("pageContent").innerHTML = `
 

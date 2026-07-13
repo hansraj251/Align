@@ -30,7 +30,19 @@ async function loadDashboard() {
 
         if (!data.success) {
 
-            alert(data.message);
+           if (data.success) {
+
+    Notify.success(
+        data.message
+    );
+
+} else {
+
+    Notify.error(
+        data.message
+    );
+
+}
 
             return;
 

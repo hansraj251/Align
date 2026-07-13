@@ -19,6 +19,38 @@ async function login() {
 
     result.textContent = "";
 
+    // Try Super Admin Login first (only for username login)
+if (!loginId.includes("@")) {
+
+    const superAdmin = await API.post(
+        "/api/super-admin/login",
+        {
+            username: loginId,
+            password
+        }
+    );
+
+    if (superAdmin.success) {
+
+        localStorage.setItem(
+            "superAdminToken",
+            superAdmin.token
+        );
+
+        localStorage.setItem(
+            "superAdmin",
+            JSON.stringify(superAdmin.admin)
+        );
+
+        window.location.href =
+            "/super-admin/dashboard.html";
+
+        return;
+
+    }
+
+}
+
     if (!loginId || !password) {
 
         result.textContent =

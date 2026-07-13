@@ -27,3 +27,31 @@ exports.getWaiterDeviceLimit = async (planId) => {
     return limit ? limit.limit_value : null;
 
 };
+exports.updateWaiterDeviceLimit =
+async (
+    planId,
+    value
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE plan_limits
+
+        SET
+
+            limit_value = ?
+
+        WHERE
+
+            plan_id = ?
+
+            AND limit_key =
+                'waiter_devices'
+        `,
+        [
+            value,
+            planId
+        ]
+    );
+
+};

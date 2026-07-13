@@ -5,23 +5,6 @@ const db = require("../db");
 const superAdminService =
     require("../services/superAdminService");
 
-exports.getDashboardStats =
-async () => {
-
-    return await
-        superAdminRepository
-            .getDashboardStats();
-
-};
-
-exports.getRestaurants =
-async () => {
-
-    return await
-        superAdminRepository
-            .getRestaurants();
-
-};
 
 exports.login = async (req, res) => {
 
@@ -189,6 +172,144 @@ exports.getRestaurants = async (
             success: true,
 
             restaurants
+
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.getActiveSessions =
+async (req, res) => {
+
+    try {
+
+        const sessions =
+            await superAdminService
+                .getActiveSessions(
+                    req.params.restaurantId
+                );
+
+        return res.json({
+
+            success: true,
+
+            sessions
+
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.forceLogout =
+async (req, res) => {
+
+    try {
+
+        await superAdminService
+            .forceLogout(
+                req.params.sessionId
+            );
+
+        return res.json({
+
+            success: true
+
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.getRestaurant = async (req, res) => {
+
+    try {
+
+        console.log("Restaurant ID:", req.params.restaurantId);
+
+        const restaurant =
+            await superAdminService
+                .getRestaurantById(
+                    req.params.restaurantId
+                );
+
+        console.log("Restaurant:", restaurant);
+
+        return res.json({
+
+            success: true,
+
+            restaurant
+
+        });
+
+    } catch (err) {
+
+        console.error("GET RESTAURANT ERROR:", err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.updateRestaurantSubscription =
+async (req, res) => {
+
+    try {
+
+        await superAdminService
+            .updateRestaurantSubscription(
+
+                req.params.restaurantId,
+
+                req.body.plan_id,
+
+                req.body.subscription_status,
+
+                req.body.days
+
+            );
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "Subscription updated successfully."
 
         });
 

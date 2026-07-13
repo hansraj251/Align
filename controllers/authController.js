@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const db = require("../db");
 const defaultSetupService =
 require("../services/defaultSetupService");
+const restaurantRepository =
+    require("../repositories/restaurantRepository");
 exports.signup = async (req, res) => {
 
     const {
@@ -309,6 +311,84 @@ if (!passwordMatched) {
 await defaultSetupService.ensureDefaultTakeAway(
     user.restaurant_id
 );
+await subscriptionService
+    .validateRestaurant(
+        user.restaurant_id
+    );
+
+if (!restaurant) {
+
+    return res.status(404).json({
+
+        success: false,
+
+        message: "Restaurant not found."
+
+    });
+
+}
+
+// Auto Expire
+
+if (
+
+    restaurant.plan_end &&
+
+    new Date(restaurant.plan_end) <
+    new Date() &&
+
+    restaurant.subscription_status !==
+    "expired"
+
+) {
+
+    await restaurantRepository
+        .expireSubscription(
+            user.restaurant_id
+        );
+
+    restaurant.subscription_status =
+        "expired";
+
+}
+
+// Block Login
+
+if (
+    restaurant.subscription_status ===
+    "expired"
+) {
+
+    return res.status(403).json({
+
+        success: false,
+
+        code: "SUBSCRIPTION_EXPIRED",
+
+        message:
+            "Restaurant subscription has expired."
+
+    });
+
+}
+
+if (
+    restaurant.subscription_status ===
+    "suspended"
+) {
+
+    return res.status(403).json({
+
+        success: false,
+
+        code: "SUBSCRIPTION_SUSPENDED",
+
+        message:
+            "Restaurant subscription is suspended."
+
+    });
+
+}
 
             const token = jwt.sign(
     {

@@ -1,0 +1,82 @@
+const db = require("../db");
+
+exports.getPlans = async () => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            id,
+
+            name,
+
+            display_name,
+
+            description,
+
+            status
+
+        FROM plans
+
+        ORDER BY id
+        `
+    );
+
+};
+
+exports.getPlanById = async (planId) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            id,
+
+            name,
+
+            display_name,
+
+            description,
+
+            status
+
+        FROM plans
+
+        WHERE id = ?
+        `,
+        [planId]
+    );
+
+};
+
+exports.updatePlan = async (
+    planId,
+    displayName,
+    description,
+    status
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE plans
+        SET
+
+            display_name = ?,
+
+            description = ?,
+
+            status = ?,
+
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            displayName,
+            description,
+            status,
+            planId
+        ]
+    );
+
+};

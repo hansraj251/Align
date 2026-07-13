@@ -33,39 +33,7 @@ exports.login = async (req, res) => {
     }
 
 };
-exports.heartbeat = async (req, res) => {
 
-    try {
-
-        if (!req.user.sessionId) {
-
-            return res.json({
-                success: true
-            });
-
-        }
-
-        await staffSessionService.updateHeartbeat(
-            req.user.sessionId
-        );
-
-        res.json({
-            success: true
-        });
-
-    } catch (err) {
-
-        res.status(500).json({
-
-            success: false,
-
-            message: err.message
-
-        });
-
-    }
-
-};
 exports.logout = async (req, res) => {
 
     try {

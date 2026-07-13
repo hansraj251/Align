@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Restaurant</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body>
+
+<script src="/js/superAdminAuth.js"></script>
+<script src="/js/superAdminLayout.js"></script>
+<script src="/js/notify.js"></script>
+<script src="/js/superAdminRestaurant.js"></script>
+
+<script>
+
+loadSuperAdminLayout({
+
+    title: "Restaurant",
+
+    active: "restaurants"
+
+});
+
+document.getElementById(
+    "pageContent"
+).innerHTML = `
+
+<div
+id="restaurantContent">
+
+Loading...
+
+</div>
+
+`;
+
+loadRestaurant();
+
+</script>
+
+</body>
+
+</html>

@@ -14,11 +14,7 @@ router.post(
     "/login",
     controller.login
 );
-router.post(
-    "/heartbeat",
-    authMiddleware,
-    controller.heartbeat
-);
+
 router.post(
     "/logout",
     authMiddleware,

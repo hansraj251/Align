@@ -119,15 +119,49 @@ exports.getPlanDetails = async (restaurantId) => {
         `
         SELECT
 
-            plan_id,
-            subscription_status,
-            plan_start,
-            plan_end
+            r.plan_id,
 
-        FROM restaurants
-        WHERE id = ?
+            p.display_name,
+
+            p.max_devices,
+
+            r.subscription_status,
+
+            r.plan_start,
+
+            r.plan_end
+
+        FROM restaurants r
+
+        LEFT JOIN plans p
+            ON p.id = r.plan_id
+
+        WHERE r.id = ?
         `,
         [restaurantId]
+    );
+
+};
+exports.expireSubscription =
+async (restaurantId) => {
+
+    await db.runAsync(
+        `
+        UPDATE restaurants
+
+        SET
+
+            subscription_status =
+                'expired',
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            restaurantId
+        ]
     );
 
 };

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Subscription</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<div class="flex h-screen flex-col">
+
+<div id="mobileHeader"></div>
+
+<div
+    id="sidebarOverlay"
+    class="fixed inset-0 z-40 hidden bg-black/50">
+</div>
+
+<div class="flex h-screen overflow-hidden">
+
+<div id="sidebar"></div>
+
+<main
+id="mainContent"
+class="flex-1 h-screen overflow-y-auto
+       p-4
+       pt-20
+       md:p-6
+       md:pt-6
+       xl:p-8
+       xl:pt-8">
+
+<div
+class="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow">
+
+<h1
+class="mb-8 text-3xl font-bold">
+
+Subscription
+
+</h1>
+
+<div
+id="subscriptionCard">
+
+Loading...
+
+</div>
+
+</div>
+
+</main>
+
+</div>
+
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/adminGuard.js"></script>
+<script src="/js/components.js"></script>
+<script src="/js/sidebar.js"></script>
+<script src="/js/mobileSidebar.js"></script>
+<script src="/js/adminSubscription.js"></script>
+
+<script>
+
+loadComponent(
+    "sidebar",
+    "/components/sidebar.html"
+);
+
+</script>
+
+</body>
+
+</html>
