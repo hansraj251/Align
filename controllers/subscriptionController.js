@@ -44,20 +44,20 @@ exports.createOrder =
                 planId
             } = req.body;
 
-            const order =
-                await subscriptionService
-                    .createOrder(
-                        req.user.restaurantId,
-                        planId
-                    );
+            const payment =
+    await subscriptionService
+        .createOrder(
+            req.user.restaurantId,
+            req.body.planId
+        );
 
-            return res.json({
+return res.json({
 
-                success: true,
+    success: true,
 
-                order
+    ...payment
 
-            });
+});
 
         } catch (err) {
 
@@ -91,6 +91,38 @@ exports.verifyPayment =
                 success: true,
 
                 data: result
+
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(500).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
+
+    };    
+exports.getPlans =
+    async (req, res) => {
+
+        try {
+
+            const plans =
+                await subscriptionService
+                    .getPlans();
+
+            return res.json({
+
+                success: true,
+
+                plans
 
             });
 

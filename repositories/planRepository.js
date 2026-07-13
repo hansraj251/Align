@@ -6,19 +6,27 @@ exports.getPlans = async () => {
         `
         SELECT
 
-            id,
+    id,
 
-            name,
+    name,
 
-            display_name,
+    display_name,
 
-            description,
+    description,
 
-            status
+    price,
+
+    currency,
+
+    duration_days,
+
+    status
 
         FROM plans
 
-        ORDER BY id
+WHERE status = 'active'
+
+ORDER BY id
         `
     );
 

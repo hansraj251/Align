@@ -16,6 +16,12 @@ router.get(
     subscriptionController.getSubscription
 );
 
+router.get(
+    "/plans",
+    auth,
+    subscriptionController.getPlans
+);
+
 router.post(
     "/create-order",
     auth,

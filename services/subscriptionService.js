@@ -201,7 +201,15 @@ await subscriptionOrderRepository
 
     );
 
-return order;
+return {
+
+    key:
+        process.env
+            .RAZORPAY_KEY_ID,
+
+    order
+
+};
 
 };
 exports.verifyPayment =
@@ -313,3 +321,11 @@ exports.verifyPayment =
         };
 
     };
+exports.getPlans =
+    async () => {
+
+        return await
+            planRepository
+                .getPlans();
+
+    };    

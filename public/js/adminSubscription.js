@@ -232,9 +232,7 @@ Upgrade to Pro
 }
 function upgradePlan() {
 
-    alert(
-        "Upgrade feature will be available soon."
-    );
+    SubscriptionPayment.upgrade();
 
 }
 function getRemainingDays(
