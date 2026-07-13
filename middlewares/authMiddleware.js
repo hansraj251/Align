@@ -16,7 +16,20 @@ module.exports = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    try {
+    try {console.log(
+    "Authorization:",
+    authHeader
+);
+
+console.log(
+    "Token:",
+    token
+);
+
+console.log(
+    "JWT Secret:",
+    process.env.JWT_SECRET
+);
 
         const decoded = jwt.verify(
             token,
@@ -47,11 +60,13 @@ module.exports = async (req, res, next) => {
 
     } catch (err) {
 
-        return res.status(401).json({
-            success: false,
-            message: "Invalid token"
-        });
+    console.log(err);
 
-    }
+    return res.status(401).json({
+        success: false,
+        message: "Invalid token"
+    });
+
+}
 
 };

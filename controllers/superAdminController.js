@@ -68,20 +68,26 @@ exports.login = async (req, res) => {
         }
 
         const token =
-            jwt.sign(
+    jwt.sign(
 
-                {
-                    superAdminId: admin.id,
-                    username: admin.username
-                },
+        {
+            superAdminId:
+                admin.id,
 
-                process.env.JWT_SECRET,
+            username:
+                admin.username,
 
-                {
-                    expiresIn: "7d"
-                }
+            role:
+                "super_admin"
+        },
 
-            );
+        process.env.JWT_SECRET,
+
+        {
+            expiresIn: "7d"
+        }
+
+    );
 
         await db.runAsync(
             `
@@ -292,17 +298,15 @@ async (req, res) => {
     try {
 
         await superAdminService
-            .updateRestaurantSubscription(
+    .updateRestaurantSubscription(
 
-                req.params.restaurantId,
+        req.params.restaurantId,
 
-                req.body.plan_id,
+        req.body.plan_id,
 
-                req.body.subscription_status,
+        req.body.subscription_status
 
-                req.body.days
-
-            );
+    );
 
         return res.json({
 

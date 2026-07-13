@@ -28,21 +28,17 @@ exports.getPlanById = async (planId) => {
 
     return await db.getAsync(
         `
-        SELECT
-
-            id,
-
-            name,
-
-            display_name,
-
-            description,
-
-            status
-
-        FROM plans
-
-        WHERE id = ?
+       SELECT
+    id,
+    name,
+    display_name,
+    description,
+    price,
+    currency,
+    duration_days,
+    status
+FROM plans
+WHERE id = ?
         `,
         [planId]
     );
@@ -53,6 +49,9 @@ exports.updatePlan = async (
     planId,
     displayName,
     description,
+    price,
+    currency,
+    durationDays,
     status
 ) => {
 
@@ -65,6 +64,12 @@ exports.updatePlan = async (
 
             description = ?,
 
+            price = ?,
+
+            currency = ?,
+
+            duration_days = ?,
+
             status = ?,
 
             updated_at = CURRENT_TIMESTAMP
@@ -74,6 +79,9 @@ exports.updatePlan = async (
         [
             displayName,
             description,
+            price,
+            currency,
+            durationDays,
             status,
             planId
         ]

@@ -1,4 +1,5 @@
-const express = require("express");
+const express =
+    require("express");
 
 const router =
     express.Router();
@@ -15,4 +16,16 @@ router.get(
     subscriptionController.getSubscription
 );
 
-module.exports = router;
+router.post(
+    "/create-order",
+    auth,
+    subscriptionController.createOrder
+);
+router.post(
+    "/verify-payment",
+    auth,
+    subscriptionController.verifyPayment
+);
+
+module.exports =
+    router;

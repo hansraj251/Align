@@ -76,17 +76,23 @@ exports.updatePlan = async (
 
         await planService.updatePlan(
 
-            req.params.id,
+    req.params.id,
 
-            req.body.display_name,
+    req.body.display_name,
 
-            req.body.description,
+    req.body.description,
 
-            req.body.waiter_devices,
+    req.body.price,
 
-            req.body.status
+    req.body.currency,
 
-        );
+    req.body.duration_days,
+
+    req.body.waiter_devices,
+
+    req.body.status
+
+);
 
         return res.json({
 

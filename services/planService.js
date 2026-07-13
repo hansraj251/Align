@@ -56,23 +56,35 @@ exports.updatePlan = async (
 
     description,
 
+    price,
+
+    currency,
+
+    durationDays,
+
     waiterDevices,
 
     status
 
 ) => {
 
-    await planRepository.updatePlan(
+   await planRepository.updatePlan(
 
-        planId,
+    planId,
 
-        displayName,
+    displayName,
 
-        description,
+    description,
 
-        status
+    price,
 
-    );
+    currency,
+
+    durationDays,
+
+    status
+
+);
 
     await planLimitRepository
         .updateWaiterDeviceLimit(

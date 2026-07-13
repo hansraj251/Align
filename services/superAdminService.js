@@ -2,6 +2,8 @@ const superAdminRepository =
     require("../repositories/superAdminRepository");
 const staffSessionRepository =
     require("../repositories/staffSessionRepository"); 
+const planRepository =
+    require("../repositories/planRepository");    
        
 
 exports.getDashboardStats =
@@ -65,9 +67,7 @@ async (
 
     planId,
 
-    status,
-
-    days
+    status
 
 ) => {
 
@@ -79,10 +79,26 @@ async (
 
     }
 
-    if (!days || days < 1) {
+    const plan =
+        await planRepository
+            .getPlanById(
+                planId
+            );
+
+    if (!plan) {
 
         throw new Error(
-            "Validity days must be greater than zero."
+            "Plan not found."
+        );
+
+    }
+
+    if (
+        Number(plan.duration_days) < 1
+    ) {
+
+        throw new Error(
+            "Invalid plan duration."
         );
 
     }
@@ -96,7 +112,7 @@ async (
 
             status,
 
-            days
+            plan.duration_days
 
         );
 

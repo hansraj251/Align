@@ -35,3 +35,77 @@ async (req, res) => {
     }
 
 };
+exports.createOrder =
+    async (req, res) => {
+
+        try {
+
+            const {
+                planId
+            } = req.body;
+
+            const order =
+                await subscriptionService
+                    .createOrder(
+                        req.user.restaurantId,
+                        planId
+                    );
+
+            return res.json({
+
+                success: true,
+
+                order
+
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(500).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
+
+    };
+exports.verifyPayment =
+    async (req, res) => {
+
+        try {
+
+            const result =
+                await subscriptionService
+                    .verifyPayment(
+                        req.user.restaurantId,
+                        req.body
+                    );
+
+            return res.json({
+
+                success: true,
+
+                data: result
+
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(500).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
+
+    };    

@@ -34,7 +34,9 @@ const createPlanLimitsTable =
     require("./schema/planLimits");
 
 const seedPlanLimits =
-    require("./seed/planLimitSeed");    
+    require("./seed/planLimitSeed");   
+const createSubscriptionRequestsTable =
+    require("./schema/subscriptionRequests"); 
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
@@ -53,6 +55,8 @@ await createMenuItemsTable();
 await createStaffTable();
 
 await createPlansTable();
+
+createSubscriptionRequestsTable();
 
 await createPlanPricingTable();
 

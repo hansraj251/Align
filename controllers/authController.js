@@ -5,6 +5,8 @@ const defaultSetupService =
 require("../services/defaultSetupService");
 const restaurantRepository =
     require("../repositories/restaurantRepository");
+const subscriptionService =
+    require("../services/subscriptionService");    
 exports.signup = async (req, res) => {
 
     const {
@@ -316,79 +318,6 @@ await subscriptionService
         user.restaurant_id
     );
 
-if (!restaurant) {
-
-    return res.status(404).json({
-
-        success: false,
-
-        message: "Restaurant not found."
-
-    });
-
-}
-
-// Auto Expire
-
-if (
-
-    restaurant.plan_end &&
-
-    new Date(restaurant.plan_end) <
-    new Date() &&
-
-    restaurant.subscription_status !==
-    "expired"
-
-) {
-
-    await restaurantRepository
-        .expireSubscription(
-            user.restaurant_id
-        );
-
-    restaurant.subscription_status =
-        "expired";
-
-}
-
-// Block Login
-
-if (
-    restaurant.subscription_status ===
-    "expired"
-) {
-
-    return res.status(403).json({
-
-        success: false,
-
-        code: "SUBSCRIPTION_EXPIRED",
-
-        message:
-            "Restaurant subscription has expired."
-
-    });
-
-}
-
-if (
-    restaurant.subscription_status ===
-    "suspended"
-) {
-
-    return res.status(403).json({
-
-        success: false,
-
-        code: "SUBSCRIPTION_SUSPENDED",
-
-        message:
-            "Restaurant subscription is suspended."
-
-    });
-
-}
 
             const token = jwt.sign(
     {
