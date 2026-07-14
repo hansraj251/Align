@@ -1,3 +1,4 @@
+let currentPlans = [];
 async function loadPlans() {
 
     const token =
@@ -39,6 +40,8 @@ async function loadPlans() {
         return;
 
     }
+    currentPlans =
+    data.plans;
 
     renderPlans(
         data.plans
@@ -116,9 +119,292 @@ Edit
 }
 function editPlan(planId) {
 
-    alert(
-        "Edit Plan : " +
-        planId
+    const plan =
+        currentPlans.find(
+            p => p.id === planId
+        );
+
+    if (!plan) {
+
+        Notify.error(
+            "Plan not found."
+        );
+
+        return;
+
+    }
+
+    openPlanModal(
+        plan
+    );
+
+}
+function openPlanModal(
+    plan = null
+) {
+
+    const isEdit =
+        plan !== null;
+
+    Modal.open(
+
+        isEdit
+            ? "Edit Plan"
+            : "Add Plan",
+
+        `
+
+<div class="space-y-4">
+
+<div>
+
+<label class="mb-1 block text-sm font-medium">
+
+Slug
+
+</label>
+
+<input
+
+id="planSlug"
+
+type="text"
+
+class="w-full rounded-lg border p-3"
+
+value="${plan?.slug ?? ""}"
+
+${isEdit ? "readonly" : ""}>
+
+</div>
+
+<div>
+
+<label class="mb-1 block text-sm font-medium">
+
+Display Name
+
+</label>
+
+<input
+
+id="planDisplayName"
+
+type="text"
+
+class="w-full rounded-lg border p-3"
+
+value="${plan?.display_name ?? ""}">
+
+</div>
+
+<div>
+
+<label class="mb-1 block text-sm font-medium">
+
+Description
+
+</label>
+
+<textarea
+
+id="planDescription"
+
+class="w-full rounded-lg border p-3"
+
+rows="3">${plan?.description ?? ""}</textarea>
+
+</div>
+
+<div>
+
+<label class="mb-1 block text-sm font-medium">
+
+Waiter Devices
+
+</label>
+
+<input
+
+id="planWaiterDevices"
+
+type="number"
+
+class="w-full rounded-lg border p-3"
+
+value="${plan?.waiter_devices ?? 1}">
+
+</div>
+
+<div>
+
+<label class="mb-1 block text-sm font-medium">
+
+Status
+
+</label>
+
+<select
+
+id="planStatus"
+
+class="w-full rounded-lg border p-3">
+
+<option
+value="active"
+${plan?.status === "inactive" ? "" : "selected"}>
+
+Active
+
+</option>
+
+<option
+value="inactive"
+${plan?.status === "inactive" ? "selected" : ""}>
+
+Inactive
+
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+`,
+
+        async () => {
+
+    const payload = {
+
+        slug:
+            document.getElementById(
+                "planSlug"
+            ).value.trim(),
+
+        display_name:
+            document.getElementById(
+                "planDisplayName"
+            ).value.trim(),
+
+        description:
+            document.getElementById(
+                "planDescription"
+            ).value.trim(),
+
+        waiter_devices:
+            Number(
+                document.getElementById(
+                    "planWaiterDevices"
+                ).value
+            ),
+
+        status:
+            document.getElementById(
+                "planStatus"
+            ).value
+
+    };
+
+    if (!payload.display_name) {
+
+        Notify.error(
+            "Display name is required."
+        );
+
+        return;
+
+    }
+
+    if (!isEdit && !payload.slug) {
+
+        Notify.error(
+            "Slug is required."
+        );
+
+        return;
+
+    }
+
+    let response;
+
+    if (isEdit) {
+
+        response =
+            await API.put(
+
+                `/api/super-admin/plans/${plan.id}`,
+
+                {
+
+                    display_name:
+                        payload.display_name,
+
+                    description:
+                        payload.description,
+
+                    waiter_devices:
+                        payload.waiter_devices,
+
+                    status:
+                        payload.status
+
+                }
+
+            );
+
+    } else {
+
+        response =
+            await API.post(
+
+                "/api/super-admin/plans",
+
+                payload
+
+            );
+
+    }
+
+    if (!response.success) {
+
+        Notify.error(
+            response.message
+        );
+
+        return;
+
+    }
+
+    Modal.close();
+
+    Notify.success(
+
+        isEdit
+            ? "Plan updated successfully."
+            : "Plan created successfully."
+
+    );
+
+    await loadPlans();
+
+},
+
+        {
+
+            buttonText:
+                isEdit
+                    ? "Update Plan"
+                    : "Create Plan",
+
+            loadingText:
+                isEdit
+                    ? "Updating..."
+                    : "Creating..."
+
+        }
+
     );
 
 }

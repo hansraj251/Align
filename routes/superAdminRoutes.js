@@ -5,7 +5,9 @@ const router = express.Router();
 const superAdminController =
     require("../controllers/superAdminController");
 const planController =
-    require("../controllers/planController");    
+    require("../controllers/planController");   
+const planPricingController =
+    require("../controllers/planPricingController");     
 
 router.post(
     "/login",
@@ -42,6 +44,10 @@ router.get(
     "/plans",
     planController.getPlans
 );
+router.post(
+    "/plans",
+    planController.createPlan
+);
 router.get(
     "/plans/:id",
     planController.getPlan
@@ -50,6 +56,25 @@ router.get(
 router.put(
     "/plans/:id",
     planController.updatePlan
+);
+router.get(
+    "/plans/:planId/pricing",
+    planPricingController.getPricing
+);
+
+router.get(
+    "/pricing",
+    planPricingController.getAllPricing
+);
+
+router.post(
+    "/pricing",
+    planPricingController.createPricing
+);
+
+router.put(
+    "/pricing/:id",
+    planPricingController.updatePricing
 );
 
 module.exports = router;

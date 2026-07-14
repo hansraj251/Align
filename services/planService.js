@@ -71,8 +71,6 @@ exports.updatePlan = async (
 
     planId,
 
-    slug,
-
     displayName,
 
     description,
@@ -96,35 +94,17 @@ exports.updatePlan = async (
 
     }
 
-    const duplicatePlan =
-        await planRepository.getBySlug(
-            slug
-        );
-
-    if (
-        duplicatePlan &&
-        duplicatePlan.id !== planId
-    ) {
-
-        throw new Error(
-            "Plan slug already exists."
-        );
-
-    }
-
     await planRepository.update(
 
-        planId,
+    planId,
 
-        slug,
+    displayName,
 
-        displayName,
+    description,
 
-        description,
+    status
 
-        status
-
-    );
+);
 
     await planLimitRepository
         .updateWaiterDeviceLimit(

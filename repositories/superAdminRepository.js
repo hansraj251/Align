@@ -37,7 +37,7 @@ exports.getRestaurants = async () => {
 
             r.email,
 
-            p.name AS plan,
+            p.display_name AS plan,
 
             r.subscription_status,
 

@@ -4,6 +4,13 @@ const planRepository =
 const planPricingRepository =
     require("../repositories/planPricingRepository");
 
+exports.getAllPricing = async () => {
+
+    return await planPricingRepository
+        .getAll();
+
+};    
+
 exports.getPricing = async (
     planId
 ) => {
@@ -174,6 +181,32 @@ exports.updatePricing = async (
         );
 
     }
+
+    const duplicatePricing =
+    await planPricingRepository
+        .getByPlanAndDuration(
+
+            pricing.plan_id,
+
+            durationDays
+
+        );
+
+if (
+
+    duplicatePricing &&
+
+    duplicatePricing.id !== pricingId
+
+) {
+
+    throw new Error(
+
+        "Pricing already exists for this duration."
+
+    );
+
+}
 
     await planPricingRepository
         .update(

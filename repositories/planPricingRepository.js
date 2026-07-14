@@ -164,3 +164,42 @@ exports.getAllActive = async () => {
     );
 
 };
+
+exports.getAll = async () => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            pp.id,
+
+            pp.plan_id,
+
+            p.display_name AS plan_name,
+
+            pp.duration_days,
+
+            pp.price,
+
+            pp.currency,
+
+            pp.status,
+
+            pp.created_at,
+
+            pp.updated_at
+
+        FROM plan_pricing pp
+
+        INNER JOIN plans p
+            ON p.id = pp.plan_id
+
+        ORDER BY
+
+            p.display_name,
+
+            pp.duration_days
+        `
+    );
+
+};

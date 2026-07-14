@@ -33,24 +33,51 @@ async (
     value
 ) => {
 
+    const existing =
+        await exports.getLimit(
+            planId,
+            "waiter_devices"
+        );
+
+    if (existing) {
+
+        await db.runAsync(
+            `
+            UPDATE plan_limits
+            SET
+                limit_value = ?
+            WHERE
+                plan_id = ?
+                AND limit_key = 'waiter_devices'
+            `,
+            [
+                value,
+                planId
+            ]
+        );
+
+        return;
+
+    }
+
     await db.runAsync(
         `
-        UPDATE plan_limits
-
-        SET
-
-            limit_value = ?
-
-        WHERE
-
-            plan_id = ?
-
-            AND limit_key =
-                'waiter_devices'
+        INSERT INTO plan_limits
+        (
+            plan_id,
+            limit_key,
+            limit_value
+        )
+        VALUES
+        (
+            ?,
+            'waiter_devices',
+            ?
+        )
         `,
         [
-            value,
-            planId
+            planId,
+            value
         ]
     );
 

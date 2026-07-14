@@ -15,8 +15,8 @@ function loadSuperAdminLayout(options) {
 </div>
 
     <aside
-    id="sidebar"
-    class="fixed left-0 top-0 z-50 h-full w-64 -translate-x-full bg-slate-900 text-white transition-transform duration-300 md:static md:translate-x-0 md:flex md:flex-col">
+id="sidebar"
+class="fixed left-0 top-0 z-50 flex h-full w-64 -translate-x-full flex-col overflow-y-auto bg-slate-900 text-white transition-transform duration-300 md:static md:translate-x-0">
         <div
             class="p-6 text-2xl font-bold border-b border-slate-700">
 
@@ -31,17 +31,15 @@ function loadSuperAdminLayout(options) {
 
         </div>
 
-        <nav class="flex-1 overflow-y-auto p-4">
+        <nav class="flex-1 space-y-2 p-4">
 
-    <div class="mb-6">
-
-        <div class="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Dashboard
-        </div>
+    <div>
 
         <a
     href="/super-admin/dashboard.html"
-    class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "dashboard" ? "bg-slate-800" : ""}">
+    class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "dashboard" ? "bg-slate-800 font-semibold"
+
+: "hover:bg-slate-800"}">
 
             Dashboard
 
@@ -49,15 +47,13 @@ function loadSuperAdminLayout(options) {
 
     </div>
 
-    <div class="mb-6">
-
-        <div class="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Restaurant Management
-        </div>
+    <div>
 
         <a
             href="/super-admin/restaurants.html"
-            class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "restaurants" ? "bg-slate-800" : ""}">
+            class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "restaurants" ? "bg-slate-800 font-semibold"
+
+: "hover:bg-slate-800"}">
 
             Users
 
@@ -65,47 +61,49 @@ function loadSuperAdminLayout(options) {
 
     </div>
 
-    <div class="mb-6">
-
-        <div class="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Subscription
-        </div>
-
-        <a
-            href="/super-admin/plans.html"
-            class="block rounded-lg px-4 py-3 transition hover:bg-slate-800">
-
-            Plans
-
-        </a>
-
-    </div>
-
-    <div class="mb-6">
-
-        <div class="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            Monitoring
-        </div>
-
-    </div>
-
     <div>
 
-        <div class="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
-            System
-        </div>
-
         <a
-            href="#"
-            class="block rounded-lg px-4 py-3 transition hover:bg-slate-800">
+    href="/super-admin/plans.html"
+    class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "plans" ? "bg-slate-800 font-semibold"
 
-            Settings
+: "hover:bg-slate-800"}">
 
-        </a>
+    Plans
+
+</a>
+</div>
+<div>
+        <a
+
+href="/super-admin/pricing.html"
+
+class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "pricing" ? "bg-slate-800 font-semibold"
+
+: "hover:bg-slate-800"}">
+
+Pricing
+
+</a>
 
     </div>
 
 </nav>
+<div class="border-t border-slate-700 p-4">
+
+<a
+
+href="#"
+
+onclick="SuperAdminAuth.logout(); return false;"
+
+class="block rounded-lg bg-red-600 px-4 py-3 text-center font-medium text-white transition hover:bg-red-700">
+
+Logout
+
+</a>
+
+</div>
 
     </aside>
 
@@ -125,20 +123,14 @@ function loadSuperAdminLayout(options) {
 
     </div>
 
-    <button
-        onclick="SuperAdminAuth.logout()"
-        class="rounded-lg bg-red-600 px-3 py-2 text-sm text-white">
-
-        Logout
-
-    </button>
+    
 
 </div>
 
-    <main class="flex-1 overflow-y-auto">
+    <main class="flex h-screen flex-1 flex-col overflow-hidden">
 
         <header
-    class="hidden md:flex items-center justify-between bg-white p-6 shadow">
+class="hidden h-20 items-center justify-between bg-white px-6 shadow md:flex">
 
             <h1
                 class="text-3xl font-bold">
@@ -147,19 +139,13 @@ function loadSuperAdminLayout(options) {
 
             </h1>
 
-            <button
-                onclick="SuperAdminAuth.logout()"
-                class="rounded-lg bg-red-600 px-4 py-2 text-white">
-
-                Logout
-
-            </button>
+            
 
         </header>
 
         <div
-    id="pageContent"
-    class="p-4 pt-20 md:p-8">
+id="pageContent"
+class="flex-1 overflow-y-auto p-4 pt-20 md:p-8">
 
         </div>
 <div id="modalContainer"></div>        

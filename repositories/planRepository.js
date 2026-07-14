@@ -110,7 +110,6 @@ exports.create = async (
 
 exports.update = async (
     id,
-    slug,
     displayName,
     description,
     status
@@ -119,21 +118,19 @@ exports.update = async (
     await db.runAsync(
         `
         UPDATE plans
-        SET
-            slug = ?,
-            display_name = ?,
-            description = ?,
-            status = ?,
-            updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
+SET
+    display_name = ?,
+    description = ?,
+    status = ?,
+    updated_at = CURRENT_TIMESTAMP
+WHERE id = ?
         `,
         [
-            slug,
-            displayName,
-            description,
-            status,
-            id
-        ]
+    displayName,
+    description,
+    status,
+    id
+]
     );
 
 };

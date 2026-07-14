@@ -1,21 +1,23 @@
-const planService =
-    require("../services/planService");
+const planPricingService =
+    require("../services/planPricingService");
 
-exports.getPlans = async (
+exports.getPricing = async (
     req,
     res
 ) => {
 
     try {
 
-        const plans =
-            await planService.getPlans();
+        const pricing =
+            await planPricingService.getPricing(
+                req.params.planId
+            );
 
         return res.json({
 
             success: true,
 
-            plans
+            pricing
 
         });
 
@@ -34,96 +36,24 @@ exports.getPlans = async (
     }
 
 };
-exports.getPlan = async (
+
+exports.createPricing = async (
     req,
     res
 ) => {
 
     try {
 
-        const plan =
-            await planService.getPlan(
-                req.params.id
-            );
+        const pricingId =
+            await planPricingService.createPricing(
 
-        return res.json({
+                req.body.plan_id,
 
-            success: true,
+                req.body.duration_days,
 
-            plan
+                req.body.price,
 
-        });
-
-    } catch (err) {
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: err.message
-
-        });
-
-    }
-
-};
-exports.updatePlan = async (
-    req,
-    res
-) => {
-
-    try {
-
-        await planService.updatePlan(
-
-    req.params.id,
-
-    req.body.display_name,
-
-    req.body.description,
-
-    req.body.waiter_devices,
-
-    req.body.status
-
-);
-
-        return res.json({
-
-            success: true
-
-        });
-
-    } catch (err) {
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: err.message
-
-        });
-
-    }
-
-};
-exports.createPlan = async (
-    req,
-    res
-) => {
-
-    try {
-
-        const planId =
-            await planService.createPlan(
-
-                req.body.slug,
-
-                req.body.display_name,
-
-                req.body.description,
-
-                req.body.waiter_devices,
+                req.body.currency,
 
                 req.body.status
 
@@ -133,7 +63,85 @@ exports.createPlan = async (
 
             success: true,
 
-            planId
+            pricingId
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.updatePricing = async (
+    req,
+    res
+) => {
+
+    try {
+
+        await planPricingService.updatePricing(
+
+            req.params.id,
+
+            req.body.duration_days,
+
+            req.body.price,
+
+            req.body.currency,
+
+            req.body.status
+
+        );
+
+        return res.json({
+
+            success: true
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.getAllPricing = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const pricing =
+            await planPricingService
+                .getAllPricing();
+
+        return res.json({
+
+            success: true,
+
+            pricing
 
         });
 
