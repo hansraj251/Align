@@ -26,6 +26,18 @@ exports.getRestaurant = async (restaurantId) => {
     );
 
 };
+exports.getById = async (restaurantId) => {
+
+    return await db.getAsync(
+        `
+        SELECT *
+        FROM restaurants
+        WHERE id = ?
+        `,
+        [restaurantId]
+    );
+
+};
 
 exports.updateRestaurant = async (
     restaurantId,

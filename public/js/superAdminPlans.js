@@ -220,7 +220,7 @@ rows="3">${plan?.description ?? ""}</textarea>
 
 <label class="mb-1 block text-sm font-medium">
 
-Waiter Devices
+Order Devices
 
 </label>
 

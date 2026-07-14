@@ -9,7 +9,9 @@ const staffRepository =
 const staffSessionService =
     require("./staffSessionService"); 
 const restaurantRepository =
-    require("../repositories/restaurantRepository");    
+    require("../repositories/restaurantRepository"); 
+const subscriptionService =
+    require("./subscriptionService");       
        
 
 exports.login = async (
@@ -61,36 +63,16 @@ await subscriptionService
     .validateRestaurant(
         staff.restaurant_id
     );
+const restaurant =
+    await restaurantRepository.getRestaurant(
+        staff.restaurant_id
+    );
 
 if (!restaurant) {
 
     throw new Error(
         "Restaurant not found."
     );
-
-}
-
-// Auto Expire
-
-if (
-
-    restaurant.plan_end &&
-
-    new Date(restaurant.plan_end) <
-    new Date() &&
-
-    restaurant.subscription_status !==
-    "expired"
-
-) {
-
-    await restaurantRepository
-        .expireSubscription(
-            staff.restaurant_id
-        );
-
-    restaurant.subscription_status =
-        "expired";
 
 }
 
@@ -130,7 +112,7 @@ if (staff.role === "waiter" || staff.role === "device") {
         );
 
     if (!allowed) {
-        throw new Error("Maximum waiter devices limit reached.");
+        throw new Error("Maximum Order devices limit reached.");
     }
 }
 

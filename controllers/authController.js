@@ -285,8 +285,7 @@ console.log("Received Login:", {
                     message: "Database error"
                 });
             }
-console.log("Login Email:", email);
-console.log("User Found:", user);
+
             if (!user) {
                 return res.status(401).json({
                     success: false,

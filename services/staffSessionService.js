@@ -29,7 +29,7 @@ exports.canCreateWaiterSession = async (restaurantId) => {
         );
 
     if (limit === null) {
-        throw new Error("Waiter device limit not configured.");
+        throw new Error("Order device limit not configured.");
     }
 
     // Unlimited
