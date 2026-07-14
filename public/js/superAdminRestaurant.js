@@ -208,6 +208,7 @@ Status
 
 <select
     id="statusSelect"
+    onchange="updateSubscriptionForm()"
     class="mt-2 w-full rounded-lg border border-slate-300 p-3">
 
 <option
@@ -246,7 +247,7 @@ Suspended
 
 </div>
 
-<div>
+<div id="planStartSection">
 
 <p class="text-sm text-slate-500">
 
@@ -262,7 +263,7 @@ ${restaurant.plan_start}
 
 </div>
 
-<div>
+<div id="planEndSection">
 
 <p class="text-sm text-slate-500">
 
@@ -278,11 +279,11 @@ ${restaurant.plan_end}
 
 </div>
 
-<div>
+<div id="daysSection">
 
 <p class="text-sm text-slate-500">
 
-Validity (Days)
+Remaining Days
 
 </p>
 
@@ -300,7 +301,7 @@ class="mt-2 w-full rounded-lg border border-slate-300 p-3">
 
 </div>
 
-<div>
+<div id="deviceUsageSection">
 
 <p class="text-sm text-slate-500">
 
@@ -312,7 +313,6 @@ Device Usage
 
 ${restaurant.active_devices}
 /
-
 ${
     restaurant.allowed_devices < 0 ||
     restaurant.allowed_devices >= 999
@@ -330,6 +330,8 @@ ${
 
 <button
 
+id="saveSubscriptionBtn"
+
 onclick="saveSubscription()"
 
 class="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
@@ -344,6 +346,103 @@ Save Subscription
 </div>
 
 `;
+updateSubscriptionForm();
+
+}
+
+function updateSubscriptionForm() {
+    
+
+    const status =
+        document.getElementById(
+            "statusSelect"
+        ).value;
+
+    const hideValidity =
+        status === "expired" ||
+        status === "suspended";
+
+    document
+        .getElementById(
+            "planStartSection"
+        )
+        .classList.toggle(
+            "hidden",
+            hideValidity
+        );
+
+    document
+        .getElementById(
+            "planEndSection"
+        )
+        .classList.toggle(
+            "hidden",
+            hideValidity
+        );
+
+    document
+        .getElementById(
+            "daysSection"
+        )
+        .classList.toggle(
+            "hidden",
+            hideValidity
+        );
+    document
+    .getElementById(
+        "deviceUsageSection"
+    )
+    .classList.toggle(
+        "hidden",
+        hideValidity
+    );  
+
+    const saveButton =
+    document.getElementById(
+        "saveSubscriptionBtn"
+    );
+
+saveButton.className =
+    "rounded-xl px-6 py-3 font-semibold text-white";
+
+switch (status) {
+
+    case "expired":
+
+        saveButton.textContent =
+            "Expire Subscription";
+
+        saveButton.classList.add(
+            "bg-red-600",
+            "hover:bg-red-700"
+        );
+
+        break;
+
+    case "suspended":
+
+        saveButton.textContent =
+            "Suspend Restaurant";
+
+        saveButton.classList.add(
+            "bg-orange-500",
+            "hover:bg-orange-600"
+        );
+
+        break;
+
+    default:
+
+        saveButton.textContent =
+            "Save Subscription";
+
+        saveButton.classList.add(
+            "bg-blue-600",
+            "hover:bg-blue-700"
+        );
+
+}    console.log("Status:", status);
+console.log("Hide:", hideValidity);
 
 }
 async function loadPlans() {
@@ -378,7 +477,7 @@ async function loadPlans() {
     }
 
 }
-async function saveSubscription() {
+async function submitSubscription() {
 
     const id =
         getRestaurantId();
@@ -417,11 +516,9 @@ async function saveSubscription() {
 
                     days:
                         Number(
-
                             document.getElementById(
                                 "daysInput"
                             ).value
-
                         )
 
                 })
@@ -435,18 +532,111 @@ async function saveSubscription() {
 
     if (data.success) {
 
-    Notify.success(
-        data.message
-    );
+        Notify.success(
+            data.message
+        );
 
-    loadRestaurant();
+        Modal.close();
 
-} else {
+        loadRestaurant();
 
-    Notify.error(
-        data.message
-    );
+    } else {
+
+        Notify.error(
+            data.message
+        );
+
+    }
 
 }
+
+async function saveSubscription() {
+
+    const status =
+        document.getElementById(
+            "statusSelect"
+        ).value;
+
+    if (
+        status === "expired"
+    ) {
+
+        Modal.confirm(
+
+            "Expire Subscription",
+
+            `
+<p class="text-slate-600">
+This will immediately expire the restaurant subscription.
+The owner will still be able to log in and renew the subscription.
+</p>
+            `,
+
+            async () => {
+
+                await submitSubscription();
+
+            },
+
+            {
+
+                buttonText:
+                    "Expire",
+
+                buttonClass:
+                    "bg-red-600",
+
+                loadingText:
+                    "Expiring..."
+
+            }
+
+        );
+
+        return;
+
+    }
+
+    if (
+        status === "suspended"
+    ) {
+
+        Modal.confirm(
+
+            "Suspend Restaurant",
+
+            `
+<p class="text-slate-600">
+This will suspend the restaurant immediately.
+The restaurant will not be able to use Align until it is activated again.
+</p>
+            `,
+
+            async () => {
+
+                await submitSubscription();
+
+            },
+
+            {
+
+                buttonText:
+                    "Suspend",
+
+                buttonClass:
+                    "bg-orange-500",
+
+                loadingText:
+                    "Suspending..."
+
+            }
+
+        );
+
+        return;
+
+    }
+
+    await submitSubscription();
 
 }

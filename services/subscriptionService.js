@@ -19,6 +19,10 @@ const subscriptionOrderRepository =
     require(
         "../repositories/subscriptionOrderRepository"
     );     
+const planPricingRepository =
+    require("../repositories/planPricingRepository");    
+const dateUtils =
+    require("../utils/date");    
 
 exports.getSubscription = async (
     restaurantId
@@ -123,41 +127,64 @@ exports.validateRestaurant = async (
 };
 exports.createOrder = async (
     restaurantId,
-    planId
+    pricingId
 ) => {
 
-    const plan =
-        await planRepository
-            .getPlanById(
-                planId
-            );
-
-    if (!plan) {
-
-        throw new Error(
-            "Plan not found."
+    const pricing =
+    await planPricingRepository
+        .getById(
+            pricingId
         );
 
-    }
+if (!pricing) {
+
+    throw new Error(
+        "Pricing not found."
+    );
+
+}
+
+if (
+    pricing.status !== "active"
+) {
+
+    throw new Error(
+        "Pricing is inactive."
+    );
+
+}
+
+const plan =
+    await planRepository
+        .getById(
+            pricing.plan_id
+        );
+
+if (!plan) {
+
+    throw new Error(
+        "Plan not found."
+    );
+
+}
+
+if (
+    plan.status !== "active"
+) {
+
+    throw new Error(
+        "Plan is inactive."
+    );
+
+}
 
     if (
-        plan.status !==
-        "active"
+        Number(pricing.price) <= 0
     ) {
 
         throw new Error(
-            "Plan is inactive."
-        );
-
-    }
-
-    if (
-        Number(plan.price) <= 0
-    ) {
-
-        throw new Error(
-            "Invalid plan price."
-        );
+    "Invalid pricing amount."
+);
 
     }
     const order =
@@ -165,11 +192,11 @@ exports.createOrder = async (
 
         amount:
             Math.round(
-                Number(plan.price) * 100
+                Number(pricing.price) * 100
             ),
 
         currency:
-            plan.currency,
+            pricing.currency,
 
         receipt:
             `restaurant_${restaurantId}_${Date.now()}`,
@@ -186,20 +213,15 @@ exports.createOrder = async (
 
     });
 
-await subscriptionOrderRepository
-    .createOrder(
-
-        restaurantId,
-
-        plan.id,
-
-        order.id,
-
-        plan.price,
-
-        plan.currency
-
-    );
+await subscriptionOrderRepository.createOrder(
+    restaurantId,
+    plan.id,
+    pricing.id,
+    order.id,
+    pricing.price,
+    pricing.currency,
+    pricing.duration_days
+);
 
 return {
 
@@ -291,25 +313,15 @@ exports.verifyPayment =
 
         }
 
-        await subscriptionOrderRepository
-            .markPaid(
+        await processSuccessfulPayment(
 
-                razorpay_order_id,
+    order,
 
-                razorpay_payment_id,
+    razorpay_payment_id,
 
-                null
+    null
 
-            );
-
-        await exports
-            .activateSubscription(
-
-                restaurantId,
-
-                order.plan_id
-
-            );
+);
 
         return {
 
@@ -321,11 +333,268 @@ exports.verifyPayment =
         };
 
     };
-exports.getPlans =
-    async () => {
+exports.getPlans = async () => {
 
-        return await
-            planRepository
-                .getPlans();
+    const plans =
+        await planRepository.getActive();
 
-    };    
+    const pricingList =
+        await planPricingRepository.getAllActive();
+
+    for (const plan of plans) {
+
+        plan.pricing =
+            pricingList.filter(
+                pricing =>
+                    pricing.plan_id === plan.id
+            );
+
+    }
+
+    return plans;
+
+};
+exports.processWebhook =
+    async (
+        body,
+        signature
+    ) => {
+
+        const expectedSignature =
+            crypto
+                .createHmac(
+
+                    "sha256",
+
+                    process.env
+                        .RAZORPAY_WEBHOOK_SECRET
+
+                )
+                .update(body)
+                .digest("hex");
+
+        if (
+            expectedSignature !==
+            signature
+        ) {
+
+            throw new Error(
+                "Invalid webhook signature."
+            );
+
+        }
+        const payload =
+            JSON.parse(
+                body.toString()
+            );
+            if (
+    payload.event !==
+    "payment.captured"
+) {
+
+    return;
+
+}
+const payment =
+    payload.payload
+        .payment
+        .entity;
+
+const order =
+    await subscriptionOrderRepository
+        .getByRazorpayOrderId(
+            payment.order_id
+        );
+if (!order) {
+
+    console.warn(
+        "Webhook received for unknown order:",
+        payment.order_id
+    );
+
+    return;
+
+}      
+await processSuccessfulPayment(
+
+    order,
+
+    payment.id,
+
+    payment.method
+
+);          
+        
+
+    };  
+async function processSuccessfulPayment(
+    order,
+    razorpayPaymentId,
+    paymentMethod = null
+) {
+
+    if (
+        order.status === "paid"
+    ) {
+
+        return;
+    }
+
+    await subscriptionOrderRepository
+        .markPaid(
+
+            order.razorpay_order_id,
+
+            razorpayPaymentId,
+
+            paymentMethod
+
+        );
+
+await exports.activateSubscription(
+    order.restaurant_id,
+    order.plan_pricing_id
+);
+
+}    
+
+exports.activateSubscription = async (
+    restaurantId,
+    pricingId
+) => {
+
+    const pricing =
+        await planPricingRepository
+            .getById(
+                pricingId
+            );
+
+    if (!pricing) {
+
+        throw new Error(
+            "Pricing not found."
+        );
+
+    }
+
+    const subscription =
+        await subscriptionRepository
+            .getSubscription(
+                restaurantId
+            );
+
+    const today =
+        new Date();
+
+        today.setHours(
+    0,
+    0,
+    0,
+    0
+);
+
+    let planStart;
+
+    let renewalBase;
+
+    let currentPlanEnd = null;
+
+if (subscription.plan_end) {
+
+    currentPlanEnd =
+        new Date(
+            subscription.plan_end
+        );
+
+    currentPlanEnd.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+}
+if (
+
+    currentPlanEnd &&
+
+    currentPlanEnd >= today &&
+
+    (
+        subscription.subscription_status === "active" ||
+        subscription.subscription_status === "trial"
+    )
+
+) {
+
+    // Active / Trial Renewal
+
+    if (subscription.plan_start) {
+
+    planStart =
+        new Date(
+            subscription.plan_start
+        );
+
+    planStart.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+} else {
+
+    planStart =
+        new Date(today);
+
+}
+
+    renewalBase =
+        currentPlanEnd;
+
+} else {
+
+    // Fresh Activation / Expired Renewal
+
+    planStart =
+        today;
+
+    renewalBase =
+        today;
+
+}
+
+    const planEnd =
+        new Date(
+            renewalBase
+        );
+
+    planEnd.setDate(
+
+        planEnd.getDate() +
+
+        Number(
+            pricing.duration_days
+        )
+
+    );
+
+    await subscriptionRepository
+        .updateSubscription(
+
+            restaurantId,
+
+            pricing.plan_id,
+
+           dateUtils.formatDate(
+    planStart
+),
+
+           dateUtils.formatDate(
+    planEnd
+)
+
+        );
+
+};

@@ -40,24 +40,35 @@ exports.createOrder =
 
         try {
 
-            const {
-                planId
-            } = req.body;
+            const pricingId =
+                Number(req.body.pricingId);
+
+            if (!pricingId) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message: "Pricing is required."
+
+                });
+
+            }
 
             const payment =
-    await subscriptionService
-        .createOrder(
-            req.user.restaurantId,
-            req.body.planId
-        );
+                await subscriptionService
+                    .createOrder(
+                        req.user.restaurantId,
+                        pricingId
+                    );
 
-return res.json({
+            return res.json({
 
-    success: true,
+                success: true,
 
-    ...payment
+                ...payment
 
-});
+            });
 
         } catch (err) {
 
@@ -131,6 +142,42 @@ exports.getPlans =
             console.error(err);
 
             return res.status(500).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
+
+    };    
+exports.webhook =
+    async (req, res) => {
+
+        try {
+
+            await subscriptionService.processWebhook(
+
+    req.body,
+
+    req.headers[
+        "x-razorpay-signature"
+    ]
+
+);
+
+            return res.json({
+
+                success: true
+
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(400).json({
 
                 success: false,
 

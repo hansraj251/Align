@@ -33,5 +33,10 @@ router.post(
     subscriptionController.verifyPayment
 );
 
+router.post(
+    "/webhook",
+    subscriptionController.webhook
+);
+
 module.exports =
     router;

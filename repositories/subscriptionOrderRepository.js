@@ -1,20 +1,23 @@
 const db =
     require("../db");
 
-exports.createOrder =
-    async (
+exports.createOrder = async (
 
-        restaurantId,
+    restaurantId,
 
-        planId,
+    planId,
 
-        razorpayOrderId,
+    planPricingId,
 
-        amount,
+    razorpayOrderId,
 
-        currency
+    amount,
 
-    ) => {
+    currency,
+
+    durationDays
+
+) => {
 
         await db.runAsync(
             `
@@ -23,56 +26,38 @@ exports.createOrder =
             (
 
                 restaurant_id,
-
-                plan_id,
-
-                razorpay_order_id,
-
-                amount,
-
-                currency
+plan_id,
+plan_pricing_id,
+razorpay_order_id,
+amount,
+currency,
+duration_days
 
             )
             VALUES
             (
                 ?,
-                ?,
-                ?,
-                ?,
-                ?
+?,
+?,
+?,
+?,
+?,
+?
             )
             `,
             [
-
-                restaurantId,
-
-                planId,
-
-                razorpayOrderId,
-
-                amount,
-
-                currency
-
-            ]
+    restaurantId,
+    planId,
+    planPricingId,
+    razorpayOrderId,
+    amount,
+    currency,
+    durationDays
+]
         );
 
     };
-    exports.getByRazorpayOrderId =
-    async (razorpayOrderId) => {
-
-        return await db.getAsync(
-            `
-            SELECT *
-            FROM subscription_orders
-            WHERE razorpay_order_id = ?
-            `,
-            [
-                razorpayOrderId
-            ]
-        );
-
-    };
+ 
 exports.markPaid =
     async (
         razorpayOrderId,

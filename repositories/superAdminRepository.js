@@ -178,6 +178,76 @@ async (
 
 ) => {
 
+    if (
+    status === "suspended"
+) {
+
+    await db.runAsync(
+        `
+        UPDATE restaurants
+
+        SET
+
+            plan_id = ?,
+
+            subscription_status = ?,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+
+            planId,
+
+            status,
+
+            restaurantId
+
+        ]
+    );
+
+    return;
+
+}
+
+if (
+    status === "expired"
+) {
+
+    await db.runAsync(
+        `
+        UPDATE restaurants
+
+        SET
+
+            plan_id = ?,
+
+            subscription_status = ?,
+
+            plan_end = CURRENT_TIMESTAMP,
+
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+
+            planId,
+
+            status,
+
+            restaurantId
+
+        ]
+    );
+
+    return;
+
+}
+    
+
     await db.runAsync(
         `
         UPDATE restaurants

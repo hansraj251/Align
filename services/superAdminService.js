@@ -67,7 +67,9 @@ async (
 
     planId,
 
-    status
+    status,
+
+    days
 
 ) => {
 
@@ -80,10 +82,10 @@ async (
     }
 
     const plan =
-        await planRepository
-            .getPlanById(
-                planId
-            );
+    await planRepository
+        .getById(
+            planId
+        );
 
     if (!plan) {
 
@@ -93,15 +95,15 @@ async (
 
     }
 
-    if (
-        Number(plan.duration_days) < 1
-    ) {
+   if (
+    Number(days) < 1
+) {
 
-        throw new Error(
-            "Invalid plan duration."
-        );
+    throw new Error(
+        "Validity days must be greater than zero."
+    );
 
-    }
+} 
 
     await superAdminRepository
         .updateRestaurantSubscription(
@@ -112,7 +114,7 @@ async (
 
             status,
 
-            plan.duration_days
+            Number(days)
 
         );
 

@@ -304,7 +304,9 @@ async (req, res) => {
 
         req.body.plan_id,
 
-        req.body.subscription_status
+        req.body.subscription_status,
+
+        req.body.days
 
     );
 

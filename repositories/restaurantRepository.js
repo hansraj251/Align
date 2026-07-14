@@ -123,8 +123,6 @@ exports.getPlanDetails = async (restaurantId) => {
 
             p.display_name,
 
-            p.max_devices,
-
             r.subscription_status,
 
             r.plan_start,

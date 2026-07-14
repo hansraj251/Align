@@ -1,65 +1,118 @@
 const db = require("../db");
 
-exports.getPlans = async () => {
+exports.getAll = async () => {
 
     return await db.allAsync(
         `
         SELECT
-
-    id,
-
-    name,
-
-    display_name,
-
-    description,
-
-    price,
-
-    currency,
-
-    duration_days,
-
-    status
-
+            id,
+            slug,
+            display_name,
+            description,
+            status,
+            created_at,
+            updated_at
         FROM plans
-
-WHERE status = 'active'
-
-ORDER BY id
+        ORDER BY id
         `
     );
 
 };
 
-exports.getPlanById = async (planId) => {
+exports.getActive = async () => {
+
+    return await db.allAsync(
+        `
+        SELECT
+            id,
+            slug,
+            display_name,
+            description,
+            status,
+            created_at,
+            updated_at
+        FROM plans
+        WHERE status = 'active'
+        ORDER BY id
+        `
+    );
+
+};
+
+exports.getById = async (id) => {
 
     return await db.getAsync(
         `
-       SELECT
-    id,
-    name,
-    display_name,
-    description,
-    price,
-    currency,
-    duration_days,
-    status
-FROM plans
-WHERE id = ?
+        SELECT
+            id,
+            slug,
+            display_name,
+            description,
+            status,
+            created_at,
+            updated_at
+        FROM plans
+        WHERE id = ?
         `,
-        [planId]
+        [id]
     );
 
 };
 
-exports.updatePlan = async (
-    planId,
+exports.getBySlug = async (slug) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            slug,
+            display_name,
+            description,
+            status,
+            created_at,
+            updated_at
+        FROM plans
+        WHERE slug = ?
+        `,
+        [slug]
+    );
+
+};
+
+exports.create = async (
+    slug,
     displayName,
     description,
-    price,
-    currency,
-    durationDays,
+    status
+) => {
+
+    const result = await db.runAsync(
+        `
+        INSERT INTO plans (
+            slug,
+            display_name,
+            description,
+            status
+        )
+        VALUES (?, ?, ?, ?)
+        `,
+        [
+            slug,
+            displayName,
+            description,
+            status
+        ]
+    );
+
+    return result.lastID;
+
+};
+
+exports.update = async (
+    id,
+    slug,
+    displayName,
+    description,
     status
 ) => {
 
@@ -67,32 +120,32 @@ exports.updatePlan = async (
         `
         UPDATE plans
         SET
-
+            slug = ?,
             display_name = ?,
-
             description = ?,
-
-            price = ?,
-
-            currency = ?,
-
-            duration_days = ?,
-
             status = ?,
-
             updated_at = CURRENT_TIMESTAMP
-
         WHERE id = ?
         `,
         [
+            slug,
             displayName,
             description,
-            price,
-            currency,
-            durationDays,
             status,
-            planId
+            id
         ]
+    );
+
+};
+
+exports.remove = async (id) => {
+
+    await db.runAsync(
+        `
+        DELETE FROM plans
+        WHERE id = ?
+        `,
+        [id]
     );
 
 };

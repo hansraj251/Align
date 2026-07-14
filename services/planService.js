@@ -4,11 +4,10 @@ const planRepository =
 const planLimitRepository =
     require("../repositories/planLimitRepository");
 
-
 exports.getPlans = async () => {
 
     const plans =
-        await planRepository.getPlans();
+        await planRepository.getAll();
 
     for (const plan of plans) {
 
@@ -22,12 +21,31 @@ exports.getPlans = async () => {
 
     return plans;
 
-};    
+};
+
+exports.getActivePlans = async () => {
+
+    const plans =
+        await planRepository.getActive();
+
+    for (const plan of plans) {
+
+        plan.waiter_devices =
+            await planLimitRepository
+                .getWaiterDeviceLimit(
+                    plan.id
+                );
+
+    }
+
+    return plans;
+
+};
 
 exports.getPlan = async (planId) => {
 
     const plan =
-        await planRepository.getPlanById(
+        await planRepository.getById(
             planId
         );
 
@@ -48,19 +66,16 @@ exports.getPlan = async (planId) => {
     return plan;
 
 };
+
 exports.updatePlan = async (
 
     planId,
 
+    slug,
+
     displayName,
 
     description,
-
-    price,
-
-    currency,
-
-    durationDays,
 
     waiterDevices,
 
@@ -68,23 +83,48 @@ exports.updatePlan = async (
 
 ) => {
 
-   await planRepository.updatePlan(
+    const existingPlan =
+        await planRepository.getById(
+            planId
+        );
 
-    planId,
+    if (!existingPlan) {
 
-    displayName,
+        throw new Error(
+            "Plan not found."
+        );
 
-    description,
+    }
 
-    price,
+    const duplicatePlan =
+        await planRepository.getBySlug(
+            slug
+        );
 
-    currency,
+    if (
+        duplicatePlan &&
+        duplicatePlan.id !== planId
+    ) {
 
-    durationDays,
+        throw new Error(
+            "Plan slug already exists."
+        );
 
-    status
+    }
 
-);
+    await planRepository.update(
+
+        planId,
+
+        slug,
+
+        displayName,
+
+        description,
+
+        status
+
+    );
 
     await planLimitRepository
         .updateWaiterDeviceLimit(
@@ -94,5 +134,81 @@ exports.updatePlan = async (
             waiterDevices
 
         );
+
+};
+
+exports.createPlan = async (
+
+    slug,
+
+    displayName,
+
+    description,
+
+    waiterDevices,
+
+    status = "active"
+
+) => {
+
+    const existingPlan =
+        await planRepository.getBySlug(
+            slug
+        );
+
+    if (existingPlan) {
+
+        throw new Error(
+            "Plan slug already exists."
+        );
+
+    }
+
+    const planId =
+        await planRepository.create(
+
+            slug,
+
+            displayName,
+
+            description,
+
+            status
+
+        );
+
+    await planLimitRepository
+        .updateWaiterDeviceLimit(
+
+            planId,
+
+            waiterDevices
+
+        );
+
+    return planId;
+
+};
+
+exports.deletePlan = async (
+    planId
+) => {
+
+    const plan =
+        await planRepository.getById(
+            planId
+        );
+
+    if (!plan) {
+
+        throw new Error(
+            "Plan not found."
+        );
+
+    }
+
+    await planRepository.remove(
+        planId
+    );
 
 };

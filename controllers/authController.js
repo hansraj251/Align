@@ -277,6 +277,7 @@ console.log("Received Login:", {
         `SELECT * FROM users WHERE email = ?`,
         [email],
         async (err, user) => {
+            try {
 
             if (err) {
                 return res.status(500).json({
@@ -313,11 +314,6 @@ if (!passwordMatched) {
 await defaultSetupService.ensureDefaultTakeAway(
     user.restaurant_id
 );
-await subscriptionService
-    .validateRestaurant(
-        user.restaurant_id
-    );
-
 
             const token = jwt.sign(
     {
@@ -342,6 +338,19 @@ return res.json({
         role: user.role
     }
 });
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(403).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
 
         }
     );

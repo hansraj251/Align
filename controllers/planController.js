@@ -78,15 +78,11 @@ exports.updatePlan = async (
 
     req.params.id,
 
+    req.body.slug,
+
     req.body.display_name,
 
     req.body.description,
-
-    req.body.price,
-
-    req.body.currency,
-
-    req.body.duration_days,
 
     req.body.waiter_devices,
 

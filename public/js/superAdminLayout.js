@@ -59,7 +59,7 @@ function loadSuperAdminLayout(options) {
             href="/super-admin/restaurants.html"
             class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "restaurants" ? "bg-slate-800" : ""}">
 
-            Restaurants
+            Users
 
         </a>
 
@@ -72,18 +72,10 @@ function loadSuperAdminLayout(options) {
         </div>
 
         <a
-            href="#"
+            href="/super-admin/plans.html"
             class="block rounded-lg px-4 py-3 transition hover:bg-slate-800">
 
             Plans
-
-        </a>
-
-        <a
-            href="#"
-            class="mt-1 block rounded-lg px-4 py-3 transition hover:bg-slate-800">
-
-            Pricing
 
         </a>
 
@@ -94,14 +86,6 @@ function loadSuperAdminLayout(options) {
         <div class="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-slate-400">
             Monitoring
         </div>
-
-        <a
-            href="#"
-            class="block rounded-lg px-4 py-3 transition hover:bg-slate-800">
-
-            Active Devices
-
-        </a>
 
     </div>
 
@@ -178,6 +162,7 @@ function loadSuperAdminLayout(options) {
     class="p-4 pt-20 md:p-8">
 
         </div>
+<div id="modalContainer"></div>        
 
     </main>
 
@@ -202,6 +187,12 @@ if (menuButton && sidebar && overlay) {
         overlay.classList.remove("hidden");
 
     });
+
+    
+    loadComponent(
+    "modalContainer",
+    "/components/modal.html"
+);
 
     overlay.addEventListener("click", () => {
 

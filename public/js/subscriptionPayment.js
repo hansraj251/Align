@@ -1,11 +1,13 @@
 const SubscriptionPayment = {
 
-    async upgrade() {
+    async upgrade(
+    subscription
+) {
 
-        const response =
-            await API.get(
-                "/api/subscription/plans"
-            );
+    const response =
+        await API.get(
+            "/api/subscription/plans"
+        );
 
         if (!response.success) {
 
@@ -16,10 +18,36 @@ const SubscriptionPayment = {
             return;
 
         }
+      let plans =
+    response.plans;
+    if (
+    subscription &&
+    subscription.plan_id
+) {
 
-        this.showPlanModal(
-            response.plans
+    plans =
+        plans.filter(
+            plan =>
+                plan.id >
+                subscription.plan_id
         );
+
+}
+if (
+    plans.length === 0
+) {
+
+    Notify.info(
+        "You are already using the highest available plan."
+    );
+
+    return;
+
+}
+
+this.showPlanModal(
+    plans
+);
 
     },
 
@@ -30,44 +58,47 @@ const SubscriptionPayment = {
     for (const plan of plans) {
 
         html += `
+<div class="mb-5 rounded-xl border p-4">
 
-<label
-class="mb-3 flex cursor-pointer items-center rounded-xl border p-4 hover:bg-slate-50">
+    <h3 class="text-lg font-semibold">
+        ${plan.display_name}
+    </h3>
 
-<input
-
-type="radio"
-
-name="plan"
-
-value="${plan.id}"
-
-class="mr-4">
-
-<div>
-
-<p class="font-semibold">
-
-${plan.display_name}
-
-</p>
-
-<p class="text-sm text-slate-500">
-
-₹${plan.price}
-
-/
-
-${plan.duration_days} Days
-
-</p>
-
-</div>
-
-</label>
-
+    <p class="mb-3 text-sm text-slate-500">
+        ${plan.description || ""}
+    </p>
 `;
 
+        for (const pricing of plan.pricing) {
+
+            html += `
+<label class="mb-2 flex cursor-pointer items-center rounded-lg border p-3 hover:bg-slate-50">
+
+    <input
+        type="radio"
+        name="pricing"
+        value="${pricing.id}"
+        class="mr-3">
+
+    <div class="flex-1">
+
+        <div class="font-medium">
+            ${pricing.duration_days} Days
+        </div>
+
+        <div class="text-sm text-slate-500">
+            ₹${pricing.price}
+        </div>
+
+    </div>
+
+</label>
+`;
+        }
+
+        html += `
+</div>
+`;
     }
 
     Modal.open(
@@ -78,12 +109,12 @@ ${plan.duration_days} Days
 
         async () => {
 
-            const selectedPlan =
+            const selectedPricing =
                 document.querySelector(
-                    'input[name="plan"]:checked'
+                    'input[name="pricing"]:checked'
                 );
 
-            if (!selectedPlan) {
+            if (!selectedPricing) {
 
                 Notify.error(
                     "Please select a plan."
@@ -94,7 +125,9 @@ ${plan.duration_days} Days
             }
 
             await this.createOrder(
-                selectedPlan.value
+                Number(
+                    selectedPricing.value
+                )
             );
 
         },
@@ -112,9 +145,52 @@ ${plan.duration_days} Days
     );
 
 },
+
+async renew(subscription) {
+
+    const response =
+        await API.get(
+            "/api/subscription/plans"
+        );
+
+    if (!response.success) {
+
+        Notify.error(
+            response.message
+        );
+
+        return;
+
+    }
+
+    const plans =
+        response.plans;
+
+    const currentPlan =
+        plans.find(
+            plan =>
+                plan.id ===
+                subscription.plan_id
+        );
+
+    if (!currentPlan) {
+
+        Notify.error(
+            "Current plan not found."
+        );
+
+        return;
+
+    }
+
+    this.showPlanModal([
+        currentPlan
+    ]);
+
+},
     
 
-async createOrder(planId) {
+async createOrder(pricingId) {
 
     const response =
         await API.post(
@@ -122,8 +198,8 @@ async createOrder(planId) {
             "/api/subscription/create-order",
 
             {
-                planId
-            }
+    pricingId
+}
 
         );
 
@@ -199,7 +275,9 @@ async createOrder(planId) {
 
             }
 
-        });
+        })
+        ;
+        
 
 razorpay.on(
 
