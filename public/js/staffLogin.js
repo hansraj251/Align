@@ -90,7 +90,7 @@ case "device":
         case "kitchen":
 
     window.location.href =
-        "/kitchen/index.html";
+        "/admin/kitchen.html";
 
     break;
 

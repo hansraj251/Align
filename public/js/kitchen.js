@@ -1,3 +1,25 @@
+function toggleKitchenHeader() {
+
+    const staff = JSON.parse(
+        localStorage.getItem("staff") || "{}"
+    );
+
+    if (
+        staff.role !== "kitchen"
+    ) {
+
+        return;
+
+    }
+
+    document
+        .getElementById(
+            "kitchenHeader"
+        )
+        ?.remove();
+
+}
+
 if (!API.getToken()) {
     window.location.href = "/admin/login.html";
 }
@@ -49,6 +71,7 @@ async function setupBackButton() {
     };
 
 }
+toggleKitchenHeader();
 
 setupBackButton();
 

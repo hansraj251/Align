@@ -25,6 +25,12 @@ router.get(
     tableController.getTables
 );
 
+router.get(
+    "/:id",
+    authMiddleware,
+    tableController.getTable
+);
+
 router.delete(
     "/:id",
     authMiddleware,

@@ -26,7 +26,7 @@ if (kitchenBtn) {
 
     kitchenBtn.onclick = () => {
 
-        const areaName =
+const areaName =
     document.getElementById("areaTitle")?.textContent || "";
 
 window.location.href =
@@ -58,6 +58,33 @@ document
 
 const tableId =
     params.get("table");
+
+async function loadTableInfo() {
+
+    if (!tableId) {
+
+        return;
+
+    }
+
+    const data =
+        await API.get(
+            `/api/tables/${tableId}`
+        );
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    document.getElementById(
+        "currentTableName"
+    ).textContent =
+
+        `${data.table.area_name} • ${data.table.name}`;
+
+}    
 
 
 const orderId =
@@ -457,6 +484,8 @@ if (checkoutBtn) {
 
 }
 
+
+loadTableInfo();
 
 initialize();
 async function loadExistingOrder() {

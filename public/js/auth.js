@@ -136,7 +136,7 @@ case "device":
     break;
 
                 case "kitchen":
-                    window.location.href = "/kitchen/index.html";
+                    window.location.href = "/admin/kitchen.html";
                     break;
 
                 case "cashier":

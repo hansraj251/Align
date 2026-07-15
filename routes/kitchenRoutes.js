@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-
+const kitchenMiddleware =
+    require("../middlewares/kitchenMiddleware");
 const authMiddleware = require("../middlewares/authMiddleware");
 const adminMiddleware =
     require("../middlewares/adminMiddleware");
@@ -9,13 +10,13 @@ const kitchenController = require("../controllers/kitchenController");
 router.get(
     "/",
     authMiddleware,
-    adminMiddleware,
+    kitchenMiddleware,
     kitchenController.getKitchenOrders
 );
 router.patch(
     "/:ticketId/status",
     authMiddleware,
-    adminMiddleware,
+    kitchenMiddleware,
     kitchenController.updateTicketStatus
 );
 router.patch(

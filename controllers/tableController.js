@@ -1,5 +1,7 @@
 const tableService =
     require("../services/tableService");
+const tableRepository =
+    require("../repositories/tableRepository");    
 
 exports.createTable = async (req, res) => {
 
@@ -140,6 +142,56 @@ exports.getTakeAwayTable = async (req, res) => {
     } catch (err) {
 
         res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.getTable = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const table =
+            await tableRepository.getTableDetails(
+
+                req.user.restaurantId,
+
+                req.params.id
+
+            );
+
+        if (!table) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Table not found."
+
+            });
+
+        }
+
+        return res.json({
+
+            success: true,
+
+            table
+
+        });
+
+    } catch (err) {
+
+        return res.status(500).json({
 
             success: false,
 

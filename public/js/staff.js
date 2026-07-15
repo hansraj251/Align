@@ -425,10 +425,16 @@ toggleStaffFields();
 }
 function toggleStaffFields() {
 
-    const isDevice =
-        document.getElementById(
-            "staffRole"
-        ).value === "device";
+    const role =
+    document.getElementById(
+        "staffRole"
+    ).value;
+
+const isSimpleRole =
+
+    role === "device" ||
+
+    role === "kitchen";
 
     [
 
@@ -447,7 +453,7 @@ function toggleStaffFields() {
         if (el) {
 
             el.style.display =
-                isDevice
+                isSimpleRole
                     ? "none"
                     : "";
 
@@ -467,8 +473,11 @@ const passwordInput =
 const role =
     document.getElementById("staffRole").value.trim();
 
-const isDevice =
-    role === "device";
+const isSimpleRole =
+
+    role === "device" ||
+
+    role === "kitchen";
 
 const body = {
 
@@ -476,7 +485,7 @@ const body = {
         document.getElementById("staffName").value.trim(),
 
     mobile:
-        isDevice
+        isSimpleRole
             ? ""
             : document.getElementById("staffMobile").value.trim(),
 
@@ -492,27 +501,27 @@ const body = {
             : undefined,
 
     salary_type:
-        isDevice
+        isSimpleRole
             ? null
             : document.getElementById("salaryType").value,
 
     basic_salary:
-        isDevice
+        isSimpleRole
             ? 0
             : Number(document.getElementById("basicSalary").value),
 
     joining_date:
-        isDevice
+        isSimpleRole
             ? null
             : document.getElementById("joiningDate").value,
 
     address:
-        isDevice
+        isSimpleRole
             ? ""
             : document.getElementById("staffAddress").value.trim(),
 
     emergency_contact:
-        isDevice
+        isSimpleRole
             ? ""
             : document.getElementById("emergencyContact").value.trim(),
 

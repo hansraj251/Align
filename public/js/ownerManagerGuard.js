@@ -13,6 +13,7 @@
     if (!staffToken) {
 
         window.location.replace("/login.html");
+
         return;
 
     }
@@ -21,22 +22,18 @@
         localStorage.getItem("staff") || "{}"
     );
 
-   if (
+    if (
 
-    staff.role !== "owner" &&
+        staff.role !== "owner" &&
 
-    staff.role !== "manager" &&
+        staff.role !== "manager"
 
-    staff.role !== "kitchen"
+    ) {
 
-) {
+        window.location.replace("/login.html");
 
-    window.location.replace(
-        "/waiter/dashboard.html"
-    );
+        return;
 
-    return;
-
-}
+    }
 
 })();
