@@ -8,6 +8,8 @@ const staffRepository =
     require("../repositories/staffRepository");
 const staffSessionService =
     require("./staffSessionService"); 
+const staffSessionRepository =
+    require("../repositories/staffSessionRepository");    
 const restaurantRepository =
     require("../repositories/restaurantRepository"); 
 const subscriptionService =
@@ -104,16 +106,33 @@ if (
 
    
 
-if (staff.role === "waiter" || staff.role === "device") {
+if (
 
-    const allowed =
-        await staffSessionService.canCreateWaiterSession(
-            staff.restaurant_id
+    staff.role === "waiter" ||
+
+    staff.role === "device"
+
+) {
+
+    await staffSessionRepository
+        .closeStaffSessions(
+            staff.id
         );
 
+    const allowed =
+        await staffSessionService
+            .canCreateWaiterSession(
+                staff.restaurant_id
+            );
+
     if (!allowed) {
-        throw new Error("Maximum Order devices limit reached.");
+
+        throw new Error(
+            "Maximum Order devices limit reached."
+        );
+
     }
+
 }
 
 await staffRepository.updateLastLogin(staff.id);

@@ -19,6 +19,8 @@ const defaultSetupService =
     require("./defaultSetupService");    
 const orderCalculationService =
     require("./orderCalculationService");    
+const subscriptionService =
+    require("./subscriptionService");    
   
 
 exports.checkout = async (
@@ -27,7 +29,15 @@ exports.checkout = async (
     staffId
 ) => {
 
-    const { table_id, items } = body;
+    await subscriptionService
+        .validateRestaurant(
+            restaurantId
+        );
+
+    const {
+        table_id,
+        items
+    } = body;
 
     if (!table_id) {
         throw new Error("Table is required");

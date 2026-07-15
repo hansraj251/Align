@@ -9,12 +9,18 @@ const settingsRepository =
 const orderRepository =
     require("../repositories/orderRepository");
 const orderCalculationService =
-    require("./orderCalculationService");    
+    require("./orderCalculationService"); 
+const subscriptionService =
+    require("./subscriptionService");       
 exports.receivePayment = async (
     restaurantId,
     orderId,
     paymentMethod
 ) => {
+    await subscriptionService
+    .validateRestaurant(
+        restaurantId
+    );
 
     return await db.transaction(async () => {
 

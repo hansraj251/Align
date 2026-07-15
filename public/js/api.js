@@ -1,3 +1,5 @@
+let redirectingToLogin =
+    false;
 const API = {
 
     getToken() {
@@ -37,7 +39,60 @@ const API = {
             headers
         });
 
-        return response.json();
+  if (
+
+    response.status === 401 &&
+
+    !url.includes("/login")
+
+) {
+
+    const data =
+        await response.json();
+
+    if (!redirectingToLogin) {
+
+        redirectingToLogin =
+            true;
+
+        localStorage.removeItem(
+            "token"
+        );
+
+        localStorage.removeItem(
+            "staffToken"
+        );
+
+        if (
+    typeof Notify !== "undefined"
+) {
+
+    Notify.error(
+
+        data.message ||
+
+        "Session expired. Please login again."
+
+    );
+
+}
+
+        setTimeout(() => {
+
+            window.location.href =
+                "/login.html";
+
+        }, 1000);
+
+    }
+
+    return data;
+
+}
+       const data =
+    await response.json();
+
+return data;
 
     },
 
