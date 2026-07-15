@@ -56,6 +56,17 @@ exports.getSubscription = async (
 
     return subscription;
 
+    const plans =
+    await planRepository.getAll();
+
+const highestPlan =
+    plans.at(-1);
+
+subscription.is_highest_plan =
+    highestPlan
+        ? highestPlan.id === subscription.plan_id
+        : false;
+
 };
 
 exports.validateRestaurant = async (

@@ -142,11 +142,24 @@ let buttonText =
     "Manage Subscription";
 
 if (
-    status === "expired"
+
+    status === "expired" ||
+
+    subscription.is_highest_plan
+
 ) {
 
     buttonText =
         "Renew Subscription";
+
+}
+
+if (
+    status === "suspended"
+) {
+
+    buttonText =
+        "Contact Administrator";
 
 }
 
@@ -344,19 +357,7 @@ ${buttonText}
 
 function upgradePlan() {
 
-    if (
-        currentSubscription.plan_id === 2
-    ) {
-
-        SubscriptionPayment.renew(
-            currentSubscription
-        );
-
-        return;
-
-    }
-
-    SubscriptionPayment.upgrade(
+    SubscriptionPayment.open(
         currentSubscription
     );
 

@@ -1,6 +1,6 @@
 const SubscriptionPayment = {
 
-async renew(subscription) {
+async open(subscription) {
 
     const response =
         await API.get(
@@ -19,9 +19,12 @@ async renew(subscription) {
 
     const currentPlan =
         response.plans.find(
+
             plan =>
+
                 plan.id ===
                 subscription.plan_id
+
         );
 
     if (!currentPlan) {
@@ -34,60 +37,52 @@ async renew(subscription) {
 
     }
 
-    this.showPlanModal(
+const renewPlans = [
 
-        [currentPlan],
+    currentPlan
 
-        []
-
-    );
-
-},
-
-async upgrade(subscription) {
-
-    const response =
-        await API.get(
-            "/api/subscription/plans"
-        );
-
-    if (!response.success) {
-
-        Notify.error(
-            response.message
-        );
-
-        return;
-
-    }
-
-    const currentPlan =
-        response.plans.find(
-            plan =>
-                plan.id ===
-                subscription.plan_id
-        );
+];
 
 const upgradePlans =
+
     response.plans.filter(
+
         plan =>
+
             plan.sort_order >
+
             currentPlan.sort_order
-    );
-
-    this.showPlanModal(
-
-        currentPlan
-            ? [currentPlan]
-            : [],
-
-        upgradePlans
 
     );
 
-},
+let modalTitle =
+    "Manage Subscription";
+
+if (
+
+    upgradePlans.length === 0
+
+) {
+
+    modalTitle =
+        "Renew Subscription";
+
+}
+
+this.showPlanModal(
+
+    modalTitle,
+
+    renewPlans,
+
+    upgradePlans
+
+);
+
+},    
 
  showPlanModal(
+    modalTitle,
     renewPlans,
     upgradePlans = []
 ) {
@@ -107,17 +102,22 @@ const upgradePlans =
 
         }
 
-        html += `
+        for (const plan of plans) {
+            html += `
 
 <h2 class="mb-4 text-lg font-semibold">
 
-${title}
+${
+    title === "Renew"
+
+        ? `Renew ${plan.display_name}`
+
+        : `Upgrade to ${plan.display_name}`
+}
 
 </h2>
 
 `;
-
-        for (const plan of plans) {
 
             html += `
 
@@ -183,9 +183,7 @@ ${pricing.duration_days} Days
 
     renderPlans(
 
-    renewPlans.length
-        ? `Renew ${renewPlans[0].display_name}`
-        : "Renew",
+    "Renew",
 
     renewPlans
 
@@ -208,9 +206,7 @@ ${pricing.duration_days} Days
 
     renderPlans(
 
-    upgradePlans.length
-        ? `Upgrade to ${upgradePlans[0].display_name}`
-        : "Upgrade",
+    "Upgrade",
 
     upgradePlans
 
@@ -218,9 +214,9 @@ ${pricing.duration_days} Days
 
     Modal.open(
 
-        "Subscription",
+    modalTitle,
 
-        html,
+    html,
 
         async () => {
 

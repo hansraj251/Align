@@ -117,19 +117,21 @@ exports.createPlan = async (
     try {
 
         const planId =
-            await planService.createPlan(
+    await planService.createPlan(
 
-                req.body.slug,
+        req.body.slug,
 
-                req.body.display_name,
+        req.body.display_name,
 
-                req.body.description,
+        req.body.description,
 
-                req.body.waiter_devices,
+        req.body.sort_order,
 
-                req.body.status
+        req.body.waiter_devices,
 
-            );
+        req.body.status
+
+    );
 
         return res.json({
 
