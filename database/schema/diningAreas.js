@@ -11,7 +11,10 @@ async function createDiningAreasTable() {
 
             name TEXT NOT NULL,
 
+            system_key TEXT,
+
             display_order INTEGER DEFAULT 0,
+            card_color TEXT DEFAULT '#2563eb',
 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 

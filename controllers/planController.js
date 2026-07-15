@@ -82,6 +82,8 @@ exports.updatePlan = async (
 
     req.body.description,
 
+    req.body.sort_order,
+
     req.body.waiter_devices,
 
     req.body.status

@@ -4,8 +4,6 @@ const http = require("http");
 require("./db");
 const path = require("path");
 const initializeDatabase = require("./database/init");
-console.log("initializeDatabase =", initializeDatabase);
-console.log("type =", typeof initializeDatabase);
 const express = require("express");
 const socket = require("./utils/socket");
 

@@ -527,29 +527,43 @@ if (
 
 ) {
 
-    // Active / Trial Renewal
+    const isUpgrade =
+        subscription.plan_id !==
+        pricing.plan_id;
 
-    if (subscription.plan_start) {
+    if (isUpgrade) {
 
-    planStart =
-        new Date(
-            subscription.plan_start
+        // Upgrade starts today
+
+        planStart =
+            new Date(today);
+
+    } else if (
+        subscription.plan_start
+    ) {
+
+        // Renewal keeps original start date
+
+        planStart =
+            new Date(
+                subscription.plan_start
+            );
+
+        planStart.setHours(
+            0,
+            0,
+            0,
+            0
         );
 
-    planStart.setHours(
-        0,
-        0,
-        0,
-        0
-    );
+    } else {
 
-} else {
+        planStart =
+            new Date(today);
 
-    planStart =
-        new Date(today);
+    }
 
-}
-
+    // Remaining validity is preserved
     renewalBase =
         currentPlanEnd;
 

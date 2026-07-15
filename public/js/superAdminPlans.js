@@ -71,6 +71,12 @@ ${plan.display_name}
 
 <td class="p-4">
 
+${plan.sort_order}
+
+</td>
+
+<td class="p-4">
+
 ${plan.description || "-"}
 
 </td>
@@ -220,6 +226,28 @@ rows="3">${plan?.description ?? ""}</textarea>
 
 <label class="mb-1 block text-sm font-medium">
 
+Sort Order
+
+</label>
+
+<input
+
+id="planSortOrder"
+
+type="number"
+
+min="0"
+
+class="w-full rounded-lg border p-3"
+
+value="${plan?.sort_order ?? 1}">
+
+</div>
+
+<div>
+
+<label class="mb-1 block text-sm font-medium">
+
 Order Devices
 
 </label>
@@ -292,6 +320,17 @@ Inactive
             document.getElementById(
                 "planDescription"
             ).value.trim(),
+        sort_order:
+
+    Number(
+
+        document.getElementById(
+
+            "planSortOrder"
+
+        ).value
+
+    ),    
 
         waiter_devices:
             Number(
@@ -343,6 +382,9 @@ Inactive
 
                     description:
                         payload.description,
+                    sort_order:
+
+    payload.sort_order,    
 
                     waiter_devices:
                         payload.waiter_devices,

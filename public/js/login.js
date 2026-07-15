@@ -130,10 +130,7 @@ localStorage.setItem(
     "restaurant_id",
     data.restaurant_id
 );
-console.log(
-    "Saved restaurant_id:",
-    localStorage.getItem("restaurant_id")
-);
+
 
 localStorage.setItem(
     "staff",

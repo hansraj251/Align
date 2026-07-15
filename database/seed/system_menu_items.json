@@ -317,210 +317,210 @@
 }
 ,
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Paneer Butter Masala",
   "food_type": "veg",
   "keywords": ["paneer", "butter", "pbm", "butter masala"],
   "popularity": 100
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Shahi Paneer",
   "food_type": "veg",
   "keywords": ["shahi", "paneer"],
   "popularity": 99
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Kadai Paneer",
   "food_type": "veg",
   "keywords": ["kadai", "paneer"],
   "popularity": 99
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Palak Paneer",
   "food_type": "veg",
   "keywords": ["palak", "paneer", "spinach"],
   "popularity": 98
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Paneer Lababdar",
   "food_type": "veg",
   "keywords": ["lababdar", "paneer"],
   "popularity": 95
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Paneer Do Pyaza",
   "food_type": "veg",
   "keywords": ["do pyaza", "paneer"],
   "popularity": 92
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Paneer Bhurji",
   "food_type": "veg",
   "keywords": ["bhurji", "paneer"],
   "popularity": 90
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Paneer Tikka Masala",
   "food_type": "veg",
   "keywords": ["paneer tikka", "masala"],
   "popularity": 96
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Matar Paneer",
   "food_type": "veg",
   "keywords": ["matar", "peas", "paneer"],
   "popularity": 98
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Malai Kofta",
   "food_type": "veg",
   "keywords": ["malai", "kofta"],
   "popularity": 98
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Navratan Korma",
   "food_type": "veg",
   "keywords": ["navratan", "korma"],
   "popularity": 90
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Mix Veg",
   "food_type": "veg",
   "keywords": ["mixed vegetables", "vegetables"],
   "popularity": 95
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Veg Jalfrezi",
   "food_type": "veg",
   "keywords": ["jalfrezi", "veg"],
   "popularity": 88
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Veg Kolhapuri",
   "food_type": "veg",
   "keywords": ["kolhapuri"],
   "popularity": 90
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Veg Handi",
   "food_type": "veg",
   "keywords": ["handi"],
   "popularity": 88
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Veg Korma",
   "food_type": "veg",
   "keywords": ["korma"],
   "popularity": 86
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Kaju Curry",
   "food_type": "veg",
   "keywords": ["kaju", "cashew"],
   "popularity": 84
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Mushroom Masala",
   "food_type": "veg",
   "keywords": ["mushroom", "masala"],
   "popularity": 90
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Mushroom Do Pyaza",
   "food_type": "veg",
   "keywords": ["mushroom", "do pyaza"],
   "popularity": 82
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Mushroom Kadai",
   "food_type": "veg",
   "keywords": ["mushroom", "kadai"],
   "popularity": 85
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Aloo Gobi",
   "food_type": "veg",
   "keywords": ["aloo", "gobi"],
   "popularity": 92
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Jeera Aloo",
   "food_type": "veg",
   "keywords": ["jeera", "aloo"],
   "popularity": 88
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Bhindi Masala",
   "food_type": "veg",
   "keywords": ["bhindi", "okra"],
   "popularity": 86
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Baingan Bharta",
   "food_type": "veg",
   "keywords": ["baingan", "eggplant", "bharta"],
   "popularity": 90
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Chana Masala",
   "food_type": "veg",
   "keywords": ["chana", "chole"],
   "popularity": 95
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Amritsari Chole",
   "food_type": "veg",
   "keywords": ["amritsari", "chole"],
   "popularity": 90
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Rajma Masala",
   "food_type": "veg",
   "keywords": ["rajma", "kidney beans"],
   "popularity": 94
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Stuffed Capsicum",
   "food_type": "veg",
   "keywords": ["capsicum", "stuffed"],
   "popularity": 80
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Corn Palak",
   "food_type": "veg",
   "keywords": ["corn", "palak"],
   "popularity": 82
 },
 {
-  "category": "Main Course Veg",
+  "category": "Main Course",
   "name": "Corn Masala",
   "food_type": "veg",
   "keywords": ["corn", "masala"],
@@ -528,210 +528,210 @@
 }
 ,
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Butter Chicken",
   "food_type": "non_veg",
   "keywords": ["butter", "chicken", "murgh makhani"],
   "popularity": 100
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Curry",
   "food_type": "non_veg",
   "keywords": ["chicken", "curry"],
   "popularity": 99
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Kadai Chicken",
   "food_type": "non_veg",
   "keywords": ["kadai", "chicken"],
   "popularity": 98
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Handi",
   "food_type": "non_veg",
   "keywords": ["handi", "chicken"],
   "popularity": 97
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Tikka Masala",
   "food_type": "non_veg",
   "keywords": ["tikka", "chicken"],
   "popularity": 98
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Lababdar",
   "food_type": "non_veg",
   "keywords": ["lababdar", "chicken"],
   "popularity": 94
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Do Pyaza",
   "food_type": "non_veg",
   "keywords": ["do pyaza", "chicken"],
   "popularity": 92
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Bhuna",
   "food_type": "non_veg",
   "keywords": ["bhuna", "chicken"],
   "popularity": 92
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Changezi",
   "food_type": "non_veg",
   "keywords": ["changezi"],
   "popularity": 90
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Korma",
   "food_type": "non_veg",
   "keywords": ["korma", "chicken"],
   "popularity": 90
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Kolhapuri",
   "food_type": "non_veg",
   "keywords": ["kolhapuri", "chicken"],
   "popularity": 88
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Mughlai",
   "food_type": "non_veg",
   "keywords": ["mughlai"],
   "popularity": 86
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Masala",
   "food_type": "non_veg",
   "keywords": ["masala", "chicken"],
   "popularity": 90
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Rogan Josh",
   "food_type": "non_veg",
   "keywords": ["rogan josh", "chicken"],
   "popularity": 82
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Chicken Keema",
   "food_type": "non_veg",
   "keywords": ["keema", "minced chicken"],
   "popularity": 82
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Egg Curry",
   "food_type": "egg",
   "keywords": ["egg", "curry"],
   "popularity": 94
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Egg Masala",
   "food_type": "egg",
   "keywords": ["egg", "masala"],
   "popularity": 90
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Boiled Egg Curry",
   "food_type": "egg",
   "keywords": ["boiled egg"],
   "popularity": 82
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Mutton Curry",
   "food_type": "non_veg",
   "keywords": ["mutton", "curry"],
   "popularity": 96
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Mutton Rogan Josh",
   "food_type": "non_veg",
   "keywords": ["mutton", "rogan josh"],
   "popularity": 94
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Mutton Korma",
   "food_type": "non_veg",
   "keywords": ["mutton", "korma"],
   "popularity": 90
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Mutton Handi",
   "food_type": "non_veg",
   "keywords": ["mutton", "handi"],
   "popularity": 88
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Mutton Keema",
   "food_type": "non_veg",
   "keywords": ["mutton", "keema"],
   "popularity": 86
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Fish Curry",
   "food_type": "non_veg",
   "keywords": ["fish", "curry"],
   "popularity": 92
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Fish Masala",
   "food_type": "non_veg",
   "keywords": ["fish", "masala"],
   "popularity": 88
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Fish Tikka Masala",
   "food_type": "non_veg",
   "keywords": ["fish", "tikka"],
   "popularity": 82
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Prawn Curry",
   "food_type": "non_veg",
   "keywords": ["prawn", "curry"],
   "popularity": 88
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Prawn Masala",
   "food_type": "non_veg",
   "keywords": ["prawn", "masala"],
   "popularity": 84
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Prawn Korma",
   "food_type": "non_veg",
   "keywords": ["prawn", "korma"],
   "popularity": 80
 },
 {
-  "category": "Main Course Non Veg",
+  "category": "Main Course",
   "name": "Keema Matar",
   "food_type": "non_veg",
   "keywords": ["keema", "matar"],

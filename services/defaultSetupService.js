@@ -8,6 +8,12 @@ const diningAreaRepository =
 
 exports.ensureDefaultTakeAway = async (restaurantId) => {
 
+     console.log(
+        ">>> ensureDefaultTakeAway",
+        restaurantId
+    );
+
+
     let area = await db.getAsync(
         `
         SELECT id
@@ -18,6 +24,8 @@ exports.ensureDefaultTakeAway = async (restaurantId) => {
         `,
         [restaurantId]
     );
+
+    console.log("Creating Take Away area...");
 
     if (!area) {
 
@@ -57,6 +65,8 @@ exports.ensureDefaultTakeAway = async (restaurantId) => {
         `,
         [restaurantId]
     );
+
+    console.log("Creating Take Away table...");
 
     if (!table) {
 

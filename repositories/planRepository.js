@@ -9,11 +9,14 @@ exports.getAll = async () => {
             slug,
             display_name,
             description,
+            sort_order,
             status,
             created_at,
             updated_at
         FROM plans
-        ORDER BY id
+        ORDER BY
+        sort_order,
+         id
         `
     );
 
@@ -28,12 +31,15 @@ exports.getActive = async () => {
             slug,
             display_name,
             description,
+            sort_order,
             status,
             created_at,
             updated_at
         FROM plans
         WHERE status = 'active'
-        ORDER BY id
+        ORDER BY 
+        sort_order,
+        id
         `
     );
 
@@ -48,6 +54,7 @@ exports.getById = async (id) => {
             slug,
             display_name,
             description,
+            sort_order,
             status,
             created_at,
             updated_at
@@ -68,6 +75,7 @@ exports.getBySlug = async (slug) => {
             slug,
             display_name,
             description,
+            sort_order,
             status,
             created_at,
             updated_at
@@ -83,6 +91,7 @@ exports.create = async (
     slug,
     displayName,
     description,
+    sortOrder,
     status
 ) => {
 
@@ -92,14 +101,16 @@ exports.create = async (
             slug,
             display_name,
             description,
+            sort_order,
             status
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         `,
         [
             slug,
             displayName,
             description,
+            sortOrder,
             status
         ]
     );
@@ -112,6 +123,7 @@ exports.update = async (
     id,
     displayName,
     description,
+    sortOrder,
     status
 ) => {
 
@@ -121,6 +133,7 @@ exports.update = async (
 SET
     display_name = ?,
     description = ?,
+    sort_order = ?,
     status = ?,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = ?
@@ -128,6 +141,7 @@ WHERE id = ?
         [
     displayName,
     description,
+    sortOrder,
     status,
     id
 ]

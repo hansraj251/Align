@@ -30,22 +30,31 @@ exports.createKitchenTables = async () => {
     await db.runAsync(`
     CREATE TABLE IF NOT EXISTS kitchen_ticket_items (
 
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-        ticket_id INTEGER NOT NULL,
+    ticket_id INTEGER NOT NULL,
 
-        menu_item_id INTEGER NOT NULL,
+    order_item_id INTEGER,
 
-        item_name TEXT NOT NULL,
+    menu_item_id INTEGER NOT NULL,
 
-        unit_price REAL NOT NULL,
+    item_name TEXT NOT NULL,
 
-        quantity INTEGER NOT NULL,
+    variant_name TEXT,
 
-        FOREIGN KEY(ticket_id)
-            REFERENCES kitchen_tickets(id)
+    unit_price REAL NOT NULL,
 
-    )
+    quantity INTEGER NOT NULL,
+
+    status TEXT DEFAULT 'pending',
+
+    FOREIGN KEY(ticket_id)
+        REFERENCES kitchen_tickets(id),
+
+    FOREIGN KEY(order_item_id)
+        REFERENCES order_items(id)
+
+)
 `);
 
     console.log(

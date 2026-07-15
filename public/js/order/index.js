@@ -12,14 +12,6 @@ Align.Order.app = {
 
         Cart.load();
 
-        console.log(
-
-            "Order initialized",
-
-            Align.Order.state
-
-        );
-
     }
 
 };

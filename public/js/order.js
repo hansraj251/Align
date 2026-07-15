@@ -427,10 +427,6 @@ async function initialize() {
 
     Number(takeaway.table.area_id) === Number(areaId);
 
-        console.log("isTakeAway =", isTakeAway);
-console.log("tableId =", tableId);
-console.log("takeawayTableId =", takeaway.table?.id);
-
     await loadMenu();
 
     await loadExistingOrder();
@@ -1290,7 +1286,6 @@ if (cartButton) {
                 "/api/orders/checkout",
                 payload
             );
-            console.log(data);
 
         if (!data.success) {
 
@@ -1730,7 +1725,6 @@ async function printBill(orderId) {
             await API.patch(
                 `/api/orders/${orderId}/send-to-billing`
             );
-            console.log(data);
 
         if (!data.success) {
 

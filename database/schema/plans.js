@@ -5,21 +5,23 @@ async function createPlansTable() {
     const sql = `
         CREATE TABLE IF NOT EXISTS plans (
 
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    name TEXT UNIQUE NOT NULL,
+            slug TEXT UNIQUE NOT NULL,
 
-    display_name TEXT NOT NULL,
+            display_name TEXT NOT NULL,
 
-    description TEXT,
+            description TEXT,
 
-    status TEXT DEFAULT 'active',
+            sort_order INTEGER NOT NULL,
 
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'active',
 
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-)
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+
+        )
     `;
 
     try {

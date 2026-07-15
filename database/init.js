@@ -37,10 +37,18 @@ const seedPlanLimits =
     require("./seed/planLimitSeed");   
 const createSubscriptionRequestsTable =
     require("./schema/subscriptionRequests"); 
+const createSystemCategoriesTable =
+    require("./schema/systemCategories");
+
+const createSystemMenuItemsTable =
+    require("./schema/systemMenuItems");
+
+const seedSystemMenu =
+    require("./seed/systemMenuSeed");    
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
-    await createRestaurantsTable();
+await createRestaurantsTable();
 
 await createUsersTable();
 
@@ -54,13 +62,17 @@ await createMenuItemsTable();
 
 await createStaffTable();
 
-await createPlansTable();
+await createSystemCategoriesTable();
 
-createSubscriptionRequestsTable();
+await createSystemMenuItemsTable();
+
+await createPlansTable();
 
 await createPlanPricingTable();
 
 await createPlanLimitsTable();
+
+await createSubscriptionRequestsTable();
 
 await createSuperAdminTable();
 
@@ -75,6 +87,8 @@ await runMigrations();
 await seedPlans();
 
 await seedPlanLimits();
+
+await seedSystemMenu();
 
 await seedSuperAdmin();
 

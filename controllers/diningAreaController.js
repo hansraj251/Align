@@ -4,25 +4,13 @@ const diningAreaService =
 exports.getAll = async (req, res) => {
 
     try {
-        console.log(
-
-            "Restaurant ID:",
-
-            req.user.restaurantId
-
-        );
+    
 
         const areas =
             await diningAreaService.getAll(
                 req.user.restaurantId
             );
-console.log(
 
-            "Areas:",
-
-            areas
-
-        );
         res.json({
 
             success: true,

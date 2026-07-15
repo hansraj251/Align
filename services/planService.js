@@ -75,6 +75,8 @@ exports.updatePlan = async (
 
     description,
 
+    sortOrder,
+
     waiterDevices,
 
     status
@@ -102,6 +104,8 @@ exports.updatePlan = async (
 
     description,
 
+    sortOrder,
+
     status
 
 );
@@ -125,6 +129,8 @@ exports.createPlan = async (
 
     description,
 
+    sortOrder,
+
     waiterDevices,
 
     status = "active"
@@ -145,17 +151,19 @@ exports.createPlan = async (
     }
 
     const planId =
-        await planRepository.create(
+    await planRepository.create(
 
-            slug,
+        slug,
 
-            displayName,
+        displayName,
 
-            description,
+        description,
 
-            status
+        sortOrder,
 
-        );
+        status
+
+    );
 
     await planLimitRepository
         .updateWaiterDeviceLimit(

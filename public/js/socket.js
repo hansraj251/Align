@@ -26,32 +26,24 @@ const socket = io();
 
 socket.on("connect", () => {
 
-    console.log("🟢 Connected:", socket.id);
-
     const restaurantId =
         localStorage.getItem("restaurant_id");
 
     if (!restaurantId) return;
 
-    console.log("Joining Restaurant:", restaurantId);
 
     socket.emit("joinRestaurant", restaurantId);
 
     const path = window.location.pathname;
 
-    console.log("PATH =", path);
 
     if (path.includes("kitchen")) {
-
-        console.log("➡️ Joining Kitchen");
 
         socket.emit("joinKitchen", restaurantId);
 
     }
 
     else if (path.includes("waiter")) {
-
-        console.log("➡️ Joining Waiter");
 
         const staff = JSON.parse(
     localStorage.getItem("staff") || "{}"
@@ -66,8 +58,6 @@ socket.emit("joinWaiter", {
 
     else if (path.includes("cashier")) {
 
-        console.log("➡️ Joining Billing");
-
         socket.emit("joinBilling", restaurantId);
 
     }
@@ -76,13 +66,9 @@ socket.emit("joinWaiter", {
 
 socket.on("disconnect", () => {
 
-    console.log("🔴 Disconnected");
-
 });
 
 socket.on("new-order", async (data) => {
-
-    console.log("🔔 New Order", data);
 
     playNotificationSound();
 
@@ -102,8 +88,6 @@ socket.on("new-order", async (data) => {
 });
 
 socket.on("ticket-ready", async data => {
-
-    console.log("🍽️ KOT Ready", data);
 
     playNotificationSound();
 
@@ -128,7 +112,6 @@ socket.on("ticket-ready", async data => {
 
 socket.on("ticket-updated", data => {
 
-    console.log("🍳 Ticket Updated", data);
 
     if (typeof loadKitchenTickets === "function") {
 
@@ -146,7 +129,6 @@ socket.on("ticket-updated", data => {
 
 socket.on("billing-updated", data => {
 
-    console.log("💰 Billing Updated", data);
 
     if (typeof loadCurrentOrder === "function") {
 
@@ -158,7 +140,6 @@ socket.on("billing-updated", data => {
 
 socket.on("order-updated", async data => {
 
-    console.log("🔄 Order Updated", data);
 
     if (typeof loadExistingOrder === "function") {
 
@@ -166,13 +147,11 @@ socket.on("order-updated", async data => {
 
         await loadExistingOrder();
 
-        console.log("loadExistingOrder finished");
 
     }
 
     if (typeof renderCart === "function") {
 
-        console.log("Rendering cart");
 
         renderCart();
 

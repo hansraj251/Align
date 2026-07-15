@@ -441,9 +441,7 @@ switch (status) {
             "hover:bg-blue-700"
         );
 
-}    console.log("Status:", status);
-console.log("Hide:", hideValidity);
-
+}    
 }
 async function loadPlans() {
 

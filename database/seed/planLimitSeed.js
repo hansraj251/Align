@@ -22,7 +22,7 @@ async function seedPlanLimits() {
             `
             SELECT id
             FROM plans
-            WHERE name = 'plus'
+            WHERE slug = 'plus'
             `
         );
 
@@ -31,7 +31,7 @@ async function seedPlanLimits() {
             `
             SELECT id
             FROM plans
-            WHERE name = 'pro'
+            WHERE slug = 'pro'
             `
         );
 

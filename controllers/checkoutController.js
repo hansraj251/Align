@@ -2,7 +2,7 @@ const db = require("../db");
 const orderService =
 
     require("../services/orderService");
-    console.log(">>> CHECKOUT CONTROLLER HIT");
+    
 exports.checkout = async (req, res) => {
 
     try {

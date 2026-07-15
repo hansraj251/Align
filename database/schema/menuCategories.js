@@ -15,6 +15,10 @@ async function createMenuCategoriesTable() {
 
             description TEXT,
 
+            is_system INTEGER DEFAULT 0,
+
+            system_category_id INTEGER,
+
             display_order INTEGER DEFAULT 0,
 
             status INTEGER DEFAULT 1,
@@ -23,8 +27,11 @@ async function createMenuCategoriesTable() {
 
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
+            FOREIGN KEY(system_category_id)
+    REFERENCES system_categories(id),
+
             FOREIGN KEY (restaurant_id)
-                REFERENCES restaurants(id)
+                REFERENCES restaurants(id)    
 
         )
     `;

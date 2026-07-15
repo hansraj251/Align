@@ -42,10 +42,7 @@ exports.approveRequest =
         req,
         res
     ) =>
-{console.log(
-    "Request ID:",
-    req.params.id
-);
+{
 
     try {
 

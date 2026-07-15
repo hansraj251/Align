@@ -25,6 +25,10 @@ module.exports = async (db) => {
 
             sgst REAL DEFAULT 2.5,
 
+            currency TEXT DEFAULT 'INR',
+
+            time_zone TEXT DEFAULT 'Asia/Kolkata',
+
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

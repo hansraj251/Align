@@ -71,11 +71,11 @@ exports.signup = async (req, res) => {
                 message: "Email or Mobile already registered"
             });
         }
-        console.log("Original Password:", password);
+       
 
 const hashedPassword = await bcrypt.hash(password, 10);
 
-console.log("Hashed Password:", hashedPassword);
+
 
 
 db.run(
@@ -98,7 +98,7 @@ VALUES
     (
         SELECT id
         FROM plans
-        WHERE name = 'plus'
+        WHERE slug = 'plus'
     ),
     ?,
     DATE('now'),
@@ -123,7 +123,6 @@ VALUES
             });
         }
 
-        console.log("Restaurant ID:", this.lastID);
 const restaurantId = this.lastID;
 const restaurantCode =
     `ALN${String(restaurantId).padStart(6, "0")}`;
@@ -186,20 +185,24 @@ db.run(
         db.run(
             `
             INSERT INTO restaurant_settings
-            (
-                restaurant_id,
-                footer_message,
-                cgst,
-                sgst
-            )
-            VALUES (?, ?, ?, ?)
+(
+    restaurant_id,
+    footer_message,
+    cgst,
+    sgst,
+    currency,
+    time_zone
+)
+VALUES (?, ?, ?, ?, ?, ?)
             `,
             [
-                restaurantId,
-                "Thank You! Visit Again.",
-                2.5,
-                2.5
-            ],
+    restaurantId,
+    "Thank You! Visit Again.",
+    2.5,
+    2.5,
+    "INR",
+    "Asia/Kolkata"
+],
             function (err) {
 
                 if (err) {
@@ -259,13 +262,7 @@ db.run(
 exports.login = (req, res) => {
 
     const { email, password } = req.body;
-console.log("Received Login:", {
 
-    email,
-
-    password
-
-});
     if (!email || !password) {
         return res.status(400).json({
             success: false,
@@ -292,18 +289,13 @@ console.log("Received Login:", {
                     message: "Invalid email or password"
                 });
             }
-            console.log("Password Type:", typeof password);
-console.log("Password Length:", password.length);
-console.log("Password JSON:", JSON.stringify(password));
-
-console.log("Hash:", user.password);
 
 const passwordMatched = await bcrypt.compare(
     password.trim(),
     user.password.trim()
 );
 
-console.log("Password Matched:", passwordMatched);
+
 if (!passwordMatched) {
     return res.status(401).json({
         success: false,

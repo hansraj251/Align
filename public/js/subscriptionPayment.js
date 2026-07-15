@@ -1,109 +1,224 @@
 const SubscriptionPayment = {
 
-    async upgrade(
-    subscription
-) {
+async renew(subscription) {
 
     const response =
         await API.get(
             "/api/subscription/plans"
         );
 
-        if (!response.success) {
+    if (!response.success) {
 
-            Notify.error(
-                response.message
-            );
+        Notify.error(
+            response.message
+        );
+
+        return;
+
+    }
+
+    const currentPlan =
+        response.plans.find(
+            plan =>
+                plan.id ===
+                subscription.plan_id
+        );
+
+    if (!currentPlan) {
+
+        Notify.error(
+            "Current plan not found."
+        );
+
+        return;
+
+    }
+
+    this.showPlanModal(
+
+        [currentPlan],
+
+        []
+
+    );
+
+},
+
+async upgrade(subscription) {
+
+    const response =
+        await API.get(
+            "/api/subscription/plans"
+        );
+
+    if (!response.success) {
+
+        Notify.error(
+            response.message
+        );
+
+        return;
+
+    }
+
+    const currentPlan =
+        response.plans.find(
+            plan =>
+                plan.id ===
+                subscription.plan_id
+        );
+
+const upgradePlans =
+    response.plans.filter(
+        plan =>
+            plan.sort_order >
+            currentPlan.sort_order
+    );
+
+    this.showPlanModal(
+
+        currentPlan
+            ? [currentPlan]
+            : [],
+
+        upgradePlans
+
+    );
+
+},
+
+ showPlanModal(
+    renewPlans,
+    upgradePlans = []
+) {
+
+    let html = "";
+
+    const renderPlans = (
+        title,
+        plans
+    ) => {
+
+        if (
+            plans.length === 0
+        ) {
 
             return;
 
         }
-      let plans =
-    response.plans;
-    if (
-    subscription &&
-    subscription.plan_id
-) {
-
-    plans =
-        plans.filter(
-            plan =>
-                plan.id >
-                subscription.plan_id
-        );
-
-}
-if (
-    plans.length === 0
-) {
-
-    Notify.info(
-        "You are already using the highest available plan."
-    );
-
-    return;
-
-}
-
-this.showPlanModal(
-    plans
-);
-
-    },
-
-    showPlanModal(plans) {
-
-    let html = "";
-
-    for (const plan of plans) {
 
         html += `
-<div class="mb-5 rounded-xl border p-4">
 
-    <h3 class="text-lg font-semibold">
-        ${plan.display_name}
-    </h3>
+<h2 class="mb-4 text-lg font-semibold">
 
-    <p class="mb-3 text-sm text-slate-500">
-        ${plan.description || ""}
-    </p>
+${title}
+
+</h2>
+
 `;
 
-        for (const pricing of plan.pricing) {
+        for (const plan of plans) {
 
             html += `
+
+<div class="mb-5 rounded-xl border p-4">
+
+<h3 class="text-lg font-semibold">
+
+${plan.display_name}
+
+</h3>
+
+<p class="mb-3 text-sm text-slate-500">
+
+${plan.description || ""}
+
+</p>
+
+`;
+
+            for (const pricing of plan.pricing) {
+
+                html += `
+
 <label class="mb-2 flex cursor-pointer items-center rounded-lg border p-3 hover:bg-slate-50">
 
-    <input
-        type="radio"
-        name="pricing"
-        value="${pricing.id}"
-        class="mr-3">
+<input
+type="radio"
+name="pricing"
+value="${pricing.id}"
+class="mr-3">
 
-    <div class="flex-1">
+<div class="flex-1">
 
-        <div class="font-medium">
-            ${pricing.duration_days} Days
-        </div>
+<div class="font-medium">
 
-        <div class="text-sm text-slate-500">
-            ₹${pricing.price}
-        </div>
+${pricing.duration_days} Days
 
-    </div>
+</div>
+
+<div class="text-sm text-slate-500">
+
+₹${pricing.price}
+
+</div>
+
+</div>
 
 </label>
+
 `;
+
+            }
+
+            html += `
+
+</div>
+
+`;
+
         }
 
+    };
+
+    renderPlans(
+
+    renewPlans.length
+        ? `Renew ${renewPlans[0].display_name}`
+        : "Renew",
+
+    renewPlans
+
+);
+
+    if (
+
+        renewPlans.length &&
+        upgradePlans.length
+
+    ) {
+
         html += `
-</div>
+
+<hr class="my-6">
+
 `;
+
     }
+
+    renderPlans(
+
+    upgradePlans.length
+        ? `Upgrade to ${upgradePlans[0].display_name}`
+        : "Upgrade",
+
+    upgradePlans
+
+);
 
     Modal.open(
 
-        "Choose Plan",
+        "Subscription",
 
         html,
 
@@ -125,9 +240,11 @@ this.showPlanModal(
             }
 
             await this.createOrder(
+
                 Number(
                     selectedPricing.value
                 )
+
             );
 
         },
@@ -145,50 +262,6 @@ this.showPlanModal(
     );
 
 },
-
-async renew(subscription) {
-
-    const response =
-        await API.get(
-            "/api/subscription/plans"
-        );
-
-    if (!response.success) {
-
-        Notify.error(
-            response.message
-        );
-
-        return;
-
-    }
-
-    const plans =
-        response.plans;
-
-    const currentPlan =
-        plans.find(
-            plan =>
-                plan.id ===
-                subscription.plan_id
-        );
-
-    if (!currentPlan) {
-
-        Notify.error(
-            "Current plan not found."
-        );
-
-        return;
-
-    }
-
-    this.showPlanModal([
-        currentPlan
-    ]);
-
-},
-    
 
 async createOrder(pricingId) {
 

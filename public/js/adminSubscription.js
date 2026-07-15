@@ -139,26 +139,7 @@ if (
         );
 
 let buttonText =
-    "Upgrade Plan";
-
-if (
-    subscription.plan_id === 1
-) {
-
-    buttonText =
-        "Upgrade to Pro";
-
-}
-
-if (
-    subscription.plan_id === 2
-) {
-
-    buttonText =
-        "Renew Plan";
-        
-
-}    
+    "Manage Subscription";
 
 if (
     status === "expired"

@@ -114,11 +114,6 @@ exports.getRequestById =
     ) =>
 {
 
-    console.log(
-        "Repository Request ID:",
-        requestId
-    );
-
     const request =
         await db.getAsync(
             `
@@ -134,10 +129,6 @@ exports.getRequestById =
             ]
         );
 
-    console.log(
-        "Repository Result:",
-        request
-    );
 
     return request;
 

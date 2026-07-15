@@ -259,7 +259,7 @@ exports.getRestaurant = async (req, res) => {
 
     try {
 
-        console.log("Restaurant ID:", req.params.restaurantId);
+        
 
         const restaurant =
             await superAdminService
@@ -267,7 +267,7 @@ exports.getRestaurant = async (req, res) => {
                     req.params.restaurantId
                 );
 
-        console.log("Restaurant:", restaurant);
+       
 
         return res.json({
 

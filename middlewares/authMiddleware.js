@@ -16,20 +16,8 @@ module.exports = async (req, res, next) => {
 
     const token = authHeader.split(" ")[1];
 
-    try {console.log(
-    "Authorization:",
-    authHeader
-);
+    try {
 
-console.log(
-    "Token:",
-    token
-);
-
-console.log(
-    "JWT Secret:",
-    process.env.JWT_SECRET
-);
 
         const decoded = jwt.verify(
             token,

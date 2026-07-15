@@ -102,6 +102,13 @@ const currentArea =
         area =>
             area.id === selectedAreaId
     );
+if (!currentArea) {
+
+    actionContainer.innerHTML = "";
+
+    return;
+
+}    
 
 actionContainer.innerHTML = `
 

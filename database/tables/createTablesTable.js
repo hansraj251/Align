@@ -19,9 +19,13 @@ async function createTablesTable() {
 
             display_order INTEGER DEFAULT 1,
 
+            system_key TEXT,
+
             status TEXT DEFAULT 'available',
 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (restaurant_id)
                 REFERENCES restaurants(id),

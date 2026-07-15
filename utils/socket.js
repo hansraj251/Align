@@ -13,7 +13,6 @@ function init(server) {
 
     io.on("connection", (socket) => {
 
-        console.log("🔌 Client Connected:", socket.id);
 
         socket.on("joinRestaurant", (restaurantId) => {
 
@@ -25,9 +24,6 @@ socket.on("joinKitchen", (restaurantId) => {
 
     socket.join(`kitchen_${restaurantId}`);
 
-    console.log(
-        `✅ Kitchen joined kitchen_${restaurantId} (${socket.id})`
-    );
 
 });
 
@@ -37,19 +33,12 @@ socket.on("joinWaiter", ({ restaurantId, staffId }) => {
 
     socket.join(`staff_${staffId}`);
 
-    console.log(
-        `Waiter ${staffId} joined`
-    );
-
 });
 
 socket.on("joinBilling", (restaurantId) => {
 
     socket.join(`billing_${restaurantId}`);
 
-    console.log(
-        `Billing joined billing_${restaurantId}`
-    );
 
 });
 

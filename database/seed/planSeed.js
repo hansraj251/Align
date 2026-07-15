@@ -21,17 +21,19 @@ async function seedPlans() {
         `
         INSERT INTO plans
         (
-            name,
+            slug,
             display_name,
-            description
+            description,
+            sort_order
         )
         VALUES
-        (?, ?, ?)
+        (?, ?, ?, ?)
         `,
         [
             "plus",
             "Align Plus",
-            "Ideal for single device restaurants"
+            "Ideal for single device restaurants",
+            1
         ]
     );
 
@@ -39,17 +41,19 @@ async function seedPlans() {
         `
         INSERT INTO plans
         (
-            name,
+            slug,
             display_name,
-            description
+            description,
+            sort_order
         )
         VALUES
-        (?, ?, ?)
+        (?, ?, ?, ?)
         `,
         [
             "pro",
             "Align Pro",
-            "Ideal for multi-device restaurants"
+            "Ideal for multi-device restaurants",
+            2
         ]
     );
 
