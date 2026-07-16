@@ -18,6 +18,7 @@ async function loadReceipt() {
 
     }
 const o = data.order;
+
     const paidDate = new Date(o.paid_at);
 
 const paidAt = paidDate.toLocaleString(
@@ -57,6 +58,67 @@ ${item.variant_name ? ` (${item.variant_name})` : ""}
 
     `)
         .join("");
+    const paymentHtml =
+    data.paymentSplits &&
+    data.paymentSplits.length > 0
+        ? `
+<div class="line"></div>
+
+<div class="center">
+    <strong>
+        Payment Details
+    </strong>
+</div>
+
+${data.paymentSplits
+    .map(payment => `
+<div class="row">
+
+    <span>
+
+        ${
+            {
+                cash: "Cash",
+                upi: "UPI",
+                card: "Card",
+                wallet: "Wallet",
+                bank: "Bank Transfer",
+                other: "Other"
+            }[
+                payment.payment_method
+            ] || payment.payment_method
+        }
+
+    </span>
+
+    <strong>
+
+        ${Align.formatCurrency(
+            payment.amount
+        )}
+
+    </strong>
+
+</div>
+`)
+.join("")}
+`
+        : `
+<div>
+
+Payment :
+
+${{
+    cash: "Cash",
+    upi: "UPI",
+    card: "Card",
+    wallet: "Wallet",
+    bank: "Bank Transfer",
+    other: "Other"
+}[o.payment_method] || o.payment_method}
+
+</div>
+`;    
 
     document.getElementById("receipt")
         .innerHTML = `
@@ -105,6 +167,8 @@ ${item.variant_name ? ` (${item.variant_name})` : ""}
     </div>
 
 </div>
+
+<div>
 
 Order :
 ${o.order_number}
@@ -160,7 +224,7 @@ ${Align.formatCurrency(o.tax, 2)}
 
 <span>
 
-Discount (${o.discount}%)
+Discount
 
 </span>
 
@@ -195,16 +259,7 @@ ${Align.formatCurrency(o.total, 2)}
 
 <div class="line"></div>
 
-<div>
-
-Payment :
-${{
-    cash: "Cash",
-    card: "Card",
-    upi: "UPI"
-}[o.payment_method] || o.payment_method}
-
-</div>
+${paymentHtml}
 
 <div class="center">
 

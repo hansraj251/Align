@@ -47,6 +47,9 @@
         </div>
 
     </main>
+    <div id="modalContainer"></div>
+
+<div id="paymentModalContainer"></div>
 
 </div>
 
@@ -55,9 +58,25 @@
 <script src="/js/auth.js"></script>
 <script src="/js/adminGuard.js"></script>
 <script src="/js/toast.js"></script>
-
-<script src="/js/billing.js"></script>
 <script src="/js/align.js"></script>
+
+<script>
+
+(async function ()
+{
+    await loadComponent(
+        "modalContainer",
+        "/components/modal.html"
+    );
+
+    await loadPaymentModal();
+})();
+
+</script>
+
+<script src="/js/modal.js"></script>
+<script src="/js/paymentModal.js"></script>
+<script src="/js/billing.js"></script>
 
 </body>
 

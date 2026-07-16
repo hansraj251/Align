@@ -367,7 +367,10 @@ document.getElementById(
 
     resetForm();
 
-    await loadMenuItems();
+    await loadMenuItems(
+    currentPage,
+    currentSearch
+);
 
     Toast.show(
 
@@ -628,8 +631,11 @@ function deleteMenuItem(
             Toast.show(
                 "Menu item deleted successfully"
             );
-
-            await loadMenuItems();
+            
+    await loadMenuItems(
+    currentPage,
+    currentSearch
+);
 
         }
 
@@ -826,6 +832,10 @@ async function saveVariants() {
     );
 
     closeVariantModal();
+    await loadMenuItems(
+    currentPage,
+    currentSearch
+);
 
 }
 function closeVariantModal() {
@@ -1062,13 +1072,6 @@ async function searchMenuItems(
     if (data.items.length === 0) {
 
         box.innerHTML = `
-
-<div
-class="p-3 text-slate-500">
-
-No matching items
-
-</div>
 
 `;
 

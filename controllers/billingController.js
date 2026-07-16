@@ -1,52 +1,75 @@
-const db = require("../db");
+const billingService =
+    require("../services/billingService");
 
-exports.getReadyOrders = (req, res) => {
+exports.getReadyOrders = async (
+    req,
+    res
+) =>
+{
+    try
+    {
+        const orders =
+            await billingService.getReadyOrders(
+                req.user.restaurantId
+            );
 
-    const restaurantId = req.user.restaurantId;
+        return res.json({
+            success: true,
+            orders
+        });
+    }
+    catch (error)
+    {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
-    db.all(
-        `
-        SELECT
+exports.payOrder = async (
+    req,
+    res
+) =>
+{
+    try
+    {
+        const result =
+            await billingService.payOrder(
+                req.user.restaurantId,
+                req.body
+            );
 
-    o.id,
+        return res.json(result);
+    }
+    catch (error)
+    {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+exports.payOrder = async (
+    req,
+    res
+) =>
+{console.log(req.body);
+    try
+    {
+        const result =
+            await billingService.payOrder(
+                req.user.restaurantId,
+                req.body
+            );
 
-    o.order_number,
-
-    o.subtotal,
-
-    o.discount,
-
-    o.tax,
-
-    o.total,
-
-    o.created_at,
-
-    t.name AS table_name
-        FROM orders o
-        JOIN tables t
-            ON t.id = o.table_id
-        WHERE
-            o.restaurant_id = ?
-            AND o.status = 'ready_for_billing'
-        ORDER BY o.created_at
-        `,
-        [restaurantId],
-        (err, rows) => {
-
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: err.message
-                });
-            }
-
-            return res.json({
-                success: true,
-                orders: rows
-            });
-
-        }
-    );
-
+        return res.json(result);
+    }
+    catch (error)
+    {
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
+    }
 };

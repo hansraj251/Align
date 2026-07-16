@@ -5,6 +5,7 @@ let filteredMenuItems = [];
 let selectedCategory = "all";
 
 let selectedFoodType = "all";
+const selectedVariants = {};
 let currentOrder = null;
 let isTakeAway = false;
 
@@ -457,6 +458,8 @@ async function initialize() {
     await loadMenu();
 
     await loadExistingOrder();
+
+    await loadPaymentModal();
 
     renderCart();
 }
@@ -1101,6 +1104,15 @@ function updateOrderAction() {
         existingItems.some(
             i => i.cancelled_count > 0
         );
+    console.log("Order Status:", currentOrder.status);
+
+console.log({
+    pending,
+    preparing,
+    ready,
+    served,
+    cancelled
+});    
 
     let html = "";
     let handler = null;
@@ -1116,40 +1128,42 @@ if (
 <button
     class="action-btn w-full rounded-xl bg-green-600 py-3 font-semibold text-white">
 
-    🖨️ Print Bill
+    Pay
 
 </button>
 `;
 
     handler = () =>
-        printBill(currentOrder.id);
+{
+    console.log("Pay clicked");
+    openPaymentModal(currentOrder);
+};
 
 }
 
 
-    else if (
+else if (
 
-        !pending &&
-        !preparing &&
-        !ready &&
-        served
+    !pending &&
+    !preparing &&
+    !ready &&
+    served
 
-    ) {
+) {
 
-       html = `
+    html = `
 <button
     class="action-btn w-full rounded-xl bg-green-600 py-3 font-semibold text-white">
 
-    🖨️ Print Bill
+    Send To Billing
 
 </button>
 `;
 
-handler = () =>
-    printBill(currentOrder.id);
+    handler = () =>
+        sendToBilling(currentOrder.id);
 
-
-    }
+}
 
     // Close Order
 
@@ -1172,10 +1186,10 @@ handler = () =>
 </button>
 `;
 
-        handler = () =>
-            closeCancelledOrder(
-                currentOrder.ticket_id
-            );
+       handler = () =>
+    closeCancelledOrder(
+        currentOrder.ticket_id
+    );
 
     }
 
@@ -1746,40 +1760,10 @@ mobileSearch?.addEventListener("input", () => {
 
 });
 
-async function printBill(orderId) {
-
-    try {
-
-        const data =
-            await API.patch(
-                `/api/orders/${orderId}/send-to-billing`
-            );
-
-        if (!data.success) {
-
-            Toast.show(
-                data.message,
-                "error"
-            );
-
-            return;
-
-        }
-
-        window.location.href =
-            `/admin/billing.html?order=${orderId}`;
-
-    }
-
-    catch (err) {
-
-        Toast.show(
-            err.message,
-            "error"
-        );
-
-    }
-
+async function printBill(orderId)
+{
+    window.location.href =
+        `/admin/billing.html?order=${orderId}`;
 }
 
 async function sendToBilling(orderId) {

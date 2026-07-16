@@ -20,7 +20,9 @@ const defaultSetupService =
 const orderCalculationService =
     require("./orderCalculationService");    
 const subscriptionService =
-    require("./subscriptionService");    
+    require("./subscriptionService");   
+const restaurantRepository =
+    require("../repositories/restaurantRepository");     
   
 
 exports.checkout = async (
@@ -82,6 +84,10 @@ const settings =
     await settingsRepository.getSettings(
         restaurantId
     );
+const restaurant =
+    await restaurantRepository.getRestaurantForReceipt(
+        restaurantId
+    );    
 
 orderId =
     await orderRepository.createOrder(
@@ -114,6 +120,45 @@ const orderNumber =
 await orderRepository.updateOrderNumber(
     orderId,
     orderNumber
+);
+
+await orderRepository.saveReceiptSnapshot(
+    orderId,
+    {
+        restaurant_name:
+            restaurant.name,
+
+        restaurant_address:
+[
+    restaurant.address,
+    restaurant.city,
+    restaurant.state,
+    restaurant.pincode
+]
+.filter(Boolean)
+.join(", "),
+
+        restaurant_phone:
+            restaurant.mobile,
+
+        restaurant_email:
+            restaurant.email,
+
+        restaurant_gst:
+            restaurant.gst_number,
+
+        restaurant_logo:
+            restaurant.logo,
+
+        receipt_footer:
+            settings.footer_message,
+
+        cgst:
+            settings.cgst,
+
+        sgst:
+            settings.sgst
+    }
 );
 
 }

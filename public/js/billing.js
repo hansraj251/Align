@@ -10,7 +10,8 @@ async function loadBillingOrders() {
         document.getElementById("billingOrders");
 
     container.innerHTML = "";
-
+window.billingOrders =
+    data.orders;
     if (!data.success) {
 
         Toast.show(data.message, "error");
@@ -48,9 +49,14 @@ async function loadBillingOrders() {
 
                 <p class="mt-2 text-slate-500">
 
-                     ${order.table_name}
+    ${order.area_name}
 
-                </p>
+    <br>
+
+    Table :
+    ${order.table_name}
+
+</p>
 
                 <div class="mt-4 space-y-2">
 
@@ -63,32 +69,6 @@ async function loadBillingOrders() {
             ${Align.formatCurrency(order.subtotal)}
 
         </strong>
-
-    </div>
-
-    <div class="flex items-center justify-between">
-
-        <label class="text-sm">
-
-            Discount %
-
-        </label>
-
-        <input
-
-            id="discount-${order.id}"
-
-            type="number"
-
-            min="0"
-
-            max="100"
-
-            value="${order.discount}"
-
-            class="w-20 rounded border px-2 py-1 text-right"
-
-        >
 
     </div>
 
@@ -119,59 +99,15 @@ async function loadBillingOrders() {
 </div>
 
                 <button
-                    onclick="payOrder(${order.id})"
-                    class="mt-6 w-full rounded-lg bg-green-600 py-3 text-white">
+    onclick="openBillingPayment(${order.id})"
+    class="mt-6 w-full rounded-lg bg-green-600 py-3 text-white">
 
-                    Print Bill
+    Pay
 
-                </button>
+</button>
 
             </div>
         `;
-
-    const input =
-    document.getElementById(
-        `discount-${order.id}`
-    );
-
-input.onchange = async () => {
-
-    let discount =
-    Number(input.value || 0);
-
-if (isNaN(discount)) {
-    discount = 0;
-}
-
-discount = Math.max(
-    0,
-    Math.min(100, discount)
-);
-
-input.value = discount;
-
-    const result =
-        await API.patch(
-            `/api/orders/${order.id}/discount`,
-            {
-                discount
-            }
-        );
-
-    if (!result.success) {
-
-        Toast.show(
-            result.message,
-            "error"
-        );
-
-        return;
-
-    }
-
-    loadBillingOrders();
-
-};    
 
     });
     
@@ -184,6 +120,41 @@ setInterval(
     loadBillingOrders,
     5000
 );
+function openBillingPayment(
+    orderId
+)
+{
+    console.log("Billing Orders:", window.billingOrders);
+
+    const order =
+        window.billingOrders.find(
+            o => o.id === orderId
+        );
+
+    console.log("Selected Order:", order);
+
+    console.log(
+        "typeof openPaymentModal:",
+        typeof openPaymentModal
+    );
+
+    console.log(
+        "window.openPaymentModal:",
+        window.openPaymentModal
+    );
+
+    if (!order)
+    {
+        Toast.show(
+            "Order not found",
+            "error"
+        );
+
+        return;
+    }
+
+    openPaymentModal(order);
+}
 async function payOrder(
     orderId,
     paymentMethod = "cash"

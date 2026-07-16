@@ -76,27 +76,52 @@ exports.deleteCategory = async (
     categoryId
 ) => {
 
-    const changes =
-        await menuCategoryRepository.deleteCategory(
-            restaurantId,
-            categoryId
-        );
+    try
+    {
 
-    if (!changes) {
+        const changes =
+            await menuCategoryRepository.deleteCategory(
+                restaurantId,
+                categoryId
+            );
 
-        throw new Error(
-            "Category not found"
-        );
+        if (!changes)
+        {
+
+            throw new Error(
+                "Category not found"
+            );
+
+        }
+
+        return {
+
+            success: true,
+
+            message:
+                "Category deleted successfully"
+
+        };
 
     }
+    catch (error)
+    {
 
-    return {
+        if (
+            error.message.includes(
+                "FOREIGN KEY constraint failed"
+            )
+        )
+        {
 
-        success: true,
+            throw new Error(
+                "This category cannot be deleted because it is assigned to one or more menu items."
+            );
 
-        message:
-            "Category deleted successfully"
+        }
 
-    };
+        throw error;
+
+    }
 
 };

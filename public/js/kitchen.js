@@ -229,7 +229,12 @@ const readyItems =
         </h2>
 
         <p class="mt-2 text-sm lg:text-base text-slate-500">
-             ${ticket.table_name}
+             ${ticket.area_name}
+
+<br>
+
+Table :
+${ticket.table_name}
         </p>
 
         <div class="mt-4 flex-1 overflow-y-auto border-t border-b py-3">

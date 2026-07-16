@@ -1,19 +1,25 @@
 const orderRepository =
     require("../repositories/orderRepository");
 
+const paymentSplitRepository =
+    require("../repositories/paymentSplitRepository");
+
 exports.getReceipt = async (
     restaurantId,
     orderId
-) => {
-
+) =>
+{
     const order =
         await orderRepository.getReceipt(
             restaurantId,
             orderId
         );
 
-    if (!order) {
-        throw new Error("Order not found");
+    if (!order)
+    {
+        throw new Error(
+            "Order not found"
+        );
     }
 
     const items =
@@ -21,14 +27,20 @@ exports.getReceipt = async (
             orderId
         );
 
-return {
+    const paymentSplits =
+        await paymentSplitRepository.getByOrder(
+            orderId
+        );
 
-    success: true,
+    return {
 
-    order,
+        success: true,
 
-    items
+        order,
 
-};
+        items,
 
+        paymentSplits
+
+    };
 };

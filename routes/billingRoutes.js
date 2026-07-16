@@ -12,5 +12,11 @@ router.get(
     adminMiddleware,
     billingController.getReadyOrders
 );
+router.post(
+    "/pay",
+    authMiddleware,
+    adminMiddleware,
+    billingController.payOrder
+);
 
 module.exports = router;

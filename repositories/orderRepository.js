@@ -440,17 +440,25 @@ exports.getOrderDetailsById = async (
         `
         SELECT
 
-            id,
+    id,
 
-            restaurant_id,
+    restaurant_id,
 
-            table_id,
+    table_id,
 
-            table_name,
+    table_name,
 
-            order_number,
+    order_number,
 
-            status
+    status,
+
+    subtotal,
+
+    tax,
+
+    discount,
+
+    total
 
         FROM orders
 
@@ -469,9 +477,8 @@ exports.getReceipt = async (restaurantId, orderId) => {
     o.order_number,
     o.subtotal,
     o.tax,
-    o.discount,(
-    o.subtotal * o.discount / 100
-) AS discountAmount,
+    o.discount,
+o.discount AS discountAmount,
     o.total,
     o.payment_method,
     o.paid_at,

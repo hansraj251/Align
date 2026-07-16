@@ -8,14 +8,31 @@ exports.search = async (
     return await db.allAsync(
         `
         SELECT
-            id,
-            name,
-            slug,
-            1 AS is_system
-        FROM system_categories
+    sc.id,
+    sc.name,
+    sc.slug,
+    1 AS is_system
+FROM system_categories sc
+
+WHERE
+    sc.status = 1
+
+    AND LOWER(sc.name) LIKE LOWER(?)
+
+    AND NOT EXISTS
+    (
+        SELECT 1
+
+        FROM menu_categories mc
+
         WHERE
-            status = 1
-            AND LOWER(name) LIKE LOWER(?)
+            mc.restaurant_id = ?
+
+            AND mc.status = 1
+
+            AND LOWER(mc.name) =
+                LOWER(sc.name)
+    )
 
         UNION
 
@@ -33,10 +50,12 @@ exports.search = async (
         ORDER BY name
         `,
         [
-            `%${keyword}%`,
-            restaurantId,
-            `%${keyword}%`
-        ]
+    `%${keyword}%`,
+    restaurantId,
+
+    restaurantId,
+    `%${keyword}%`
+]
     );
 
 };

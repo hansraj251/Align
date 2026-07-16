@@ -109,26 +109,27 @@ exports.getActiveTickets = async (
         `
         SELECT
 
-            kt.id,
-            kt.ticket_number,
-            kt.status,
-            kt.created_at,
+    kt.id,
 
-            o.order_number,
+    kt.ticket_number,
 
-            t.name AS table_name,
+    kt.status,
 
-            o.total
+    kt.created_at,
+
+    o.order_number,
+
+    o.area_name,
+
+    o.table_name,
+
+    o.total
 
         FROM kitchen_tickets kt
 
         JOIN orders o
 
             ON o.id = kt.order_id
-
-        JOIN tables t
-
-            ON t.id = o.table_id
 
         WHERE
 
