@@ -181,13 +181,12 @@ function openTable(tableId) {
         `/waiter/order.html?table=${tableId}&area=${areaId}`;
 
 }
+loadTables();
+
 setInterval(
 
     loadTables,
 
-    30000
+    5000
 
 );
-
-
-loadTables();
