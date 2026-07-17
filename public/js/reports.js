@@ -9,7 +9,14 @@ document.getElementById("fromDate").value =
 
 document.getElementById("toDate").value =
     today;
-loadReport("sales");    
+
+let currentReport =
+    "sales";
+
+loadReport(
+    currentReport
+);
+  
 async function loadReport(type) {
 
     const from =
@@ -501,28 +508,68 @@ ${data.report.open_orders || 0}
 
 document
     .getElementById("salesReportBtn")
-    .onclick = () =>
-        loadReport("sales");
+    .onclick = () => {
+
+        currentReport =
+            "sales";
+
+        loadReport(
+            currentReport
+        );
+
+    };
 
 document
     .getElementById("ordersReportBtn")
-    .onclick = () =>
-        loadReport("orders");
+    .onclick = () => {
+
+        currentReport =
+            "orders";
+
+        loadReport(
+            currentReport
+        );
+
+    };
 
 document
     .getElementById("itemsReportBtn")
-    .onclick = () =>
-        loadReport("items");
+    .onclick = () => {
+
+        currentReport =
+            "items";
+
+        loadReport(
+            currentReport
+        );
+
+    };
 
 document
     .getElementById("paymentsReportBtn")
-    .onclick = () =>
-        loadReport("payments");
+    .onclick = () => {
+
+        currentReport =
+            "payments";
+
+        loadReport(
+            currentReport
+        );
+
+    };
 
 document
     .getElementById("auditReportBtn")
-    .onclick = () =>
-        loadReport("audit");
+    .onclick = () => {
+
+        currentReport =
+            "audit";
+
+        loadReport(
+            currentReport
+        );
+
+    };
 
 document
     .getElementById("downloadExcelBtn")
@@ -664,3 +711,29 @@ function formatPaymentMethod(
     }
 
 }    
+
+document
+    .getElementById("fromDate")
+    .addEventListener(
+        "change",
+        e => {
+
+            e.preventDefault();
+
+            loadReport(currentReport);
+
+        }
+    );
+
+document
+    .getElementById("toDate")
+    .addEventListener(
+        "change",
+        e => {
+
+            e.preventDefault();
+
+            loadReport(currentReport);
+
+        }
+    );

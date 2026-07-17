@@ -124,24 +124,12 @@ function openBillingPayment(
     orderId
 )
 {
-    console.log("Billing Orders:", window.billingOrders);
+   
 
     const order =
         window.billingOrders.find(
             o => o.id === orderId
         );
-
-    console.log("Selected Order:", order);
-
-    console.log(
-        "typeof openPaymentModal:",
-        typeof openPaymentModal
-    );
-
-    console.log(
-        "window.openPaymentModal:",
-        window.openPaymentModal
-    );
 
     if (!order)
     {

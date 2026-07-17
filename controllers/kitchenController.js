@@ -190,3 +190,31 @@ exports.adminCancelTicketItem = async (
     }
 
 };
+exports.getKitchenTicket = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await kitchenService.getKitchenTicket(
+                req.params.ticketId,
+                req.user.restaurantId
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

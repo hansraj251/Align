@@ -30,7 +30,7 @@ exports.payOrder = async (
 const order =
     await orderRepository.getOrderDetailsById(
         orderId
-    );console.log(order);
+    );
 let discount = 0;
 
 if (discountType === "amount")
@@ -87,12 +87,7 @@ if (
         "Order is not ready for billing"
     );
 }    
-console.log({
-    discountType,
-    discountValue,
-    subtotal: order.subtotal,
-    discount
-});
+
     await billingRepository.payOrder(
     restaurantId,
     orderId,

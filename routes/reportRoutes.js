@@ -8,7 +8,6 @@ const adminMiddleware =
 
 const reportController =
     require("../controllers/reportController");
-console.log("✅ reportRoutes loaded");    
 
 router.get(
     "/",
@@ -22,7 +21,7 @@ router.get(
      adminMiddleware,
     reportController.downloadExcel
 );
-console.log("✅ PDF route registered");
+
 router.get(
     "/pdf",
     authMiddleware,

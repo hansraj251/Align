@@ -125,3 +125,11 @@ document.getElementById("pageTitle").textContent =
     localStorage.getItem("restaurantName") || "Dashboard";
 
 loadAreas();
+
+setInterval(
+
+    loadAreas,
+
+    5000
+
+);

@@ -379,8 +379,6 @@ async function searchSystemCategories(
             `/api/category-search?keyword=${encodeURIComponent(keyword)}`
         );
 
-    console.log(data);
-
     if (!data.success) {
 
         return;

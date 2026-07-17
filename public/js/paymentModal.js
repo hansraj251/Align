@@ -19,7 +19,6 @@ async function loadPaymentModal()
     paymentModal = document.getElementById("paymentModal");
 
     bindPaymentModalEvents();
-    console.log("Payment Modal Loaded", paymentModal);
 }
 
 
@@ -92,8 +91,7 @@ function bindPaymentModalEvents()
 }
 
 function openPaymentModal(order)
-{console.log("openPaymentModal", paymentModal);
-
+{
     if (!paymentModal)
     {
         return;
@@ -426,10 +424,7 @@ async function processPayment(
 }
 
 isPaymentProcessing = true;
-console.log({
-    orderId: currentPaymentOrder.id,
-    currentPaymentOrder
-});
+
     const splitPayments = [];
 
 document
@@ -499,8 +494,6 @@ document
 
 const result =
     await response.json();
-
-console.log(result);
 
 
 if (!result.success)

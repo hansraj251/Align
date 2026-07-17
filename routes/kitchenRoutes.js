@@ -13,6 +13,12 @@ router.get(
     kitchenMiddleware,
     kitchenController.getKitchenOrders
 );
+router.get(
+    "/:ticketId",
+    authMiddleware,
+    kitchenMiddleware,
+    kitchenController.getKitchenTicket
+);
 router.patch(
     "/:ticketId/status",
     authMiddleware,

@@ -133,6 +133,42 @@ exports.getKitchenTickets = async (
 
 };
 
+exports.getKitchenTicket = async (
+    ticketId,
+    restaurantId
+) => {
+
+    const ticket =
+        await kitchenRepository.getTicketById(
+            ticketId
+        );
+
+    if (
+        !ticket ||
+        ticket.restaurant_id !== restaurantId
+    ) {
+
+        throw new Error(
+            "Kitchen ticket not found"
+        );
+
+    }
+
+    ticket.items =
+        await kitchenRepository.getTicketItems(
+            ticket.id
+        );
+
+    return {
+
+        success: true,
+
+        ticket
+
+    };
+
+};
+
 exports.updateTicketStatus = async (ticketId, status) => {
 
     const ticket =

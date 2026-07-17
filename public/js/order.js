@@ -1103,16 +1103,7 @@ function updateOrderAction() {
     const cancelled =
         existingItems.some(
             i => i.cancelled_count > 0
-        );
-    console.log("Order Status:", currentOrder.status);
-
-console.log({
-    pending,
-    preparing,
-    ready,
-    served,
-    cancelled
-});    
+        ); 
 
     let html = "";
     let handler = null;
@@ -1135,7 +1126,7 @@ if (
 
     handler = () =>
 {
-    console.log("Pay clicked");
+    
     openPaymentModal(currentOrder);
 };
 

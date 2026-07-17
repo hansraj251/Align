@@ -874,7 +874,7 @@ const restaurant =
         restaurantId,
         from,
         to
-    );console.log("Sales Report:", salesReport);
+    );
 
 let currencyCode = "INR";
 

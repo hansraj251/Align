@@ -10,8 +10,6 @@ function showSocketNotification(title, message) {
 
     if (typeof Toast === "undefined") {
 
-        console.warn("Toast not loaded");
-
         return;
 
     }
@@ -142,8 +140,6 @@ socket.on("order-updated", async data => {
 
 
     if (typeof loadExistingOrder === "function") {
-
-        console.log("Calling loadExistingOrder");
 
         await loadExistingOrder();
 

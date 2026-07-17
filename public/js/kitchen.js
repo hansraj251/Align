@@ -83,38 +83,11 @@ toggleKitchenHeader();
 
 setupBackButton();
 
-async function loadKitchenOrders() {
+function renderTicket(
+    ticket
+) {
 
-    const data = await API.get("/api/kitchen");
-
-    const container =
-        document.getElementById("kitchenOrders");
-
-    container.innerHTML = "";
-
-    if (!data.success) {
-
-        Toast.show(data.message, "error");
-        return;
-
-    }
-
-    if (data.tickets.length === 0) {
-
-        container.innerHTML = `
-            <div class="col-span-4 rounded-xl bg-white p-8 text-center shadow">
-
-                 No Pending Orders
-
-            </div>
-        `;
-
-        return;
-
-    }
-
-    data.tickets.forEach(ticket => {
-    const pendingItems =
+        const pendingItems =
     (ticket.items || []).filter(
         item => item.status === "pending"
     ).length;
@@ -226,8 +199,11 @@ const readyItems =
     ticket.status === "sent_to_kitchen"
         ? "border-l-4 border-orange-500"
         : "border-l-4 border-green-500";
-        container.innerHTML += `
-    <div class="${borderClass} flex flex-col rounded-xl bg-white p-4 lg:p-5 shadow max-h-[520px]">
+
+        return `
+    <div id="ticket-${ticket.id}"
+
+    class="${borderClass} flex flex-col rounded-xl bg-white p-4 lg:p-5 shadow max-h-[520px]">
 
         <h2 class="text-lg sm:text-lg lg:text-xl xl:text-2xl font-bold">
             ${
@@ -287,7 +263,86 @@ pendingItems > 0
     </div>
 `;
 
-    });
+}
+
+async function loadKitchenOrders() {
+
+    const data = await API.get("/api/kitchen");
+
+    const container =
+        document.getElementById("kitchenOrders");
+
+    container.innerHTML = "";
+
+    if (!data.success) {
+
+        Toast.show(data.message, "error");
+        return;
+
+    }
+
+    if (data.tickets.length === 0) {
+
+        container.innerHTML = `
+            <div class="col-span-4 rounded-xl bg-white p-8 text-center shadow">
+
+                 No Pending Orders
+
+            </div>
+        `;
+
+        return;
+
+    }
+    data.tickets.forEach(
+    ticket => {
+
+        container.innerHTML +=
+            renderTicket(
+                ticket
+            );
+
+    }
+);
+
+}
+async function refreshTicket(
+    ticketId
+) {
+
+    const data =
+        await API.get(
+            `/api/kitchen/${ticketId}`
+        );
+
+    if (!data.success) {
+
+        loadKitchenOrders();
+
+        return;
+
+    }
+
+    const ticket =
+        data.ticket;
+
+    const card =
+        document.getElementById(
+            `ticket-${ticketId}`
+        );
+
+    if (!card) {
+
+        loadKitchenOrders();
+
+        return;
+
+    }
+
+    card.outerHTML =
+        renderTicket(
+            ticket
+        );
 
 }
 
