@@ -9,7 +9,7 @@ exports.createCategory = async (
     const slug = name
         .toLowerCase()
         .trim()
-        .replace(/\s+/g, "-");
+        .replace(/\s+/g, "-");    
 
     const result = await db.runAsync(
         `
@@ -44,7 +44,8 @@ exports.getCategories = async (
             id,
             name,
             slug,
-            description
+            description,
+            is_system
         FROM menu_categories
         WHERE restaurant_id = ?
         ORDER BY name
@@ -289,5 +290,65 @@ exports.createSystemCategory = async (
         );
 
     return result.lastID;
+
+};
+exports.findByName = async (
+    restaurantId,
+    name
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id
+        FROM menu_categories
+        WHERE
+            restaurant_id = ?
+
+            AND LOWER(
+                TRIM(name)
+            ) = LOWER(
+                TRIM(?)
+            )
+
+        LIMIT 1
+        `,
+        [
+            restaurantId,
+            name
+        ]
+    );
+
+};
+exports.findByNameExceptId = async (
+    restaurantId,
+    categoryId,
+    name
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id
+        FROM menu_categories
+        WHERE
+            restaurant_id = ?
+
+            AND id != ?
+
+            AND LOWER(
+                TRIM(name)
+            ) = LOWER(
+                TRIM(?)
+            )
+
+        LIMIT 1
+        `,
+        [
+            restaurantId,
+            categoryId,
+            name
+        ]
+    );
 
 };

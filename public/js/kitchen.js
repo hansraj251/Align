@@ -18,6 +18,14 @@ function toggleKitchenHeader() {
         )
         ?.remove();
 
+    document
+        .getElementById(
+            "kitchenLogoutBtn"
+        )
+        ?.classList.remove(
+            "hidden"
+        );
+
 }
 
 if (!API.getToken()) {
@@ -393,3 +401,29 @@ async function markItemReady(ticketItemId) {
     loadKitchenOrders();
 
 }
+const logoutBtn =
+    document.getElementById(
+        "kitchenLogoutBtn"
+    );
+
+logoutBtn?.addEventListener(
+    "click",
+    () => {
+
+        localStorage.removeItem(
+            "staff"
+        );
+
+        localStorage.removeItem(
+            "staffToken"
+        );
+
+        localStorage.removeItem(
+            "token"
+        );
+
+        window.location.href =
+            "/admin/login.html";
+
+    }
+);

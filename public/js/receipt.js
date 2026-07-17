@@ -126,21 +126,22 @@ ${{
 <div class="center">
 
     ${
-        o.restaurant_logo
-            ? `
-            <img
-                src="${o.restaurant_logo}"
-                alt="Restaurant Logo"
-                style="
-                    width:70px;
-                    height:70px;
-                    object-fit:contain;
-                    display:block;
-                    margin:0 auto 10px;
-                ">
-            `
-            : ""
-    }
+    o.restaurant_logo
+        ? `
+        <img
+            src="${o.restaurant_logo}"
+            alt=""
+            onerror="this.remove();"
+            style="
+                width:70px;
+                height:70px;
+                object-fit:contain;
+                display:block;
+                margin:0 auto 10px;
+            ">
+        `
+        : ""
+}
 
     <h2>
 

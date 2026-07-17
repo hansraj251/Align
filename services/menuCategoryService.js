@@ -6,13 +6,29 @@ exports.createCategory = async (
     name,
     description
 ) => {
+    const cleanedName =
+    name
+        .trim()
+        .replace(/\s+/g, " ");
+     
+    const existingCategory =
+    await menuCategoryRepository.findByName(
+        restaurantId,
+        cleanedName
+    );
 
-    const categoryId =
-        await menuCategoryRepository.createCategory(
-            restaurantId,
-            name,
-            description
-        );
+if (existingCategory)
+{
+    throw new Error(
+        "Category already exists."
+    );
+}
+const categoryId =
+    await menuCategoryRepository.createCategory(
+        restaurantId,
+        cleanedName,
+        description
+    );    
 
     return {
 
@@ -43,14 +59,31 @@ exports.updateCategory = async (
     name,
     description
 ) => {
+    const cleanedName =
+    name
+        .trim()
+        .replace(/\s+/g, " ");
+    const existingCategory =
+    await menuCategoryRepository.findByNameExceptId(
+        restaurantId,
+        categoryId,
+        cleanedName
+    );
+
+if (existingCategory)
+{
+    throw new Error(
+        "Category already exists."
+    );
+}    
 
     const changes =
         await menuCategoryRepository.updateCategory(
-            restaurantId,
-            categoryId,
-            name,
-            description
-        );
+    restaurantId,
+    categoryId,
+    cleanedName,
+    description
+);
 
     if (!changes) {
 
@@ -123,5 +156,37 @@ exports.deleteCategory = async (
         throw error;
 
     }
+
+};
+exports.findByNameExceptId = async (
+    restaurantId,
+    categoryId,
+    name
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id
+        FROM menu_categories
+        WHERE
+            restaurant_id = ?
+
+            AND id != ?
+
+            AND LOWER(
+                TRIM(name)
+            ) = LOWER(
+                TRIM(?)
+            )
+
+        LIMIT 1
+        `,
+        [
+            restaurantId,
+            categoryId,
+            name
+        ]
+    );
 
 };

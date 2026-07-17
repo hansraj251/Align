@@ -47,12 +47,19 @@
     <div class="mt-4 rounded-xl bg-white p-4 sm:p-6 shadow">
 
         <div class="grid grid-cols-2 gap-2 sm:gap-4">
+        <div class="relative">
+    
 
             <input
                 id="categoryName"
                 type="text"
                 placeholder="Category Name"
                 class="w-full rounded-lg border p-3">
+             <div
+        id="categorySuggestions"
+        class="absolute left-0 right-0 top-full z-50 hidden rounded-lg border bg-white shadow-lg">
+    </div> 
+    </div>   
 
             <input
                 id="categoryDescription"

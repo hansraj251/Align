@@ -244,10 +244,38 @@ table.status !== "available"
     ) {
 
         const rowTables =
-            areaTables.filter(
-                t =>
-                    (t.display_row || 1) === row
+    areaTables
+        .filter(
+            t =>
+                (t.display_row || 1) === row
+        )
+        .sort((a, b) => {
+
+            const aMatch =
+                a.name.match(/\d+$/);
+
+            const bMatch =
+                b.name.match(/\d+$/);
+
+            if (aMatch && bMatch) {
+
+                return (
+                    Number(aMatch[0]) -
+                    Number(bMatch[0])
+                );
+
+            }
+
+            return a.name.localeCompare(
+                b.name,
+                undefined,
+                {
+                    numeric: true,
+                    sensitivity: "base"
+                }
             );
+
+        });
 
         container.innerHTML += `
 

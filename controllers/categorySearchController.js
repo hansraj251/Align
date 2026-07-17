@@ -9,10 +9,8 @@ exports.search = async (
     res.json(
 
         await service.search(
-
-            req.user.restaurantId,
-
-            req.query.q || ""
+    req.user.restaurantId,
+    req.query.keyword || req.query.q || ""
 
         )
 

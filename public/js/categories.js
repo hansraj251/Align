@@ -38,11 +38,29 @@ function renderCategories(categories) {
 
 <div class="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
 
+    <div class="flex items-center justify-between">
+
     <h3 class="text-lg font-bold">
 
         ${category.name}
 
     </h3>
+
+    ${
+        category.is_system
+            ? `
+                <span class="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
+                    System
+                </span>
+            `
+            : `
+                <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
+                    Custom
+                </span>
+            `
+    }
+
+</div>
 
     <p class="mt-2 min-h-[40px] text-sm text-slate-500">
 
@@ -330,3 +348,97 @@ document
 
         }
     );    
+    
+
+    const categoryNameInput =
+    document.getElementById(
+        "categoryName"
+    );
+
+const categorySuggestions =
+    document.getElementById(
+        "categorySuggestions"
+    );
+
+async function searchSystemCategories(
+    keyword
+) {
+
+    if (keyword.length < 2) {
+
+        categorySuggestions.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    const data =
+        await API.get(
+            `/api/category-search?keyword=${encodeURIComponent(keyword)}`
+        );
+
+    console.log(data);
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    categorySuggestions.innerHTML = "";
+
+    data.categories.forEach(category => {
+
+        categorySuggestions.innerHTML += `
+            <div
+                class="cursor-pointer border-b px-4 py-2 hover:bg-slate-100"
+                data-name="${category.name}">
+
+                ${category.name}
+
+            </div>
+        `;
+
+    });
+
+    categorySuggestions.classList.remove(
+        "hidden"
+    );
+
+}
+categoryNameInput.addEventListener(
+    "input",
+    e => {
+
+        searchSystemCategories(
+            e.target.value.trim()
+        );
+
+    }
+);
+categorySuggestions.addEventListener(
+    "click",
+    e => {
+
+        const item =
+            e.target.closest(
+                "[data-name]"
+            );
+
+        if (!item) {
+
+            return;
+
+        }
+
+        categoryNameInput.value =
+            item.dataset.name;
+
+        categorySuggestions.classList.add(
+            "hidden"
+        );
+
+    }
+);

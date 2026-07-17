@@ -87,10 +87,22 @@ function renderAreas() {
     });
 
     // Selected Area Tables
-    const areaTables =
-        floorTables.filter(
+  const areaTables =
+    floorTables
+        .filter(
             table =>
                 table.area_id === selectedAreaId
+        )
+        .sort(
+            (a, b) =>
+                a.name.localeCompare(
+                    b.name,
+                    undefined,
+                    {
+                        numeric: true,
+                        sensitivity: "base"
+                    }
+                )
         );
     const actionContainer =
     document.getElementById(
@@ -483,6 +495,47 @@ async function openAddTableModal(
     areaId,
     areaName
 ) {
+    const areaTables =
+    floorTables.filter(
+        table =>
+            table.area_id === areaId
+    );
+
+const prefix =
+    areaName
+        .split(" ")
+        .map(
+            word =>
+                word.charAt(0).toUpperCase()
+        )
+        .join("");
+
+let nextNumber = 1;
+
+areaTables.forEach(table => {
+
+    const match =
+        table.name.match(
+            new RegExp(
+                `^${prefix}\\s*(\\d+)$`,
+                "i"
+            )
+        );
+
+    if (match) {
+
+        nextNumber =
+            Math.max(
+                nextNumber,
+                Number(match[1]) + 1
+            );
+
+    }
+
+});
+
+const defaultTableName =
+    `${prefix} ${nextNumber}`;
 
     Modal.open(
 
@@ -497,6 +550,7 @@ Table Name
 
 <input
     id="tableName"
+    value="${defaultTableName}"
     class="mb-4 w-full rounded-lg border p-3">
 
 <label class="mb-2 block">
