@@ -13,7 +13,9 @@ const variantRepository =
     require("../repositories/menuVariantRepository"); 
 const orderCalculationService =
     require("./orderCalculationService");
-const { getIO } = require("../utils/socket");    
+const { getIO } = require("../utils/socket"); 
+const orderParticipantRepository =
+    require("../repositories/orderParticipantRepository");   
 
 exports.createKitchenTicket = async (
     orderId,
@@ -168,10 +170,26 @@ exports.updateTicketStatus = async (ticketId, status) => {
         );
 
        // Waiter notification
-if (ticket.created_by_staff_id) {
+const participants =
+    await orderParticipantRepository.getParticipantIds(
+        ticket.order_id
+    );
+
+if (
+    participants.length === 0 &&
+    ticket.created_by_staff_id
+) {
+
+    participants.push(
+        ticket.created_by_staff_id
+    );
+
+}
+
+for (const staffId of participants) {
 
     io.to(
-        `staff_${ticket.created_by_staff_id}`
+        `staff_${staffId}`
     ).emit(
         "ticket-ready",
         {
@@ -183,7 +201,6 @@ if (ticket.created_by_staff_id) {
     );
 
 }
-
     }
 
     if (status === "served") {
@@ -270,10 +287,26 @@ io.to(`restaurant_${item.restaurant_id}`).emit(
 
     if (status === "ready") {
 
-    if (item.created_by_staff_id) {
+    const participants =
+    await orderParticipantRepository.getParticipantIds(
+        item.order_id
+    );
+
+if (
+    participants.length === 0 &&
+    item.created_by_staff_id
+) {
+
+    participants.push(
+        item.created_by_staff_id
+    );
+
+}
+
+for (const staffId of participants) {
 
     io.to(
-        `staff_${item.created_by_staff_id}`
+        `staff_${staffId}`
     ).emit(
         "ticket-ready",
         {

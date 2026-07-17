@@ -23,7 +23,8 @@ const subscriptionService =
     require("./subscriptionService");   
 const restaurantRepository =
     require("../repositories/restaurantRepository");     
-  
+const orderParticipantRepository =
+    require("../repositories/orderParticipantRepository");  
 
 exports.checkout = async (
     restaurantId,
@@ -64,6 +65,11 @@ let orderId;
 if (order) {
 
     orderId = order.id;
+
+    await orderParticipantRepository.addParticipant(
+        orderId,
+        staffId
+    );
 
 } else {
 
@@ -159,6 +165,10 @@ await orderRepository.saveReceiptSnapshot(
         sgst:
             settings.sgst
     }
+);
+await orderParticipantRepository.addParticipant(
+    orderId,
+    staffId
 );
 
 }
