@@ -26,9 +26,23 @@ async function loadTables() {
 
     }
 
-    const tables = data.tables.filter(
-    table => table.area_id == areaId
-);
+    const tables =
+    data.tables
+        .filter(
+            table =>
+                table.area_id == areaId
+        )
+        .sort(
+            (a, b) =>
+                a.name.localeCompare(
+                    b.name,
+                    undefined,
+                    {
+                        numeric: true,
+                        sensitivity: "base"
+                    }
+                )
+        );
 
 renderTables(tables);
 if (tables.length) {

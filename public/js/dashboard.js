@@ -227,3 +227,7 @@ function formatDuration(minutes) {
 
 }
 loadDashboard();
+setInterval(
+    loadDashboard,
+    5000
+);

@@ -61,15 +61,29 @@ exports.getDashboardSummary = async (restaurantId) => {
 ) AS totalTables,
 
             (
-                SELECT COUNT(*)
-                FROM orders
-                WHERE
-                    restaurant_id = ?
-                    AND status IN (
-                        'sent_to_kitchen',
-                        'preparing'
-                    )
-            ) AS pendingKitchen
+    SELECT COUNT(*)
+
+    FROM kitchen_ticket_items kti
+
+    INNER JOIN kitchen_tickets kt
+        ON kt.id = kti.ticket_id
+
+    INNER JOIN orders o
+        ON o.id = kt.order_id
+
+    WHERE
+
+        o.restaurant_id = ?
+
+        AND kti.status IN (
+
+            'pending',
+
+            'preparing'
+
+        )
+
+) AS pendingKitchen
         `,
        [
     restaurantId,

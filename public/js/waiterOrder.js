@@ -17,6 +17,7 @@ let filteredMenuItems = [];
 let selectedCategory = "all";
 let selectedFoodType = "all";
 let selectedVariants = {};
+let tables = [];
 
 
 async function initialize() {
@@ -431,6 +432,7 @@ async function loadTable() {
         return;
 
     }
+    
 
     const table =
         data.tables.find(

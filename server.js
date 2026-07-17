@@ -59,7 +59,9 @@ const superAdminRoutes =
 const subscriptionRoutes =
     require("./routes/subscriptionRoutes");    
 const subscriptionRequestRoutes =
-    require("./routes/subscriptionRequestRoutes");           
+    require("./routes/subscriptionRequestRoutes");   
+const waiterRoutes =
+    require("./routes/waiterRoutes");           
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -147,6 +149,10 @@ app.use(
 app.use(
     "/api/subscription",
     subscriptionRequestRoutes
+);
+app.use(
+    "/api/waiter",
+    waiterRoutes
 );
 app.get("/", (req, res) => {
     res.redirect("/admin/login.html");
