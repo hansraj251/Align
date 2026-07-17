@@ -43,6 +43,8 @@ exports.getDashboard = async (
 
     pendingKitchen:
         summary.pendingKitchen,
+    pendingBilling:
+    summary.pendingBilling,    
 
     categories:
         summary.categories,

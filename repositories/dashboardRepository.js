@@ -83,9 +83,17 @@ exports.getDashboardSummary = async (restaurantId) => {
 
         )
 
-) AS pendingKitchen
+) AS pendingKitchen,
+(
+    SELECT COUNT(*)
+    FROM orders
+    WHERE
+        restaurant_id = ?
+        AND status = 'ready_for_billing'
+) AS pendingBilling
         `,
        [
+    restaurantId,
     restaurantId,
     restaurantId,
     restaurantId,

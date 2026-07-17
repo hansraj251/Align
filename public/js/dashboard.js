@@ -23,6 +23,9 @@ async function loadDashboard() {
     document.getElementById("pendingKitchen").textContent =
     data.pendingKitchen;
 
+    document.getElementById("pendingBilling").textContent =
+    data.pendingBilling;
+
     await loadRestaurantFloor();  
 
 }
