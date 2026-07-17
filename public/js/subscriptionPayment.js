@@ -158,9 +158,7 @@ ${pricing.duration_days} Days
 </div>
 
 <div class="text-sm text-slate-500">
-
-₹${pricing.price}
-
+    ${Align.formatCurrency(pricing.price)}
 </div>
 
 </div>

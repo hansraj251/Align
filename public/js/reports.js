@@ -372,7 +372,9 @@ ${payments.map(payment => `
 
 <div class="text-slate-500">
 
-${payment.payment_method || "Unknown"}
+${formatPaymentMethod(
+    payment.payment_method
+)}
 
 </div>
 
@@ -573,3 +575,92 @@ document
         window.URL.revokeObjectURL(url);
 
     };    
+
+document
+    .getElementById("downloadPdfBtn")
+    .onclick = async () => {
+
+        const from =
+            document.getElementById("fromDate").value;
+
+        const to =
+            document.getElementById("toDate").value;
+
+        const response =
+            await fetch(
+                `/api/reports/pdf?from=${from}&to=${to}`,
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${API.getToken()}`
+                    }
+                }
+            );
+
+        if (!response.ok) {
+
+            Toast.show(
+                "Unable to download report",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const blob =
+            await response.blob();
+
+        const url =
+            window.URL.createObjectURL(blob);
+
+        const a =
+            document.createElement("a");
+
+        a.href = url;
+
+        a.download =
+            `Restaurant_Report_${from}_to_${to}.pdf`;
+
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+
+    };    
+function formatPaymentMethod(
+    method
+) {
+
+    if (!method) {
+
+        return "Unknown";
+
+    }
+
+    switch (method.toLowerCase()) {
+
+        case "upi":
+            return "UPI";
+
+        case "cash":
+            return "Cash";
+
+        case "card":
+            return "Card";
+
+        case "bank_transfer":
+            return "Bank Transfer";
+
+        default:
+            return method
+                .split("_")
+                .map(
+                    word =>
+                        word.charAt(0).toUpperCase() +
+                        word.slice(1)
+                )
+                .join(" ");
+
+    }
+
+}    

@@ -191,15 +191,15 @@ function populatePaymentSummary(order)
 <div class="flex justify-between">
     <span>Subtotal</span>
     <span>
-        ₹${Number(order.subtotal).toFixed(2)}
-    </span>
+    ${Align.formatCurrency(Number(order.subtotal))}
+</span>
 </div>
 
 <div class="flex justify-between">
     <span>Tax</span>
     <span>
-        ₹${Number(order.tax).toFixed(2)}
-    </span>
+    ${Align.formatCurrency(Number(order.tax))}
+</span>
 </div>
 
 <hr>
@@ -207,8 +207,8 @@ function populatePaymentSummary(order)
 <div class="flex justify-between text-base font-semibold">
     <span>Total</span>
     <span>
-        ₹${Number(order.total).toFixed(2)}
-    </span>
+    ${Align.formatCurrency(Number(order.total))}
+</span>
 </div>
 `;
 }
@@ -255,37 +255,39 @@ function updatePaymentSummary()
     }
 
     const grandTotal =
-        subtotal -
-        discount +
-        tax;
-    currentPaymentOrder.payable =
-    grandTotal;    
+    subtotal -
+    discount +
+    tax;
 
-    document.getElementById(
-        "paymentSummary"
-    ).innerHTML = `
+currentPaymentOrder.payable =
+    grandTotal;
+
+document.getElementById(
+    "paymentSummary"
+).innerHTML = `
 <div class="flex justify-between">
     <span>Subtotal</span>
-    <span>₹${subtotal.toFixed(2)}</span>
+    <span>${Align.formatCurrency(subtotal)}</span>
 </div>
 
 <div class="flex justify-between">
     <span>Discount</span>
-    <span>- ₹${discount.toFixed(2)}</span>
+    <span>-${Align.formatCurrency(discount)}</span>
 </div>
 
 <div class="flex justify-between">
     <span>Tax</span>
-    <span>₹${tax.toFixed(2)}</span>
+    <span>${Align.formatCurrency(tax)}</span>
 </div>
 
 <hr>
 
 <div class="flex justify-between text-base font-semibold">
     <span>Payable</span>
-    <span>₹${grandTotal.toFixed(2)}</span>
+    <span>${Align.formatCurrency(grandTotal)}</span>
 </div>
 `;
+
 updateSplitSummary();
 }
 
@@ -391,14 +393,18 @@ if (!splitEnabled)
         );
 
     document.getElementById(
-        "splitPaidAmount"
-    ).textContent =
-        "₹" + paid.toFixed(2);
+    "splitPaidAmount"
+).textContent =
+    Align.formatCurrency(
+        paid
+    );
 
-    document.getElementById(
-        "splitRemainingAmount"
-    ).textContent =
-        "₹" + remaining.toFixed(2);
+document.getElementById(
+    "splitRemainingAmount"
+).textContent =
+    Align.formatCurrency(
+        remaining
+    );
 
     document.getElementById(
         "markPaidBtn"

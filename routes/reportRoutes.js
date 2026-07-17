@@ -8,6 +8,7 @@ const adminMiddleware =
 
 const reportController =
     require("../controllers/reportController");
+console.log("✅ reportRoutes loaded");    
 
 router.get(
     "/",
@@ -20,6 +21,13 @@ router.get(
     authMiddleware,
      adminMiddleware,
     reportController.downloadExcel
+);
+console.log("✅ PDF route registered");
+router.get(
+    "/pdf",
+    authMiddleware,
+     adminMiddleware,
+    reportController.downloadPdf
 );
 
 module.exports = router;

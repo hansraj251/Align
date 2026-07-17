@@ -74,3 +74,35 @@ exports.downloadExcel = async (
     }
 
 };
+exports.downloadPdf = async (
+    req,
+    res
+) => {
+
+    try {
+
+        await reportService.downloadPdf(
+
+            req.user.restaurantId,
+
+            req.query.from,
+
+            req.query.to,
+
+            res
+
+        );
+
+    } catch (err) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

@@ -19,19 +19,10 @@ async function loadReceipt() {
     }
 const o = data.order;
 
-    const paidDate = new Date(o.paid_at);
-
-const paidAt = paidDate.toLocaleString(
-    "en-IN",
-    {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-    }
-);
+const paidAt =
+    Align.formatDateTime(
+        o.paid_at
+    );
 
     const items = data.items
         .map(item => `

@@ -73,7 +73,7 @@ ${pricing.duration_days} Days
 
 <td class="p-4">
 
-₹${pricing.price}
+${Align.formatCurrency(pricing.price)}
 
 </td>
 
