@@ -159,6 +159,31 @@ document.getElementById(
 ).classList.add(
     "hidden"
 );
+const discountType =
+    document.getElementById(
+        "discountType"
+    );
+
+const discountValue =
+    document.getElementById(
+        "discountValue"
+    );
+
+discountType.disabled =
+    false;
+
+discountValue.disabled =
+    false;
+
+discountType.classList.remove(
+    "bg-slate-100",
+    "cursor-not-allowed"
+);
+
+discountValue.classList.remove(
+    "bg-slate-100",
+    "cursor-not-allowed"
+);
 }
 function populatePaymentSummary(order)
 {
@@ -286,7 +311,18 @@ document.getElementById(
 </div>
 `;
 
-updateSplitSummary();
+if (
+    document.getElementById(
+        "splitPayment"
+    ).checked
+)
+{
+    updateLastSplitAmount();
+}
+else
+{
+    updateSplitSummary();
+}
 }
 
 function toggleSplitPayment()
@@ -301,6 +337,41 @@ function toggleSplitPayment()
         document.getElementById(
             "splitPaymentContainer"
         );
+
+        const discountType =
+    document.getElementById(
+        "discountType"
+    );
+
+const discountValue =
+    document.getElementById(
+        "discountValue"
+    );
+    discountType.disabled =
+    checkbox.checked;
+
+discountValue.disabled =
+    checkbox.checked;
+
+discountType.classList.toggle(
+    "bg-slate-100",
+    checkbox.checked
+);
+
+discountValue.classList.toggle(
+    "bg-slate-100",
+    checkbox.checked
+);
+
+discountType.classList.toggle(
+    "cursor-not-allowed",
+    checkbox.checked
+);
+
+discountValue.classList.toggle(
+    "cursor-not-allowed",
+    checkbox.checked
+);
     const paymentMethodContainer =
     document.getElementById(
         "paymentMethodContainer"
@@ -312,12 +383,7 @@ if (paymentMethodContainer)
         "hidden",
         checkbox.checked
     );
-}
-
-paymentMethodContainer.classList.toggle(
-    "hidden",
-    checkbox.checked
-);    
+}    
 
     container.classList.toggle(
         "hidden",
@@ -482,10 +548,7 @@ document
         ).checked,
 
     splitPayments,    
-                    
-
-                notes:
-                    document.getElementById("paymentNotes").value
+                
 
             })
 
@@ -700,13 +763,18 @@ amountInputs.forEach(
     (input, index) =>
     {
         input.readOnly =
-            index ===
-            amountInputs.length - 1;
+    index === 0;
 
-        input.classList.toggle(
-            "bg-slate-100",
-            input.readOnly
-        );
+input.classList.toggle(
+    "bg-slate-100",
+    input.readOnly
+);
+
+input.classList.toggle(
+    "cursor-not-allowed",
+    input.readOnly
+);
+
     }
 );
 }
@@ -778,25 +846,23 @@ function updateLastSplitAmount()
 
     let paid = 0;
 
-    for (
-        let i = 0;
-        i < inputs.length - 1;
-        i++
-    )
-    {
-        paid +=
-            Number(
-                inputs[i].value
-            ) || 0;
-    }
+for (
+    let i = 1;
+    i < inputs.length;
+    i++
+)
+{
+    paid +=
+        Number(
+            inputs[i].value
+        ) || 0;
+}
 
-    inputs[
-        inputs.length - 1
-    ].value =
-        Math.max(
-            0,
-            payable - paid
-        ).toFixed(2);
+inputs[0].value =
+    Math.max(
+        0,
+        payable - paid
+    ).toFixed(2);
 
     updateSplitSummary();
 }
