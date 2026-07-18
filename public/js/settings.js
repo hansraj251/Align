@@ -101,9 +101,6 @@ async function saveRestaurant() {
         mobile:
             mobile.value,
 
-        email:
-            email.value,
-
         gst_number:
             gstNumber.value,
 

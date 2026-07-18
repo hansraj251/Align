@@ -107,11 +107,13 @@ async function saveOtp(
             db.run(
                 `
                 DELETE FROM email_otps
-                WHERE email = ?
+WHERE email = ?
+AND purpose = ?
                 `,
                 [
-                    data.email
-                ],
+    data.email,
+    data.purpose
+],
                 err => {
 
                     if (err) {
@@ -124,28 +126,30 @@ async function saveOtp(
                         `
                         INSERT INTO email_otps
                         (
-                            email,
-                            otp,
-                            restaurant_name,
-                            owner_name,
-                            mobile,
-                            password_hash,
-                            expires_at
-                        )
+    email,
+    otp,
+    purpose,
+    restaurant_name,
+    owner_name,
+    mobile,
+    password_hash,
+    expires_at
+)
                         VALUES
                         (
-                            ?, ?, ?, ?, ?, ?, ?
+                            ?, ?, ?, ?, ?, ?, ?, ?
                         )
                         `,
                         [
-                            data.email,
-                            data.otp,
-                            data.restaurantName,
-                            data.ownerName,
-                            data.mobile,
-                            data.passwordHash,
-                            data.expiresAt
-                        ],
+    data.email,
+    data.otp,
+    data.purpose,
+    data.restaurantName,
+    data.ownerName,
+    data.mobile,
+    data.passwordHash,
+    data.expiresAt
+],
                         err => {
 
                             if (err) {
@@ -169,7 +173,8 @@ async function saveOtp(
 
 async function verifyOtp(
     email,
-    otp
+    otp,
+    purpose
 ) {
 
     return new Promise(
@@ -181,19 +186,22 @@ async function verifyOtp(
 
             db.get(
 
-                `
-                SELECT *
-                FROM email_otps
-                WHERE email = ?
-                `,
-                [
-                    email
-                ],
+    `
+    SELECT *
+    FROM email_otps
+    WHERE email = ?
+    AND purpose = ?
+    `,
 
-                (
-                    err,
-                    otpRecord
-                ) => {
+    [
+        email,
+        purpose
+    ],
+
+    (
+        err,
+        otpRecord
+    ) => {
 
                     if (err) {
 
@@ -266,7 +274,8 @@ async function verifyOtp(
 }
 
 async function deleteOtp(
-    email
+    email,
+    purpose
 ) {
 
     return new Promise(
@@ -280,11 +289,13 @@ async function deleteOtp(
 
                 `
                 DELETE FROM email_otps
-                WHERE email = ?
+WHERE email = ?
+AND purpose = ?
                 `,
-                [
-                    email
-                ],
+              [
+    email,
+    purpose
+],
 
                 function (err) {
 

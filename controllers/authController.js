@@ -8,7 +8,9 @@ require("../services/defaultSetupService");
 const authSignupService =
     require("../services/authSignupService");      
 const otpService =
-    require("../services/otpService");    
+    require("../services/otpService");  
+const passwordResetService =
+    require("../services/passwordResetService");      
 exports.signup = async (req, res) => {
 
     const {
@@ -91,15 +93,18 @@ try {
 
     await otpService.saveOtp({
 
-        email,
-        otp,
-        restaurantName,
-        ownerName,
-        mobile,
-        passwordHash: hashedPassword,
-        expiresAt
+    email,
+    otp,
 
-    });
+    purpose: "signup",
+
+    restaurantName,
+    ownerName,
+    mobile,
+    passwordHash: hashedPassword,
+    expiresAt
+
+});
 
     await otpService.sendOtpEmail(
         email,
@@ -253,7 +258,9 @@ const verificationResult =
 
         email,
 
-        otp
+        otp,
+
+        "signup"
 
     );
 
@@ -296,9 +303,11 @@ try {
 
     await otpService.deleteOtp(
 
-        otpData.email
+    otpData.email,
 
-    );
+    "signup"
+
+);
 
 }
 catch (err) {
@@ -341,3 +350,240 @@ return res.json({
     }
 
 };
+exports.forgotPassword = async (req, res) => {
+
+    const {
+        email
+    } = req.body;
+
+    if (!email) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Email is required"
+
+        });
+
+    }
+
+    db.get(
+
+        `
+        SELECT *
+        FROM users
+        WHERE email = ?
+        `,
+
+        [
+            email
+        ],
+
+        async (
+            err,
+            user
+        ) => {
+
+            if (err) {
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        "Database error"
+
+                });
+
+            }
+
+            if (!user) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Email not found"
+
+                });
+
+            }
+
+            try {
+
+                const otp =
+                    otpService.generateOtp();
+
+                const expiresAt =
+                    otpService.generateExpiry();
+
+                await otpService.saveOtp({
+
+                    email,
+
+                    otp,
+
+                    purpose:
+                        "reset_password",
+
+                    restaurantName:
+                        null,
+
+                    ownerName:
+                        null,
+
+                    mobile:
+                        null,
+
+                    passwordHash:
+                        null,
+
+                    expiresAt
+
+                });
+
+                await otpService.sendOtpEmail(
+
+                    email,
+
+                    otp
+
+                );
+
+                return res.json({
+
+                    success: true,
+
+                    message:
+                        "OTP sent successfully"
+
+                });
+
+            }
+            catch (err) {
+
+                console.error(err);
+
+                return res.status(500).json({
+
+                    success: false,
+
+                    message:
+                        err.message
+
+                });
+
+            }
+
+        }
+
+    );
+
+};
+
+exports.resetPassword =
+    async (
+        req,
+        res
+    ) => {
+
+        try {
+
+            const {
+
+                email,
+
+                otp,
+
+                password
+
+            } = req.body;
+
+            if (
+                !email ||
+                !otp ||
+                !password
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Email, OTP and Password are required"
+
+                });
+
+            }
+
+            const verificationResult =
+                await otpService.verifyOtp(
+
+                    email,
+
+                    otp,
+
+                    "reset_password"
+
+                );
+
+            if (
+                !verificationResult.success
+            ) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        verificationResult.message
+
+                });
+
+            }
+
+            await passwordResetService.resetPassword(
+
+                email,
+
+                password
+
+            );
+
+            await otpService.deleteOtp(
+
+                email,
+
+                "reset_password"
+
+            );
+
+            return res.json({
+
+                success: true,
+
+                message:
+                    "Password reset successfully"
+
+            });
+
+        }
+        catch (err) {
+
+            console.error(err);
+
+            return res.status(500).json({
+
+                success: false,
+
+                message:
+                    err.message
+
+            });
+
+        }
+
+    };
