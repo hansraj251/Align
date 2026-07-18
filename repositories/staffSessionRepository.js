@@ -75,18 +75,16 @@ exports.countActiveSessions = async (restaurantId) => {
     const row = await db.getAsync(
         `
         SELECT COUNT(*) AS total
-        FROM staff_sessions
-        WHERE
+FROM staff_sessions
+WHERE
 
-            restaurant_id = ?
-            AND is_active = 1
+    restaurant_id = ?
+    AND is_active = 1
 
-            AND role IN ('waiter','device')
-
-            AND last_seen >= datetime(
-                    'now',
-                    '-5 minutes'
-                )
+    AND last_seen >= datetime(
+        'now',
+        '-5 minutes'
+    )
         `,
         [restaurantId]
     );
@@ -171,6 +169,26 @@ exports.getSessionById = async (sessionId) => {
             last_seen
         FROM staff_sessions
         WHERE id = ?
+        `,
+        [sessionId]
+    );
+
+};
+
+exports.updateLastSeen = async (sessionId) => {
+
+    await db.runAsync(
+        `
+        UPDATE staff_sessions
+        SET
+            last_seen = CURRENT_TIMESTAMP
+        WHERE
+            id = ?
+            AND is_active = 1
+            AND last_seen < datetime(
+                'now',
+                '-1 minute'
+            )
         `,
         [sessionId]
     );

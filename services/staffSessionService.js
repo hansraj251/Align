@@ -70,3 +70,10 @@ exports.getSessionById = async (sessionId) => {
     );
 
 };
+exports.updateLastSeen = async (sessionId) => {
+
+    return await staffSessionRepository.updateLastSeen(
+        sessionId
+    );
+
+};

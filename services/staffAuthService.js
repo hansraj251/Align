@@ -106,47 +106,40 @@ if (
 
    
 
-if (
+await staffSessionRepository
+    .closeStaffSessions(
+        staff.id
+    );
 
-    staff.role === "waiter" ||
-
-    staff.role === "device"
-
-) {
-
-    await staffSessionRepository
-        .closeStaffSessions(
-            staff.id
+const allowed =
+    await staffSessionService
+        .canCreateWaiterSession(
+            staff.restaurant_id
         );
 
-    const allowed =
-        await staffSessionService
-            .canCreateWaiterSession(
-                staff.restaurant_id
-            );
+if (!allowed) {
 
-    if (!allowed) {
-
-        throw new Error(
-            "Maximum Order devices limit reached."
-        );
-
-    }
+    throw new Error(
+        "Maximum active devices limit reached."
+    );
 
 }
 
 await staffRepository.updateLastLogin(staff.id);
 
-if (staff.role === "waiter" || staff.role === "device") {
+sessionId =
+    await staffSessionService.createSession({
 
-    sessionId =
-        await staffSessionService.createSession({
-            restaurant_id: staff.restaurant_id,
-            staff_id: staff.id,
-            role: staff.role
-        });
+        restaurant_id:
+            staff.restaurant_id,
 
-}    
+        staff_id:
+            staff.id,
+
+        role:
+            staff.role
+
+    });
 
     const token =
         jwt.sign(

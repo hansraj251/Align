@@ -26,21 +26,25 @@ module.exports = async (req, res, next) => {
 
         if (decoded.sessionId) {
 
-            const session =
-                await staffSessionService.getSessionById(
-                    decoded.sessionId
-                );
+    const session =
+        await staffSessionService.getSessionById(
+            decoded.sessionId
+        );
 
-            if (!session || !session.is_active) {
+    if (!session || !session.is_active) {
 
-                return res.status(401).json({
-                    success: false,
-                    message: "Session expired"
-                });
+        return res.status(401).json({
+            success: false,
+            message: "Session expired"
+        });
 
-            }
+    }
 
-        }
+    await staffSessionService.updateLastSeen(
+        decoded.sessionId
+    );
+
+}
 
         req.user = decoded;
 
