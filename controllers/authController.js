@@ -1,12 +1,14 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require("../db");
+const db =
+    require("../db");
 const defaultSetupService =
 require("../services/defaultSetupService");
-const restaurantRepository =
-    require("../repositories/restaurantRepository");
-const subscriptionService =
-    require("../services/subscriptionService");    
+
+const authSignupService =
+    require("../services/authSignupService");      
+const otpService =
+    require("../services/otpService");    
 exports.signup = async (req, res) => {
 
     const {
@@ -73,187 +75,61 @@ exports.signup = async (req, res) => {
         }
        
 
-const hashedPassword = await bcrypt.hash(password, 10);
+try {
 
+    const hashedPassword =
+        await bcrypt.hash(
+            password,
+            10
+        );
 
+    const otp =
+        otpService.generateOtp();
 
+    const expiresAt =
+        otpService.generateExpiry();
 
-db.run(
-    `INSERT INTO restaurants
-(
-    name,
-    owner_name,
-    email,
-    mobile,
-    status,
-    plan_id,
-    subscription_status,
-    plan_start,
-    plan_end,
-    trial_used
-)
-VALUES
-(
-    ?, ?, ?, ?, ?,
-    (
-        SELECT id
-        FROM plans
-        WHERE slug = 'plus'
-    ),
-    ?,
-    DATE('now'),
-    DATE('now', '+30 days'),
-    ?
-)`,
-    [
-    restaurantName,
-    ownerName,
-    email,
-    mobile,
-    "active",
-    "trial",
-    1
-],
-    function (err) {
+    await otpService.saveOtp({
 
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: err.message
-            });
-        }
-
-const restaurantId = this.lastID;
-const restaurantCode =
-    `ALN${String(restaurantId).padStart(6, "0")}`;
-
-db.run(
-    `
-    UPDATE restaurants
-    SET restaurant_code = ?
-    WHERE id = ?
-    `,
-    [
-        restaurantCode,
-        restaurantId
-    ],
-    function (err) {
-
-        if (err) {
-
-            return res.status(500).json({
-                success: false,
-                message: err.message
-            });
-
-        }
-
-    }
-);
-db.run(
-    `INSERT INTO users
-    (
-        restaurant_id,
-        name,
         email,
-        mobile,
-        password,
-        role,
-        status
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [
-        restaurantId,
+        otp,
+        restaurantName,
         ownerName,
-        email,
         mobile,
-        hashedPassword,
-        "owner",
-        "active"
-    ],
-    function (err) {
-
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: err.message
-            });
-        }
-
-        const userId = this.lastID;
-
-        db.run(
-            `
-            INSERT INTO restaurant_settings
-(
-    restaurant_id,
-    footer_message,
-    cgst,
-    sgst,
-    currency,
-    time_zone
-)
-VALUES (?, ?, ?, ?, ?, ?)
-            `,
-            [
-    restaurantId,
-    "Thank You! Visit Again.",
-    2.5,
-    2.5,
-    "INR",
-    "Asia/Kolkata"
-],
-            function (err) {
-
-                if (err) {
-
-                    return res.status(500).json({
-                        success: false,
-                        message: err.message
-                    });
-
-                }
-                
-   defaultSetupService
-    .ensureDefaultTakeAway(
-        restaurantId
-    )
-    .then(() => {
-
-        return res.json({
-
-            success: true,
-
-            message: "Signup Successful",
-
-            restaurantId,
-
-            userId
-
-        });
-
-    })
-    .catch(err => {
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: err.message
-
-        });
+        passwordHash: hashedPassword,
+        expiresAt
 
     });
 
-            }
-        );
+    await otpService.sendOtpEmail(
+        email,
+        otp
+    );
 
-    }
-);
-    }
-);
+    return res.json({
 
-        
+        success: true,
+
+        message:
+            "OTP sent successfully"
+
+    });
+
+}
+catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+
+        success: false,
+
+        message:
+            err.message
+
+    });
+
+}
 
     }
 );
@@ -345,5 +221,123 @@ return res.json({
 
         }
     );
+
+};
+exports.verifyOtp =
+    async (
+        req,
+        res
+    ) => {
+     try {    
+        const {
+
+    email,
+
+    otp
+
+} = req.body;
+if (!email || !otp) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            "Email and OTP are required"
+
+    });
+
+}
+const verificationResult =
+    await otpService.verifyOtp(
+
+        email,
+
+        otp
+
+    );
+
+if (!verificationResult.success) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            verificationResult.message
+
+    });
+
+}
+const otpData =
+    verificationResult.data;
+
+const result =
+    await authSignupService.createRestaurantAccount({
+
+        restaurantName:
+            otpData.restaurant_name,
+
+        ownerName:
+            otpData.owner_name,
+
+        email:
+            otpData.email,
+
+        mobile:
+            otpData.mobile,
+
+        passwordHash:
+            otpData.password_hash
+
+    });
+
+try {
+
+    await otpService.deleteOtp(
+
+        otpData.email
+
+    );
+
+}
+catch (err) {
+
+    console.error(
+
+        "Failed to delete OTP:",
+
+        err
+
+    );
+
+}
+
+return res.json({
+
+    success: true,
+
+    message:
+        "Signup Successful",
+
+    restaurantId:
+        result.restaurantId,
+
+    userId:
+        result.userId
+
+});
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: err.message
+        });
+
+    }
 
 };

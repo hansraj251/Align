@@ -1,5 +1,5 @@
 Auth.redirectIfLoggedIn();
-
+loadOtpModal();
 document
 
     .getElementById("signupForm")
@@ -55,16 +55,14 @@ async function signup() {
     }
 
     result.classList.remove("text-red-600");
-    result.classList.add("text-green-600");
 
-    result.textContent =
-        "Account created successfully. Redirecting to login...";
+result.classList.add("text-green-600");
 
-    setTimeout(() => {
+result.textContent =
+    "OTP sent successfully. Please verify your email.";
+    window.signupEmail =
+    email;
 
-        window.location.href =
-            "/admin/login.html";
-
-    }, 1500);
+openOtpModal();
 
 }

@@ -41,9 +41,7 @@ if (!staff.password) {
 }
 
     const last =
-        await staffRepository.getLastStaffCode(
-            restaurantId
-        );
+    await staffRepository.getLastStaffCode();
 
     const staffCode =
         generateStaffCode(
@@ -61,7 +59,7 @@ if (existing) {
 
     throw new Error(
 
-        "Username already exists"
+         "This username is already in use. Please choose a different username."
 
     );
 

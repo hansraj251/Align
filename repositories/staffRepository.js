@@ -188,9 +188,7 @@ exports.deleteStaff = async (
 
 };
 
-exports.getLastStaffCode = async (
-    restaurantId
-) => {
+exports.getLastStaffCode = async () => {
 
     return await db.getAsync(
         `
@@ -198,13 +196,10 @@ exports.getLastStaffCode = async (
 
         FROM staff
 
-        WHERE restaurant_id = ?
-
         ORDER BY id DESC
 
         LIMIT 1
-        `,
-        [restaurantId]
+        `
     );
 
 };

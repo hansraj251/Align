@@ -44,13 +44,17 @@ const createSystemMenuItemsTable =
     require("./schema/systemMenuItems");
 
 const seedSystemMenu =
-    require("./seed/systemMenuSeed");    
+    require("./seed/systemMenuSeed");  
+const createEmailOtpsTable =
+    require("./schema/emailOtps");      
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
 await createRestaurantsTable();
 
 await createUsersTable();
+
+await createEmailOtpsTable();
 
 await createDiningAreasTable();
 
