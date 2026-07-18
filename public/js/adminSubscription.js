@@ -307,7 +307,14 @@ ${
 
 </div>
 
-<div id="activeDevicesSection">
+<div
+id="activeDevicesSection"
+class="cursor-pointer rounded-xl p-3 transition hover:bg-slate-100"
+onclick="showActiveDevices()">
+
+<div class="flex items-center justify-between">
+
+<div>
 
 <p class="text-sm text-slate-500">
 
@@ -320,6 +327,16 @@ Active Devices
 ${subscription.active_devices}
 
 </p>
+
+</div>
+
+<div class="text-2xl text-slate-400">
+
+›
+
+</div>
+
+</div>
 
 </div>
 
@@ -419,3 +436,252 @@ function formatDate(date) {
 
 }
 loadSubscription();
+async function showActiveDevices() {
+
+    const data =
+        await API.get(
+            "/api/subscription/active-devices"
+        );
+
+    if (
+        !data.success
+    ) {
+
+        return;
+
+    }
+
+    const modal =
+        document.getElementById(
+            "activeDevicesModal"
+        );
+
+    const list =
+        document.getElementById(
+            "activeDevicesList"
+        );
+
+    list.innerHTML =
+        "";
+
+        if (
+    data.sessions.length === 0
+) {
+
+    closeActiveDevicesModal();
+
+    return;
+
+}
+
+    data.sessions.forEach(
+        session => {
+
+            list.innerHTML += `
+
+<div class="border rounded-lg p-4 flex justify-between items-center">
+
+    <div>
+
+        <div class="font-semibold">
+            ${session.staff_name}
+        </div>
+
+        <div class="text-sm text-gray-500">
+            ${session.role}
+        </div>
+
+        <div class="text-xs text-gray-400 mt-1">
+            ${getDeviceName(session.device_info)}
+        </div>
+
+        <div class="text-xs text-gray-400">
+            Last Seen:
+            ${Align.formatDateTime(session.last_seen)}
+        </div>
+
+    </div>
+
+    <button
+        onclick="logoutActiveDevice(${session.id})"
+        class="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+    >
+        Logout
+    </button>
+
+</div>
+
+`;
+
+        }
+    );
+
+    modal.classList.remove(
+        "hidden"
+    );
+
+    modal.classList.add(
+        "flex"
+    );
+
+}
+function closeActiveDevicesModal() {
+
+    document
+        .getElementById(
+            "activeDevicesModal"
+        )
+        .classList
+        .add(
+            "hidden"
+        );
+
+}
+async function logoutActiveDevice(sessionId) {
+
+    Modal.confirm(
+
+        "Logout Device",
+
+        "Are you sure you want to logout this device?",
+
+        async () => {
+
+            const data =
+                await API.post(
+                    `/api/subscription/active-devices/${sessionId}/logout`
+                );
+
+            if (!data.success) {
+
+                throw new Error(
+                    data.message
+                );
+
+            }
+
+            Modal.close();
+
+            await showActiveDevices();
+
+            loadSubscription();
+
+        },
+
+        {
+
+            buttonText:
+                "Logout",
+
+            buttonClass:
+                "bg-red-600 hover:bg-red-700",
+
+            loadingText:
+                "Logging out..."
+
+        }
+
+    );
+
+}
+function getDeviceName(userAgent) {
+
+    if (!userAgent) {
+
+        return "Unknown Device";
+
+    }
+
+    let browser = "Browser";
+    let os = "Unknown";
+
+    if (userAgent.includes("Chrome") &&
+        !userAgent.includes("Edg")) {
+
+        browser = "Chrome";
+
+    } else if (userAgent.includes("Firefox")) {
+
+        browser = "Firefox";
+
+    } else if (userAgent.includes("Safari") &&
+               !userAgent.includes("Chrome")) {
+
+        browser = "Safari";
+
+    } else if (userAgent.includes("Edg")) {
+
+        browser = "Edge";
+
+    }
+
+    if (userAgent.includes("Windows")) {
+
+        os = "Windows";
+
+    } else if (userAgent.includes("Mac")) {
+
+        os = "macOS";
+
+    } else if (userAgent.includes("Android")) {
+
+        os = "Android";
+
+    } else if (
+        userAgent.includes("iPhone") ||
+        userAgent.includes("iPad")
+    ) {
+
+        os = "iPhone";
+
+    } else if (userAgent.includes("Linux")) {
+
+        os = "Linux";
+
+    }
+
+    return `${browser} • ${os}`;
+
+}
+let subscriptionRefreshTimer = null;
+
+function startSubscriptionAutoRefresh() {
+
+    if (subscriptionRefreshTimer) {
+
+        clearInterval(
+            subscriptionRefreshTimer
+        );
+
+    }
+
+    subscriptionRefreshTimer =
+        setInterval(
+            async () => {
+
+                await loadSubscription();
+
+                const modal =
+                    document.getElementById(
+                        "activeDevicesModal"
+                    );
+
+                if (
+                    modal &&
+                    !modal.classList.contains(
+                        "hidden"
+                    )
+                ) {
+
+                    await showActiveDevices();
+
+                }
+
+            },
+            5000
+        );
+
+}
+loadSubscription();
+
+startSubscriptionAutoRefresh();

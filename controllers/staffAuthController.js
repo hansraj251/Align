@@ -7,22 +7,32 @@ exports.login = async (req, res) => {
 
     try {
 
+        const {
+            username,
+            password
+        } = req.body;
+
         const result =
             await staffAuthService.login(
+                username,
+                password,
+                {
+                    device_info:
+                        req.headers["user-agent"],
 
-                req.body.username,
-
-                req.body.password
-
+                    ip_address:
+                        req.headers["x-forwarded-for"] ||
+                        req.ip
+                }
             );
 
-        res.json(result);
+        return res.json(
+            result
+        );
 
-    }
+    } catch (err) {
 
-    catch (err) {
-
-        res.status(401).json({
+        return res.status(401).json({
 
             success: false,
 

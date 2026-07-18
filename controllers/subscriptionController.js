@@ -1,5 +1,7 @@
 const subscriptionService =
     require("../services/subscriptionService");
+const staffSessionService =
+    require("../services/staffSessionService");    
 
 exports.getSubscription =
 async (req, res) => {
@@ -188,3 +190,59 @@ exports.webhook =
         }
 
     };    
+
+exports.getActiveDevices = async (req, res) => {
+
+    try {
+
+        const sessions =
+            await staffSessionService.getActiveSessionsByRestaurant(
+                req.user.restaurantId
+            );
+
+        return res.json({
+            success: true,
+            sessions
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to load active devices."
+        });
+
+    }
+
+};    
+exports.logoutActiveDevice = async (
+    req,
+    res
+) => {
+
+    try {
+
+        await staffSessionService.logoutSession(
+            req.params.sessionId,
+            req.user.restaurantId
+        );
+
+        return res.json({
+            success: true,
+            message: "Device logged out successfully."
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(400).json({
+            success: false,
+            message: err.message
+        });
+
+    }
+
+};

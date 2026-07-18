@@ -21,6 +21,11 @@ router.get(
     auth,
     subscriptionController.getPlans
 );
+router.get(
+    "/active-devices",
+    auth,
+    subscriptionController.getActiveDevices
+);
 
 router.post(
     "/create-order",
@@ -37,6 +42,13 @@ router.post(
     "/webhook",
     subscriptionController.webhook
 );
+
+router.post(
+    "/active-devices/:sessionId/logout",
+    auth,
+    subscriptionController.logoutActiveDevice
+);
+
 
 module.exports =
     router;

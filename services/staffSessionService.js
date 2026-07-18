@@ -77,3 +77,34 @@ exports.updateLastSeen = async (sessionId) => {
     );
 
 };
+exports.getActiveSessionsByRestaurant = async (
+    restaurantId
+) => {
+
+    return await staffSessionRepository.getActiveSessionsByRestaurant(
+        restaurantId
+    );
+
+};
+exports.logoutSession = async (
+    sessionId,
+    restaurantId
+) => {
+
+    const session =
+        await staffSessionRepository.getSessionByRestaurant(
+            sessionId,
+            restaurantId
+        );
+
+    if (!session) {
+        throw new Error(
+            "Session not found."
+        );
+    }
+
+    await staffSessionRepository.logoutSession(
+        sessionId
+    );
+
+};

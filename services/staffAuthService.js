@@ -18,7 +18,8 @@ const subscriptionService =
 
 exports.login = async (
     username,
-    password
+    password,
+    deviceInfo
 ) => {
 
     const staff =
@@ -130,16 +131,22 @@ await staffRepository.updateLastLogin(staff.id);
 sessionId =
     await staffSessionService.createSession({
 
-        restaurant_id:
-            staff.restaurant_id,
+    restaurant_id:
+        staff.restaurant_id,
 
-        staff_id:
-            staff.id,
+    staff_id:
+        staff.id,
 
-        role:
-            staff.role
+    role:
+        staff.role,
 
-    });
+    device_info:
+        deviceInfo.device_info,
+
+    ip_address:
+        deviceInfo.ip_address
+
+});
 
     const token =
         jwt.sign(

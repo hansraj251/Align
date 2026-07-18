@@ -104,15 +104,16 @@ exports.cleanupInactiveSessions = async () => {
             logout_at = CURRENT_TIMESTAMP
 
         WHERE
-
     is_active = 1
-
     AND logout_at IS NULL
-
+    AND role IN (
+        'waiter',
+        'device'
+    )
     AND last_seen < datetime(
-            'now',
-            '-5 minutes'
-        )
+        'now',
+        '-5 minutes'
+    )
         `
     );
 
@@ -199,5 +200,84 @@ exports.updateLastSeen = async (sessionId) => {
 exports.forceLogout = async (sessionId) => {
 
     return await exports.closeSession(sessionId);
+
+};
+exports.getActiveSessionsByRestaurant = async (
+    restaurantId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            ss.id,
+            ss.staff_id,
+            ss.role,
+            ss.device_info,
+ss.ip_address,
+            ss.login_at,
+            ss.last_seen,
+
+            s.name AS staff_name
+
+        FROM
+            staff_sessions ss
+
+        INNER JOIN
+            staff s
+
+        ON
+            s.id = ss.staff_id
+
+        WHERE
+
+            ss.restaurant_id = ?
+            AND ss.is_active = 1
+
+        ORDER BY
+
+            ss.last_seen DESC
+        `,
+        [restaurantId]
+    );
+
+};
+exports.logoutSession = async (sessionId) => {
+
+    await db.runAsync(
+        `
+        UPDATE
+            staff_sessions
+        SET
+            is_active = 0,
+            logout_at = CURRENT_TIMESTAMP
+        WHERE
+            id = ?
+        `,
+        [sessionId]
+    );
+
+};
+exports.getSessionByRestaurant = async (
+    sessionId,
+    restaurantId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            *
+        FROM
+            staff_sessions
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+            AND is_active = 1
+        `,
+        [
+            sessionId,
+            restaurantId
+        ]
+    );
 
 };
