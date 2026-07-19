@@ -83,11 +83,7 @@ async function loadOrders() {
 
         <div class="flex justify-between">
 
-            <span class="text-slate-500">
-
-                Table
-
-            </span>
+            
 
             <strong>
 
