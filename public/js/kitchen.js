@@ -291,7 +291,7 @@ pendingItems > 0
     onclick="updateStatus(${ticket.id}, 'ready')"
     class="w-full rounded-lg bg-green-600 py-3 text-white">
 
-    Mark Ready
+    Ready All
 
 </button>
 `

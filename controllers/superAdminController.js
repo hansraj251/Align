@@ -46,6 +46,7 @@ exports.login = async (req, res) => {
                 message: "Invalid username or password"
 
             });
+            
 
         }
 
@@ -54,6 +55,8 @@ exports.login = async (req, res) => {
                 password,
                 admin.password
             );
+        
+
 
         if (!matched) {
 

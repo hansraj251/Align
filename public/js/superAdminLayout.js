@@ -87,6 +87,19 @@ Pricing
 </a>
 
     </div>
+    <div>
+
+    <a
+        href="/super-admin/accounts.html"
+        class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "accounts"
+            ? "bg-slate-800 font-semibold"
+            : "hover:bg-slate-800"}">
+
+        Accounts
+
+    </a>
+
+</div>
 
 </nav>
 <div class="border-t border-slate-700 p-4">

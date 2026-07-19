@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        Align Super Admin
+
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body>
+
+<script src="/js/components.js"></script>
+<script src="/js/superAdminAuth.js"></script>
+<script src="/js/superAdminLayout.js"></script>
+<script src="/js/notify.js"></script>
+<script src="/js/superAdminAccounts.js"></script>
+
+<script>
+
+loadSuperAdminLayout({
+
+    title:
+        "Super Admin Accounts",
+
+    active:
+        "accounts"
+
+});
+
+document.getElementById(
+    "pageContent"
+).innerHTML = `
+
+<div class="rounded-2xl bg-white p-6 shadow">
+
+    <div class="mb-6 flex items-center justify-between">
+
+        <div>
+
+            <p class="mt-1 text-sm text-slate-500">
+
+                Manage Super Admin accounts
+
+            </p>
+
+        </div>
+
+        <button
+            id="addAccountBtn"
+            class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+
+            Add Super Admin
+
+        </button>
+
+    </div>
+
+    <div class="overflow-x-auto">
+
+        <table class="min-w-full">
+
+            <thead>
+
+                <tr class="border-b">
+
+                    <th class="py-3 text-left">
+
+                        Name
+
+                    </th>
+
+                    <th class="py-3 text-left">
+
+                        Username
+
+                    </th>
+
+                    <th class="py-3 text-left">
+
+                        Status
+
+                    </th>
+
+                    <th class="py-3 text-right">
+
+                        Actions
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody
+                id="accountsTableBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div
+    id="accountModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/50 p-4">
+
+    <div class="w-full max-w-md rounded-xl bg-white p-6">
+
+        <div class="mb-5 flex items-center justify-between">
+
+            <h2
+                id="accountModalTitle"
+                class="text-xl font-semibold">
+
+                Add Super Admin
+
+            </h2>
+
+            <button
+                id="closeAccountModal"
+                class="text-2xl leading-none text-slate-500">
+
+                &times;
+
+            </button>
+
+        </div>
+
+        <form
+            id="accountForm"
+            class="space-y-4">
+
+            <input
+                id="accountId"
+                type="hidden">
+
+            <div>
+
+                <label class="mb-1 block text-sm">
+
+                    Name
+
+                </label>
+
+                <input
+                    id="accountName"
+                    autocomplete="name"
+                    class="w-full rounded-lg border px-3 py-2">
+
+            </div>
+
+            <div>
+
+                <label class="mb-1 block text-sm">
+
+                    Username
+
+                </label>
+
+                <input
+                    id="accountUsername"
+                    autocomplete="username"
+                    class="w-full rounded-lg border px-3 py-2">
+
+            </div>
+
+            <div
+                id="passwordField">
+
+                <label class="mb-1 block text-sm">
+
+                    Password
+
+                </label>
+
+                <input
+                    id="accountPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    class="w-full rounded-lg border px-3 py-2">
+
+            </div>
+
+            <div>
+
+                <label class="mb-1 block text-sm">
+
+                    Status
+
+                </label>
+
+                <select
+                    id="accountStatus"
+                    class="w-full rounded-lg border px-3 py-2">
+
+                    <option value="active">
+
+                        Active
+
+                    </option>
+
+                    <option value="inactive">
+
+                        Inactive
+
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="flex justify-end gap-3">
+
+                <button
+                    type="button"
+                    id="cancelAccountBtn"
+                    class="rounded-lg border px-4 py-2">
+
+                    Cancel
+
+                </button>
+
+                <button
+    id="saveAccountBtn"
+    type="submit"
+    class="rounded-lg bg-blue-600 px-4 py-2 text-white">
+
+    Save
+
+</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div
+    id="passwordModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+
+    <div class="w-full max-w-md rounded-xl bg-white p-6">
+
+        <div class="mb-5 flex items-center justify-between">
+
+            <h2 class="text-xl font-semibold">
+
+                Change Password
+
+            </h2>
+
+            <button
+                id="closePasswordModal"
+                class="text-2xl text-slate-500">
+
+                &times;
+
+            </button>
+
+        </div>
+
+        <form id="passwordForm">
+
+            <input
+                id="passwordAccountId"
+                type="hidden">
+
+            <div class="mb-4">
+
+                <label class="mb-1 block text-sm">
+
+                    New Password
+
+                </label>
+
+                <input
+                    id="newPassword"
+                    type="password"
+                    class="w-full rounded-lg border px-3 py-2">
+
+            </div>
+
+            <div class="flex justify-end gap-3">
+
+                <button
+                    type="button"
+                    id="cancelPasswordBtn"
+                    class="rounded-lg border px-4 py-2">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="rounded-lg bg-blue-600 px-4 py-2 text-white">
+
+                    Update
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+`;
+
+initializeSuperAdminAccounts();
+
+</script>
+
+</body>
+
+</html>

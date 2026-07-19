@@ -19,10 +19,19 @@ async function login() {
 
     result.textContent = "";
 
-    // Try Super Admin Login first (only for username login)
-if (!loginId.includes("@")) {
+    // Try Super Admin Login first
+if (!loginId || !password) {
 
-    const superAdmin = await API.post(
+        result.textContent =
+            "Username/Email and Password are required.";
+
+        return;
+
+    }  
+    
+    try {
+const superAdmin =
+    await API.post(
         "/api/super-admin/login",
         {
             username: loginId,
@@ -30,35 +39,26 @@ if (!loginId.includes("@")) {
         }
     );
 
-    if (superAdmin.success) {
+if (superAdmin.success) {
 
-        localStorage.setItem(
-            "superAdminToken",
-            superAdmin.token
-        );
+    localStorage.setItem(
+        "superAdminToken",
+        superAdmin.token
+    );
 
-        localStorage.setItem(
-            "superAdmin",
-            JSON.stringify(superAdmin.admin)
-        );
+    localStorage.setItem(
+        "superAdmin",
+        JSON.stringify(
+            superAdmin.admin
+        )
+    );
 
-        window.location.href =
-            "/super-admin/dashboard.html";
+    window.location.href =
+        "/super-admin/dashboard.html";
 
-        return;
-
-    }
+    return;
 
 }
-
-    if (!loginId || !password) {
-
-        result.textContent =
-            "Username/Email and Password are required.";
-
-        return;
-
-    }
 
     let data;
 
@@ -169,6 +169,16 @@ localStorage.setItem(
             default:
                 result.textContent = "Unknown role";
         }
+        
+
+    }
+
+} catch (err) {
+
+        console.error(err);
+
+        result.textContent =
+            "Unable to connect to server.";
 
     }
 
