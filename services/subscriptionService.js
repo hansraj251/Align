@@ -49,14 +49,12 @@ exports.getSubscription = async (
             );
 
     subscription.active_devices =
-        await staffSessionRepository
-            .countActiveSessions(
-                restaurantId
-            );
+    await staffSessionRepository
+        .countActiveSessions(
+            restaurantId
+        );
 
-    return subscription;
-
-    const plans =
+const plans =
     await planRepository.getAll();
 
 const highestPlan =
@@ -66,6 +64,8 @@ subscription.is_highest_plan =
     highestPlan
         ? highestPlan.id === subscription.plan_id
         : false;
+
+return subscription;
 
 };
 

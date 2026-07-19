@@ -251,12 +251,19 @@ function selectArea(id) {
     renderAreas();
 
 }
-document
-    .getElementById("addAreaBtn")
-    .addEventListener(
-        "click",
-        addArea
-    );
+[
+    "addAreaBtn",
+    "addAreaBtnMobile"
+].forEach(id => {
+
+    document
+        .getElementById(id)
+        ?.addEventListener(
+            "click",
+            addArea
+        );
+
+});
 
 function addArea() {
 

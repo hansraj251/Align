@@ -33,13 +33,20 @@ xl:pt-8">
 <div
 class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
 
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center gap-2">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-3 py-2 text-white">
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white">
 
-            ← Dashboard
+            Dashboard
+
+        </a>
+        <a
+            href="/admin/settings.html"
+            class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white">
+
+            Settings
 
         </a>
 
@@ -57,20 +64,22 @@ class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hid
 
 <!-- Desktop Header -->
 
-<div class="mb-8 hidden items-center justify-between md:flex">
+<div
+    class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden items-center justify-between bg-slate-100 px-6 py-3 shadow-sm md:flex xl:-mx-8 xl:-mt-8 xl:px-8">
 
     <div class="flex items-center gap-3">
 
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-5 py-3 font-medium text-white transition hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
 
             Dashboard
 
         </a>
+
         <a
             href="/admin/settings.html"
-            class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 md:px-5 md:py-3 md:text-base">
+            class="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white hover:bg-indigo-700">
 
             Settings
 
@@ -78,7 +87,7 @@ class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hid
 
         <button
             id="addStaffBtn"
-            class="rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white transition hover:bg-blue-700">
+            class="rounded-lg bg-blue-600 px-5 py-2 font-semibold text-white transition hover:bg-blue-700">
 
             + Add Staff
 
@@ -86,7 +95,7 @@ class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hid
 
     </div>
 
-    <h1 class="text-3xl font-bold">
+    <h1 class="text-2xl font-bold">
 
         👥 Staff
 

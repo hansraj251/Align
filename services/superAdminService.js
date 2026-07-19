@@ -18,9 +18,21 @@ async () => {
 exports.getRestaurants =
 async () => {
 
-    return await
-        superAdminRepository
+    const restaurants =
+        await superAdminRepository
             .getRestaurants();
+
+    for (const restaurant of restaurants) {
+
+        restaurant.active_devices =
+            await staffSessionRepository
+                .countActiveSessions(
+                    restaurant.id
+                );
+
+    }
+
+    return restaurants;
 
 };
 exports.getActiveSessions =
@@ -52,11 +64,25 @@ async (sessionId) => {
 exports.getRestaurantById =
 async (restaurantId) => {
 
-    return await
-        superAdminRepository
+    const restaurant =
+        await superAdminRepository
             .getRestaurantById(
                 restaurantId
             );
+
+    if (!restaurant) {
+
+        return null;
+
+    }
+
+    restaurant.active_devices =
+        await staffSessionRepository
+            .countActiveSessions(
+                restaurant.id
+            );
+
+    return restaurant;
 
 };
 

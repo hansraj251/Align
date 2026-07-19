@@ -11,20 +11,31 @@ function toggleKitchenHeader() {
         return;
 
     }
+    [
+    "kitchenHeaderButtons",
+    "kitchenHeaderButtonsMobile"
+].forEach(id => {
 
     document
-        .getElementById(
-            "kitchenHeader"
-        )
-        ?.remove();
+        .getElementById(id)
+        ?.classList.add(
+            "hidden"
+        );
+
+});
+
+[
+    "kitchenLogoutBtn",
+    "kitchenLogoutBtnMobile"
+].forEach(id => {
 
     document
-        .getElementById(
-            "kitchenLogoutBtn"
-        )
+        .getElementById(id)
         ?.classList.remove(
             "hidden"
         );
+
+});
 
 }
 
@@ -39,8 +50,17 @@ const params =
 const areaId =
     params.get("area");
 
-const backBtn =
-    document.getElementById("backBtn");
+const backButtons = [
+
+    document.getElementById(
+        "backBtn"
+    ),
+
+    document.getElementById(
+        "backBtnMobile"
+    )
+
+].filter(Boolean);
 
 async function setupBackButton() {
 
@@ -48,35 +68,49 @@ async function setupBackButton() {
         return;
     }
 
-    backBtn.classList.remove("hidden");
+    backButtons.forEach(button => {
 
-    const data =
-        await API.get(
-            "/api/dining-areas"
+    button.classList.remove(
+        "hidden"
+    );
+
+});
+
+const data =
+    await API.get(
+        "/api/dining-areas"
+    );
+
+if (data.success) {
+
+    const area =
+        data.areas.find(
+            a => a.id == areaId
         );
 
-    if (data.success) {
+    if (area) {
 
-        const area =
-            data.areas.find(
-                a => a.id == areaId
-            );
+        backButtons.forEach(button => {
 
-        if (area) {
+            button.textContent =
+                area.name;
 
-            backBtn.textContent =
-                ` ${area.name}`;
-
-        }
+        });
 
     }
 
-    backBtn.onclick = () => {
+}
+
+backButtons.forEach(button => {
+
+    button.onclick = () => {
 
         window.location.href =
             `/admin/area.html?id=${areaId}`;
 
     };
+
+});
 
 }
 toggleKitchenHeader();
@@ -459,29 +493,33 @@ async function markItemReady(ticketItemId) {
     loadKitchenOrders();
 
 }
-const logoutBtn =
-    document.getElementById(
-        "kitchenLogoutBtn"
-    );
+[
+    "kitchenLogoutBtn",
+    "kitchenLogoutBtnMobile"
+].forEach(id => {
 
-logoutBtn?.addEventListener(
-    "click",
-    () => {
+    document
+        .getElementById(id)
+        ?.addEventListener(
+            "click",
+            () => {
 
-        localStorage.removeItem(
-            "staff"
+                localStorage.removeItem(
+                    "staff"
+                );
+
+                localStorage.removeItem(
+                    "staffToken"
+                );
+
+                localStorage.removeItem(
+                    "token"
+                );
+
+                window.location.href =
+                    "/admin/login.html";
+
+            }
         );
 
-        localStorage.removeItem(
-            "staffToken"
-        );
-
-        localStorage.removeItem(
-            "token"
-        );
-
-        window.location.href =
-            "/admin/login.html";
-
-    }
-);
+});

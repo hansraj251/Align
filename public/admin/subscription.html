@@ -21,29 +21,88 @@
 
 <div class="flex h-screen flex-col">
 
-<div id="mobileHeader"></div>
-
+<main
+class="min-h-screen bg-slate-100
+p-4
+pt-20
+md:p-6
+md:pt-6
+xl:p-8
+xl:pt-8">
 <div
-    id="sidebarOverlay"
-    class="fixed inset-0 z-40 hidden bg-black/50">
+class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
+
+<div class="flex items-center justify-between">   
+<div class="flex items-center gap-2">
+
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800">
+
+            Dashboard
+
+        </a>
+
+        <a
+            href="/admin/settings.html"
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800">
+
+            Settings
+
+        </a>
+
+        </div>
+        <a
+        href="/admin/support.html"
+        class="rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-700">
+
+        Support
+
+    </a>
+
+
+    </div>
+
+</div>
+<div
+class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden bg-slate-100 px-6 py-3 shadow-sm md:block xl:-mx-8 xl:-mt-8 xl:px-8">
+
+    <div class="flex items-center justify-between">
+
+        <div class="flex items-center gap-3">
+
+            <a
+                href="/admin/dashboard.html"
+                class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
+
+                Dashboard
+
+            </a>
+
+            <a
+                href="/admin/settings.html"
+                class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
+
+                Settings
+
+            </a>
+
+        </div>
+
+        <a
+            href="/admin/support.html"
+            class="rounded-lg bg-emerald-600 px-5 py-2 font-medium text-white transition hover:bg-emerald-700">
+
+            Support
+
+        </a>
+
+    </div>
+
 </div>
 
-<div class="flex h-screen overflow-hidden">
-
-<div id="sidebar"></div>
-
-<main
-id="mainContent"
-class="flex-1 h-screen overflow-y-auto
-       p-4
-       pt-20
-       md:p-6
-       md:pt-6
-       xl:p-8
-       xl:pt-8">
-
 <div
-class="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow">
+class="rounded-2xl bg-white p-6 shadow lg:p-8">
 
 <h1
 class="mb-8 text-3xl font-bold">
@@ -108,8 +167,6 @@ Loading...
 <script src="/js/auth.js"></script>
 <script src="/js/ownerManagerGuard.js"></script>
 <script src="/js/components.js"></script>
-<script src="/js/sidebar.js"></script>
-<script src="/js/mobileSidebar.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script src="/js/subscriptionPayment.js"></script>
 <script src="/js/align.js"></script>
@@ -119,10 +176,6 @@ Loading...
 
 <script>
 
-loadComponent(
-    "sidebar",
-    "/components/sidebar.html"
-);
 loadComponent(
     "modalContainer",
     "/components/modal.html"

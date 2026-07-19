@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Support</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body class="bg-slate-100">
+
+<main
+    id="mainContent"
+    class="min-h-screen bg-slate-100
+    p-4
+    pt-20
+    md:p-6
+    md:pt-6
+    xl:p-8
+    xl:pt-8">
+
+<div  id="mobileHeader"
+class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
+
+    <div class="flex items-center gap-2">
+
+    <div
+        id="adminHeaderButtonsMobile"
+        class="flex items-center gap-2">
+
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800">
+
+            Dashboard
+
+        </a>
+
+        <a
+            href="/admin/subscription.html"
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800">
+
+            Subscription
+
+        </a>
+
+        </div>
+
+<a
+    id="loginBtnHeaderMobile"
+    href="/admin/login.html"
+    class="hidden rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
+
+    Login
+
+</a>
+
+    </div>
+
+</div>
+
+<div  id="desktopHeader"
+class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden bg-slate-100 px-6 py-3 shadow-sm md:block xl:-mx-8 xl:-mt-8 xl:px-8">
+
+    <div class="flex items-center gap-3">
+
+    <div
+        id="adminHeaderButtons"
+        class="flex items-center gap-3">
+
+        <a
+            href="/admin/dashboard.html"
+            class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
+
+            Dashboard
+
+        </a>
+
+        <a
+            href="/admin/subscription.html"
+            class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
+
+           Subscription
+
+        </a>
+
+        </div>
+        <a
+    id="loginBtnHeader"
+    href="/admin/login.html"
+    class="hidden rounded-lg bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700">
+
+    Login
+
+</a>
+
+    </div>
+
+</div>
+
+<div
+class="rounded-2xl bg-white p-6 shadow lg:p-8">
+
+    <h1
+        class="text-3xl font-bold">
+
+        Support
+
+    </h1>
+    <br>
+
+    <div class="grid gap-4 md:grid-cols-2">
+
+    <div class="rounded-xl border border-slate-200 p-5">
+
+        <h2 class="text-lg font-semibold">
+
+            📞 Phone
+
+        </h2>
+
+        <p
+            id="supportPhone"
+            class="mt-2 text-slate-600">
+
+            +91 9782004333
+
+        </p>
+
+    </div>
+
+    <div class="rounded-xl border border-slate-200 p-5">
+
+        <h2 class="text-lg font-semibold">
+
+            📧 Email
+
+        </h2>
+
+        <p
+            id="supportEmail"
+            class="mt-2 text-slate-600">
+
+            hans004333@gmail.com
+
+        </p>
+
+    </div>
+
+    <div class="rounded-xl border border-slate-200 p-5">
+
+        <h2 class="text-lg font-semibold">
+
+            💬 WhatsApp
+
+        </h2>
+
+        <p
+            id="supportWhatsapp"
+            class="mt-2 text-slate-600">
+
+            +91 9782004333
+
+        </p>
+
+    </div>
+
+    <div class="rounded-xl border border-slate-200 p-5">
+
+        <h2 class="text-lg font-semibold">
+
+            🕒 Support Hours
+
+        </h2>
+
+        <p class="mt-2 text-slate-600">
+
+            Monday – Saturday<br>
+
+            9:00 AM – 7:00 PM
+
+        </p>
+
+    </div>
+
+</div>
+
+<div
+    class="mt-6 rounded-xl bg-slate-50 p-5">
+
+    <h2 class="text-lg font-semibold">
+
+        Need Help?
+
+    </h2>
+
+    <p class="mt-2 text-slate-600">
+
+        If you're facing any issue with Align POS, contact our support team.
+        We'll help you as quickly as possible.
+
+    </p>
+
+</div>
+
+</div>
+
+</main>
+
+<script src="/js/api.js"></script>
+
+<script>
+
+if (!API.getToken()) {
+
+    document
+        .getElementById(
+            "adminHeaderButtons"
+        )
+        ?.classList.add(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "adminHeaderButtonsMobile"
+        )
+        ?.classList.add(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "loginBtnHeader"
+        )
+        ?.classList.remove(
+            "hidden"
+        );
+
+    document
+        .getElementById(
+            "loginBtnHeaderMobile"
+        )
+        ?.classList.remove(
+            "hidden"
+        );
+
+}
+
+</script>
+
+
+</body>
+
+</html>

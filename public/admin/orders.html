@@ -19,33 +19,54 @@
 
 <body class="bg-slate-100">
 
-<main class="min-h-screen bg-slate-100 p-3 sm:p-5 lg:p-8">
+<main
+class="min-h-screen bg-slate-100
+p-4
+pt-20
+md:p-6
+md:pt-6
+xl:p-8
+xl:pt-8">
 
-        <div class="sticky top-0 z-30 -mx-3 sm:-mx-5 lg:-mx-8 -mt-3 sm:-mt-5 lg:-mt-8 mb-4 bg-slate-100 px-3 sm:px-5 lg:px-8 pt-3 sm:pt-5 lg:pt-8 pb-4 shadow-sm">
+<div
+class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
 
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="flex items-center gap-2">
 
         <a
             href="/admin/dashboard.html"
-            class="shrink-0 rounded-lg bg-slate-700 px-4 py-2.5 text-sm sm:text-base font-medium text-white hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white">
 
-            ←
+            Dashboard
 
         </a>
 
-        <div class="ml-auto flex w-full gap-2 sm:w-auto">
-
-    <input
-        id="fromDate"
-        type="date"
-        class="w-1/2 sm:w-44 rounded-lg border px-3 py-2">
-
-    <input
-        id="toDate"
-        type="date"
-        class="w-1/2 sm:w-44 rounded-lg border px-3 py-2">
+    </div>
 
 </div>
+
+        <div
+class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden items-center justify-between bg-slate-100 px-6 py-3 shadow-sm md:flex xl:-mx-8 xl:-mt-8 xl:px-8">
+
+    <a
+        href="/admin/dashboard.html"
+        class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
+
+        Dashboard
+
+    </a>
+
+    <div class="flex items-center gap-2">
+
+        <input
+            id="fromDate"
+            type="date"
+            class="w-44 rounded-lg border px-3 py-2">
+
+        <input
+            id="toDate"
+            type="date"
+            class="w-44 rounded-lg border px-3 py-2">
 
     </div>
 
@@ -54,8 +75,6 @@
 <div
     id="ordersTable"
     class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-5">
-</div>
-
 </div>
 
     </main>

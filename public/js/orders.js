@@ -1,6 +1,21 @@
 Auth.requireLogin();
 
+const today =
+    new Date()
+        .toISOString()
+        .split("T")[0];
+
+document.getElementById(
+    "fromDate"
+).value = today;
+
+document.getElementById(
+    "toDate"
+).value = today;
+
 async function loadOrders() {
+
+    
 
     const from =
         document.getElementById("fromDate").value;
@@ -82,8 +97,6 @@ async function loadOrders() {
     <div class="mt-5 space-y-3">
 
         <div class="flex justify-between">
-
-            
 
             <strong>
 

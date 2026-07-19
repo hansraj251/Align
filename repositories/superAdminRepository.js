@@ -45,26 +45,6 @@ exports.getRestaurants = async () => {
 
             r.plan_end,
 
-            (
-                SELECT COUNT(*)
-
-                FROM staff_sessions ss
-
-                WHERE
-
-                    ss.restaurant_id = r.id
-
-                    AND ss.is_active = 1
-
-                    AND ss.role IN ('waiter','device')
-
-                    AND ss.last_seen >= datetime(
-                        'now',
-                        '-2 minutes'
-                    )
-
-            ) AS active_devices,
-
             r.created_at
 
         FROM restaurants r
@@ -115,26 +95,6 @@ exports.getRestaurantById = async (
             r.plan_start,
 
             r.plan_end,
-
-            (
-                SELECT COUNT(*)
-
-                FROM staff_sessions ss
-
-                WHERE
-
-                    ss.restaurant_id = r.id
-
-                    AND ss.is_active = 1
-
-                    AND ss.role IN ('waiter','device')
-
-                    AND ss.last_seen >= datetime(
-                        'now',
-                        '-2 minutes'
-                    )
-
-            ) AS active_devices,
 
             (
     SELECT
