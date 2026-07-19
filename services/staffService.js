@@ -222,3 +222,15 @@ exports.deleteStaff = async (
     };
 
 };
+
+exports.saveFcmToken = async (
+    staffId,
+    fcmToken
+) => {
+
+    await staffRepository.saveFcmToken(
+        staffId,
+        fcmToken
+    );
+
+};

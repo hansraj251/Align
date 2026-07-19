@@ -306,3 +306,29 @@ exports.updatePassword = async (
     );
 
 };
+
+exports.saveFcmToken = async (
+    staffId,
+    fcmToken
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE staff
+
+        SET
+
+            fcm_token = ?,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            fcmToken,
+            staffId
+        ]
+    );
+
+};

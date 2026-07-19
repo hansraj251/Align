@@ -6,6 +6,23 @@ document
 
 async function login() {
 
+    let fcmToken = "";
+
+if (
+    window.Android &&
+    typeof Android.getFcmToken === "function"
+) {
+
+    fcmToken =
+        Android.getFcmToken();
+
+    console.log(
+        "FCM Token:",
+        fcmToken
+    );
+
+}
+
     const loginId = document
         .getElementById("loginId")
         .value
