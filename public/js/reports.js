@@ -145,12 +145,6 @@ ${order.order_number}
 
 </h3>
 
-<p class="text-sm text-slate-500">
-
-${order.table_name}
-
-</p>
-
 </div>
 
 <div class="text-right">
@@ -216,22 +210,6 @@ Tax
 <div>
 
 ${Align.formatCurrency(order.tax)}
-
-</div>
-
-</div>
-
-<div>
-
-<span class="text-slate-500 text-sm">
-
-Payment
-
-</span>
-
-<div>
-
-${order.payment_method || "-"}
 
 </div>
 
@@ -391,110 +369,9 @@ ${Align.formatCurrency(payment.amount)}
 
 </div>
 
-<div class="mt-2 text-sm text-slate-500">
-
-${payment.total_orders} Orders
-
-</div>
-
 </div>
 
 `).join("")}
-
-</div>
-
-`;
-
-}
-else if (type === "audit") {
-
-    result.innerHTML = `
-
-<div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-
-<div class="rounded-xl bg-white p-5 shadow">
-
-<div class="text-sm text-slate-500">
-Total Orders
-</div>
-
-<div class="mt-2 text-3xl font-bold">
-
-${data.report.total_orders || 0}
-
-</div>
-
-</div>
-
-<div class="rounded-xl bg-white p-5 shadow">
-
-<div class="text-sm text-slate-500">
-Paid
-</div>
-
-<div class="mt-2 text-3xl font-bold text-green-600">
-
-${data.report.paid_orders || 0}
-
-</div>
-
-</div>
-
-<div class="rounded-xl bg-white p-5 shadow">
-
-<div class="text-sm text-slate-500">
-Cancelled
-</div>
-
-<div class="mt-2 text-3xl font-bold text-red-600">
-
-${data.report.cancelled_orders || 0}
-
-</div>
-
-</div>
-
-<div class="rounded-xl bg-white p-5 shadow">
-
-<div class="text-sm text-slate-500">
-Kitchen Pending
-</div>
-
-<div class="mt-2 text-3xl font-bold text-orange-600">
-
-${data.report.kitchen_pending || 0}
-
-</div>
-
-</div>
-
-<div class="rounded-xl bg-white p-5 shadow">
-
-<div class="text-sm text-slate-500">
-Billing Pending
-</div>
-
-<div class="mt-2 text-3xl font-bold text-blue-600">
-
-${data.report.billing_pending || 0}
-
-</div>
-
-</div>
-
-<div class="rounded-xl bg-white p-5 shadow">
-
-<div class="text-sm text-slate-500">
-Open Orders
-</div>
-
-<div class="mt-2 text-3xl font-bold">
-
-${data.report.open_orders || 0}
-
-</div>
-
-</div>
 
 </div>
 
@@ -558,18 +435,6 @@ document
 
     };
 
-document
-    .getElementById("auditReportBtn")
-    .onclick = () => {
-
-        currentReport =
-            "audit";
-
-        loadReport(
-            currentReport
-        );
-
-    };
 
 document
     .getElementById("downloadExcelBtn")
@@ -673,7 +538,9 @@ document
 
         window.URL.revokeObjectURL(url);
 
-    };    
+    };   
+    
+    
 function formatPaymentMethod(
     method
 ) {

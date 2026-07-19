@@ -51,8 +51,6 @@ exports.getOrdersReport = async (
 
             id,
             order_number,
-            table_name,
-            payment_method,
             subtotal,
             discount,
             tax,
@@ -140,97 +138,32 @@ exports.getPaymentsReport = async (
         `
         SELECT
 
-            payment_method,
+    ps.payment_method,
 
-            COUNT(*) AS total_orders,
+    IFNULL(SUM(ps.amount),0) AS amount
 
-            SUM(total) AS amount
+FROM payment_splits ps
 
-        FROM orders
+JOIN orders o
 
-        WHERE
+    ON o.id = ps.order_id
 
-            restaurant_id = ?
+WHERE
 
-            AND status = 'paid'
+    o.restaurant_id = ?
 
-            AND DATE(paid_at)
-                BETWEEN DATE(?) AND DATE(?)
+    AND o.status = 'paid'
 
-        GROUP BY payment_method
+    AND DATE(o.paid_at)
+        BETWEEN DATE(?) AND DATE(?)
 
-        ORDER BY amount DESC
-        `,
-        [
-            restaurantId,
-            from,
-            to
-        ]
-    );
+GROUP BY
 
-};
+    ps.payment_method
 
-exports.getAuditReport = async (
-    restaurantId,
-    from,
-    to
-) => {
+ORDER BY
 
-    return await db.getAsync(
-        `
-        SELECT
-
-            COUNT(*) AS total_orders,
-
-            SUM(
-                CASE
-                    WHEN status='paid'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS paid_orders,
-
-            SUM(
-                CASE
-                    WHEN status='cancelled'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS cancelled_orders,
-
-            SUM(
-                CASE
-                    WHEN status='ready_for_billing'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS billing_pending,
-
-            SUM(
-                CASE
-                    WHEN status='sent_to_kitchen'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS kitchen_pending,
-
-            SUM(
-                CASE
-                    WHEN status='open'
-                    THEN 1
-                    ELSE 0
-                END
-            ) AS open_orders
-
-        FROM orders
-
-        WHERE
-
-            restaurant_id = ?
-
-            AND DATE(created_at)
-                BETWEEN DATE(?) AND DATE(?)
-
+    amount DESC
         `,
         [
             restaurantId,

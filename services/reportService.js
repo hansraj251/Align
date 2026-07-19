@@ -74,18 +74,6 @@ exports.getReport = async (
 
             );
 
-        case "audit":
-
-            return await reportRepository.getAuditReport(
-
-                restaurantId,
-
-                from,
-
-                to
-
-            );
-
         default:
 
             throw new Error(
@@ -331,18 +319,6 @@ salesSheet.views = [
     },
 
     {
-        header: "Table",
-        key: "table_name",
-        width: 15
-    },
-
-    {
-        header: "Payment",
-        key: "payment_method",
-        width: 15
-    },
-
-    {
         header: "Subtotal",
         key: "subtotal",
         width: 15
@@ -385,12 +361,6 @@ orders.forEach(order => {
 
         order_number:
             order.order_number,
-
-        table_name:
-            order.table_name,
-
-        payment_method:
-            order.payment_method,
 
         subtotal:
             order.subtotal,
@@ -448,7 +418,7 @@ for (
 
 ) {
 
-    ["D","E","F","G"].forEach(col => {
+    ["B","C","D","E"].forEach(col => {
 
         orderSheet.getCell(
 
@@ -476,7 +446,7 @@ orderSheet.autoFilter = {
 
     from: "A1",
 
-    to: "I1"
+    to: "G1"
 
 };
 
@@ -615,12 +585,6 @@ paymentSheet.columns = [
     },
 
     {
-        header: "Orders",
-        key: "total_orders",
-        width: 15
-    },
-
-    {
         header: "Amount",
         key: "amount",
         width: 18
@@ -633,9 +597,6 @@ payments.forEach(payment => {
 
         payment_method:
             payment.payment_method,
-
-        total_orders:
-            payment.total_orders,
 
         amount:
             payment.amount
@@ -679,7 +640,7 @@ for (
 ) {
 
     paymentSheet.getCell(
-        `C${i}`
+        `B${i}`
     ).numFmt =
     currencyFormat;
 
@@ -700,135 +661,9 @@ paymentSheet.autoFilter = {
 
     from: "A1",
 
-    to: "C1"
-
-};
-const audit =
-    await reportRepository.getAuditReport(
-
-        restaurantId,
-
-        from,
-
-        to
-
-    );
-
-
-const auditSheet =
-    workbook.addWorksheet(
-        "Audit"
-    );
-auditSheet.columns = [
-
-    {
-        header: "Metric",
-        key: "metric",
-        width: 35
-    },
-
-    {
-        header: "Count",
-        key: "value",
-        width: 20
-    }
-
-];
-auditSheet.addRows([
-
-    {
-
-        metric: "Total Orders",
-
-        value: audit.total_orders
-
-    },
-
-    {
-
-        metric: "Paid Orders",
-
-        value: audit.paid_orders
-
-    },
-
-    {
-
-        metric: "Cancelled Orders",
-
-        value: audit.cancelled_orders
-
-    },
-
-    {
-
-        metric: "Kitchen Pending",
-
-        value: audit.kitchen_pending
-
-    },
-
-    {
-
-        metric: "Billing Pending",
-
-        value: audit.billing_pending
-
-    },
-
-    {
-
-        metric: "Open Orders",
-
-        value: audit.open_orders
-
-    }
-
-]);
-auditSheet.getRow(1).font = {
-
-    bold: true,
-
-    color: {
-
-        argb: "FFFFFFFF"
-
-    }
-
-};
-
-auditSheet.getRow(1).fill = {
-
-    type: "pattern",
-
-    pattern: "solid",
-
-    fgColor: {
-
-        argb: "1E3A8A"
-
-    }
-
-};
-auditSheet.views = [
-
-    {
-
-        state: "frozen",
-
-        ySplit: 1
-
-    }
-
-];
-
-auditSheet.autoFilter = {
-
-    from: "A1",
-
     to: "B1"
 
-};    
+};
 
     res.setHeader(
 

@@ -158,7 +158,7 @@ ${pricing.duration_days} Days
 </div>
 
 <div class="text-sm text-slate-500">
-    ${Align.formatCurrency(pricing.price)}
+    ₹${Number(pricing.price).toFixed(2)}
 </div>
 
 </div>

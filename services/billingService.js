@@ -118,6 +118,18 @@ if (
         );
     }
 }
+else
+{
+    await paymentSplitRepository.deleteByOrder(
+        orderId
+    );
+
+    await paymentSplitRepository.create(
+        orderId,
+        paymentMethod,
+        finalTotal
+    );
+}
     await tableRepository.updateStatus(
     order.table_id,
     "available"
