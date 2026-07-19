@@ -16,10 +16,9 @@ if (
     fcmToken =
         Android.getFcmToken();
 
-    console.log(
-        "FCM Token:",
-        fcmToken
-    );
+    alert(
+    "FCM Token: " + fcmToken
+);
 
 }
 
