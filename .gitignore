@@ -19,3 +19,4 @@ uploads/
 backups/
 database/*backup*.db
 database/*before*.db
+config/firebase-service-account.json
