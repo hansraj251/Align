@@ -19,6 +19,7 @@ const subscriptionService =
 exports.login = async (
     username,
     password,
+    fcmToken,
     deviceInfo
 ) => {
 
@@ -127,7 +128,14 @@ if (!allowed) {
 }
 
 await staffRepository.updateLastLogin(staff.id);
+if (fcmToken) {
 
+    await staffRepository.saveFcmToken(
+        staff.id,
+        fcmToken
+    );
+
+}
 sessionId =
     await staffSessionService.createSession({
 

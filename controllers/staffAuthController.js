@@ -8,23 +8,25 @@ exports.login = async (req, res) => {
     try {
 
         const {
-            username,
-            password
-        } = req.body;
+    username,
+    password,
+    fcmToken
+} = req.body;
 
         const result =
-            await staffAuthService.login(
-                username,
-                password,
-                {
-                    device_info:
-                        req.headers["user-agent"],
+    await staffAuthService.login(
+        username,
+        password,
+        fcmToken,
+        {
+            device_info:
+                req.headers["user-agent"],
 
-                    ip_address:
-                        req.headers["x-forwarded-for"] ||
-                        req.ip
-                }
-            );
+            ip_address:
+                req.headers["x-forwarded-for"] ||
+                req.ip
+        }
+    );
 
         return res.json(
             result

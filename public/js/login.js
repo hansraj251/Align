@@ -120,12 +120,13 @@ localStorage.setItem(
         // Staff Login
 
         data = await API.post(
-            "/api/staff-auth/login",
-            {
-                username: loginId,
-                password
-            }
-        );
+    "/api/staff-auth/login",
+    {
+        username: loginId,
+        password,
+        fcmToken
+    }
+);
         
 
         if (!data.success) {
