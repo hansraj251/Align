@@ -61,6 +61,11 @@ const backButtons = [
     )
 
 ].filter(Boolean);
+const processingTickets =
+    new Set();
+
+const processingItems =
+    new Set();
 
 async function setupBackButton() {
 
@@ -421,6 +426,20 @@ async function updateStatus(
     ticketId,
     status
 ) {
+    if (
+    processingTickets.has(
+        ticketId
+    )
+) {
+
+    return;
+
+}
+
+processingTickets.add(
+    ticketId
+);
+ try {
 
     const data = await API.patch(
     `/api/kitchen/${ticketId}/status`,
@@ -460,37 +479,69 @@ Toast.show(
 );
 
     loadKitchenOrders();
+    } finally {
+
+        processingTickets.delete(
+            ticketId
+        );}
 
 }
-async function markItemReady(ticketItemId) {
+async function markItemReady(
+    ticketItemId
+) {
 
-    const data = await API.patch(
-
-        `/api/kitchen/items/${ticketItemId}/status`,
-
-        {
-            status: "ready"
-        }
-
-    );
-
-    if (!data.success) {
-
-        Toast.show(
-            data.message,
-            "error"
-        );
+    if (
+        processingItems.has(
+            ticketItemId
+        )
+    ) {
 
         return;
 
     }
 
-    Toast.show(
-        "Item Ready",
-        "success"
+    processingItems.add(
+        ticketItemId
     );
 
-    loadKitchenOrders();
+    try {
+
+        const data =
+            await API.patch(
+
+                `/api/kitchen/items/${ticketItemId}/status`,
+
+                {
+                    status: "ready"
+                }
+
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Toast.show(
+            "Item Ready",
+            "success"
+        );
+
+        loadKitchenOrders();
+
+    } finally {
+
+        processingItems.delete(
+            ticketItemId
+        );
+
+    }
 
 }
 [
@@ -521,5 +572,6 @@ async function markItemReady(ticketItemId) {
 
             }
         );
+        
 
 });
