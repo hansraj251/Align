@@ -312,16 +312,6 @@ exports.saveFcmToken = async (
     fcmToken
 ) => {
 
-    console.log(
-        "Saving FCM token for staff:",
-        staffId
-    );
-
-    console.log(
-        "FCM Token:",
-        fcmToken
-    );
-
     await db.runAsync(
         `
         UPDATE staff
@@ -341,8 +331,22 @@ exports.saveFcmToken = async (
         ]
     );
 
-    console.log(
-        "FCM token saved successfully."
+};
+
+exports.getFcmToken = async (
+    staffId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            fcm_token
+        FROM staff
+        WHERE id = ?
+        `,
+        [
+            staffId
+        ]
     );
 
 };

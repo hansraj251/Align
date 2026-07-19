@@ -16,6 +16,8 @@ const orderCalculationService =
 const { getIO } = require("../utils/socket"); 
 const orderParticipantRepository =
     require("../repositories/orderParticipantRepository");   
+const notificationService =
+    require("./notificationService");    
 
 exports.createKitchenTicket = async (
     orderId,
@@ -235,6 +237,19 @@ for (const staffId of participants) {
             ticketNumber: ticket.ticket_number
         }
     );
+    await notificationService.sendTicketReadyNotification(
+    staffId,
+    {
+        orderId:
+            ticket.order_id,
+        ticketId:
+            ticket.id,
+        tableName:
+            ticket.table_name,
+        ticketNumber:
+            ticket.ticket_number
+    }
+);
 
 }
     }
@@ -352,6 +367,19 @@ for (const staffId of participants) {
             ticketNumber: item.ticket_number
         }
     );
+    await notificationService.sendTicketReadyNotification(
+    staffId,
+    {
+        orderId:
+            item.order_id,
+        ticketId:
+            item.ticket_id,
+        tableName:
+            item.table_name,
+        ticketNumber:
+            item.ticket_number
+    }
+);
 
 }
 

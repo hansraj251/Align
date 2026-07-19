@@ -65,7 +65,9 @@ const waiterRoutes =
 const superAdminAccountRoutes =
     require(
         "./routes/superAdminAccountRoutes"
-    );              
+    );    
+const firebaseService =
+    require("./services/firebaseService");              
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -166,15 +168,31 @@ app.get("/", (req, res) => {
     res.redirect("/admin/login.html");
 });
 
+
 initializeDatabase()
+    .then(() => {
+
+        firebaseService.initialize();
+
+        const PORT =
+            process.env.PORT || 3000;
+
+        console.log(
+            "🚀 SOCKET VERSION: 2026-07-10-V3"
+        );
+
+        socket.init(server);
+
+        server.listen(
+            PORT,
+            () => {
+
+                console.log(
+                    `🚀 Align Server running on http://localhost:${PORT}`
+                );
+
+            }
+        );
+
+    })
     .catch(console.error);
-
-const PORT = process.env.PORT || 3000;
-
-console.log("🚀 SOCKET VERSION: 2026-07-10-V3");
-
-socket.init(server);
-
-server.listen(PORT, () => {
-    console.log(`🚀 Align Server running on http://localhost:${PORT}`);
-});
