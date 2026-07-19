@@ -40,17 +40,27 @@ exports.initialize = () => {
 
     } else {
 
-        let serviceAccountPath;
+        let serviceAccountPath =
+    "/etc/secrets/firebase-service-account.json";
+    console.log(
+    "Secret exists:",
+    fs.existsSync(
+        "/etc/secrets/firebase-service-account.json"
+    )
+);
+
+console.log(
+    "Secret dir exists:",
+    fs.existsSync(
+        "/etc/secrets"
+    )
+);
 
 if (
-    process.env.NODE_ENV ===
-    "production"
+    !fs.existsSync(
+        serviceAccountPath
+    )
 ) {
-
-    serviceAccountPath =
-        "/etc/secrets/firebase-service-account.json";
-
-} else {
 
     serviceAccountPath =
         path.join(
@@ -61,16 +71,7 @@ if (
         );
 
 }
-
-serviceAccount =
-    JSON.parse(
-        fs.readFileSync(
-            serviceAccountPath,
-            "utf8"
-        )
-    );
-
-    }
+}
 
     initializeApp({
 
