@@ -125,7 +125,17 @@ function renderRows(
 
 <div class="mb-8">
 
-<div class="flex gap-4 overflow-x-auto">
+<div class="relative">
+
+    <button
+        class="row-scroll-left absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-slate-800 p-2 shadow-md">
+
+        <i class="fas fa-chevron-left"></i>
+
+    </button>
+
+    <div
+        class="row-scroll flex gap-4 overflow-x-auto px-10">
 
 ${
 
@@ -215,6 +225,15 @@ No tables
 
 }
 
+ </div>
+
+    <button
+        class="row-scroll-right absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-slate-800 p-2 shadow-md">
+
+        <i class="fas fa-chevron-right"></i>
+
+    </button>
+
 </div>
 
 </div>
@@ -224,7 +243,104 @@ No tables
 
     }
 
+});
+requestAnimationFrame(() => {
+
+    initializeRowScrolls();
+
 });}
+
+function initializeRowScrolls() {
+
+    document
+        .querySelectorAll(".row-scroll")
+        .forEach((row) => {
+
+            const wrapper =
+                row.parentElement;
+
+            const left =
+                wrapper.querySelector(
+                    ".row-scroll-left"
+                );
+
+            const right =
+                wrapper.querySelector(
+                    ".row-scroll-right"
+                );
+
+            function update() {
+
+                const maxScroll =
+                    row.scrollWidth -
+                    row.clientWidth;
+
+                if (maxScroll <= 0) {
+
+                    left.classList.add(
+                        "hidden"
+                    );
+
+                    right.classList.add(
+                        "hidden"
+                    );
+
+                    return;
+
+                }
+
+                left.classList.toggle(
+                    "opacity-40",
+                    row.scrollLeft <= 5
+                );
+
+                left.classList.toggle(
+                    "pointer-events-none",
+                    row.scrollLeft <= 5
+                );
+
+                right.classList.toggle(
+                    "opacity-40",
+                    row.scrollLeft >=
+                        maxScroll - 5
+                );
+
+                right.classList.toggle(
+                    "pointer-events-none",
+                    row.scrollLeft >=
+                        maxScroll - 5
+                );
+
+            }
+
+            left.onclick = () => {
+
+                row.scrollBy({
+                    left: -row.clientWidth * 0.8,
+                    behavior: "smooth"
+                });
+
+            };
+
+            right.onclick = () => {
+
+                row.scrollBy({
+                    left: row.clientWidth * 0.8,
+                    behavior: "smooth"
+                });
+
+            };
+
+            row.addEventListener(
+                "scroll",
+                update
+            );
+
+            update();
+
+        });
+
+}
 
 function openDashboardOrder(
     tableId,

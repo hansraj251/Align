@@ -64,7 +64,6 @@ let tableId =
     );
 
 async function loadTableInfo() {
-
     if (!tableId) {
 
         return;
@@ -76,11 +75,23 @@ async function loadTableInfo() {
             `/api/tables/${tableId}`
         );
 
+
     if (!data.success) {
 
         return;
 
     }
+    const currentTableName =
+    document.getElementById(
+        "currentTableName"
+    );
+
+if (currentTableName) {
+
+    currentTableName.textContent =
+    `${data.table.area_name} • ${data.table.name}`;;
+
+}
 
 }    
 
@@ -151,7 +162,7 @@ async function loadTableStrip() {
 
     occupiedTables.forEach(table => {
 
-        tableStrip.innerHTML += `
+    tableStrip.innerHTML += `
 
 <button
     onclick="openDashboardOrder(
@@ -178,7 +189,14 @@ async function loadTableStrip() {
 
 `;
 
-    });
+});
+
+requestAnimationFrame(() => {
+
+    updateTableStripButtons();
+
+});
+    
 
 }
 
@@ -1957,3 +1975,90 @@ async function switchTable(
     );
 
 }
+
+const tableStrip =
+    document.getElementById(
+        "tableStrip"
+    );
+
+const leftButton =
+    document.getElementById(
+        "tableStripLeft"
+    );
+
+const rightButton =
+    document.getElementById(
+        "tableStripRight"
+    );
+
+function updateTableStripButtons() {
+
+    const maxScroll =
+        tableStrip.scrollWidth -
+        tableStrip.clientWidth;
+
+    if (maxScroll <= 0) {
+
+        leftButton.classList.add(
+            "hidden"
+        );
+
+        rightButton.classList.add(
+            "hidden"
+        );
+
+        return;
+
+    }
+
+    leftButton.classList.toggle(
+        "hidden",
+        tableStrip.scrollLeft <= 5
+    );
+
+    rightButton.classList.toggle(
+        "hidden",
+        tableStrip.scrollLeft >= maxScroll - 5
+    );
+
+}
+
+leftButton.addEventListener(
+    "click",
+    () => {
+
+        tableStrip.scrollBy({
+
+            left: -250,
+
+            behavior: "smooth"
+
+        });
+
+    }
+);
+
+rightButton.addEventListener(
+    "click",
+    () => {
+
+        tableStrip.scrollBy({
+
+            left: 250,
+
+            behavior: "smooth"
+
+        });
+
+    }
+);
+
+tableStrip.addEventListener(
+    "scroll",
+    updateTableStripButtons
+);
+
+window.addEventListener(
+    "resize",
+    updateTableStripButtons
+);
