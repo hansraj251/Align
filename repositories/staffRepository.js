@@ -350,8 +350,9 @@ exports.getFcmToken = async (
     );
 
 };
-exports.getKitchenFcmTokens = async (
-    restaurantId
+exports.getFcmTokensByRole = async (
+    restaurantId,
+    role
 ) => {
 
     return await db.allAsync(
@@ -366,7 +367,7 @@ exports.getKitchenFcmTokens = async (
 
             restaurant_id = ?
 
-            AND role = 'kitchen'
+            AND role = ?
 
             AND status = 'active'
 
@@ -375,7 +376,8 @@ exports.getKitchenFcmTokens = async (
             AND fcm_token != ''
         `,
         [
-            restaurantId
+            restaurantId,
+            role
         ]
     );
 
