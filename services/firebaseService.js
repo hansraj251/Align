@@ -100,32 +100,38 @@ exports.sendToToken = async (
 
     try {
 
-        await getMessaging().send({
+        const response =
+            await getMessaging().send({
 
-            token:
-                fcmToken,
+                token: fcmToken,
 
-            notification: {
+                notification: {
 
-                title,
+                    title,
 
-                body
+                    body
 
-            },
+                },
 
-            data
+                data
 
-        });
+            });
+
+        console.log(
+            "[FCM SENT]",
+            response
+        );
 
     } catch (error) {
 
-    console.error(
-        "FCM send failed:",
-        error.message
-    );
+        console.error(
+            "[FCM FAILED]",
+            error.code,
+            error.message
+        );
 
-    throw error;
+        throw error;
 
-}
+    }
 
 };
