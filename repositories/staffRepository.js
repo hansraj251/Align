@@ -311,6 +311,13 @@ exports.saveFcmToken = async (
     staffId,
     fcmToken
 ) => {
+    console.log(
+    "[SAVE TOKEN]",
+    {
+        staffId,
+        token: fcmToken.substring(0, 25)
+    }
+);
 
     await db.runAsync(
         `
