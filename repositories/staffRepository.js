@@ -311,13 +311,7 @@ exports.saveFcmToken = async (
     staffId,
     fcmToken
 ) => {
-    console.log(
-    "[SAVE TOKEN]",
-    {
-        staffId,
-        token: fcmToken.substring(0, 25)
-    }
-);
+    
 
     await db.runAsync(
         `
@@ -334,6 +328,30 @@ exports.saveFcmToken = async (
         `,
         [
             fcmToken,
+            staffId
+        ]
+    );
+
+};
+
+exports.clearFcmToken = async (
+    staffId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE staff
+
+        SET
+
+            fcm_token = NULL,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
             staffId
         ]
     );
@@ -385,6 +403,30 @@ exports.getFcmTokensByRole = async (
         [
             restaurantId,
             role
+        ]
+    );
+
+};
+
+exports.clearFcmTokenByValue = async (
+    fcmToken
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE staff
+
+        SET
+
+            fcm_token = NULL,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE fcm_token = ?
+        `,
+        [
+            fcmToken
         ]
     );
 

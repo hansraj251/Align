@@ -119,11 +119,13 @@ exports.sendToToken = async (
 
     } catch (error) {
 
-        console.error(
-            "FCM send failed:",
-            error.message
-        );
+    console.error(
+        "FCM send failed:",
+        error.message
+    );
 
-    }
+    throw error;
+
+}
 
 };

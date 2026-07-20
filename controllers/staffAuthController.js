@@ -53,8 +53,9 @@ exports.logout = async (req, res) => {
         if (req.user.sessionId) {
 
             await staffSessionService.closeSession(
-                req.user.sessionId
-            );
+    req.user.sessionId,
+    req.user.staffId
+);
 
         }
 

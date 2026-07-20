@@ -6,6 +6,8 @@ const planLimitRepository =
 
 const staffSessionRepository =
     require("../repositories/staffSessionRepository");
+const staffRepository =
+    require("../repositories/staffRepository");    
 
 exports.canCreateWaiterSession = async (restaurantId) => {
 
@@ -55,7 +57,18 @@ exports.createSession = async (sessionData) => {
 
 };
 
-exports.closeSession = async (sessionId) => {
+exports.closeSession = async (
+    sessionId,
+    staffId
+) => {
+
+    if (staffId) {
+
+        await staffRepository.clearFcmToken(
+            staffId
+        );
+
+    }
 
     return await staffSessionRepository.closeSession(
         sessionId

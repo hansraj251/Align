@@ -1,7 +1,8 @@
 const firebaseService =
     require("./firebaseService");
 const staffRepository =
-    require("../repositories/staffRepository");    
+    require("../repositories/staffRepository");   
+     
 
 exports.sendTicketReadyNotification =
     async (
@@ -27,7 +28,7 @@ exports.sendTicketReadyNotification =
             return;
 
         }
-
+try {
         await firebaseService.sendToToken(
             staff.fcm_token,
             "Order Ready",
@@ -38,7 +39,22 @@ exports.sendTicketReadyNotification =
                 ticketId:
                     String(data.ticketId)
             }
+        );} catch (error) {
+
+    if (
+        error.code ===
+        "messaging/registration-token-not-registered"
+    ) {
+
+        await staffRepository.clearFcmTokenByValue(
+            staff.fcm_token
         );
+
+    }
+
+    throw error;
+
+}
 
     };
 
@@ -64,18 +80,36 @@ exports.sendNewKitchenOrderNotification =
                 "[FCM] Sending Kitchen",
                 staff.fcm_token
             );
-            await firebaseService.sendToToken(
-                staff.fcm_token,
-                "New Kitchen Order",
-                `Table ${data.tableName} has a new order.`,
-                {
-                    orderId:
-                        String(data.orderId),
-                    ticketId:
-                        String(data.ticketId)
-                }
-            );
+            try {
 
+    await firebaseService.sendToToken(
+        staff.fcm_token,
+        "New Kitchen Order",
+        `Table ${data.tableName} has a new order.`,
+        {
+            orderId:
+                String(data.orderId),
+            ticketId:
+                String(data.ticketId)
+        }
+    );
+
+} catch (error) {
+
+    if (
+        error.code ===
+        "messaging/registration-token-not-registered"
+    ) {
+
+        await staffRepository.clearFcmTokenByValue(
+            staff.fcm_token
+        );
+
+    }
+
+    throw error;
+
+}
         }
 
     };    
