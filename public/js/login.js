@@ -16,10 +16,6 @@ if (
     fcmToken =
         Android.getFcmToken();
 
-    alert(
-    "FCM Token: " + fcmToken
-);
-
 }
 
     const loginId = document

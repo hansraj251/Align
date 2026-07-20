@@ -117,11 +117,6 @@ exports.sendToToken = async (
 
             });
 
-        console.log(
-            "[FCM SENT]",
-            response
-        );
-
     } catch (error) {
 
         console.error(

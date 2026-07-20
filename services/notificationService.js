@@ -14,11 +14,7 @@ exports.sendTicketReadyNotification =
             await staffRepository.getFcmToken(
                 staffId
             );
-            console.log(
-    "[FCM READY]",
-    staffId,
-    staff
-);
+            
 
         if (
             !staff ||
@@ -69,17 +65,10 @@ exports.sendNewKitchenOrderNotification =
                 restaurantId,
                 "kitchen"
             );
-            console.log(
-            "[FCM] Kitchen Recipients",
-            restaurantId,
-            staffs
-        );
+           
 
         for (const staff of staffs) {
- console.log(
-                "[FCM] Sending Kitchen",
-                staff.fcm_token
-            );
+ 
             try {
 
     await firebaseService.sendToToken(
