@@ -25,6 +25,8 @@ const restaurantRepository =
     require("../repositories/restaurantRepository");     
 const orderParticipantRepository =
     require("../repositories/orderParticipantRepository");  
+const notificationService =
+    require("./notificationService");    
 
 exports.checkout = async (
     restaurantId,
@@ -289,6 +291,14 @@ const kitchenTicket =
         orderId,
         items
     );
+await notificationService.sendNewKitchenOrderNotification(
+    restaurantId,
+    {
+        orderId,
+        ticketId: kitchenTicket.ticketId,
+        tableName: table.name
+    }
+);    
 
 const io = getIO();
 

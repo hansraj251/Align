@@ -36,3 +36,33 @@ exports.sendTicketReadyNotification =
         );
 
     };
+
+exports.sendNewKitchenOrderNotification =
+    async (
+        restaurantId,
+        data
+    ) => {
+
+        const staffs =
+            await staffRepository.getFcmTokensByRole(
+                restaurantId,
+                "kitchen"
+            );
+
+        for (const staff of staffs) {
+
+            await firebaseService.sendToToken(
+                staff.fcm_token,
+                "New Kitchen Order",
+                `Table ${data.tableName} has a new order.`,
+                {
+                    orderId:
+                        String(data.orderId),
+                    ticketId:
+                        String(data.ticketId)
+                }
+            );
+
+        }
+
+    };    

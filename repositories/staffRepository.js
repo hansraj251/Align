@@ -350,3 +350,33 @@ exports.getFcmToken = async (
     );
 
 };
+exports.getKitchenFcmTokens = async (
+    restaurantId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            fcm_token
+
+        FROM staff
+
+        WHERE
+
+            restaurant_id = ?
+
+            AND role = 'kitchen'
+
+            AND status = 'active'
+
+            AND fcm_token IS NOT NULL
+
+            AND fcm_token != ''
+        `,
+        [
+            restaurantId
+        ]
+    );
+
+};
