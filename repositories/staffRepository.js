@@ -337,6 +337,10 @@ exports.saveFcmToken = async (
 exports.clearFcmToken = async (
     staffId
 ) => {
+    console.log(
+        "[CLEAR TOKEN]",
+        staffId
+    );
 
     await db.runAsync(
         `
