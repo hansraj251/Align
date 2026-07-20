@@ -326,7 +326,7 @@ async function loadKitchenOrders() {
     if (data.tickets.length === 0) {
 
         container.innerHTML = `
-            <div class="col-span-4 rounded-xl bg-white p-8 text-center shadow">
+            <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
 
                  No Pending Orders
 

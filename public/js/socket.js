@@ -69,6 +69,7 @@ socket.on("disconnect", () => {
 socket.on("new-order", async (data) => {
 
     playNotificationSound();
+    
 
     showSocketNotification(
         "🔔 New Order",

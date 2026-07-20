@@ -17,59 +17,95 @@
 
 <body class="bg-slate-100">
 
-<main class="min-h-screen bg-slate-100 p-3 sm:p-5 lg:p-8">
+<main
+class="min-h-screen bg-slate-100
+p-4
+pt-20
+md:p-6
+md:pt-6
+xl:p-8
+xl:pt-8">
 
-        <div class="sticky top-0 z-30 -mx-3 sm:-mx-5 lg:-mx-8 -mt-3 sm:-mt-5 lg:-mt-8 mb-4 bg-slate-100 px-3 sm:px-5 lg:px-8 pt-2 pb-2
-sm:pt-2 sm:pb-2
-lg:pt-3 lg:pb-3 shadow-sm">
+        <div
+class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hidden">
 
-    <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+    <div class="flex items-center gap-2">
 
-        <div class="flex flex-wrap gap-2">
+        <button
+            id="backBtn"
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-semibold text-white">
 
-            <button
-                id="backBtn"
-                class="rounded-lg bg-slate-700 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-slate-800">
+            Home
 
-                Dashboard
+        </button>
 
-            </button>
-            <a
-    href="/admin/kitchen.html"
-    class="rounded-lg bg-indigo-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-indigo-700">
+        <a
+            href="/admin/kitchen.html"
+            class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white">
 
-    Kitchen
-
-        </a>
-         <a
-    href="/admin/table-occupancy.html"
-    class="rounded-lg bg-indigo-600 px-3 sm:px-5 py-2.5 sm:py-3 text-sm sm:text-base font-medium text-white hover:bg-indigo-700">
-
-    Dining Area
+            Kitchen
 
         </a>
 
-        </div>
+        <a
+            href="/admin/table-occupancy.html"
+            class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white">
 
-        <div class="min-w-0 flex-1 text-right">
+            Dining Area
 
-            <h1
-                id="areaTitle"
-                class="text-2xl font-bold md:text-3xl">
+        </a>
 
-                Dining Area
+    </div>
 
-            </h1>
+</div>
+<div
+class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden items-center justify-between bg-slate-100 px-6 py-3 shadow-sm md:flex xl:-mx-8 xl:-mt-8 xl:px-8">
 
-            <p
-                id="areaSubtitle"
-                class="text-sm text-slate-500 md:text-base">
+    <div class="flex items-center gap-3">
 
-                Manage Tables
+        <button
+            id="desktopBackBtn"
+            class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
 
-            </p>
+            Home
 
-        </div>
+        </button>
+
+        <a
+            href="/admin/kitchen.html"
+            class="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white hover:bg-indigo-700">
+
+            Kitchen
+
+        </a>
+
+        <a
+            href="/admin/table-occupancy.html"
+            class="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white hover:bg-indigo-700">
+
+            Dining Area
+
+        </a>
+
+    </div>
+
+    <div class="text-right">
+
+        <h1
+            id="areaTitle"
+            class="text-2xl font-bold">
+
+            Dining Area
+
+        </h1>
+
+        <p
+            id="areaSubtitle"
+            class="text-sm text-slate-500">
+
+            Manage Tables
+
+        </p>
 
     </div>
 
@@ -90,14 +126,26 @@ lg:pt-3 lg:pb-3 shadow-sm">
 <script src="/js/align.js"></script>
 <script>
 
-document
-    .getElementById("backBtn")
-    .onclick = () => {
+[
+    "backBtn",
+    "desktopBackBtn"
+].forEach((id) => {
 
-        window.location.href =
-            "/admin/dashboard.html";
+    const button =
+        document.getElementById(id);
 
-    };
+    if (button) {
+
+        button.onclick = () => {
+
+            window.location.href =
+                "/admin/dashboard.html";
+
+        };
+
+    }
+
+});
 
 </script>
 

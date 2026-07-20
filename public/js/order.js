@@ -79,12 +79,6 @@ async function loadTableInfo() {
 
     }
 
-    document.getElementById(
-        "currentTableName"
-    ).textContent =
-
-        `${data.table.area_name} • ${data.table.name}`;
-
 }    
 
 
@@ -139,6 +133,72 @@ async function loadMenu() {
     applyFilters();
 
 }
+async function loadTableStrip() {
+
+    const response =
+        await API.get(
+            "/api/tables"
+        );
+
+    if (!response.success) {
+
+        return;
+
+    }
+
+    const tableStrip =
+        document.getElementById(
+            "tableStrip"
+        );
+
+    if (!tableStrip) {
+
+        return;
+
+    }
+
+    const occupiedTables =
+        response.tables.filter(table =>
+
+            table.status !== "available"
+
+        );
+
+    tableStrip.innerHTML = "";
+
+    occupiedTables.forEach(table => {
+
+        tableStrip.innerHTML += `
+
+<button
+    onclick="openDashboardOrder(
+        ${table.id},
+        ${table.area_id}
+    )"
+    class="
+        flex-shrink-0
+        rounded-lg
+        px-4
+        py-2
+        text-sm
+        font-medium
+        transition
+        ${
+            Number(table.id) === Number(tableId)
+                ? "bg-blue-600 text-white"
+                : "bg-amber-500 text-white hover:bg-amber-600"
+        }">
+
+    ${table.name}
+
+</button>
+
+`;
+
+    });
+
+}
+
 function renderMenu(items) {
 
     const menu =
@@ -458,6 +518,7 @@ async function initialize() {
     await loadMenu();
 
     await loadExistingOrder();
+    await loadTableStrip();
 
     await loadPaymentModal();
 
@@ -489,6 +550,8 @@ if (checkoutBtn) {
 
 
 loadTableInfo();
+
+loadTableStrip();
 
 initialize();
 async function loadExistingOrder() {
@@ -1355,6 +1418,8 @@ if (cartButton) {
         if (typeof loadTable === "function") {
 
     await loadTable();
+    
+
 
 }
 
@@ -1365,6 +1430,7 @@ if (cartButton) {
         if (typeof loadExistingOrder === "function") {
 
     await loadExistingOrder();
+    await loadTableStrip();
 
 }
 
@@ -1783,6 +1849,7 @@ async function sendToBilling(orderId) {
         );
 
         await loadExistingOrder();
+        await loadTableStrip();
 
         renderCart();
 
@@ -1824,5 +1891,15 @@ async function closeCancelledOrder(ticketId) {
 
     window.location.href =
         `/admin/area.html?id=${areaId}`;
+
+}
+
+function openDashboardOrder(
+    tableId,
+    areaId
+) {
+
+    window.location.href =
+        `/admin/order.html?table=${tableId}&area=${areaId}`;
 
 }
