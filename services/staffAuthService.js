@@ -112,6 +112,9 @@ await staffSessionRepository
     .closeStaffSessions(
         staff.id
     );
+await staffRepository.clearFcmToken(
+    staff.id
+);    
 
 const allowed =
     await staffSessionService
