@@ -15,7 +15,7 @@ async function loadAccounts() {
     if (!token) {
 
         location.href =
-            "/super-admin/login.html";
+            "/login.html";
 
         return;
 

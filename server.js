@@ -165,7 +165,7 @@ app.use(
     superAdminAccountRoutes
 );
 app.get("/", (req, res) => {
-    res.redirect("/admin/login.html");
+    res.redirect("/login.html");
 });
 
 

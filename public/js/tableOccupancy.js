@@ -1,7 +1,7 @@
 if (!API.getToken()) {
 
     window.location.href =
-        "/admin/login.html";
+        "/login.html";
 
 }
 

@@ -515,48 +515,36 @@ document
 
         });
     });
-    const response = await fetch(
-        "/api/billing/pay",
-        {
-            method: "POST",
+    const result = await API.post(
+    "/api/billing/pay",
+    {
+        orderId: currentPaymentOrder.id,
 
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization":
-    "Bearer " + localStorage.getItem("token")
-            },
+        discountType:
+            document.getElementById(
+                "discountType"
+            ).value,
 
-            body: JSON.stringify({
+        discountValue:
+            Number(
+                document.getElementById(
+                    "discountValue"
+                ).value
+            ),
 
-                orderId:
-                    currentPaymentOrder.id,
+        paymentMethod:
+            document.getElementById(
+                "paymentMethod"
+            ).value,
 
-                discountType:
-                    document.getElementById("discountType").value,
+        splitPayment:
+            document.getElementById(
+                "splitPayment"
+            ).checked,
 
-                discountValue:
-                    Number(
-                        document.getElementById("discountValue").value
-                    ),
-
-                paymentMethod:
-                    document.getElementById("paymentMethod").value,
-
-                splitPayment:
-        document.getElementById(
-            "splitPayment"
-        ).checked,
-
-    splitPayments,    
-                
-
-            })
-
-        }
-    );
-
-const result =
-    await response.json();
+        splitPayments
+    }
+);
 
 
 if (!result.success)

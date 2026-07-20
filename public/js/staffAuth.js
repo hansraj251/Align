@@ -45,7 +45,7 @@ const StaffAuth = {
         );
 
         window.location.href =
-            "/staff-login.html";
+            "/login.html";
 
     },
 
@@ -54,7 +54,7 @@ const StaffAuth = {
         if (!this.token()) {
 
             window.location.href =
-                "/staff-login.html";
+                "/login.html";
 
         }
 

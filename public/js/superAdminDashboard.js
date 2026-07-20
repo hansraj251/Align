@@ -6,7 +6,7 @@ async function loadDashboard() {
     if (!token) {
 
         location.href =
-            "/super-admin/login.html";
+            "/login.html";
 
         return;
 

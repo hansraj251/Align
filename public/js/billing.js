@@ -1,13 +1,77 @@
 if (!API.getToken()) {
-    window.location.href = "/admin/login.html";
+    window.location.href = "/login.html";
 }
 
+function initializeBillingPage() {
+
+    const staff =
+        StaffAuth.staff();
+
+    if (
+
+        !staff ||
+        staff.role !== "cashier"
+
+    ) {
+
+        return;
+
+    }
+
+    document
+    .querySelectorAll(".billing-nav")
+    .forEach(element => {
+
+        element.remove();
+
+    });
+
+    document
+        .getElementById(
+            "billingLogoutBtn"
+        )
+        ?.classList.remove("hidden");
+
+    document
+        .getElementById(
+            "billingLogoutBtnMobile"
+        )
+        ?.classList.remove("hidden");
+
+    document
+        .getElementById(
+            "billingLogoutBtn"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                StaffAuth.logout();
+
+            }
+        );
+
+    document
+        .getElementById(
+            "billingLogoutBtnMobile"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                StaffAuth.logout();
+
+            }
+        );
+
+}
 async function loadBillingOrders() {
 
     const data = await API.get("/api/billing");
 
     const container =
         document.getElementById("billingOrders");
+        
 
     container.innerHTML = "";
 window.billingOrders =
@@ -24,7 +88,7 @@ window.billingOrders =
         container.innerHTML = `
             <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
 
-                No Ready Orders
+                No Pending Order
 
             </div>
         `;
@@ -114,12 +178,7 @@ window.billingOrders =
 
 }
 
-loadBillingOrders();
 
-setInterval(
-    loadBillingOrders,
-    5000
-);
 function openBillingPayment(
     orderId
 )
@@ -171,3 +230,12 @@ async function payOrder(
     loadBillingOrders();
 
 }
+
+initializeBillingPage();
+
+loadBillingOrders();
+
+setInterval(
+    loadBillingOrders,
+    5000
+);

@@ -4,8 +4,8 @@ const router = express.Router();
 
 const authMiddleware =
     require("../middlewares/authMiddleware");
-const adminMiddleware =
-    require("../middlewares/adminMiddleware");    
+const billingMiddleware =
+    require("../middlewares/billingMiddleware");  
 
 const receiptController =
     require("../controllers/receiptController");
@@ -13,7 +13,7 @@ const receiptController =
 router.get(
     "/:id",
     authMiddleware,
-    adminMiddleware,
+    billingMiddleware,
     receiptController.getReceipt
 );
 

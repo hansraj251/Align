@@ -96,9 +96,8 @@ case "device":
 
 case "cashier":
 
-    Toast.show(
-        "Cashier module under development"
-    );
+    window.location.href =
+        "/admin/billing.html";
 
     break;
 

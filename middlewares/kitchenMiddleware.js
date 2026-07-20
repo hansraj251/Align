@@ -16,7 +16,8 @@ module.exports = (req, res, next) => {
 
         req.user.role !== "owner" &&
 
-        req.user.role !== "kitchen"
+        req.user.role !== "kitchen" &&
+         req.user.role !== "manager"
 
     ) {
 

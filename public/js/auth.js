@@ -140,7 +140,7 @@ case "device":
                     break;
 
                 case "cashier":
-                    window.location.href = "/cashier/dashboard.html";
+                    window.location.href = "/admin/billing.html";
                     break;
             }
 

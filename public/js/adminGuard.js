@@ -23,20 +23,104 @@
 
    if (
 
-    staff.role !== "owner" &&
-
-    staff.role !== "manager" &&
-
-    staff.role !== "kitchen"
+    staff.role === "owner"
 
 ) {
-
-    window.location.replace(
-        "/waiter/dashboard.html"
-    );
 
     return;
 
 }
+
+if (
+
+    staff.role === "manager"
+
+) {
+
+    const blockedPages = [
+
+        "/admin/settings.html",
+
+        "/admin/staff.html"
+
+    ];
+
+    if (
+
+        blockedPages.includes(
+            window.location.pathname
+        )
+
+    ) {
+
+        window.location.replace(
+            "/admin/dashboard.html"
+        );
+
+    }
+
+    return;
+
+}
+
+if (
+
+    staff.role === "kitchen"
+
+) {
+
+    if (
+
+        !window.location.pathname.endsWith(
+            "/admin/kitchen.html"
+        )
+
+    ) {
+
+        window.location.replace(
+            "/admin/kitchen.html"
+        );
+
+    }
+
+    return;
+
+}
+
+if (
+
+    staff.role === "cashier"
+
+) {
+
+    const allowedPages = [
+
+        "/admin/billing.html",
+
+        "/admin/receipt.html"
+
+    ];
+
+    if (
+
+        !allowedPages.includes(
+            window.location.pathname
+        )
+
+    ) {
+
+        window.location.replace(
+            "/admin/billing.html"
+        );
+
+    }
+
+    return;
+
+}
+
+window.location.replace(
+    "/waiter/dashboard.html"
+);
 
 })();

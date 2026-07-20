@@ -6,6 +6,7 @@ const staffSessionService =
 module.exports = async (req, res, next) => {
 
     const authHeader = req.headers.authorization;
+    
 
     if (!authHeader) {
         return res.status(401).json({
@@ -15,6 +16,7 @@ module.exports = async (req, res, next) => {
     }
 
     const token = authHeader.split(" ")[1];
+    
 
     try {
 

@@ -2,20 +2,21 @@ const express = require("express");
 const router = express.Router();
 
 const authMiddleware = require("../middlewares/authMiddleware");
-const adminMiddleware =
-    require("../middlewares/adminMiddleware");
+const billingMiddleware =
+    require("../middlewares/billingMiddleware");
 const billingController = require("../controllers/billingController");
 
 router.get(
     "/",
     authMiddleware,
-    adminMiddleware,
+    billingMiddleware,
     billingController.getReadyOrders
 );
+
 router.post(
     "/pay",
     authMiddleware,
-    adminMiddleware,
+    billingMiddleware,
     billingController.payOrder
 );
 

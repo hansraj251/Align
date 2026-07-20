@@ -29,9 +29,11 @@ class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hid
 
     <div class="flex items-center gap-2">
 
+    <div class="billing-nav flex items-center gap-2">
+
         <a
             href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800">
+            class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white">
 
             Home
 
@@ -39,7 +41,7 @@ class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hid
 
         <a
             href="/admin/kitchen.html"
-            class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700">
+            class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white">
 
             Kitchen
 
@@ -47,30 +49,36 @@ class="fixed left-0 right-0 top-0 z-40 border-b bg-white px-4 py-3 shadow md:hid
 
     </div>
 
+    <button
+        id="billingLogoutBtnMobile"
+        class="hidden rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white">
+
+        Logout
+
+    </button>
+
+</div>
 </div>
     <div
 class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden bg-slate-100 px-6 py-3 shadow-sm md:block xl:-mx-8 xl:-mt-8 xl:px-8">
 
-    <div class="flex items-center gap-3">
+  <div class="flex items-center gap-3">
 
-        <a
-            href="/admin/dashboard.html"
-            class="rounded-lg bg-slate-700 px-5 py-2 font-medium text-white transition hover:bg-slate-800">
+    <div class="billing-nav flex items-center gap-3">
 
-            Home
-
-        </a>
-
-        <a
-            href="/admin/kitchen.html"
-            class="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700">
-
-            Kitchen
-
-        </a>
+       <a href="/admin/dashboard.html" class="rounded-lg bg-slate-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800"> Home </a> <a href="/admin/kitchen.html" class="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"> Kitchen </a>
 
     </div>
 
+    <button
+        id="billingLogoutBtn"
+        class="hidden rounded-lg bg-red-600 px-5 py-2 font-medium text-white">
+
+        Logout
+
+    </button>
+
+</div>
 </div>
         <div
             id="billingOrders"
@@ -86,6 +94,7 @@ class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden bg-slate-100 px-6 py-3 shadow-s
 <script src="/js/components.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
+<script src="/js/staffAuth.js"></script>
 <script src="/js/adminGuard.js"></script>
 <script src="/js/toast.js"></script>
 <script src="/js/align.js"></script>

@@ -2,7 +2,7 @@ let editingCategoryId = null;
 let allCategories = [];
 const token = localStorage.getItem("token");
 if (!API.getToken()) {
-    window.location.href = "/admin/login.html";
+    window.location.href = "/login.html";
 }
 const isEdit = !!editingCategoryId;
 

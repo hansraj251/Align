@@ -10,7 +10,7 @@ let currentOrder = null;
 let isTakeAway = false;
 
 if (!API.getToken()) {
-    window.location.href = "/admin/login.html";
+    window.location.href = "/login.html";
 }
 
 const params =

@@ -15,7 +15,8 @@ module.exports = (req, res, next) => {
     if (
 
         req.user.role !== "owner" &&
-        req.user.role !== "manager"
+        req.user.role !== "manager" &&
+        req.user.role !== "cashier"
 
     ) {
 

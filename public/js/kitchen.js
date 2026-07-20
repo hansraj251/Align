@@ -40,7 +40,7 @@ function toggleKitchenHeader() {
 }
 
 if (!API.getToken()) {
-    window.location.href = "/admin/login.html";
+    window.location.href = "/login.html";
 }
 const params =
     new URLSearchParams(
@@ -568,7 +568,7 @@ async function markItemReady(
                 );
 
                 window.location.href =
-                    "/admin/login.html";
+                    "/login.html";
 
             }
         );
