@@ -17,9 +17,10 @@ const params =
     new URLSearchParams(
         window.location.search
     );
-const areaId =
-
-    params.get("area"); 
+let areaId =
+    Number(
+        params.get("area")
+    );
 const kitchenBtn =
     document.getElementById("kitchenBtn");
 
@@ -57,8 +58,10 @@ document
         goBack
     );   
 
-const tableId =
-    params.get("table");
+let tableId =
+    Number(
+        params.get("table")
+    );
 
 async function loadTableInfo() {
 
@@ -85,7 +88,7 @@ async function loadTableInfo() {
 const orderId =
     params.get("order");
 
-const cartKey =
+let cartKey =
     tableId
         ? `cart_${tableId}`
         : `order_${orderId}`;
@@ -97,40 +100,20 @@ let existingItems = [];
 
 async function loadMenu() {
 
-    const data =
-        await API.get("/api/menu/items/all");
+    const loaded =
+        await loadMenuData();
 
-    if (!data.success) {
-
-        Toast.show(
-            data.message,
-            "error"
-        );
+    if (!loaded) {
 
         return;
 
     }
 
-    allMenuItems =
-    data.items
-        .filter(
-            item => item.is_available == 1
-        )
-        .sort((a, b) =>
-            a.name.localeCompare(
-                b.name,
-                undefined,
-                {
-                    sensitivity: "base"
-                }
-            )
-        );
-
     renderCategoryFilters();
 
     renderFoodFilters();
 
-    applyFilters();
+    refreshMenu();
 
 }
 async function loadTableStrip() {
@@ -517,12 +500,11 @@ async function initialize() {
 
     await loadMenu();
 
-    await loadExistingOrder();
-    await loadTableStrip();
+await refreshCurrentTable();
 
-    await loadPaymentModal();
+await loadTableStrip();
 
-    renderCart();
+await loadPaymentModal();
 }
 
 
@@ -547,9 +529,6 @@ if (checkoutBtn) {
     );
 
 }
-
-
-loadTableInfo();
 
 loadTableStrip();
 
@@ -1427,24 +1406,11 @@ if (cartButton) {
             "Order sent successfully",
             "success"
         );
-        if (typeof loadExistingOrder === "function") {
+        await refreshCurrentTable();
 
-    await loadExistingOrder();
-    await loadTableStrip();
+await loadTableStrip();
 
-}
-
-if (typeof loadMenu === "function") {
-
-    await loadMenu();
-
-}
-
-if (typeof renderCart === "function") {
-
-    renderCart();
-
-}
+await loadMenu();
 
     }
     catch (err) {
@@ -1894,12 +1860,100 @@ async function closeCancelledOrder(ticketId) {
 
 }
 
-function openDashboardOrder(
-    tableId,
-    areaId
+async function openDashboardOrder(
+    newTableId,
+    newAreaId
 ) {
 
-    window.location.href =
-        `/admin/order.html?table=${tableId}&area=${areaId}`;
+    await switchTable(
+        newTableId,
+        newAreaId
+    );
+
+}
+
+async function refreshCurrentTable() {
+
+    cartKey =
+        tableId
+            ? `cart_${tableId}`
+            : `order_${orderId}`;
+
+    Align.Order.state.cartKey =
+        cartKey;
+
+    Align.Order.state.cart = [];
+
+    Align.Order.cart.load();
+
+    await loadTableInfo();
+
+    await loadExistingOrder();
+
+    renderCart();
+
+}
+function refreshMenu() {
+
+    applyFilters();
+
+}
+async function loadMenuData() {
+
+    const data =
+        await API.get(
+            "/api/menu/items/all"
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return false;
+
+    }
+
+    allMenuItems =
+        data.items
+            .filter(
+                item => item.is_available == 1
+            )
+            .sort(
+                (a, b) =>
+                    a.name.localeCompare(
+                        b.name,
+                        undefined,
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+            );
+
+    return true;
+
+}
+async function switchTable(
+    newTableId,
+    newAreaId
+) {
+
+    tableId =
+        Number(newTableId);
+
+    areaId =
+        Number(newAreaId);
+
+    await refreshCurrentTable();
+
+    await loadTableStrip();
+
+    history.pushState(
+        {},
+        "",
+        `/admin/order.html?table=${tableId}&area=${areaId}`
+    );
 
 }
