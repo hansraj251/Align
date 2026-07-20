@@ -147,7 +147,11 @@ localStorage.setItem(
 
 localStorage.setItem(
     "staff",
-    JSON.stringify(data.staff)
+    JSON.stringify({
+        ...data.staff,
+        restaurant_id: data.restaurant_id,
+        restaurant_name: data.restaurant_name
+    })
 );
 
         localStorage.setItem(

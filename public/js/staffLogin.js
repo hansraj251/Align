@@ -47,14 +47,17 @@ async function login() {
         return;
 
     }
+const staffToSave = {
+    ...data.staff,
+    restaurant_id: data.restaurant_id,
+    restaurant_name: data.restaurant_name
+};
 
-    StaffAuth.save(
+StaffAuth.save(
+    data.token,
+    staffToSave
+);
 
-        data.token,
-
-        data.staff
-
-    );
 localStorage.setItem(
 
     "restaurantName",
@@ -96,8 +99,8 @@ case "device":
 
 case "cashier":
 
-    window.location.href =
-        "/admin/billing.html";
+    // window.location.href =
+    //     "/admin/billing.html";
 
     break;
 

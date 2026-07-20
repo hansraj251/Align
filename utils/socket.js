@@ -37,6 +37,11 @@ socket.on("joinWaiter", ({ restaurantId, staffId }) => {
 
 socket.on("joinBilling", (restaurantId) => {
 
+     console.log(
+        "Billing joined:",
+        restaurantId
+    );
+
     socket.join(`billing_${restaurantId}`);
 
 

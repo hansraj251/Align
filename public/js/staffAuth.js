@@ -1,16 +1,17 @@
 const StaffAuth = {
 
-    save(token, staff) {
+   save(token, staff) {
 
-        localStorage.setItem(
-            "staffToken",
-            token
-        );
+    localStorage.setItem(
+        "staffToken",
+        token
+    );
 
-        localStorage.setItem(
-            "staff",
-            JSON.stringify(staff)
-        );
+    localStorage.setItem(
+        "staff",
+        JSON.stringify(staff)
+    );
+
 
     },
 

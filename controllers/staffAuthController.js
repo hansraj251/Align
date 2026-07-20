@@ -28,6 +28,8 @@ exports.login = async (req, res) => {
         }
     );
 
+    console.log("Controller Result:", result);
+
         return res.json(
             result
         );

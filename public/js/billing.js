@@ -232,8 +232,41 @@ async function payOrder(
 }
 
 initializeBillingPage();
-
 loadBillingOrders();
+const socket = io();
+
+const staff =
+    StaffAuth.staff();
+console.log("STAFF:", staff);
+
+console.log(
+    "RID:",
+    staff?.restaurant_id
+);
+
+console.log(
+    "RAW:",
+    localStorage.getItem("staff")
+);
+   
+
+socket.emit(
+    "joinBilling",
+    staff.restaurant_id
+);
+
+socket.on(
+    "ready-for-billing",
+    async data => {
+
+        Toast.show(
+            `Table ${data.tableName} is ready for billing`
+        );
+
+        await loadBillingOrders();
+
+    }
+);
 
 setInterval(
     loadBillingOrders,
