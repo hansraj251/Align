@@ -20,7 +20,7 @@ if (activeLink) {
     activeLink.classList.remove("hover:bg-slate-100");
 
     activeLink.classList.add(
-        "bg-blue-600",
+        "bg-slate-600",
         "text-white"
     );
 

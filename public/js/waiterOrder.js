@@ -210,7 +210,7 @@ function updateCategorySelection() {
                 parent?.id === "categoryListDesktop";
 
             let activeClass =
-                "bg-blue-600 border-blue-600 text-white";
+                "bg-slate-600 border-blue-600 text-white";
 
             if (selectedFoodType === "veg") {
 
@@ -586,7 +586,7 @@ ${item.id},
 ${item.price}
 )"
 
-class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white">
+class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-600 text-white">
 
 +
 
@@ -644,7 +644,7 @@ ${variant.id},
 '${variant.name.replace(/'/g,"\\'")}'
 )"
 
-class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
+class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-600 text-white">
 
 +
 
@@ -1499,7 +1499,7 @@ if (
 
 <button
     id="sendBillingBtn"
-    class="w-full rounded-xl bg-blue-600 py-3 font-semibold text-white">
+    class="w-full rounded-xl bg-slate-600 py-3 font-semibold text-white">
 
     Send To Billing
 

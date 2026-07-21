@@ -138,7 +138,7 @@ Category name is required.
 
                 buttonText: "OK",
 
-                buttonClass: "bg-blue-600"
+                buttonClass: "bg-slate-600"
 
             }
 

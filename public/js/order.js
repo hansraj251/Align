@@ -179,7 +179,7 @@ async function loadTableStrip() {
         transition
         ${
             Number(table.id) === Number(tableId)
-                ? "bg-blue-600 text-white"
+                ? "bg-slate-600 text-white"
                 : "bg-amber-500 text-white hover:bg-amber-600"
         }">
 
@@ -216,7 +216,13 @@ function renderMenu(items) {
 
 <div class="rounded-lg border border-dashed p-8 text-center text-slate-500">
 
-No menu items found
+<a
+            href="/admin/menu-items.html"
+            class="rounded-lg bg-slate-600 px-5 py-2 font-medium text-white hover:bg-slate-800">
+
+            Add
+
+        </a>
 
 </div>
 
@@ -226,7 +232,21 @@ No menu items found
 
     }
 
-    items.forEach(item => {
+    const normalItems =
+    items.filter(
+        item =>
+            !item.variants ||
+            item.variants.length === 0
+    );
+
+const variantItems =
+    items.filter(
+        item =>
+            item.variants &&
+            item.variants.length > 0
+    );
+
+    [...normalItems, ...variantItems].forEach(item => {
 
         if (
     item.variants &&
@@ -239,27 +259,13 @@ No menu items found
 
         const variantsHtml =
 (item.variants && item.variants.length)
-? item.variants.map(v => `
+? `
 
-<div class="mt-2 flex items-center justify-between rounded-lg border px-2 py-2">
+<div class="mt-3 grid grid-cols-1 gap-2">
 
-    <div>
+${item.variants.map(v => `
 
-        <div class="text-sm font-medium">
-
-            ${v.name}
-
-        </div>
-
-        <div class="text-xs text-slate-500">
-
-            ${Align.formatCurrency(v.price)}
-
-        </div>
-
-    </div>
-
-    <button
+<div
     onclick="addItem(
         ${item.id},
         '${item.name.replace(/'/g,"\\'")}',
@@ -267,18 +273,30 @@ No menu items found
         ${v.id},
         '${v.name.replace(/'/g,"\\'")}'
     )"
-    class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700">
+    class="cursor-pointer rounded-lg border px-3 py-2 transition hover:bg-slate-50">
 
-        +
+    <div class="text-sm font-medium">
 
-    </button>
+        ${v.name}
+
+    </div>
+
+    <div class="mt-1 text-xs text-slate-500">
+
+        ${Align.formatCurrency(v.price)}
+
+    </div>
 
 </div>
 
-`).join("")
+`).join("")}
+
+</div>
+
+`
 : "";
 
-        html += `
+html += `
 
 <div
 class="rounded-xl border border-slate-200 border-l-4
@@ -298,6 +316,7 @@ ${
     : "border-l-slate-300"
 }
 bg-white p-2.5 shadow-sm transition hover:shadow-md lg:p-4">
+
 <div class="min-w-0">
 
 <h3 class="truncate text-sm font-semibold lg:text-base">
@@ -315,25 +334,33 @@ ${item.category}
 ${
 !item.variants || item.variants.length === 0
 ? `
-<div class="mt-2 flex items-center justify-between">
+<div
+    onclick="addItem(
+        ${item.id},
+        '${item.name.replace(/'/g,"\\'")}',
+        ${item.price}
+    )"
+    class="mt-2 cursor-pointer rounded-lg border px-2 py-2 transition hover:bg-slate-50">
 
-<div class="text-sm font-semibold text-blue-600">
+    <div class="flex items-center justify-between">
 
-${Align.formatCurrency(item.price)}
+        <div>
 
-</div>
+            <div class="text-sm font-medium">
 
-<button
-onclick="addItem(
-${item.id},
-'${item.name.replace(/'/g,"\\'")}',
-${item.price}
-)"
-class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700">
+                Price
 
-+
+            </div>
 
-</button>
+            <div class="text-xs text-slate-500">
+
+                ${Align.formatCurrency(item.price)}
+
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 `
@@ -1240,12 +1267,10 @@ function updateOrderAction() {
 
 }
 
-    const hasUnsavedMenuItems =
-    Align.Order.state.cart.some(
-        item => !item.is_quick_item
-    );
+    const hasUnsavedItems =
+    Align.Order.state.cart.length > 0;
 
-if (hasUnsavedMenuItems) {
+if (hasUnsavedItems) {
 
     return;
 
@@ -1950,7 +1975,7 @@ function updateFoodSelection() {
             ) {
 
                 btn.className =
-"food-chip rounded-full bg-blue-600 px-3 py-1.5 text-xs text-white lg:px-4 lg:py-2 lg:text-sm";
+"food-chip rounded-full bg-slate-600 px-3 py-1.5 text-xs text-white lg:px-4 lg:py-2 lg:text-sm";
 
             }
 

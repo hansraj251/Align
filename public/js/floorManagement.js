@@ -74,7 +74,7 @@ function renderAreas() {
     onclick="selectArea(${area.id})"
     class="rounded-lg px-4 py-2 font-medium ${
         selectedAreaId === area.id
-            ? "bg-blue-600 text-white"
+            ? "bg-slate-600 text-white"
             : "border bg-white"
     }">
 
@@ -142,7 +142,7 @@ actionContainer.innerHTML = `
 
 <button
     onclick="openAddTableModal(${currentArea.id}, '${currentArea.name}')"
-    class="rounded bg-blue-600 px-4 py-2 text-white">
+    class="rounded bg-slate-600 px-4 py-2 text-white">
 
     + Add Table
 

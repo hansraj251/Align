@@ -384,7 +384,7 @@ function renderAccountRow(
             <td class="py-3 text-right">
 
                 <button
-    class="edit-account-btn rounded bg-blue-600 px-3 py-1 text-sm text-white"
+    class="edit-account-btn rounded bg-slate-600 px-3 py-1 text-sm text-white"
     data-id="${account.id}">
 
     Edit

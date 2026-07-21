@@ -40,7 +40,7 @@ const Notify = {
 
             "bg-red-600",
 
-            "bg-blue-600"
+            "bg-slate-600"
 
         );
 
@@ -57,7 +57,7 @@ const Notify = {
             case "info":
 
                 toast.classList.add(
-                    "bg-blue-600"
+                    "bg-slate-600"
                 );
 
                 break;

@@ -31,7 +31,7 @@ const Modal = {
 
         saveBtn.className =
             `rounded-lg px-5 py-2 text-white ${
-                options.buttonClass ?? "bg-blue-600"
+                options.buttonClass ?? "bg-slate-600"
             }`;
 
         this.saveHandler = async () => {
@@ -118,7 +118,7 @@ ${message}
 
                 buttonClass:
                     options.buttonClass ??
-                    "bg-blue-600",
+                    "bg-slate-600",
 
                 loadingText:
                     options.loadingText ??

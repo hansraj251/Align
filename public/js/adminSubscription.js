@@ -356,7 +356,7 @@ ${
 
 onclick="upgradePlan()"
 
-class="rounded-xl bg-blue-600 px-6 py-3 text-white hover:bg-blue-700">
+class="rounded-xl bg-slate-600 px-6 py-3 text-white hover:bg-blue-700">
 
 ${buttonText}
 

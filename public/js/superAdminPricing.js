@@ -104,7 +104,7 @@ ${pricing.status}
 
 onclick="editPricing(${pricing.id})"
 
-class="rounded bg-blue-600 px-3 py-2 text-white hover:bg-blue-700">
+class="rounded bg-slate-600 px-3 py-2 text-white hover:bg-blue-700">
 
 Edit
 

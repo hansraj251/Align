@@ -129,7 +129,7 @@ function renderQuickItems() {
                     </div>
 
                     <button
-                        class="add-quick-item rounded-lg bg-blue-600 px-3 py-2 text-white"
+                        class="add-quick-item rounded-lg bg-slate-600 px-3 py-2 text-white"
                         data-id="${item.id}">
 
                         Add

@@ -334,7 +334,7 @@ id="saveSubscriptionBtn"
 
 onclick="saveSubscription()"
 
-class="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
+class="rounded-xl bg-slate-600 px-6 py-3 font-semibold text-white hover:bg-blue-700">
 
 Save Subscription
 
@@ -437,7 +437,7 @@ switch (status) {
             "Save Subscription";
 
         saveButton.classList.add(
-            "bg-blue-600",
+            "bg-slate-600",
             "hover:bg-blue-700"
         );
 

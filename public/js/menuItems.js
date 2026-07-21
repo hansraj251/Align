@@ -1325,7 +1325,7 @@ Previous
 
 class="rounded px-4 py-2 ${
 i === page
-? "bg-blue-600 text-white"
+? "bg-slate-600 text-white"
 : "border"
 }"
 

@@ -106,7 +106,7 @@ async function loadRestaurants() {
 
         onclick="location.href='/super-admin/restaurant.html?id=${r.id}'"
 
-        class="rounded bg-blue-600 px-3 py-2 text-white hover:bg-blue-700">
+        class="rounded bg-slate-600 px-3 py-2 text-white hover:bg-blue-700">
 
         Manage
 

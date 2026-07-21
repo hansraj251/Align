@@ -13,7 +13,7 @@ function showSocketNotification(title, message) {
     const box = document.createElement("div");
 
     box.className =
-        "fixed top-5 right-5 z-[9999] w-80 rounded-xl bg-blue-600 p-4 text-white shadow-2xl transition";
+        "fixed top-5 right-5 z-[9999] w-80 rounded-xl bg-slate-600 p-4 text-white shadow-2xl transition";
 
     box.innerHTML = `
 
