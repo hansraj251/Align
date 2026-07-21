@@ -171,6 +171,7 @@ exports.update = async (
 
     const name =
         (data.name || "").trim();
+        
 
     if (!name) {
 
@@ -179,6 +180,24 @@ exports.update = async (
         );
 
     }
+    const existing =
+    await tableRepository.getByNameExceptId(
+
+        restaurantId,
+
+        name,
+
+        tableId
+
+    );
+
+if (existing) {
+
+    throw new Error(
+        "Table name already exists"
+    );
+
+}
     const capacity =
     Number(data.capacity);
     const displayRow =

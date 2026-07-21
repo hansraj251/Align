@@ -46,7 +46,9 @@ const createSystemMenuItemsTable =
 const seedSystemMenu =
     require("./seed/systemMenuSeed");  
 const createEmailOtpsTable =
-    require("./schema/emailOtps");      
+    require("./schema/emailOtps"); 
+const createQuickItemsTable =
+    require("./schema/quickItems");         
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
@@ -63,6 +65,8 @@ await createTablesTable();
 await createMenuCategoriesTable();
 
 await createMenuItemsTable();
+
+await createQuickItemsTable();
 
 await createStaffTable();
 

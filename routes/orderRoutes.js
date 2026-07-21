@@ -48,4 +48,15 @@ router.patch(
     adminMiddleware,
     orderController.serveOrderItem
 );
+router.delete(
+
+    "/quick-item/:orderItemId",
+
+    authMiddleware,
+
+    adminMiddleware,
+
+    orderController.removeQuickItem
+
+);
 module.exports = router;

@@ -1,26 +1,49 @@
 Align.Order.cart = {
 
-    find(menuItemId, variantId = null) {
+    find(
+    menuItemId = null,
+    variantId = null,
+    quickItemId = null
+) {
 
-        return Align.Order.state.cart.find(item =>
+    return Align.Order.state.cart.find(item => {
+
+        if (quickItemId) {
+
+            return (
+                item.is_quick_item &&
+                item.quick_item_id == quickItemId
+            );
+
+        }
+
+        return (
+
+            !item.is_quick_item &&
 
             item.menu_item_id == menuItemId &&
 
-            (item.variant_id || null) == (variantId || null)
+            (item.variant_id || null) ==
+
+            (variantId || null)
 
         );
 
-    },
+    });
+
+},
 
     add(item) {
 
         const existing = this.find(
 
-            item.menu_item_id,
+    item.menu_item_id,
 
-            item.variant_id
+    item.variant_id,
 
-        );
+    item.quick_item_id
+
+);
 
         if (existing) {
 
@@ -32,99 +55,134 @@ Align.Order.cart = {
 
             Align.Order.state.cart.push({
 
-                menu_item_id: item.menu_item_id,
+    menu_item_id:
+        item.menu_item_id || null,
 
-                item_name: item.item_name,
+    quick_item_id:
+        item.quick_item_id || null,
 
-                variant_id: item.variant_id || null,
+    is_quick_item:
+        item.is_quick_item || 0,
 
-                variant_name: item.variant_name || null,
+    item_name:
+        item.item_name,
 
-                unit_price: item.unit_price,
+    variant_id:
+        item.variant_id || null,
 
-                quantity: 1,
+    variant_name:
+        item.variant_name || null,
 
-                notes: ""
+    unit_price:
+        item.unit_price,
 
-            });
+    quantity: 1,
 
+    notes: ""
+
+});
         }
 
         this.save();
 
     },
 
-    increase(menuItemId, variantId = null) {
+increase(
+    menuItemId = null,
+    variantId = null,
+    quickItemId = null
+) {
 
-        const item = this.find(
-
+    const item =
+        this.find(
             menuItemId,
-
-            variantId
-
+            variantId,
+            quickItemId
         );
 
-        if (!item) return;
+    if (!item) {
 
-        item.quantity++;
+        return;
 
-        this.save();
+    }
 
-    },
+    item.quantity++;
 
-    decrease(menuItemId, variantId = null) {
+    this.save();
 
-        const item = this.find(
+},
 
+ decrease(
+    menuItemId = null,
+    variantId = null,
+    quickItemId = null
+) {
+
+    const item =
+        this.find(
             menuItemId,
-
-            variantId
-
+            variantId,
+            quickItemId
         );
 
-        if (!item) return;
+    if (!item) {
 
-        item.quantity--;
+        return;
 
-        if (item.quantity <= 0) {
+    }
 
-            this.remove(
+    item.quantity--;
 
-                menuItemId,
+    if (item.quantity <= 0) {
 
-                variantId
+        this.remove(
+            menuItemId,
+            variantId,
+            quickItemId
+        );
+
+        return;
+
+    }
+
+    this.save();
+
+},
+
+  remove(
+    menuItemId = null,
+    variantId = null,
+    quickItemId = null
+) {
+
+    Align.Order.state.cart =
+        Align.Order.state.cart.filter(item => {
+
+            if (quickItemId) {
+
+                return !(
+                    item.is_quick_item &&
+                    item.quick_item_id == quickItemId
+                );
+
+            }
+
+            return !(
+
+                !item.is_quick_item &&
+
+                item.menu_item_id == menuItemId &&
+
+                (item.variant_id || null) ==
+                (variantId || null)
 
             );
 
-            return;
+        });
 
-        }
+    this.save();
 
-        this.save();
-
-    },
-
-    remove(menuItemId, variantId = null) {
-
-        Align.Order.state.cart =
-
-            Align.Order.state.cart.filter(item =>
-
-                !(
-
-                    item.menu_item_id == menuItemId &&
-
-                    (item.variant_id || null) ==
-
-                    (variantId || null)
-
-                )
-
-            );
-
-        this.save();
-
-    },
+},
 
     clear() {
 

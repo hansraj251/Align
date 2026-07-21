@@ -28,6 +28,8 @@ const staffAuthRoutes =
 const restaurantRoutes = require("./routes/restaurantRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
+const quickItemRoutes =
+    require("./routes/quickItemRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const tableRoutes = require("./routes/tableRoutes");
 const orderRoutes = require("./routes/orderRoutes");
@@ -71,6 +73,10 @@ const firebaseService =
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
+app.use(
+    "/api/quick-items",
+    quickItemRoutes
+);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/tables", tableRoutes);
 app.use(

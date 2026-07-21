@@ -41,6 +41,40 @@ exports.getByName = async (
 
 };
 
+exports.getByNameExceptId = async (
+
+    restaurantId,
+
+    name,
+
+    tableId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            id
+
+        FROM tables
+
+        WHERE
+
+            restaurant_id = ?
+
+            AND name = ?
+
+            AND id != ?
+        `,
+        [
+            restaurantId,
+            name,
+            tableId
+        ]
+    );
+
+};
+
 exports.create = async (
     restaurantId,
     name,

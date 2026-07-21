@@ -27,6 +27,8 @@ const orderParticipantRepository =
     require("../repositories/orderParticipantRepository");  
 const notificationService =
     require("./notificationService");    
+const quickItemRepository =
+    require("../repositories/quickItemRepository");    
 
 exports.checkout = async (
     restaurantId,
@@ -178,6 +180,80 @@ await orderParticipantRepository.addParticipant(
 let subtotal = 0;
 
     for (const item of items) {
+        
+
+
+       if (item.is_quick_item) {
+
+        console.log("Quick Item Payload:", item);
+
+    const quickItem =
+    await quickItemRepository.getById(
+
+        restaurantId,
+
+        item.quick_item_id
+
+    );
+         console.log("Quick Item DB:", quickItem);
+
+    if (!quickItem) {
+
+        throw new Error(
+            "Quick item not found"
+        );
+
+    }
+
+    if (!quickItem.active) {
+
+        throw new Error(
+            `${quickItem.name} is unavailable`
+        );
+
+    }
+
+    const unitPrice =
+        quickItem.price;
+
+    const totalPrice =
+        unitPrice * item.quantity;
+
+    subtotal += totalPrice;
+
+    const orderItemId =
+        await orderRepository.addOrderItem(
+
+            orderId,
+
+            null,
+
+            quickItem.id,
+
+            1,
+
+            quickItem.name,
+
+            null,
+
+            null,
+
+            null,
+
+            item.quantity,
+
+            unitPrice,
+
+            totalPrice
+
+        );
+
+    item.order_item_id =
+        orderItemId;
+
+    continue;
+
+}
 
         const menu =
             await menuRepository.getMenuItemById(
@@ -234,6 +310,10 @@ if (item.variant_id) {
 
         menu.id,
 
+        null,
+
+        0,
+
         menu.name,
 
         menu.food_type,
@@ -249,6 +329,10 @@ if (item.variant_id) {
         totalPrice
 
     );
+
+item.order_item_id =
+    orderItemId;
+
 
 item.order_item_id = orderItemId;
 
@@ -286,19 +370,26 @@ if (table.system_key === "takeaway") {
 
 }
     
-const kitchenTicket =
-    await kitchenService.createKitchenTicket(
-        orderId,
-        items
+const kitchenItems =
+    items.filter(
+        item => !item.is_quick_item
     );
-await notificationService.sendNewKitchenOrderNotification(
-    restaurantId,
-    {
-        orderId,
-        ticketId: kitchenTicket.ticketId,
-        tableName: table.name
-    }
-);    
+if (kitchenItems.length > 0) {
+
+    const kitchenTicket =
+        await kitchenService.createKitchenTicket(
+            orderId,
+            kitchenItems
+        );
+
+    await notificationService.sendNewKitchenOrderNotification(
+        restaurantId,
+        {
+            orderId,
+            ticketId: kitchenTicket.ticketId,
+            tableName: table.name
+        }
+    );
 
 const io = getIO();
 
@@ -311,7 +402,7 @@ io.to(`kitchen_${restaurantId}`).emit(
         ticketNumber: kitchenTicket.ticketNumber,
         time: Date.now()
     }
-);
+);}
     return {
     success: true,
     message: "Order sent to kitchen",
@@ -404,10 +495,21 @@ exports.sendToBilling = async (
         await kitchenRepository.getActiveTicketsByOrder(
             orderId
         );
+    const orderItems =
+    await orderRepository.getOrderItems(
+        orderId
+    );
+
+const hasQuickItems =
+    orderItems.some(
+        item => item.is_quick_item
+    );    
         
 
     // Pehle hi process ho chuka hai
     if (activeTickets.length === 0) {
+
+    if (!hasQuickItems) {
 
         return {
 
@@ -418,6 +520,8 @@ exports.sendToBilling = async (
         };
 
     }
+
+}
 
     for (const ticket of activeTickets) {
 
@@ -456,6 +560,57 @@ io.to(`billing_${order.restaurant_id}`).emit(
         tableName: order.table_name
     }
 );
+
+    return {
+
+        success: true
+
+    };
+
+};
+
+exports.removeQuickItem = async (
+    restaurantId,
+    orderItemId
+) => {
+
+    const orderItem =
+        await orderRepository.getOrderItemById(
+            orderItemId
+        );
+
+    if (!orderItem) {
+
+        throw new Error(
+            "Quick item not found"
+        );
+
+    }
+
+    if (
+        orderItem.restaurant_id !==
+        restaurantId
+    ) {
+
+        throw new Error(
+            "Invalid quick item"
+        );
+
+    }
+
+    if (
+        !orderItem.is_quick_item
+    ) {
+
+        throw new Error(
+            "Invalid quick item"
+        );
+
+    }
+
+    await orderRepository.removeQuickItem(
+        orderItemId
+    );
 
     return {
 

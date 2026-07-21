@@ -522,6 +522,8 @@ await refreshCurrentTable();
 
 await loadTableStrip();
 
+await loadQuickItemsModal();
+
 await loadPaymentModal();
 }
 
@@ -582,7 +584,14 @@ async function loadExistingOrder() {
 
     existingItems = order.items.map(item => ({
 
-    id: item.menu_item_id,
+    id:
+    item.is_quick_item
+        ? item.quick_item_id
+        : item.menu_item_id,
+    quick_item_id:
+    item.quick_item_id,
+    is_quick_item:
+    item.is_quick_item,    
 
     name: item.name,
 
@@ -769,35 +778,37 @@ ${item.variant_name}
 
     <div class="mt-3 flex items-center gap-3">
 
-        <button
-            onclick="decreaseQty(
-    ${item.menu_item_id},
-    ${item.variant_id || "null"}
-)"
-            class="h-9 w-9 rounded bg-red-500 text-white">
+    <button
+        onclick="decreaseQty(
+            ${item.menu_item_id || "null"},
+            ${item.variant_id || "null"},
+            ${item.quick_item_id || "null"}
+        )"
+        class="h-9 w-9 rounded bg-red-500 text-white">
 
-            -
+        -
 
-        </button>
+    </button>
 
-        <span class="text-lg font-semibold">
+    <span class="text-lg font-semibold">
 
-            ${item.quantity}
+        ${item.quantity}
 
-        </span>
+    </span>
 
-        <button
-            onclick="increaseQty(
-    ${item.menu_item_id},
-    ${item.variant_id || "null"}
-)"
-            class="h-9 w-9 rounded bg-green-600 text-white">
+    <button
+        onclick="increaseQty(
+            ${item.menu_item_id || "null"},
+            ${item.variant_id || "null"},
+            ${item.quick_item_id || "null"}
+        )"
+        class="h-9 w-9 rounded bg-green-600 text-white">
 
-            +
+        +
 
-        </button>
+    </button>
 
-    </div>
+</div>
 
 </div>
 `;
@@ -938,12 +949,22 @@ ${item.variant_name || ""}
 </button>
 ` : ""}
 
+${item.is_quick_item ? `
+<button
+    onclick="removeQuickItem(${item.order_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
+
+    Remove
+
+</button>
+` : ""}
+
 ${canServeItem(item) ? `
 <button
     onclick="serveOrderItem(${item.ready_ticket_item_id})"
     class="mt-2 ml-2 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-green-700">
 
-     ${isTakeAway ? " Handed Over" : " Served"}
+     ${isTakeAway ? " Handed Over" : " Serve"}
 
 </button>
 ` : ""}
@@ -995,6 +1016,15 @@ if (cartSheet) {
     class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white">
 
     Cancel Item
+
+</button>
+` : ""}
+${item.is_quick_item ? `
+<button
+    onclick="removeQuickItem(${item.order_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
+
+    Remove
 
 </button>
 ` : ""}
@@ -1083,7 +1113,6 @@ document.getElementById(
 ).textContent =
 `${totalItems} Item${totalItems === 1 ? "" : "s"}`;
 
-updateOrderAction();
 document.getElementById(
     "mobileTotal"
 ).textContent =
@@ -1099,6 +1128,49 @@ document.getElementById("mobileTotal").textContent =
     Align.formatCurrency(
         Align.Order.cart.total()
     );
+updateOrderAction();
+const hasMenuItems =
+    Align.Order.state.cart.some(
+        item => !item.is_quick_item
+    );
+
+const hasQuickItems =
+    Align.Order.state.cart.some(
+        item => item.is_quick_item
+    );
+
+const onlyQuickItems =
+    hasQuickItems &&
+    !hasMenuItems;
+
+const buttonText =
+    onlyQuickItems
+        ? "Save"
+        : "Send To Kitchen";
+
+const sendButton =
+    document.getElementById(
+        "sendKitchenBtn"
+    );
+
+if (sendButton) {
+
+    sendButton.textContent =
+        buttonText;
+
+}
+
+const checkoutButton =
+    document.getElementById(
+        "checkoutBtn"
+    );
+
+if (checkoutButton) {
+
+    checkoutButton.textContent =
+        buttonText;
+
+}    
 
 }
 function updateOrderAction() {
@@ -1164,6 +1236,10 @@ function updateOrderAction() {
         existingItems.some(
             i => i.cancelled_count > 0
         ); 
+    const hasQuickItems =
+    existingItems.some(
+        i => i.is_quick_item
+    );    
 
     let html = "";
     let handler = null;
@@ -1213,6 +1289,31 @@ else if (
 
     handler = () =>
         sendToBilling(currentOrder.id);
+
+}
+else if (
+
+    !pending &&
+    !preparing &&
+    !ready &&
+    !served &&
+    hasQuickItems
+
+) {
+
+    html = `
+<button
+    class="action-btn w-full rounded-xl bg-green-600 py-3 font-semibold text-white">
+
+    Send To Billing
+
+</button>
+`;
+
+    handler = () =>
+        sendToBilling(
+            currentOrder.id
+        );
 
 }
 
@@ -1274,12 +1375,18 @@ else if (
 
 function increaseQty(
     menuItemId,
-    variantId = null
+    variantId = null,
+    quickItemId = null
 ) {
 
     Align.Order.cart.increase(
+
         menuItemId,
-        variantId
+
+        variantId,
+
+        quickItemId
+
     );
 
     renderCart();
@@ -1288,12 +1395,18 @@ function increaseQty(
 
 function decreaseQty(
     menuItemId,
-    variantId = null
+    variantId = null,
+    quickItemId = null
 ) {
 
     Align.Order.cart.decrease(
+
         menuItemId,
-        variantId
+
+        variantId,
+
+        quickItemId
+
     );
 
     renderCart();
@@ -1328,6 +1441,19 @@ async function sendToKitchen() {
         return;
 
     }
+    const hasMenuItems =
+    Align.Order.state.cart.some(
+        item => !item.is_quick_item
+    );
+
+const hasQuickItems =
+    Align.Order.state.cart.some(
+        item => item.is_quick_item
+    );
+
+const onlyQuickItems =
+    hasQuickItems &&
+    !hasMenuItems;
 
     const sendButton =
         document.getElementById(
@@ -1343,7 +1469,10 @@ async function sendToKitchen() {
 
     sendButton.disabled = true;
 
-    sendButton.textContent = "Sending...";
+    sendButton.textContent =
+    onlyQuickItems
+        ? "Saving..."
+        : "Sending...";
 
 }
 
@@ -1351,7 +1480,10 @@ if (cartButton) {
 
     cartButton.disabled = true;
 
-    cartButton.textContent = "Sending...";
+    cartButton.textContent =
+    onlyQuickItems
+        ? "Saving..."
+        : "Sending...";
 
 }
 
@@ -1359,21 +1491,31 @@ if (cartButton) {
 
         const payload = {
 
-            table_id: Number(tableId),
+    table_id: Number(tableId),
 
-            items: Align.Order.state.cart.map(item => ({
+    items: Align.Order.state.cart.map(item => ({
 
-                menu_item_id: item.menu_item_id,
+        menu_item_id:
+            item.menu_item_id,
 
-                variant_id: item.variant_id,
+        quick_item_id:
+            item.quick_item_id,
 
-                quantity: item.quantity,
+        is_quick_item:
+            item.is_quick_item,
 
-                notes: item.notes || ""
+        variant_id:
+            item.variant_id,
 
-            }))
+        quantity:
+            item.quantity,
 
-        };
+        notes:
+            item.notes || ""
+
+    }))
+
+};
 
         const data =
             await API.post(
@@ -1421,9 +1563,11 @@ if (cartButton) {
 }
 
         Toast.show(
-            "Order sent successfully",
-            "success"
-        );
+    onlyQuickItems
+        ? "Quick items saved"
+        : "Order sent successfully",
+    "success"
+);
         await refreshCurrentTable();
 
 await loadTableStrip();
@@ -1446,7 +1590,9 @@ await loadMenu();
     sendButton.disabled = false;
 
     sendButton.textContent =
-        "Send To Kitchen";
+    onlyQuickItems
+        ? "Save"
+        : "Send To Kitchen";
 
 }
 
@@ -1455,7 +1601,9 @@ if (cartButton) {
     cartButton.disabled = false;
 
     cartButton.textContent =
-        "Send To Kitchen";
+    onlyQuickItems
+        ? "Save"
+        : "Send To Kitchen";
 
 }
 
@@ -1806,6 +1954,48 @@ async function printBill(orderId)
     window.location.href =
         `/admin/billing.html?order=${orderId}`;
 }
+async function removeQuickItem(
+    orderItemId
+) {
+
+    try {
+
+        const data =
+            await API.delete(
+                `/api/orders/quick-item/${orderItemId}`
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Toast.show(
+            "Quick item removed",
+            "success"
+        );
+
+        await loadExistingOrder();
+
+        renderCart();
+
+    }
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
 
 async function sendToBilling(orderId) {
 
@@ -2062,3 +2252,11 @@ window.addEventListener(
     "resize",
     updateTableStripButtons
 );
+document
+    .getElementById(
+        "quickItemsBtn"
+    )
+    .addEventListener(
+        "click",
+        openQuickItemsModal
+    );

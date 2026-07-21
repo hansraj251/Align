@@ -82,15 +82,29 @@ exports.updateTotals = async (
 };
 
 exports.addOrderItem = async (
+
     orderId,
+
     menuItemId,
+
+    quickItemId,
+
+    isQuickItem,
+
     itemName,
+
     foodType,
+
     variantId,
+
     variantName,
+
     quantity,
+
     unitPrice,
+
     totalPrice
+
 ) => {
 
     const result = await db.runAsync(
@@ -98,29 +112,43 @@ exports.addOrderItem = async (
         INSERT INTO order_items
         (
             order_id,
-            menu_item_id,
-            item_name,
-            food_type,
-            variant_id,
-            variant_name,
-            quantity,
-            unit_price,
-            total_price
+menu_item_id,
+quick_item_id,
+is_quick_item,
+item_name,
+food_type,
+variant_id,
+variant_name,
+quantity,
+unit_price,
+total_price
         )
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
-            orderId,
-            menuItemId,
-            itemName,
-            itemName ? foodType : foodType,
-            variantId,
-            variantName,
-            quantity,
-            unitPrice,
-            totalPrice
-        ]
+    orderId,
+
+    menuItemId,
+
+    quickItemId,
+
+    isQuickItem,
+
+    itemName,
+
+    foodType,
+
+    variantId,
+
+    variantName,
+
+    quantity,
+
+    unitPrice,
+
+    totalPrice
+]
     );
 
     return result.lastID;
@@ -519,6 +547,10 @@ exports.getOrderItems = async (
 
             oi.menu_item_id,
 
+            oi.quick_item_id,
+
+            oi.is_quick_item,
+
             oi.item_name AS name,
 
             oi.variant_name,
@@ -882,6 +914,54 @@ exports.updateOrderTotals = async (
             totals.tax,
             totals.total,
             orderId
+        ]
+    );
+
+};
+exports.removeQuickItem = async (
+    orderItemId
+) => {
+
+    return await db.runAsync(
+        `
+        DELETE FROM
+            order_items
+        WHERE
+            id = ?
+            AND is_quick_item = 1
+        `,
+        [
+            orderItemId
+        ]
+    );
+
+};
+exports.getOrderItemById = async (
+    orderItemId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            oi.id,
+
+            oi.order_id,
+
+            oi.is_quick_item,
+
+            o.restaurant_id
+
+        FROM order_items oi
+
+        INNER JOIN orders o
+            ON o.id = oi.order_id
+
+        WHERE
+            oi.id = ?
+        `,
+        [
+            orderItemId
         ]
     );
 

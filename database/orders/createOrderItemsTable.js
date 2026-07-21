@@ -25,6 +25,10 @@ async function createOrderItemsTable() {
 
         status TEXT DEFAULT 'pending',
 
+        quick_item_id INTEGER,
+
+        is_quick_item INTEGER DEFAULT 0,
+
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
         FOREIGN KEY (order_id)
