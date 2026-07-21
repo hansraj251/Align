@@ -1,6 +1,13 @@
 async function loadSidebarRestaurant() {
 
-    const token = localStorage.getItem("token");
+    const token =
+    localStorage.getItem("token")
+    ||
+    localStorage.getItem("staffToken");
+
+if (!token) {
+    return;
+}
 
     if (!token) return;
 
@@ -100,6 +107,27 @@ function initializeSidebar() {
             "click",
             Auth.logout
         );
+
+    }
+
+    const staff =
+    JSON.parse(
+        localStorage.getItem("staff")
+    );
+
+if (
+    staff &&
+    staff.role === "manager"
+) {
+
+    document
+        .getElementById("staffMenu")
+        ?.classList.add("hidden");
+
+    document
+        .getElementById("settingsMenu")
+        ?.classList.add("hidden");
+
 
     }
 

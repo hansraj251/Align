@@ -188,38 +188,31 @@ async function saveQuickItem() {
 
     const body = {
 
-        name:
-            document
-                .getElementById(
-                    "quickItemName"
-                )
-                .value
-                .trim(),
+    name:
+        document
+            .getElementById(
+                "quickItemName"
+            )
+            .value
+            .trim(),
 
-        price:
-            document
-                .getElementById(
-                    "quickItemPrice"
-                )
-                .value,
+    price:
+        document
+            .getElementById(
+                "quickItemPrice"
+            )
+            .value,
 
-        sort_order:
-            document
-                .getElementById(
-                    "quickItemSortOrder"
-                )
-                .value,
+    sort_order:
+        document
+            .getElementById(
+                "quickItemSortOrder"
+            )
+            .value,
 
-        active:
-            document
-                .getElementById(
-                    "quickItemActive"
-                )
-                .checked
-                ? 1
-                : 0
+    active: 1
 
-    };
+};
 
     if (!body.name) {
 
@@ -594,4 +587,56 @@ document
         "click",
         cancelEdit
     );
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const tableId =
+    params.get("table");
+
+const areaId =
+    params.get("area");
+
+if (
+    tableId &&
+    areaId
+) {
+
+    const orderUrl =
+        `/admin/order.html?table=${tableId}&area=${areaId}`;
+
+    const desktopButton =
+        document.getElementById(
+            "backToOrderBtn"
+        );
+
+    const mobileButton =
+        document.getElementById(
+            "backToOrderBtnMobile"
+        );
+
+    if (desktopButton) {
+
+        desktopButton.href =
+            orderUrl;
+
+        desktopButton.classList.remove(
+            "hidden"
+        );
+
+    }
+
+    if (mobileButton) {
+
+        mobileButton.href =
+            orderUrl;
+
+        mobileButton.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}    
 loadQuickItems();    

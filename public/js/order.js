@@ -523,6 +523,18 @@ await refreshCurrentTable();
 await loadTableStrip();
 
 await loadQuickItemsModal();
+updateQuickItemLink();
+const addQuickItemButton =
+        document.getElementById(
+            "addQuickItemButton"
+        );
+
+    if (addQuickItemButton) {
+
+        addQuickItemButton.href =
+            `/admin/quick-items.html?table=${tableId}&area=${areaId}`;
+
+    }
 
 await loadPaymentModal();
 }
@@ -552,7 +564,25 @@ if (checkoutBtn) {
 
 loadTableStrip();
 
+
 initialize();
+function updateQuickItemLink() {
+
+    const addQuickItemButton =
+        document.getElementById(
+            "addQuickItemButton"
+        );
+
+    if (!addQuickItemButton) {
+
+        return;
+
+    }
+
+    addQuickItemButton.href =
+        `/admin/quick-items.html?table=${tableId}&area=${areaId}`;
+
+}
 async function loadExistingOrder() {
 
     if (!tableId) return;
@@ -2231,6 +2261,7 @@ async function switchTable(
         "",
         `/admin/order.html?table=${tableId}&area=${areaId}`
     );
+updateQuickItemLink();     
 
 }
 
@@ -2328,3 +2359,4 @@ document
         "click",
         openQuickItemsModal
     );
+   

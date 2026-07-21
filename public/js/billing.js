@@ -237,18 +237,6 @@ const socket = io();
 
 const staff =
     StaffAuth.staff();
-console.log("STAFF:", staff);
-
-console.log(
-    "RID:",
-    staff?.restaurant_id
-);
-
-console.log(
-    "RAW:",
-    localStorage.getItem("staff")
-);
-   
 
 socket.emit(
     "joinBilling",

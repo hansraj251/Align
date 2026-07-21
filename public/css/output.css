@@ -1267,7 +1267,7 @@
   .bg-indigo-500 {
     background-color: var(--color-indigo-500);
   }
-  .bg-indigo-600 {
+  .bg-slate-600 {
     background-color: var(--color-indigo-600);
   }
   .bg-orange-50 {
@@ -1279,7 +1279,7 @@
   .bg-orange-500 {
     background-color: var(--color-orange-500);
   }
-  .bg-orange-600 {
+  .bg-slate-600 {
     background-color: var(--color-orange-600);
   }
   .bg-purple-600 {
@@ -1318,7 +1318,7 @@
   .bg-slate-600 {
     background-color: var(--color-slate-600);
   }
-  .bg-slate-700 {
+  .bg-slate-600 {
     background-color: var(--color-slate-700);
   }
   .bg-slate-800 {
@@ -1916,7 +1916,7 @@
       }
     }
   }
-  .hover\:bg-orange-600 {
+  .hover\:bg-slate-600 {
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-orange-600);
@@ -1993,7 +1993,7 @@
       }
     }
   }
-  .hover\:bg-slate-700 {
+  .hover\:bg-slate-600 {
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-slate-700);

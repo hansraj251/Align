@@ -485,11 +485,22 @@ async function processPayment(
 )
 {
     if (isPaymentProcessing)
-{
-    return;
-}
+    {
+        return;
+    }
 
-isPaymentProcessing = true;
+    isPaymentProcessing = true;
+
+    let receiptWindow = null;
+
+    if (shouldPrint)
+    {
+        receiptWindow =
+            window.open(
+                "",
+                "_blank"
+            );
+    }
 
     const splitPayments = [];
 
@@ -549,6 +560,8 @@ document
 
 if (!result.success)
 {
+    receiptWindow?.close();
+
     Toast.show(
         result.message,
         "error"
@@ -566,10 +579,19 @@ closePaymentModal();
 
 if (shouldPrint)
 {
-    window.open(
-        `/admin/receipt.html?orderId=${orderId}`,
-        "_blank"
-    );
+    if (receiptWindow)
+    {
+        receiptWindow.location =
+            `/admin/receipt.html?orderId=${orderId}`;
+    }
+
+    else
+    {
+        window.open(
+            `/admin/receipt.html?orderId=${orderId}`,
+            "_blank"
+        );
+    }
 
     window.location.reload();
 

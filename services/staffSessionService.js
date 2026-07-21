@@ -121,3 +121,16 @@ exports.logoutSession = async (
     );
 
 };
+exports.closeStaffSessions = async (
+    staffId
+) => {
+
+    await staffRepository.clearFcmToken(
+        staffId
+    );
+
+    return await staffSessionRepository.closeStaffSessions(
+        staffId
+    );
+
+};

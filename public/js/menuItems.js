@@ -211,7 +211,7 @@ class="rounded-xl border bg-white p-5 shadow-sm transition hover:shadow-md">
         </button>
 
         <button
-            class="variants-item rounded-lg bg-indigo-600 py-2 text-white transition hover:bg-indigo-700"
+            class="variants-item rounded-lg bg-slate-600 py-2 text-white transition hover:bg-indigo-700"
 
             data-id="${item.id}"
             data-name="${encodeURIComponent(item.name)}">

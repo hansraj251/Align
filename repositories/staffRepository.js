@@ -432,3 +432,26 @@ exports.clearFcmTokenByValue = async (
     );
 
 };
+exports.getStaffById = async (
+    restaurantId,
+    staffId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            status
+        FROM
+            staff
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            staffId,
+            restaurantId
+        ]
+    );
+
+};

@@ -426,7 +426,7 @@ switch (status) {
 
         saveButton.classList.add(
             "bg-orange-500",
-            "hover:bg-orange-600"
+            "hover:bg-slate-600"
         );
 
         break;

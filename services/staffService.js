@@ -2,6 +2,8 @@ const bcrypt =
     require("bcrypt");
 const staffRepository =
     require("../repositories/staffRepository");
+const staffSessionService =
+    require("./staffSessionService");    
 
 function generateStaffCode(lastCode) {
 
@@ -145,6 +147,19 @@ exports.updateStaff = async (
     staffId,
     staff
 ) => {
+    const existingStaff =
+    await staffRepository.getStaffById(
+        restaurantId,
+        staffId
+    );
+
+if (!existingStaff) {
+
+    throw new Error(
+        "Staff not found"
+    );
+
+}
 
     const changes =
         await staffRepository.updateStaff(
@@ -181,6 +196,17 @@ exports.updateStaff = async (
         );
 
     }
+    if (
+    existingStaff.status === "active"
+    &&
+    staff.status === "inactive"
+) {
+
+    await staffSessionService.closeStaffSessions(
+        staffId
+    );
+
+}
 
     return {
 
