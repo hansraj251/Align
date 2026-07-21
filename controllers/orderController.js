@@ -309,3 +309,33 @@ exports.removeQuickItem = async (
     }
 
 };
+
+exports.closeOrder = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await orderService.closeOrder(
+                req.user.restaurantId,
+                Number(req.params.orderId)
+            );
+
+        res.json(result);
+
+    }
+    catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

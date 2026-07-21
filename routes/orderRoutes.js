@@ -59,4 +59,10 @@ router.delete(
     orderController.removeQuickItem
 
 );
+router.patch(
+    "/:orderId/close",
+    authMiddleware,
+    adminMiddleware,
+    orderController.closeOrder
+);
 module.exports = router;

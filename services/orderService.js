@@ -29,6 +29,7 @@ const notificationService =
     require("./notificationService");    
 const quickItemRepository =
     require("../repositories/quickItemRepository");    
+    
 
 exports.checkout = async (
     restaurantId,
@@ -607,9 +608,62 @@ exports.removeQuickItem = async (
         );
 
     }
-
+    const changes =
     await orderRepository.removeQuickItem(
         orderItemId
+    );
+
+if (changes === 0) {
+
+    throw new Error(
+        "Quick item could not be removed"
+    );
+
+}
+
+const totals =
+    await orderCalculationService.calculateOrderTotals(
+        orderItem.order_id
+    );
+
+await orderRepository.updateOrderTotals(
+    orderItem.order_id,
+    totals
+);
+
+return {
+    success: true
+};
+    
+
+};
+
+exports.closeOrder = async (
+    restaurantId,
+    orderId
+) => {
+
+    const order =
+        await orderRepository.getOrderDetails(
+            restaurantId,
+            orderId
+        );
+
+    if (!order) {
+
+        throw new Error(
+            "Order not found"
+        );
+
+    }
+
+    await orderRepository.closeOrder(
+        orderId
+    );
+
+    await tableRepository.updateStatus(
+        order.table_id,
+        "available"
     );
 
     return {

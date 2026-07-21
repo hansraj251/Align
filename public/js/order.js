@@ -563,8 +563,16 @@ async function loadExistingOrder() {
         );    
 
     if (!active.hasActiveOrder) {
-        return;
-    }
+
+    currentOrder = null;
+
+    existingItems = [];
+
+    renderCart();
+
+    return;
+
+}
 
     const order =
         await API.get(
@@ -706,6 +714,8 @@ document
 
     document.getElementById("mobileTotal").textContent =
         Align.formatCurrency(0);
+
+    updateOrderAction();    
 
     return;
 
@@ -902,12 +912,6 @@ ${item.variant_name}
 
 if (existingItems.length > 0) {
 
-   
-    if (cartSheet) {
-
-}
-    
-
     existingItems.forEach(item => {
 
         const total =
@@ -949,7 +953,8 @@ ${item.variant_name || ""}
 </button>
 ` : ""}
 
-${item.is_quick_item ? `
+${item.is_quick_item &&
+  currentOrder?.status !== "ready_for_billing" ? `
 <button
     onclick="removeQuickItem(${item.order_item_id})"
     class="mt-2 ml-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
@@ -1019,7 +1024,8 @@ if (cartSheet) {
 
 </button>
 ` : ""}
-${item.is_quick_item ? `
+${item.is_quick_item &&
+  currentOrder?.status !== "ready_for_billing" ? `
 <button
     onclick="removeQuickItem(${item.order_item_id})"
     class="mt-2 ml-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-700">
@@ -1056,10 +1062,6 @@ ${item.is_quick_item ? `
 
     });
 
-    if (cartSheet) {
-
-
-}
 
 }    
 
@@ -1107,19 +1109,6 @@ if (mobileBar) {
     }
 
 }
-
-document.getElementById(
-    "mobileItemCount"
-).textContent =
-`${totalItems} Item${totalItems === 1 ? "" : "s"}`;
-
-document.getElementById(
-    "mobileTotal"
-).textContent =
-Align.formatCurrency(
-    Align.Order.cart.total()
-);
-
 
 document.getElementById("mobileItemCount").textContent =
     `${totalItems} Item${totalItems === 1 ? "" : "s"}`;
@@ -1206,11 +1195,32 @@ function updateOrderAction() {
 
     });
 
-    if (existingItems.length === 0) {
+    const quickItemsRemoved =
+    existingItems.length === 0 &&
+    Align.Order.state.cart.length === 0 &&
+    currentOrder &&
+    currentOrder.status === "sent_to_kitchen";
 
-        return;
+    if (
+    existingItems.length === 0 &&
+    !quickItemsRemoved
+) {
 
-    }
+    return;
+
+}
+
+    const hasUnsavedMenuItems =
+    Align.Order.state.cart.some(
+        item => !item.is_quick_item
+    );
+
+if (hasUnsavedMenuItems) {
+
+    return;
+
+}
+    
 
     const pending =
         existingItems.some(
@@ -1317,17 +1327,21 @@ else if (
 
 }
 
+
     // Close Order
 
     else if (
 
+    (
         !pending &&
         !preparing &&
         !ready &&
         !served &&
         cancelled
+    ) ||
+    quickItemsRemoved
 
-    ) {
+) {
 
         html = `
 <button
@@ -1338,10 +1352,22 @@ else if (
 </button>
 `;
 
-       handler = () =>
-    closeCancelledOrder(
-        currentOrder.ticket_id
-    );
+       if (quickItemsRemoved) {
+
+    handler = () =>
+        closeOrder(
+            currentOrder.id
+        );
+
+}
+else {
+
+    handler = () =>
+        closeCancelledOrder(
+            currentOrder.ticket_id
+        );
+
+}
 
     }
 
@@ -1964,6 +1990,7 @@ async function removeQuickItem(
             await API.delete(
                 `/api/orders/quick-item/${orderItemId}`
             );
+            
 
         if (!data.success) {
 
@@ -1984,6 +2011,47 @@ async function removeQuickItem(
         await loadExistingOrder();
 
         renderCart();
+
+    }
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
+async function closeOrder(
+    orderId
+) {
+
+    try {
+
+        const data =
+            await API.patch(
+                `/api/orders/${orderId}/close`
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Toast.show(
+            "Order Closed",
+            "success"
+        );
+
+        window.location.href =
+            `/admin/area.html?id=${areaId}`;
 
     }
     catch (err) {

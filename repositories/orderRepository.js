@@ -922,18 +922,21 @@ exports.removeQuickItem = async (
     orderItemId
 ) => {
 
-    return await db.runAsync(
-        `
-        DELETE FROM
-            order_items
-        WHERE
-            id = ?
-            AND is_quick_item = 1
-        `,
-        [
-            orderItemId
-        ]
-    );
+    const result =
+        await db.runAsync(
+            `
+            DELETE FROM
+                order_items
+            WHERE
+                id = ?
+                AND is_quick_item = 1
+            `,
+            [
+                orderItemId
+            ]
+        );
+console.log(result);
+    return result.changes;
 
 };
 exports.getOrderItemById = async (
@@ -962,6 +965,24 @@ exports.getOrderItemById = async (
         `,
         [
             orderItemId
+        ]
+    );
+
+};
+exports.closeOrder = async (
+    orderId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE orders
+        SET
+            status = 'closed'
+        WHERE
+            id = ?
+        `,
+        [
+            orderId
         ]
     );
 
