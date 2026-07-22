@@ -25,6 +25,10 @@ async function createOrderItemsTable() {
 
         status TEXT DEFAULT 'pending',
 
+        variant_id INTEGER,
+
+        variant_name TEXT,
+
         quick_item_id INTEGER,
 
         is_quick_item INTEGER DEFAULT 0,

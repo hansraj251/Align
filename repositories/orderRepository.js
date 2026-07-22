@@ -82,77 +82,64 @@ exports.updateTotals = async (
 };
 
 exports.addOrderItem = async (
-
     orderId,
-
     menuItemId,
-
     quickItemId,
-
     isQuickItem,
-
     itemName,
-
     foodType,
-
     variantId,
-
     variantName,
-
     quantity,
-
     unitPrice,
-
     totalPrice
-
 ) => {
+
+    const schema = await db.allAsync(
+        "PRAGMA table_info(order_items)"
+    );
+
+    console.log(
+        "Runtime columns:",
+        schema.map(c => c.name)
+    );
+
+    
 
     const result = await db.runAsync(
         `
         INSERT INTO order_items
         (
             order_id,
-menu_item_id,
-quick_item_id,
-is_quick_item,
-item_name,
-food_type,
-variant_id,
-variant_name,
-quantity,
-unit_price,
-total_price
+            menu_item_id,
+            quick_item_id,
+            is_quick_item,
+            item_name,
+            food_type,
+            variant_id,
+            variant_name,
+            quantity,
+            unit_price,
+            total_price
         )
-        VALUES
-(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         [
-    orderId,
-
-    menuItemId,
-
-    quickItemId,
-
-    isQuickItem,
-
-    itemName,
-
-    foodType,
-
-    variantId,
-
-    variantName,
-
-    quantity,
-
-    unitPrice,
-
-    totalPrice
-]
+            orderId,
+            menuItemId,
+            quickItemId,
+            isQuickItem,
+            itemName,
+            foodType,
+            variantId,
+            variantName,
+            quantity,
+            unitPrice,
+            totalPrice
+        ]
     );
 
     return result.lastID;
-
 };
 exports.updateOrderNumber = async (
     orderId,

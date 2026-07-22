@@ -48,7 +48,15 @@ const seedSystemMenu =
 const createEmailOtpsTable =
     require("./schema/emailOtps"); 
 const createQuickItemsTable =
-    require("./schema/quickItems");         
+    require("./schema/quickItems");  
+const createOrderStaffParticipantsTable =
+    require("./schema/orderStaffParticipants"); 
+const createPaymentSplitsTable =
+    require("./schema/paymentSplits"); 
+const createStaffSessionsTable =
+    require("./schema/staffSessions");
+const createSubscriptionOrdersTable =
+    require("./schema/subscriptionOrders");                     
 async function initializeDatabase() {
     console.log("📦 Initializing database...");
 
@@ -70,6 +78,8 @@ await createQuickItemsTable();
 
 await createStaffTable();
 
+await createStaffSessionsTable();
+
 await createSystemCategoriesTable();
 
 await createSystemMenuItemsTable();
@@ -80,6 +90,8 @@ await createPlanPricingTable();
 
 await createPlanLimitsTable();
 
+await createSubscriptionOrdersTable();
+
 await createSubscriptionRequestsTable();
 
 await createSuperAdminTable();
@@ -87,6 +99,10 @@ await createSuperAdminTable();
 await createOrdersTable();
 
 await createOrderItemsTable();
+
+await createOrderStaffParticipantsTable();
+
+await createPaymentSplitsTable();
 
 await createKitchenTables();
 

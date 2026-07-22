@@ -35,12 +35,19 @@ async function createOrdersTable() {
 
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
+            created_by_staff_id INTEGER,
+
+            created_by_role TEXT,
+
             FOREIGN KEY (restaurant_id)
                 REFERENCES restaurants(id),
 
             FOREIGN KEY (table_id)
                 REFERENCES tables(id)
                 ON DELETE SET NULL
+            FOREIGN KEY (created_by_staff_id)
+                REFERENCES staff(id)
+                ON DELETE SET NULL    
 
         )
     `;

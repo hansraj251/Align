@@ -65,6 +65,30 @@ const migrations = [
     require(
         "./012_upgrade_staff_auth"
     )
+],
+[
+    "013_add_order_creator_columns",
+    require("./013_add_order_creator_columns")
+],
+[
+    "014_create_order_staff_participants",
+    require("./014_create_order_staff_participants")
+],
+[
+    "015_create_payment_splits",
+    require("./015_create_payment_splits")
+],
+[
+    "016_create_staff_sessions",
+    require("./016_create_staff_sessions")
+],
+[
+    "017_create_subscription_orders",
+    require("./017_create_subscription_orders")
+],
+[
+    "018_add_quick_item_columns_to_order_items",
+    require("./018_add_quick_item_columns_to_order_items")
 ]
 
 ];

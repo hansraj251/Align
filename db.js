@@ -15,6 +15,12 @@ const db = new sqlite3.Database(dbPath, (err) => {
         db.run("PRAGMA foreign_keys = ON;");
     }
 });
+
+
+const fs = require("fs");
+
+console.log("Using DB:", dbPath);
+console.log("Resolved:", fs.realpathSync(dbPath));
 db.runAsync = (sql, params = []) => {
 
     return new Promise((resolve, reject) => {
