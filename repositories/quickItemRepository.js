@@ -12,19 +12,6 @@ exports.create = async (
 
     sortOrder
 ) => {
-    console.log({
-
-        restaurantId,
-
-        name,
-
-        price,
-
-        active,
-
-        sortOrder
-
-    });
 
     const result =
         await db.runAsync(

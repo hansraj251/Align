@@ -157,7 +157,7 @@ ${Align.formatCurrency(order.total)}
 
 <p class="text-sm text-slate-500">
 
-${new Date(order.paid_at).toLocaleString("en-IN")}
+${Align.formatDateTime(order.paid_at)}
 
 </p>
 

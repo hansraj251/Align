@@ -5,7 +5,7 @@ const dbPath =
     process.env.RENDER
         ? "/var/data/align.db"
         : path.join(__dirname, "database", "align.db");
-console.log("Using DB:", dbPath);
+
 
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
@@ -16,16 +16,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
     }
 });
 
-
-const fs = require("fs");
-
-console.log("Using DB:", dbPath);
-console.log("Resolved:", fs.realpathSync(dbPath));
 db.runAsync = (sql, params = []) => {
-
-    console.log("Executing SQL:");
-    console.log(sql);
-    console.log("Params:", params);
 
     return new Promise((resolve, reject) => {
 

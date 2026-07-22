@@ -39,10 +39,6 @@ exports.create = async (
 ) => {
 
     try {
-         console.log(
-            "req.user:",
-            req.user
-        );
 
         const result =
             await quickItemService.create(

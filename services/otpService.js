@@ -2,9 +2,7 @@ const db =
     require("../db");
 const Brevo =
     require("@getbrevo/brevo");
-console.log(
-    Object.keys(Brevo)
-);    
+   
 function generateOtp() {
 
     return Math.floor(

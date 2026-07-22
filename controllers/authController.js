@@ -123,8 +123,6 @@ try {
 }
 catch (err) {
 
-    console.error(err);
-
     return res.status(500).json({
 
         success: false,
@@ -211,8 +209,6 @@ return res.json({
     }
 });
         } catch (err) {
-
-            console.error(err);
 
             return res.status(403).json({
 
@@ -340,8 +336,6 @@ return res.json({
     }
     catch (err) {
 
-        console.error(err);
-
         return res.status(500).json({
             success: false,
             message: err.message
@@ -465,8 +459,6 @@ exports.forgotPassword = async (req, res) => {
             }
             catch (err) {
 
-                console.error(err);
-
                 return res.status(500).json({
 
                     success: false,
@@ -572,8 +564,6 @@ exports.resetPassword =
 
         }
         catch (err) {
-
-            console.error(err);
 
             return res.status(500).json({
 

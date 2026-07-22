@@ -15,10 +15,6 @@ exports.create = async (
     restaurantId,
     data
 ) => {
-    console.log({
-        restaurantId,
-        data
-    });
 
     const name =
         (data.name || "").trim();

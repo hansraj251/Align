@@ -52,7 +52,6 @@ trial_used INTEGER
     `;
 
     try {
-        console.log(sql);
 
         await db.runAsync(sql);
 

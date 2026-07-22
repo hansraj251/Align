@@ -186,8 +186,6 @@ let subtotal = 0;
 
        if (item.is_quick_item) {
 
-        console.log("Quick Item Payload:", item);
-
     const quickItem =
     await quickItemRepository.getById(
 
@@ -196,7 +194,7 @@ let subtotal = 0;
         item.quick_item_id
 
     );
-         console.log("Quick Item DB:", quickItem);
+
 
     if (!quickItem) {
 

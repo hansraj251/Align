@@ -98,14 +98,7 @@ exports.addOrderItem = async (
     const schema = await db.allAsync(
         "PRAGMA table_info(order_items)"
     );
-
-    console.log(
-        "Runtime columns:",
-        schema.map(c => c.name)
-    );
-
     
-
     const result = await db.runAsync(
         `
         INSERT INTO order_items
@@ -922,7 +915,7 @@ exports.removeQuickItem = async (
                 orderItemId
             ]
         );
-console.log(result);
+
     return result.changes;
 
 };
