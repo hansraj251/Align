@@ -89,6 +89,26 @@ const migrations = [
 [
     "018_add_quick_item_columns_to_order_items",
     require("./018_add_quick_item_columns_to_order_items")
+],
+[
+    "019_add_fcm_token_to_staff",
+    require("./019_add_fcm_token_to_staff")
+],
+[
+    "020_add_ticket_timestamps",
+    require("./020_add_ticket_timestamps")
+],
+[
+    "021_add_ready_at_to_kitchen_ticket_items",
+    require("./021_add_ready_at_to_kitchen_ticket_items")
+],
+[
+    "022_add_duration_days_to_plan_pricing",
+    require("./022_add_duration_days_to_plan_pricing")
+],
+[
+    "023_add_status_to_plan_pricing",
+    require("./023_add_status_to_plan_pricing")
 ]
 
 ];

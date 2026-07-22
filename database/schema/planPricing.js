@@ -9,13 +9,13 @@ async function createPlanPricingTable() {
 
             plan_id INTEGER NOT NULL,
 
-            duration_months INTEGER NOT NULL,
+            duration_days INTEGER NOT NULL,
 
             price REAL NOT NULL,
 
-            currency TEXT DEFAULT 'INR',
+            currency TEXT NOT NULL DEFAULT 'INR',
 
-            is_active INTEGER DEFAULT 1,
+            status TEXT NOT NULL DEFAULT 'active',
 
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
@@ -27,7 +27,7 @@ async function createPlanPricingTable() {
 
             UNIQUE (
                 plan_id,
-                duration_months
+                duration_days
             )
 
         )

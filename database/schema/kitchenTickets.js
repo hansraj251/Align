@@ -48,6 +48,12 @@ exports.createKitchenTables = async () => {
 
     status TEXT DEFAULT 'pending',
 
+    started_at DATETIME,
+
+    ready_at DATETIME,
+
+    served_at DATETIME,
+
     FOREIGN KEY(ticket_id)
         REFERENCES kitchen_tickets(id),
 

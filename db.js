@@ -23,6 +23,10 @@ console.log("Using DB:", dbPath);
 console.log("Resolved:", fs.realpathSync(dbPath));
 db.runAsync = (sql, params = []) => {
 
+    console.log("Executing SQL:");
+    console.log(sql);
+    console.log("Params:", params);
+
     return new Promise((resolve, reject) => {
 
         db.run(sql, params, function (err) {

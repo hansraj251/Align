@@ -51,6 +51,27 @@ exports.create = async (
     status
 ) => {
 
+    const schema = await db.allAsync(
+    "PRAGMA table_info(plan_pricing)"
+);
+
+console.log("Runtime PRAGMA:");
+console.table(schema);
+
+const createSql = await db.getAsync(`
+    SELECT sql
+    FROM sqlite_master
+    WHERE name = 'plan_pricing'
+`);
+
+console.log(createSql.sql);
+
+const dbs = await db.allAsync(
+    "PRAGMA database_list"
+);
+
+console.table(dbs);
+
     const result =
         await db.runAsync(
             `
