@@ -1,11 +1,7 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-const dbPath =
-    process.env.RENDER
-        ? "/var/data/align.db"
-        : path.join(__dirname, "database", "align.db");
-
+const dbPath = path.join(__dirname, "database", "align.db");
 console.log("Using DB:", dbPath);
 const db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
