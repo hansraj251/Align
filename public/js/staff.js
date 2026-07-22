@@ -251,10 +251,11 @@ function openStaffModal(staff = null) {
         </label>
 
         <input
-            id="staffUsername"
-            value="${staff?.username || ""}"
-            placeholder=""
-            class="w-full rounded-lg border p-3">
+    id="staffUsername"
+    value="${staff?.username || ""}"
+    pattern="[A-Za-z0-9]+"
+    autocomplete="off"
+    class="w-full rounded-lg border p-3">
 
     </div>
 
@@ -281,23 +282,25 @@ function openStaffModal(staff = null) {
 
     </div>
 
-   ${!staff ? `
+   <div id="passwordGroup">
 
-<div id="passwordGroup">
+    <label class="mb-2 block font-medium">
 
-        <label class="mb-2 block font-medium">
-            Password
-        </label>
+        Password
 
-        <input
-            id="staffPassword"
-            type="password"
-            placeholder="Minimum 8 characters"
-            class="w-full rounded-lg border p-3">
+    </label>
 
-    </div>
+    <input
+        id="staffPassword"
+        type="password"
+        placeholder="${
+            staff
+                ? "Leave blank to keep current password"
+                : "Minimum 8 characters"
+        }"
+        class="w-full rounded-lg border p-3">
 
-    ` : `<div></div>`}
+</div>
 
     <div id="salaryTypeGroup">
 
@@ -559,6 +562,16 @@ const body = {
 
         "error"
 
+    );
+
+    return;
+
+}
+if (!/^[a-zA-Z0-9]+$/.test(body.username)) {
+
+    Toast.show(
+        "Username can contain only letters and numbers",
+        "error"
     );
 
     return;

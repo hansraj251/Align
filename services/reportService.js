@@ -781,17 +781,23 @@ const generatedOn =
             margin: 40,
             size: "A4"
         });
-    const logoPath =
-    path.join(
-        __dirname,
-        "..",
-        restaurant.logo.replace(
-            /^\//,
-            ""
-        )
-    );
+    let logoPath = null;
+
+if (restaurant.logo) {
+
+    logoPath =
+        path.join(
+            __dirname,
+            "..",
+            restaurant.logo.replace(
+                /^\//,
+                ""
+            )
+        );
+
+}
     if (
-    restaurant.logo &&
+    logoPath &&
     fs.existsSync(logoPath)
 ) {
 
@@ -813,22 +819,20 @@ const generatedOn =
 }
 
 if (
-    restaurant.logo &&
-    fs.existsSync(
-        logoPath
-    )
+    logoPath &&
+    fs.existsSync(logoPath)
 ) {
 
     doc.image(
-    logoPath,
-    40,
-    30,
-    {
-        fit: [70, 70]
-    }
-);
+        logoPath,
+        40,
+        30,
+        {
+            fit: [70, 70]
+        }
+    );
 
-}      
+}   
     
 
     res.setHeader(
