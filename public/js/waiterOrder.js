@@ -729,7 +729,21 @@ function renderMenu(items) {
 
 }
 
-   items.forEach(item => {
+   const normalItems =
+    items.filter(
+        item =>
+            !item.variants ||
+            item.variants.length === 0
+    );
+
+const variantItems =
+    items.filter(
+        item =>
+            item.variants &&
+            item.variants.length > 0
+    );
+
+[...normalItems, ...variantItems].forEach(item => {
     
 
     const hasVariants =
@@ -745,7 +759,7 @@ class="rounded-lg bg-white p-3 shadow-sm ${getFoodTypeColor(item.food_type)}">
 
 <div class="flex items-center justify-between">
 
-<div>
+<div class="w-full">
 
 <h3 class="text-[15px] font-semibold leading-5">
 
@@ -764,21 +778,22 @@ ${
         ? `
         `
         : `
-        <p class="mt-1 text-base text-blue-600 transition hover:bg-blue-200 hover:text-blue-700">
+        <div
+class="mt-3 flex items-center justify-between rounded-lg border px-2 py-1.5">
 
-           ${Align.formatCurrency(item.price)}
+    <div>
 
-        </p>
+        ${Align.formatCurrency(item.price)}
+
+    </div>
+
+    ${renderMenuControls(item)}
+
+</div>
         `
 }
 
 </div>
-
-${
-!hasVariants
-? renderMenuControls(item)
-: ""
-}
 
 </div>
 

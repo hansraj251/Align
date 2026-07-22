@@ -6,7 +6,8 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const adminMiddleware =
     require("../middlewares/adminMiddleware");
 const kitchenController = require("../controllers/kitchenController");
-
+const orderCloseMiddleware =
+    require("../middlewares/orderCloseMiddleware");
 router.get(
     "/",
     authMiddleware,
@@ -44,7 +45,7 @@ router.patch(
 router.patch(
     "/:ticketId/close-cancelled",
     authMiddleware,
-    adminMiddleware,
+    orderCloseMiddleware,
     kitchenController.closeCancelledTicket
 );
 module.exports = router;
