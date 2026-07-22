@@ -16,7 +16,7 @@ function loadSuperAdminLayout(options) {
 
     <aside
 id="sidebar"
-class="fixed left-0 top-0 z-50 flex h-full w-64 -translate-x-full flex-col overflow-y-auto bg-slate-900 text-white transition-transform duration-300 md:static md:translate-x-0">
+class="fixed left-0 top-0 z-50 flex h-full w-72 max-w-[85vw] md:w-64 -translate-x-full flex-col overflow-y-auto bg-slate-900 text-white transition-transform duration-300 md:static md:translate-x-0">
         <div
             class="p-6 text-2xl font-bold border-b border-slate-700">
 
@@ -158,7 +158,7 @@ class="hidden h-20 items-center justify-between bg-white px-6 shadow md:flex">
 
         <div
 id="pageContent"
-class="flex-1 overflow-y-auto p-4 pt-20 md:p-8">
+class="flex-1 overflow-y-auto p-4 pt-20 md:p-8 md:pt-8">
 
         </div>
 <div id="modalContainer"></div>        

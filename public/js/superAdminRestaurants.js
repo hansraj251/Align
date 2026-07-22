@@ -59,7 +59,7 @@ async function loadRestaurants() {
 
             tbody.innerHTML += `
 
-<tr class="border-t">
+<td class="whitespace-nowrap p-4">
 
     <td class="p-4">
         ${r.restaurant_code}

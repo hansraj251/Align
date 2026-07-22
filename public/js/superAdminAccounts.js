@@ -344,19 +344,21 @@ function renderAccountRow(
     return `
         <tr class="border-b">
 
-            <td class="py-3">
+         <td class="whitespace-nowrap py-3 pr-10">
 
-                ${account.name}
+    ${account.name}
 
-            </td>
+</td>
 
-            <td class="py-3">
+<td class="w-[220px] whitespace-nowrap py-3">
 
-                ${account.username}
+    ${account.username}
 
-            </td>
+</td>
 
-            <td class="py-3">
+<td class="w-[140px] whitespace-nowrap py-3">
+
+            <td class="min-w-[260px] py-3">
 
                 ${
                     account.status ===
@@ -381,33 +383,37 @@ function renderAccountRow(
 
             </td>
 
-            <td class="py-3 text-right">
+            <td class="w-[260px] py-3">
 
-                <button
-    class="edit-account-btn rounded bg-slate-600 px-3 py-1 text-sm text-white"
-    data-id="${account.id}">
+    <div class="flex justify-end gap-2 whitespace-nowrap">
 
-    Edit
+        <button
+            class="edit-account-btn rounded bg-slate-600 px-3 py-1 text-sm text-white whitespace-nowrap"
+            data-id="${account.id}">
 
-</button>
+            Edit
 
-                <button
-    class="password-account-btn ml-2 rounded bg-yellow-500 px-3 py-1 text-sm text-white"
-    data-id="${account.id}">
+        </button>
 
-    Password
+        <button
+            class="password-account-btn rounded bg-yellow-500 px-3 py-1 text-sm text-white whitespace-nowrap"
+            data-id="${account.id}">
 
-</button>
+            Password
 
-                <button
-    class="delete-account-btn ml-2 rounded bg-red-600 px-3 py-1 text-sm text-white"
-    data-id="${account.id}">
+        </button>
 
-    Delete
+        <button
+            class="delete-account-btn rounded bg-red-600 px-3 py-1 text-sm text-white whitespace-nowrap"
+            data-id="${account.id}">
 
-</button>
+            Delete
 
-            </td>
+        </button>
+
+    </div>
+
+</td>
 
         </tr>
         `;

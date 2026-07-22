@@ -47,7 +47,7 @@ document.getElementById(
 
 <div class="rounded-2xl bg-white p-6 shadow">
 
-    <div class="mb-6 flex items-center justify-between">
+    <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
         <div>
 
@@ -60,9 +60,8 @@ document.getElementById(
         </div>
 
         <button
-            id="addAccountBtn"
-            class="rounded-lg bg-slate-600 px-4 py-2 text-white hover:bg-blue-700">
-
+    id="addAccountBtn"
+    class="w-full rounded-lg bg-slate-600 px-4 py-2 text-white hover:bg-blue-700 md:w-auto">
             Add Super Admin
 
         </button>
@@ -71,35 +70,35 @@ document.getElementById(
 
     <div class="overflow-x-auto">
 
-        <table class="min-w-full">
+       <table class="min-w-[900px] w-full">
 
             <thead>
 
                 <tr class="border-b">
 
-                    <th class="py-3 text-left">
+                    <th class="w-[240px] whitespace-nowrap py-3 text-left">
 
-                        Name
+    Name
 
-                    </th>
+</th>
 
-                    <th class="py-3 text-left">
+<th class="w-[220px] whitespace-nowrap py-3 text-left">
 
-                        Username
+    Username
 
-                    </th>
+</th>
 
-                    <th class="py-3 text-left">
+<th class="w-[140px] whitespace-nowrap py-3 text-left">
 
-                        Status
+    Status
 
-                    </th>
+</th>
 
-                    <th class="py-3 text-right">
+<th class="w-[260px] whitespace-nowrap py-3 text-right">
 
-                        Actions
+    Actions
 
-                    </th>
+</th>
 
                 </tr>
 
@@ -225,12 +224,12 @@ document.getElementById(
 
             </div>
 
-            <div class="flex justify-end gap-3">
+            <div class="flex flex-col-reverse gap-3 md:flex-row md:justify-end">
 
                 <button
                     type="button"
                     id="cancelAccountBtn"
-                    class="rounded-lg border px-4 py-2">
+                    class="w-full rounded-lg border px-4 py-2 md:w-auto">
 
                     Cancel
 
@@ -239,7 +238,7 @@ document.getElementById(
                 <button
     id="saveAccountBtn"
     type="submit"
-    class="rounded-lg bg-slate-600 px-4 py-2 text-white">
+    class="w-full rounded-lg bg-slate-600 px-4 py-2 text-white md:w-auto">
 
     Save
 
@@ -298,12 +297,12 @@ document.getElementById(
 
             </div>
 
-            <div class="flex justify-end gap-3">
+            <div class="flex flex-col-reverse gap-3 md:flex-row md:justify-end">
 
                 <button
                     type="button"
                     id="cancelPasswordBtn"
-                    class="rounded-lg border px-4 py-2">
+                    class="w-full rounded-lg border px-4 py-2 md:w-auto">
 
                     Cancel
 
@@ -311,7 +310,7 @@ document.getElementById(
 
                 <button
                     type="submit"
-                    class="rounded-lg bg-slate-600 px-4 py-2 text-white">
+                    class="w-full rounded-lg bg-slate-600 px-4 py-2 text-white md:w-auto">
 
                     Update
 
