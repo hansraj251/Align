@@ -86,10 +86,18 @@ app.use(
 app.use("/api/orders", orderRoutes);
 app.use("/api/kitchen", kitchenRoutes);
 app.use(express.static("public"));
+const uploadsPath =
+    process.env.RENDER
+        ? "/var/data/uploads"
+        : path.join(
+            __dirname,
+            "uploads"
+        );
+
 app.use(
     "/uploads",
     express.static(
-        path.join(__dirname, "uploads")
+        uploadsPath
     )
 );
 app.use(
