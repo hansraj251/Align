@@ -6,12 +6,14 @@ const storage = multer.diskStorage({
     destination(req, file, cb) {
 
     const uploadPath =
-        path.join(
-            __dirname,
-            "..",
-            "uploads",
-            "logos"
-        );
+        process.env.RENDER
+            ? "/var/data/uploads/logos"
+            : path.join(
+                __dirname,
+                "..",
+                "uploads",
+                "logos"
+            );
 
     fs.mkdirSync(
         uploadPath,
