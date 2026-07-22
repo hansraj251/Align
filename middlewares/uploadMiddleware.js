@@ -1,28 +1,31 @@
 const multer = require("multer");
+const fs = require("fs");
 const path = require("path");
-
 const storage = multer.diskStorage({
 
     destination(req, file, cb) {
 
-        cb(
-            null,
-            "uploads/logos"
+    const uploadPath =
+        path.join(
+            __dirname,
+            "..",
+            "uploads",
+            "logos"
         );
 
-    },
+    fs.mkdirSync(
+        uploadPath,
+        {
+            recursive: true
+        }
+    );
 
-    filename(req, file, cb) {
+    cb(
+        null,
+        uploadPath
+    );
 
-        const ext =
-            path.extname(file.originalname);
-
-        cb(
-            null,
-            `logo-${Date.now()}${ext}`
-        );
-
-    }
+},
 
 });
 
