@@ -35,20 +35,35 @@ const StaffAuth = {
 
     },
 
-    logout() {
+    async logout() {
 
-        localStorage.removeItem(
-            "staffToken"
+    try {
+
+        await API.post(
+            "/api/staff-auth/logout"
         );
 
-        localStorage.removeItem(
-            "staff"
+    } catch (err) {
+
+        console.error(
+            "Logout failed:",
+            err
         );
 
-        window.location.href =
-            "/login.html";
+    }
 
-    },
+    localStorage.removeItem(
+        "staffToken"
+    );
+
+    localStorage.removeItem(
+        "staff"
+    );
+
+    window.location.href =
+        "/login.html";
+
+},
 
     requireLogin() {
 

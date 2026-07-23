@@ -276,19 +276,16 @@ async function saveQuickItem() {
 
     }
 
-    resetForm();
+const successMessage =
+    isEdit
+        ? "Quick item updated successfully"
+        : "Quick item created successfully";
 
-    await loadQuickItems();
+resetForm();
 
-    Toast.show(
+await loadQuickItems();
 
-        isEdit
-
-            ? "Quick item updated successfully"
-
-            : "Quick item created successfully"
-
-    );
+Toast.show(successMessage);
 
 }
 function editQuickItem(
@@ -322,17 +319,13 @@ function editQuickItem(
         ).value =
         item.sort_order;
 
-    document
-        .getElementById(
-            "quickItemActive"
-        ).checked =
-        !!item.active;
 
     document
-        .getElementById(
-            "saveQuickItemBtn"
-        ).textContent =
-        "Update Quick Item";
+    .getElementById(
+        "saveQuickItemBtn"
+    ).textContent =
+    "Update";
+    
 
     document
         .getElementById(
@@ -374,16 +367,10 @@ function resetForm() {
         0;
 
     document
-        .getElementById(
-            "quickItemActive"
-        ).checked =
-        true;
-
-    document
-        .getElementById(
-            "saveQuickItemBtn"
-        ).textContent =
-        "Save Quick Item";
+    .getElementById(
+        "saveQuickItemBtn"
+    ).textContent =
+    "Save";
 
     document
         .getElementById(
