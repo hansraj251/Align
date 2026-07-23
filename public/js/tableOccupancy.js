@@ -17,6 +17,43 @@ const areaId =
 
 async function loadArea() {
 
+    const cachedAreas =
+        await CacheService.get(
+            "areas"
+        );
+
+    const cachedTables =
+        await CacheService.get(
+            "tables"
+        );
+
+    if (
+
+        cachedAreas.length &&
+        cachedTables.length
+
+    ) {
+
+        document.getElementById(
+            "areaTitle"
+        ).textContent =
+            "Dining Area";
+
+        document.getElementById(
+            "areaSubtitle"
+        ).textContent =
+            `${cachedTables.length} Tables`;
+
+        renderRows(
+
+            cachedAreas,
+
+            cachedTables
+
+        );
+
+    }
+
     const areaResponse =
         await API.get(
             "/api/dining-areas"
@@ -40,6 +77,15 @@ async function loadArea() {
         return;
 
     }
+    await CacheService.save(
+    "areas",
+    areaResponse.areas
+);
+
+await CacheService.save(
+    "tables",
+    tableResponse.tables
+);
 
     document.getElementById(
         "areaTitle"

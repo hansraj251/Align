@@ -66,6 +66,22 @@ function closeQuickItemsModal() {
 }
 async function loadQuickItems() {
 
+    const cachedQuickItems =
+    await CacheService.get(
+        "quickItems"
+    );
+
+if (cachedQuickItems.length) {
+
+    quickItems =
+        cachedQuickItems.filter(
+            item => item.active
+        );
+
+    renderQuickItems();
+
+}
+
     const response =
         await API.get(
             "/api/quick-items"
@@ -82,12 +98,17 @@ async function loadQuickItems() {
 
     }
 
-    quickItems =
-        response.data.filter(
-            item => item.active
-        );
+await CacheService.save(
+    "quickItems",
+    response.data
+);
 
-    renderQuickItems();
+quickItems =
+    response.data.filter(
+        item => item.active
+    );
+
+renderQuickItems();
 
 }
 function renderQuickItems() {

@@ -17,6 +17,31 @@ const areaId =
 
 async function loadArea() {
 
+    const cachedAreas =
+    await CacheService.get(
+        "areas"
+    );
+
+const cachedTables =
+    await CacheService.get(
+        "tables"
+    );
+
+if (
+
+    cachedAreas.length &&
+
+    cachedTables.length
+
+) {
+
+    renderArea(
+        cachedAreas,
+        cachedTables
+    );
+
+}
+
     const areaResponse =
         await API.get(
             "/api/dining-areas"
@@ -40,9 +65,30 @@ async function loadArea() {
         return;
 
     }
+await CacheService.save(
+    "areas",
+    areaResponse.areas
+);
 
-    const area =
-        areaResponse.areas.find(
+await CacheService.save(
+    "tables",
+    tableResponse.tables
+);
+
+renderArea(
+    areaResponse.areas,
+    tableResponse.tables
+);    
+
+}
+
+function renderArea(
+    areas,
+    tables
+) {
+
+   const area =
+       areas.find(
             a => a.id == areaId
         );
 
@@ -78,14 +124,14 @@ if (
 } else {
 
     subtitle.textContent =
-        `${tableResponse.tables.filter(
+        `${tables.filter(
             t => t.area_id == areaId
         ).length} Tables`;
 
 }
 
     const areaTables =
-    tableResponse.tables.filter(
+    tables.filter(
         t => t.area_id == areaId
     );
 
@@ -113,15 +159,10 @@ if (
 } else {
 
     renderRows(
-        tableResponse.tables
+        tables
     );
 
 }
-
-return;    
-        renderRows(
-    tableResponse.tables
-);
 
 }
 

@@ -111,20 +111,17 @@ let existingItems = [];
 
 async function loadMenu() {
 
-    const loaded =
-        await loadMenuData();
+    await loadMenuData();
 
-    if (!loaded) {
+    if (allMenuItems.length) {
 
-        return;
+        renderCategoryFilters();
+
+        renderFoodFilters();
+
+        refreshMenu();
 
     }
-
-    renderCategoryFilters();
-
-    renderFoodFilters();
-
-    refreshMenu();
 
 }
 async function loadTableStrip() {
@@ -2231,6 +2228,39 @@ function refreshMenu() {
 }
 async function loadMenuData() {
 
+ const cachedMenuItems =
+    await CacheService.get(
+        "menuItems"
+    );
+
+if (cachedMenuItems.length) {
+
+    allMenuItems =
+        cachedMenuItems
+            .filter(
+                item =>
+                    item.is_available == 1
+            )
+            .sort(
+                (a, b) =>
+                    a.name.localeCompare(
+                        b.name,
+                        undefined,
+                        {
+                            sensitivity:
+                                "base"
+                        }
+                    )
+            );
+
+    renderCategoryFilters();
+
+    renderFoodFilters();
+
+    refreshMenu();
+
+}
+
     const data =
         await API.get(
             "/api/menu/items/all"
@@ -2247,23 +2277,34 @@ async function loadMenuData() {
 
     }
 
-    allMenuItems =
-        data.items
-            .filter(
-                item => item.is_available == 1
-            )
-            .sort(
-                (a, b) =>
-                    a.name.localeCompare(
-                        b.name,
-                        undefined,
-                        {
-                            sensitivity: "base"
-                        }
-                    )
-            );
+    await CacheService.save(
+    "menuItems",
+    data.items
+);
 
-    return true;
+allMenuItems =
+    data.items
+        .filter(
+            item =>
+                item.is_available == 1
+        )
+        .sort(
+            (a, b) =>
+                a.name.localeCompare(
+                    b.name,
+                    undefined,
+                    {
+                        sensitivity: "base"
+                    }
+                )
+        );
+renderCategoryFilters();
+
+renderFoodFilters();
+
+refreshMenu();        
+
+return true;
 
 }
 async function switchTable(
