@@ -50,6 +50,11 @@ async (restaurantId) => {
 exports.forceLogout =
 async (sessionId) => {
 
+    console.log(
+    "[SUPER ADMIN FORCE LOGOUT]",
+    sessionId
+);
+
     return await
         staffSessionAdminService
             .forceLogout(

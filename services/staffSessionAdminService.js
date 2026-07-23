@@ -14,7 +14,10 @@ exports.getActiveSessions = async (restaurantId) => {
 exports.forceLogout = async (
     sessionId
 ) => {
-
+console.log(
+    "[STAFF SESSION ADMIN FORCE LOGOUT]",
+    sessionId
+);
     const session =
         await staffSessionRepository.getSessionById(
             sessionId
