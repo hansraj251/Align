@@ -178,27 +178,6 @@ function renderTableStrip(
     }
 
     const occupiedTables =
-        tables.filter(
-            table =>
-                table.status !== "available"
-        );
-
-    tableStrip.innerHTML = "";
-
-    occupiedTables.forEach(table => {
-
-        const tableStrip =
-        document.getElementById(
-            "tableStrip"
-        );
-
-    if (!tableStrip) {
-
-        return;
-
-    }
-
-    const occupiedTables =
     tables.filter(
         table => table.status !== "available"
     );
@@ -242,14 +221,6 @@ requestAnimationFrame(() => {
 
 });
 
-    });
-
-    requestAnimationFrame(() => {
-
-        updateTableStripButtons();
-
-    });
-
 }
 async function loadTableStrip() {
 
@@ -272,6 +243,7 @@ async function loadTableStrip() {
     renderTableStrip(
         response.tables
     );
+    
 
 }
 
