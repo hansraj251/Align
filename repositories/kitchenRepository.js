@@ -276,7 +276,9 @@ exports.getTicketById = async (
 
             o.table_id,
 
-            o.table_name
+            o.table_name,
+
+            o.area_name
 
         FROM kitchen_tickets kt
 
@@ -432,7 +434,10 @@ exports.getTicketItem = async (
 
             o.created_by_staff_id,
 
-            o.table_name
+            o.table_name,
+
+            o.area_name
+
 
         FROM kitchen_ticket_items kti
 
