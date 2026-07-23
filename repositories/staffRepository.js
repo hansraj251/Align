@@ -334,27 +334,40 @@ exports.saveFcmToken = async (
 
 };
 
-exports.clearFcmToken = async (
-    staffId
-) => {
-   
+exports.clearFcmToken = async (staffId) => {
+
+    console.log(
+        "[FCM CLEAR]",
+        staffId
+    );
 
     await db.runAsync(
         `
         UPDATE staff
-
         SET
-
             fcm_token = NULL,
-
-            updated_at =
-                CURRENT_TIMESTAMP
-
+            updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
         `,
-        [
-            staffId
-        ]
+        [staffId]
+    );
+
+    const staff =
+        await db.getAsync(
+            `
+            SELECT
+                id,
+                role,
+                fcm_token
+            FROM staff
+            WHERE id = ?
+            `,
+            [staffId]
+        );
+
+    console.log(
+        "[FCM AFTER CLEAR]",
+        staff
     );
 
 };
