@@ -141,6 +141,7 @@ function renderRows(
     tables
 
 ) {
+    
 
     const container =
         document.getElementById(
@@ -171,8 +172,20 @@ function renderRows(
 `;
 
     const areaTables =
-        tables.filter(
+    tables
+        .filter(
             t => t.area_id == area.id
+        )
+        .sort(
+            (a, b) =>
+                a.name.localeCompare(
+                    b.name,
+                    undefined,
+                    {
+                        numeric: true,
+                        sensitivity: "base"
+                    }
+                )
         );
 
     const maxRow =
