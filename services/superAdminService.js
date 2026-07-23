@@ -4,7 +4,8 @@ const staffSessionRepository =
     require("../repositories/staffSessionRepository"); 
 const planRepository =
     require("../repositories/planRepository");    
-       
+const staffSessionAdminService =
+    require("./staffSessionAdminService");       
 
 exports.getDashboardStats =
 async () => {
@@ -49,15 +50,11 @@ async (restaurantId) => {
 exports.forceLogout =
 async (sessionId) => {
 
-    await
-        staffSessionRepository
+    return await
+        staffSessionAdminService
             .forceLogout(
                 sessionId
             );
-
-    return {
-        success: true
-    };
 
 };
 
