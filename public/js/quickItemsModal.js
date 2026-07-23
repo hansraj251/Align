@@ -89,14 +89,18 @@ if (cachedQuickItems.length) {
 
     if (!response.success) {
 
+    if (!cachedQuickItems.length) {
+
         Toast.show(
             response.message,
             "error"
         );
 
-        return;
-
     }
+
+    return;
+
+}
 
 await CacheService.save(
     "quickItems",

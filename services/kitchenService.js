@@ -419,11 +419,13 @@ for (const staffId of participants) {
 
     }
 
-    return {
+   return {
 
-        success: true
+    success: true,
 
-    };
+    ticketId: item.ticket_id
+
+};
 
 };
 exports.cancelTicketItem = async (

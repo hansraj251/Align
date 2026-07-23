@@ -309,16 +309,25 @@ pendingItems > 0
 
 async function loadKitchenOrders() {
 
-    const data = await API.get("/api/kitchen");
+    const data =
+        await API.get(
+            "/api/kitchen"
+        );
 
     const container =
-        document.getElementById("kitchenOrders");
-
-    container.innerHTML = "";
+        document.getElementById(
+            "kitchenOrders"
+        );
 
     if (!data.success) {
 
-        Toast.show(data.message, "error");
+        container.innerHTML = "";
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
         return;
 
     }
@@ -328,7 +337,7 @@ async function loadKitchenOrders() {
         container.innerHTML = `
             <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
 
-                 No Pending Orders
+                No Pending Orders
 
             </div>
         `;
@@ -336,16 +345,11 @@ async function loadKitchenOrders() {
         return;
 
     }
-    data.tickets.forEach(
-    ticket => {
 
-        container.innerHTML +=
-            renderTicket(
-                ticket
-            );
-
-    }
-);
+    container.innerHTML =
+        data.tickets
+            .map(renderTicket)
+            .join("");
 
 }
 async function refreshTicket(
@@ -357,13 +361,42 @@ async function refreshTicket(
             `/api/kitchen/${ticketId}`
         );
 
-    if (!data.success) {
+   if (!data.success) {
 
-        loadKitchenOrders();
+    const card =
+        document.getElementById(
+            `ticket-${ticketId}`
+        );
 
-        return;
+    if (card) {
+
+        card.remove();
 
     }
+
+    const container =
+        document.getElementById(
+            "kitchenOrders"
+        );
+
+    if (
+        container &&
+        container.children.length === 0
+    ) {
+
+        container.innerHTML = `
+            <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
+
+                No Pending Orders
+
+            </div>
+        `;
+
+    }
+
+    return;
+
+}
 
     const ticket =
         data.ticket;
@@ -375,12 +408,9 @@ async function refreshTicket(
 
     if (!card) {
 
-        loadKitchenOrders();
+    return;
 
-        return;
-
-    }
-
+}
     card.outerHTML =
         renderTicket(
             ticket
@@ -418,10 +448,6 @@ async function closeCancelledTicket(
 
 }
 
-setInterval(
-    loadKitchenOrders,
-    5000
-);
 async function updateStatus(
     ticketId,
     status
@@ -478,7 +504,9 @@ Toast.show(
     "success"
 );
 
-    loadKitchenOrders();
+    await refreshTicket(
+    ticketId
+);
     } finally {
 
         processingTickets.delete(
@@ -528,12 +556,14 @@ async function markItemReady(
 
         }
 
-        Toast.show(
-            "Item Ready",
-            "success"
-        );
+       Toast.show(
+    "Item Ready",
+    "success"
+);
 
-        loadKitchenOrders();
+await refreshTicket(
+    data.ticketId
+);
 
     } finally {
 
@@ -575,3 +605,7 @@ async function markItemReady(
         
 
 });
+setInterval(
+    loadKitchenOrders,
+    60000
+);

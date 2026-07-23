@@ -69,6 +69,44 @@ async function loadTableInfo() {
         return;
 
     }
+    const cachedTables =
+    await CacheService.get(
+        "tables"
+    );
+
+const cachedAreas =
+    await CacheService.get(
+        "areas"
+    );
+
+const cachedTable =
+    cachedTables.find(
+        table =>
+            Number(table.id) === Number(tableId)
+    );
+
+if (cachedTable) {
+
+    const cachedArea =
+        cachedAreas.find(
+            area =>
+                Number(area.id) ===
+                Number(cachedTable.area_id)
+        );
+
+    const currentTableName =
+        document.getElementById(
+            "currentTableName"
+        );
+
+    if (currentTableName) {
+
+        currentTableName.textContent =
+            `${cachedArea?.name || ""} • ${cachedTable.name}`;
+
+    }
+
+}
 
     const data =
         await API.get(
@@ -124,18 +162,9 @@ async function loadMenu() {
     }
 
 }
-async function loadTableStrip() {
-
-    const response =
-        await API.get(
-            "/api/tables"
-        );
-
-    if (!response.success) {
-
-        return;
-
-    }
+function renderTableStrip(
+    tables
+) {
 
     const tableStrip =
         document.getElementById(
@@ -149,11 +178,30 @@ async function loadTableStrip() {
     }
 
     const occupiedTables =
-        response.tables.filter(table =>
-
-            table.status !== "available"
-
+        tables.filter(
+            table =>
+                table.status !== "available"
         );
+
+    tableStrip.innerHTML = "";
+
+    occupiedTables.forEach(table => {
+
+        const tableStrip =
+        document.getElementById(
+            "tableStrip"
+        );
+
+    if (!tableStrip) {
+
+        return;
+
+    }
+
+    const occupiedTables =
+    tables.filter(
+        table => table.status !== "available"
+    );
 
     tableStrip.innerHTML = "";
 
@@ -193,6 +241,56 @@ requestAnimationFrame(() => {
     updateTableStripButtons();
 
 });
+
+    });
+
+    requestAnimationFrame(() => {
+
+        updateTableStripButtons();
+
+    });
+
+}
+async function loadTableStrip() {
+    const cachedTables =
+    await CacheService.get(
+        "tables"
+    );
+
+if (cachedTables.length) {
+
+    renderTableStrip(
+        cachedTables
+    );
+
+}
+
+    const response =
+        await API.get(
+            "/api/tables"
+        );
+
+    if (!response.success) {
+
+    if (!cachedTables.length) {
+
+        Toast.show(
+            "Unable to load tables",
+            "error"
+        );
+
+    }
+
+    return;
+
+}
+    await CacheService.save(
+    "tables",
+    response.tables
+);
+    renderTableStrip(
+    response.tables
+);
     
 
 }
@@ -585,8 +683,6 @@ if (checkoutBtn) {
     );
 
 }
-
-loadTableStrip();
 
 
 initialize();

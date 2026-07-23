@@ -333,8 +333,6 @@ item.order_item_id =
     orderItemId;
 
 
-item.order_item_id = orderItemId;
-
     }
 const totals =
     await orderCalculationService.calculateOrderTotals(

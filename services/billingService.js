@@ -31,7 +31,34 @@ const order =
     await orderRepository.getOrderDetailsById(
         orderId
     );
-let discount = 0;
+
+if (!order)
+{
+    throw new Error(
+        "Order not found"
+    );
+}
+let discount = 0;    
+
+if (
+    order.restaurant_id !==
+    restaurantId
+)
+{
+    throw new Error(
+        "Invalid order"
+    );
+}
+
+if (
+    order.status !==
+    "ready_for_billing"
+)
+{
+    throw new Error(
+        "Order is not ready for billing"
+    );
+}    
 
 if (discountType === "amount")
 {
@@ -61,32 +88,6 @@ const finalTotal =
     discount +
     order.tax;
 
-if (!order)
-{
-    throw new Error(
-        "Order not found"
-    );
-}
-
-if (
-    order.restaurant_id !==
-    restaurantId
-)
-{
-    throw new Error(
-        "Invalid order"
-    );
-}
-
-if (
-    order.status !==
-    "ready_for_billing"
-)
-{
-    throw new Error(
-        "Order is not ready for billing"
-    );
-}    
 
     await billingRepository.payOrder(
     restaurantId,

@@ -615,6 +615,7 @@ exports.updateTicketItemStatus = async (
         query,
         params
     );
+    
 
 };
 

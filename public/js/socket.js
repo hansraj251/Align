@@ -76,9 +76,11 @@ socket.on("new-order", async (data) => {
         `Table ${data.tableId} • ${data.ticketNumber}`
     );
 
-    if (typeof loadKitchenTickets === "function") {
-        await loadKitchenTickets();
-    }
+    if (typeof loadKitchenOrders === "function") {
+
+    await loadKitchenOrders();
+
+}
 
     if (typeof loadCurrentOrder === "function") {
         await loadCurrentOrder();
@@ -109,18 +111,27 @@ socket.on("ticket-ready", async data => {
 
 });
 
-socket.on("ticket-updated", data => {
+socket.on("ticket-updated", async data => {
 
+    if (typeof refreshTicket === "function") {
 
-    if (typeof loadKitchenTickets === "function") {
+        await refreshTicket(
+            data.ticketId
+        );
 
-        loadKitchenTickets();
+    }
+
+    else if (
+        typeof loadKitchenOrders === "function"
+    ) {
+
+        await loadKitchenOrders();
 
     }
 
     if (typeof loadCurrentOrder === "function") {
 
-        loadCurrentOrder();
+        await loadCurrentOrder();
 
     }
 
@@ -139,16 +150,21 @@ socket.on("billing-updated", data => {
 
 socket.on("order-updated", async data => {
 
+    if (typeof refreshTicket === "function") {
+
+        await refreshTicket(
+            data.ticketId
+        );
+
+    }
 
     if (typeof loadExistingOrder === "function") {
 
         await loadExistingOrder();
 
-
     }
 
     if (typeof renderCart === "function") {
-
 
         renderCart();
 
