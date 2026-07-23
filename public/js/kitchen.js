@@ -580,28 +580,15 @@ await refreshTicket(
 ].forEach(id => {
 
     document
-        .getElementById(id)
-        ?.addEventListener(
-            "click",
-            () => {
+    .getElementById(id)
+    ?.addEventListener(
+        "click",
+        async () => {
 
-                localStorage.removeItem(
-                    "staff"
-                );
+            await Auth.logout();
 
-                localStorage.removeItem(
-                    "staffToken"
-                );
-
-                localStorage.removeItem(
-                    "token"
-                );
-
-                window.location.href =
-                    "/login.html";
-
-            }
-        );
+        }
+    );
         
 
 });

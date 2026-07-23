@@ -92,10 +92,16 @@ await CacheService.save(
     ).textContent =
         "Dining Area";
 
-    document.getElementById(
-        "areaSubtitle"
-    ).textContent =
-        `${tableResponse.tables.length} Tables`;
+    const tableCount =
+    tableResponse.tables.filter(
+        table =>
+            table.system_key !== "takeaway"
+    ).length;
+
+document.getElementById(
+    "areaSubtitle"
+).textContent =
+    `${tableCount} Tables`;
 
     renderRows(
 
