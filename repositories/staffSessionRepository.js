@@ -165,11 +165,14 @@ exports.getSessionById = async (sessionId) => {
     return await db.getAsync(
         `
         SELECT
-            id,
-            is_active,
-            last_seen
-        FROM staff_sessions
-        WHERE id = ?
+    id,
+    staff_id,
+    restaurant_id,
+    role,
+    is_active,
+    last_seen
+FROM staff_sessions
+WHERE id = ?
         `,
         [sessionId]
     );

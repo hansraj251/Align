@@ -1,5 +1,7 @@
 const staffSessionRepository =
     require("../repositories/staffSessionRepository");
+const staffSessionService =
+    require("./staffSessionService");    
 
 exports.getActiveSessions = async (restaurantId) => {
 
@@ -9,10 +11,26 @@ exports.getActiveSessions = async (restaurantId) => {
 
 };
 
-exports.forceLogout = async (sessionId) => {
+exports.forceLogout = async (
+    sessionId
+) => {
 
-    await staffSessionRepository.forceLogout(
-        sessionId
+    const session =
+        await staffSessionRepository.getSessionById(
+            sessionId
+        );
+
+    if (!session) {
+
+        throw new Error(
+            "Session not found."
+        );
+
+    }
+
+    await staffSessionService.closeSession(
+        sessionId,
+        session.staff_id
     );
 
     return {
