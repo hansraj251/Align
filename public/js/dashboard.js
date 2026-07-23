@@ -24,33 +24,80 @@ async function loadDashboard() {
     data.pendingKitchen;
 
     document.getElementById("pendingBilling").textContent =
-    data.pendingBilling;
-
-    await loadRestaurantFloor();  
+    data.pendingBilling; 
 
 }
 async function loadRestaurantFloor() {
 
-    const areaResponse =
-        await API.get(
-            "/api/dining-areas"
-        );
+    const cachedAreas =
+    await CacheDB.getAll(
+        "areas"
+    );
 
-    const tableResponse =
-        await API.get(
-            "/api/tables"
-        );
+const cachedTables =
+    await CacheDB.getAll(
+        "tables"
+    );
 
-    if (
-        !areaResponse.success ||
-        !tableResponse.success
-    ) {
+if (
 
-        return;
+    cachedAreas.length ||
 
-    }
+    cachedTables.length
+
+) {
 
     floorAreas =
+        cachedAreas.filter(
+            area =>
+                area.system_key !==
+                "takeaway"
+        );
+
+    floorTables =
+        cachedTables;
+
+    renderRestaurantFloor();
+
+}
+
+    const [
+
+    areaResponse,
+
+    tableResponse,
+
+    takeawayResponse
+
+] = await Promise.all([
+
+    API.get(
+        "/api/dining-areas"
+    ),
+
+    API.get(
+        "/api/tables"
+    ),
+
+    API.get(
+        "/api/tables/takeaway"
+    )
+
+]);
+
+if (
+
+    !areaResponse.success ||
+
+    !tableResponse.success
+
+) {
+
+    return;
+
+}
+
+floorAreas =
     areaResponse.areas.filter(
         area =>
             area.system_key !== "takeaway"
@@ -59,24 +106,41 @@ async function loadRestaurantFloor() {
 floorTables =
     tableResponse.tables;
 
+await CacheDB.clear(
+    "areas"
+);
+
+await CacheDB.putMany(
+    "areas",
+    areaResponse.areas
+);
+
+await CacheDB.clear(
+    "tables"
+);
+
+await CacheDB.putMany(
+    "tables",
+    tableResponse.tables
+);    
+
 const takeawayBtn =
     document.getElementById(
         "takeawayBtn"
     );
 
-const takeawayResponse =
-    await API.get(
-        "/api/tables/takeaway"
-    );
-
 if (
+
     takeawayBtn &&
+
     takeawayResponse.success &&
+
     takeawayResponse.table
+
 ) {
 
-   takeawayBtn.href =
-`/admin/area.html?id=${takeawayResponse.table.area_id}`;
+    takeawayBtn.href =
+        `/admin/area.html?id=${takeawayResponse.table.area_id}`;
 
 }
 
@@ -229,7 +293,14 @@ function formatDuration(minutes) {
     return `${hours}h ${mins}m`;
 
 }
-loadDashboard();
+(async () => {
+
+    await loadDashboard();
+
+    await loadRestaurantFloor();
+
+})();
+
 setInterval(
     loadDashboard,
     5000
