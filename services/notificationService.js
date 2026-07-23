@@ -65,11 +65,6 @@ exports.sendNewKitchenOrderNotification =
                 restaurantId,
                 "kitchen"
             );
-        console.log(
-    "[TOKENS BEFORE SEND]",
-    restaurantId,
-    staffs
-);    
            
 
         for (const staff of staffs) {

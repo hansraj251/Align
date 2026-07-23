@@ -336,11 +336,6 @@ exports.saveFcmToken = async (
 
 exports.clearFcmToken = async (staffId) => {
 
-    console.log(
-        "[FCM CLEAR]",
-        staffId
-    );
-
     await db.runAsync(
         `
         UPDATE staff
@@ -364,11 +359,6 @@ exports.clearFcmToken = async (staffId) => {
             `,
             [staffId]
         );
-
-    console.log(
-        "[FCM AFTER CLEAR]",
-        staff
-    );
 
 };
 

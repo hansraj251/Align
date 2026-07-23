@@ -5,6 +5,7 @@ require("./db");
 const path = require("path");
 const initializeDatabase = require("./database/init");
 const express = require("express");
+
 const socket = require("./utils/socket");
 
 const cors = require("cors");

@@ -196,29 +196,31 @@ async function forceLogout(sessionId) {
                 }
 
             );
+            console.log(
+    "Force logout status:",
+    response.status
+);
 
         const data =
             await response.json();
+            console.log(
+    "Force logout response:",
+    data
+);
 
         if (!data.success) {
-
-            if (data.success) {
-
-    Notify.success(
-        data.message
-    );
-
-} else {
 
     Notify.error(
         data.message
     );
 
+    return;
+
 }
 
-            return;
-
-        }
+Notify.success(
+    data.message
+);
 
         await loadActiveDevices();
 

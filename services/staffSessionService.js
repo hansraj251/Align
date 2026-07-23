@@ -111,16 +111,20 @@ exports.logoutSession = async (
         );
 
     if (!session) {
+
         throw new Error(
             "Session not found."
         );
+
     }
 
-    await staffSessionRepository.logoutSession(
-        sessionId
+    await exports.closeSession(
+        sessionId,
+        session.staff_id
     );
 
 };
+
 exports.closeStaffSessions = async (
     staffId
 ) => {

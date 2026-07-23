@@ -232,30 +232,17 @@ async (req, res) => {
 exports.forceLogout =
 async (req, res) => {
 
-    try {
+    console.log(
+        "[FORCE LOGOUT CONTROLLER]"
+    );
 
-        await superAdminService
-            .forceLogout(
-                req.params.sessionId
-            );
+    return res.json({
 
-        return res.json({
+        success: true,
 
-            success: true
+        message: "CONTROLLER HIT"
 
-        });
-
-    } catch (err) {
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: err.message
-
-        });
-
-    }
+    });
 
 };
 exports.getRestaurant = async (req, res) => {
