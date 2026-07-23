@@ -253,19 +253,6 @@ requestAnimationFrame(() => {
 }
 async function loadTableStrip() {
 
-    const cachedTables =
-        await CacheService.get(
-            "tables"
-        );
-
-    if (cachedTables.length) {
-
-        renderTableStrip(
-            cachedTables
-        );
-
-    }
-
     const response =
         await API.get(
             "/api/tables"
@@ -273,37 +260,18 @@ async function loadTableStrip() {
 
     if (!response.success) {
 
-        if (!cachedTables.length) {
-
-            Toast.show(
-                "Unable to load tables",
-                "error"
-            );
-
-        }
+        Toast.show(
+            "Unable to load tables",
+            "error"
+        );
 
         return;
 
     }
 
-    const tableSync =
-        await CacheService.sync(
-            "tables",
-            response.tables
-        );
-
-    if (
-
-        !cachedTables.length ||
-        tableSync.changed
-
-    ) {
-
-        renderTableStrip(
-            response.tables
-        );
-
-    }
+    renderTableStrip(
+        response.tables
+    );
 
 }
 

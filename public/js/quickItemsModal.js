@@ -66,22 +66,6 @@ function closeQuickItemsModal() {
 }
 async function loadQuickItems() {
 
-    const cachedQuickItems =
-        await CacheService.get(
-            "quickItems"
-        );
-
-    if (cachedQuickItems.length) {
-
-        quickItems =
-            cachedQuickItems.filter(
-                item => item.active
-            );
-
-        renderQuickItems();
-
-    }
-
     const response =
         await API.get(
             "/api/quick-items"
@@ -89,40 +73,21 @@ async function loadQuickItems() {
 
     if (!response.success) {
 
-        if (!cachedQuickItems.length) {
-
-            Toast.show(
-                response.message,
-                "error"
-            );
-
-        }
+        Toast.show(
+            response.message,
+            "error"
+        );
 
         return;
 
     }
 
-    const quickItemSync =
-        await CacheService.sync(
-            "quickItems",
-            response.data
+    quickItems =
+        response.data.filter(
+            item => item.active
         );
 
-    if (
-
-        !cachedQuickItems.length ||
-        quickItemSync.changed
-
-    ) {
-
-        quickItems =
-            response.data.filter(
-                item => item.active
-            );
-
-        renderQuickItems();
-
-    }
+    renderQuickItems();
 
 }
 function renderQuickItems() {
