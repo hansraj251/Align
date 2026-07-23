@@ -30,12 +30,12 @@ async function loadDashboard() {
 async function loadRestaurantFloor() {
 
     const cachedAreas =
-    await CacheDB.getAll(
+    await CacheService.get(
         "areas"
     );
 
 const cachedTables =
-    await CacheDB.getAll(
+    await CacheService.get(
         "tables"
     );
 
@@ -106,23 +106,15 @@ floorAreas =
 floorTables =
     tableResponse.tables;
 
-await CacheDB.clear(
-    "areas"
-);
-
-await CacheDB.putMany(
+await CacheService.save(
     "areas",
     areaResponse.areas
 );
 
-await CacheDB.clear(
-    "tables"
-);
-
-await CacheDB.putMany(
+await CacheService.save(
     "tables",
     tableResponse.tables
-);    
+); 
 
 const takeawayBtn =
     document.getElementById(
