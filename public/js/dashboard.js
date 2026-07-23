@@ -30,113 +30,123 @@ async function loadDashboard() {
 async function loadRestaurantFloor() {
 
     const cachedAreas =
-    await CacheService.get(
-        "areas"
-    );
+        await CacheService.get(
+            "areas"
+        );
 
-const cachedTables =
-    await CacheService.get(
-        "tables"
-    );
+    const cachedTables =
+        await CacheService.get(
+            "tables"
+        );
 
-if (
+   if (
 
-    cachedAreas.length ||
-
+    cachedAreas.length &&
     cachedTables.length
 
 ) {
 
-    floorAreas =
-        cachedAreas.filter(
-            area =>
-                area.system_key !==
-                "takeaway"
-        );
+        floorAreas =
+            cachedAreas.filter(
+                area =>
+                    area.system_key !==
+                    "takeaway"
+            );
 
-    floorTables =
-        cachedTables;
+        floorTables =
+            cachedTables;
 
-    renderRestaurantFloor();
+        renderRestaurantFloor();
 
-}
+    }
 
     const [
 
-    areaResponse,
+        areaResponse,
 
-    tableResponse,
+        tableResponse,
 
-    takeawayResponse
+        takeawayResponse
 
-] = await Promise.all([
+    ] = await Promise.all([
 
-    API.get(
-        "/api/dining-areas"
-    ),
+        API.get(
+            "/api/dining-areas"
+        ),
 
-    API.get(
-        "/api/tables"
-    ),
+        API.get(
+            "/api/tables"
+        ),
 
-    API.get(
-        "/api/tables/takeaway"
-    )
+        API.get(
+            "/api/tables/takeaway"
+        )
 
-]);
+    ]);
 
-if (
+    if (
 
-    !areaResponse.success ||
+        !areaResponse.success ||
+        !tableResponse.success
 
-    !tableResponse.success
+    ) {
 
-) {
+        return;
 
-    return;
+    }
 
-}
+    const areaSync =
+        await CacheService.sync(
+            "areas",
+            areaResponse.areas
+        );
 
-floorAreas =
-    areaResponse.areas.filter(
-        area =>
-            area.system_key !== "takeaway"
-    );
+    const tableSync =
+        await CacheService.sync(
+            "tables",
+            tableResponse.tables
+        );
 
-floorTables =
-    tableResponse.tables;
+    if (
 
-await CacheService.save(
-    "areas",
-    areaResponse.areas
-);
+        !cachedAreas.length ||
+        !cachedTables.length ||
+        areaSync.changed ||
+        tableSync.changed
 
-await CacheService.save(
-    "tables",
-    tableResponse.tables
-); 
+    ) {
 
-const takeawayBtn =
-    document.getElementById(
-        "takeawayBtn"
-    );
+        floorAreas =
+            areaResponse.areas.filter(
+                area =>
+                    area.system_key !==
+                    "takeaway"
+            );
 
-if (
+        floorTables =
+            tableResponse.tables;
 
-    takeawayBtn &&
+        renderRestaurantFloor();
 
-    takeawayResponse.success &&
+    }
 
-    takeawayResponse.table
+    const takeawayBtn =
+        document.getElementById(
+            "takeawayBtn"
+        );
 
-) {
+    if (
 
-    takeawayBtn.href =
-        `/admin/area.html?id=${takeawayResponse.table.area_id}`;
+        takeawayBtn &&
+        takeawayResponse.success &&
+        takeawayResponse.table
 
-}
+    ) {
 
-renderRestaurantFloor();
+        takeawayBtn.href =
+            `/admin/area.html?id=${takeawayResponse.table.area_id}`;
+
+    }
 
 }
 function renderRestaurantFloor() {

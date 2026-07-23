@@ -65,20 +65,29 @@ if (
         return;
 
     }
-await CacheService.save(
-    "areas",
-    areaResponse.areas
-);
+const areaSync =
+    await CacheService.sync(
+        "areas",
+        areaResponse.areas
+    );
 
-await CacheService.save(
-    "tables",
-    tableResponse.tables
-);
+const tableSync =
+    await CacheService.sync(
+        "tables",
+        tableResponse.tables
+    );
 
-renderArea(
-    areaResponse.areas,
-    tableResponse.tables
-);    
+if (
+    areaSync.changed ||
+    tableSync.changed
+) {
+
+    renderArea(
+        areaResponse.areas,
+        tableResponse.tables
+    );
+
+} 
 
 }
 

@@ -39,10 +39,17 @@ async function loadArea() {
         ).textContent =
             "Dining Area";
 
+        const cachedTableCount =
+            cachedTables.filter(
+                table =>
+                    table.system_key !==
+                    "takeaway"
+            ).length;
+
         document.getElementById(
             "areaSubtitle"
         ).textContent =
-            `${cachedTables.length} Tables`;
+            `${cachedTableCount} Tables`;
 
         renderRows(
 
@@ -77,39 +84,54 @@ async function loadArea() {
         return;
 
     }
-    await CacheService.save(
-    "areas",
-    areaResponse.areas
-);
 
-await CacheService.save(
-    "tables",
-    tableResponse.tables
-);
+    const areaSync =
+        await CacheService.sync(
+            "areas",
+            areaResponse.areas
+        );
 
-    document.getElementById(
-        "areaTitle"
-    ).textContent =
-        "Dining Area";
+    const tableSync =
+        await CacheService.sync(
+            "tables",
+            tableResponse.tables
+        );
 
-    const tableCount =
-    tableResponse.tables.filter(
-        table =>
-            table.system_key !== "takeaway"
-    ).length;
+    if (
 
-document.getElementById(
-    "areaSubtitle"
-).textContent =
-    `${tableCount} Tables`;
+        !cachedAreas.length ||
+        !cachedTables.length ||
+        areaSync.changed ||
+        tableSync.changed
 
-    renderRows(
+    ) {
 
-        areaResponse.areas,
+        document.getElementById(
+            "areaTitle"
+        ).textContent =
+            "Dining Area";
 
-        tableResponse.tables
+        const tableCount =
+            tableResponse.tables.filter(
+                table =>
+                    table.system_key !==
+                    "takeaway"
+            ).length;
 
-    );
+        document.getElementById(
+            "areaSubtitle"
+        ).textContent =
+            `${tableCount} Tables`;
+
+        renderRows(
+
+            areaResponse.areas,
+
+            tableResponse.tables
+
+        );
+
+    }
 
 }
 function renderRows(

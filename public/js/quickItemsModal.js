@@ -67,20 +67,20 @@ function closeQuickItemsModal() {
 async function loadQuickItems() {
 
     const cachedQuickItems =
-    await CacheService.get(
-        "quickItems"
-    );
-
-if (cachedQuickItems.length) {
-
-    quickItems =
-        cachedQuickItems.filter(
-            item => item.active
+        await CacheService.get(
+            "quickItems"
         );
 
-    renderQuickItems();
+    if (cachedQuickItems.length) {
 
-}
+        quickItems =
+            cachedQuickItems.filter(
+                item => item.active
+            );
+
+        renderQuickItems();
+
+    }
 
     const response =
         await API.get(
@@ -89,30 +89,40 @@ if (cachedQuickItems.length) {
 
     if (!response.success) {
 
-    if (!cachedQuickItems.length) {
+        if (!cachedQuickItems.length) {
 
-        Toast.show(
-            response.message,
-            "error"
-        );
+            Toast.show(
+                response.message,
+                "error"
+            );
+
+        }
+
+        return;
 
     }
 
-    return;
+    const quickItemSync =
+        await CacheService.sync(
+            "quickItems",
+            response.data
+        );
 
-}
+    if (
 
-await CacheService.save(
-    "quickItems",
-    response.data
-);
+        !cachedQuickItems.length ||
+        quickItemSync.changed
 
-quickItems =
-    response.data.filter(
-        item => item.active
-    );
+    ) {
 
-renderQuickItems();
+        quickItems =
+            response.data.filter(
+                item => item.active
+            );
+
+        renderQuickItems();
+
+    }
 
 }
 function renderQuickItems() {

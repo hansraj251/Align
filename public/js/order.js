@@ -252,18 +252,19 @@ requestAnimationFrame(() => {
 
 }
 async function loadTableStrip() {
+
     const cachedTables =
-    await CacheService.get(
-        "tables"
-    );
+        await CacheService.get(
+            "tables"
+        );
 
-if (cachedTables.length) {
+    if (cachedTables.length) {
 
-    renderTableStrip(
-        cachedTables
-    );
+        renderTableStrip(
+            cachedTables
+        );
 
-}
+    }
 
     const response =
         await API.get(
@@ -272,26 +273,37 @@ if (cachedTables.length) {
 
     if (!response.success) {
 
-    if (!cachedTables.length) {
+        if (!cachedTables.length) {
 
-        Toast.show(
-            "Unable to load tables",
-            "error"
-        );
+            Toast.show(
+                "Unable to load tables",
+                "error"
+            );
+
+        }
+
+        return;
 
     }
 
-    return;
+    const tableSync =
+        await CacheService.sync(
+            "tables",
+            response.tables
+        );
 
-}
-    await CacheService.save(
-    "tables",
-    response.tables
-);
-    renderTableStrip(
-    response.tables
-);
-    
+    if (
+
+        !cachedTables.length ||
+        tableSync.changed
+
+    ) {
+
+        renderTableStrip(
+            response.tables
+        );
+
+    }
 
 }
 
@@ -2324,38 +2336,38 @@ function refreshMenu() {
 }
 async function loadMenuData() {
 
- const cachedMenuItems =
-    await CacheService.get(
-        "menuItems"
-    );
+    const cachedMenuItems =
+        await CacheService.get(
+            "menuItems"
+        );
 
-if (cachedMenuItems.length) {
+    if (cachedMenuItems.length) {
 
-    allMenuItems =
-        cachedMenuItems
-            .filter(
-                item =>
-                    item.is_available == 1
-            )
-            .sort(
-                (a, b) =>
-                    a.name.localeCompare(
-                        b.name,
-                        undefined,
-                        {
-                            sensitivity:
-                                "base"
-                        }
-                    )
-            );
+        allMenuItems =
+            cachedMenuItems
+                .filter(
+                    item =>
+                        item.is_available == 1
+                )
+                .sort(
+                    (a, b) =>
+                        a.name.localeCompare(
+                            b.name,
+                            undefined,
+                            {
+                                sensitivity:
+                                    "base"
+                            }
+                        )
+                );
 
-    renderCategoryFilters();
+        renderCategoryFilters();
 
-    renderFoodFilters();
+        renderFoodFilters();
 
-    refreshMenu();
+        refreshMenu();
 
-}
+    }
 
     const data =
         await API.get(
@@ -2364,43 +2376,59 @@ if (cachedMenuItems.length) {
 
     if (!data.success) {
 
-        Toast.show(
-            data.message,
-            "error"
-        );
+        if (!cachedMenuItems.length) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+        }
 
         return false;
 
     }
 
-    await CacheService.save(
-    "menuItems",
-    data.items
-);
-
-allMenuItems =
-    data.items
-        .filter(
-            item =>
-                item.is_available == 1
-        )
-        .sort(
-            (a, b) =>
-                a.name.localeCompare(
-                    b.name,
-                    undefined,
-                    {
-                        sensitivity: "base"
-                    }
-                )
+    const menuSync =
+        await CacheService.sync(
+            "menuItems",
+            data.items
         );
-renderCategoryFilters();
 
-renderFoodFilters();
+    if (
 
-refreshMenu();        
+        !cachedMenuItems.length ||
+        menuSync.changed
 
-return true;
+    ) {
+
+        allMenuItems =
+            data.items
+                .filter(
+                    item =>
+                        item.is_available == 1
+                )
+                .sort(
+                    (a, b) =>
+                        a.name.localeCompare(
+                            b.name,
+                            undefined,
+                            {
+                                sensitivity:
+                                    "base"
+                            }
+                        )
+                );
+
+        renderCategoryFilters();
+
+        renderFoodFilters();
+
+        refreshMenu();
+
+    }
+
+    return true;
 
 }
 async function switchTable(
