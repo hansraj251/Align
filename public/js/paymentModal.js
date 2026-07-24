@@ -456,19 +456,6 @@ if (!splitEnabled)
             payable - paid
         );
 
-    document.getElementById(
-    "splitPaidAmount"
-).textContent =
-    Align.formatCurrency(
-        paid
-    );
-
-document.getElementById(
-    "splitRemainingAmount"
-).textContent =
-    Align.formatCurrency(
-        remaining
-    );
 
     document.getElementById(
         "markPaidBtn"

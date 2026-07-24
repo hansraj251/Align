@@ -233,28 +233,28 @@ async function payOrder(
 
 initializeBillingPage();
 loadBillingOrders();
-const socket = io();
+// const socket = io();
 
-const staff =
-    StaffAuth.staff();
+// const staff =
+//     StaffAuth.staff();
 
-socket.emit(
-    "joinBilling",
-    staff.restaurant_id
-);
+// socket.emit(
+//     "joinBilling",
+//     staff.restaurant_id
+// );
 
-socket.on(
-    "ready-for-billing",
-    async data => {
+// socket.on(
+//     "ready-for-billing",
+//     async data => {
 
-        Toast.show(
-            `Table ${data.tableName} is ready for billing`
-        );
+//         Toast.show(
+//             `Table ${data.tableName} is ready for billing`
+//         );
 
-        await loadBillingOrders();
+//         await loadBillingOrders();
 
-    }
-);
+//     }
+// );
 
 setInterval(
     loadBillingOrders,
