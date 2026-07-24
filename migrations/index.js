@@ -109,6 +109,10 @@ const migrations = [
 [
     "023_add_status_to_plan_pricing",
     require("./023_add_status_to_plan_pricing")
+],
+[
+    "024_add_mode_to_kitchen_tickets",
+    require("./024_add_mode_to_kitchen_tickets")
 ]
 
 ];

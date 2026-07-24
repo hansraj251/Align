@@ -1,7 +1,6 @@
 const kitchenService =
     require("../services/kitchenService");
-const service =
-    require("../services/kitchenService");
+
 exports.getKitchenOrders = async (
     req,
     res
@@ -69,7 +68,7 @@ exports.updateTicketItemStatus = async (
     try {
 
         const result =
-            await service.updateTicketItemStatus(
+            await kitchenService.updateTicketItemStatus(
 
                 req.params.itemId,
 
@@ -105,7 +104,7 @@ exports.cancelTicketItem = async (
     try {
 
         const result =
-            await service.cancelTicketItem(
+            await kitchenService.cancelTicketItem(
                 req.params.itemId
             );
 
@@ -136,7 +135,7 @@ exports.closeCancelledTicket = async (
     try {
 
         const result =
-            await service.closeCancelledTicket(
+            await kitchenService.closeCancelledTicket(
                 req.params.ticketId
             );
 
@@ -167,7 +166,7 @@ exports.adminCancelTicketItem = async (
     try {
 
         const result =
-            await service.adminCancelTicketItem(
+            await kitchenService.adminCancelTicketItem(
                 req.params.itemId
             );
 
@@ -208,6 +207,40 @@ exports.getKitchenTicket = async (
     } catch (err) {
 
         res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.getTicketPrintData = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const ticket =
+            await kitchenService.getTicketPrintData(
+                req.params.ticketId
+            );
+
+        res.json({
+
+            success: true,
+
+            ticket
+
+        });
+
+    }
+    catch (err) {
+
+        res.status(400).json({
 
             success: false,
 

@@ -13,6 +13,8 @@ exports.createKitchenTables = async () => {
 
     status TEXT DEFAULT 'new',
 
+    mode TEXT DEFAULT 'kitchen',
+
     ticket_total REAL DEFAULT 0,
 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

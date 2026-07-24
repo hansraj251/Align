@@ -48,4 +48,10 @@ router.patch(
     orderCloseMiddleware,
     kitchenController.closeCancelledTicket
 );
+router.get(
+    "/tickets/:ticketId/print",
+    authMiddleware,
+    orderCloseMiddleware,
+    kitchenController.getTicketPrintData
+);
 module.exports = router;

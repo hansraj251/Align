@@ -43,9 +43,10 @@ exports.checkout = async (
         );
 
     const {
-        table_id,
-        items
-    } = body;
+    table_id,
+    items,
+    mode = "kitchen"
+} = body;
 
     if (!table_id) {
         throw new Error("Table is required");
@@ -366,47 +367,74 @@ if (table.system_key === "takeaway") {
     );
 
 }
-    
+
+let kitchenTicket = null;
+
 const kitchenItems =
     items.filter(
         item => !item.is_quick_item
     );
+
 if (kitchenItems.length > 0) {
 
-    const kitchenTicket =
+    kitchenTicket =
         await kitchenService.createKitchenTicket(
             orderId,
-            kitchenItems
+            kitchenItems,
+            mode
         );
 
-    await notificationService.sendNewKitchenOrderNotification(
-        restaurantId,
-        {
-            orderId,
-            ticketId: kitchenTicket.ticketId,
-            tableName: table.name
-        }
-    );
+    if (mode === "kitchen") {
 
-const io = getIO();
+        await notificationService.sendNewKitchenOrderNotification(
+            restaurantId,
+            {
+                orderId,
+                ticketId: kitchenTicket.ticketId,
+                tableName: table.name
+            }
+        );
 
-io.to(`kitchen_${restaurantId}`).emit(
-    "new-order",
-    {
-        orderId,
-        tableId: table_id,
-        kitchenTicketId: kitchenTicket.ticketId,
-        ticketNumber: kitchenTicket.ticketNumber,
-        time: Date.now()
+        const io = getIO();
+
+        io.to(`kitchen_${restaurantId}`).emit(
+            "new-order",
+            {
+                orderId,
+                tableId: table_id,
+                kitchenTicketId: kitchenTicket.ticketId,
+                ticketNumber: kitchenTicket.ticketNumber,
+                time: Date.now()
+            }
+        );
+
     }
-);}
-    return {
+
+}
+
+return {
+
     success: true,
+
     message: "Order sent to kitchen",
+
     orderId,
-    subtotal: totals.subtotal,
-    tax: totals.tax,
-    total: totals.total
+
+    ticketId:
+        kitchenTicket?.ticketId || null,
+
+    ticketNumber:
+        kitchenTicket?.ticketNumber || null,
+
+    subtotal:
+        totals.subtotal,
+
+    tax:
+        totals.tax,
+
+    total:
+        totals.total
+
 };
 
 });

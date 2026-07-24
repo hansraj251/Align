@@ -21,12 +21,14 @@ const notificationService =
 
 exports.createKitchenTicket = async (
     orderId,
-    items
+    items,
+    mode = "kitchen"
 ) => {
 
     const ticketId =
     await kitchenRepository.createTicket(
-        orderId
+        orderId,
+        mode
     );
 
 const lastKot =
@@ -96,6 +98,13 @@ if (item.variant_id) {
 );
 
 }
+if (mode === "print_ready") {
+
+    await kitchenRepository.markTicketReadyDirect(
+        ticketId
+    );
+
+}
 
     return {
 
@@ -146,16 +155,16 @@ exports.getKitchenTicket = async (
         );
 
     if (
-        !ticket ||
-        ticket.restaurant_id !== restaurantId
-    ) {
+    !ticket ||
+    ticket.restaurant_id !== restaurantId ||
+    ticket.mode !== "kitchen"
+) {
 
-        throw new Error(
-            "Kitchen ticket not found"
-        );
+    throw new Error(
+        "Kitchen ticket not found"
+    );
 
-    }
-
+}
     ticket.items =
         await kitchenRepository.getTicketItems(
             ticket.id
@@ -597,6 +606,36 @@ if (changes === 0) {
     return {
 
         success: true
+
+    };
+
+};
+
+exports.getTicketPrintData = async (ticketId) => {
+
+    const ticket =
+        await kitchenRepository.getTicketPrintData(
+            ticketId
+        );
+
+    console.log("ticket =", ticket);
+
+    const items =
+        await kitchenRepository.getTicketPrintItems(
+            ticketId
+        );
+
+    console.log("items =", items);
+    console.log(
+        "isArray =",
+        Array.isArray(items)
+    );
+
+    return {
+
+        ...ticket,
+
+        items
 
     };
 

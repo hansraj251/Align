@@ -1,30 +1,28 @@
 const db = require("../db");
 
-exports.createTicket = async (orderId) => {
+exports.createTicket = async (
+    orderId,
+    mode = "kitchen"
+) => {
 
     const result =
 
         await db.runAsync(
 
             `
-
-            INSERT INTO kitchen_tickets
-
-            (
-
-                order_id
-
-            )
-
-            VALUES (?)
+INSERT INTO kitchen_tickets
+(
+    order_id,
+    mode
+)
+VALUES (?, ?)
 
             `,
 
             [
-
-                orderId
-
-            ]
+    orderId,
+    mode
+]
 
         );
 
@@ -135,6 +133,8 @@ exports.getActiveTickets = async (
 
             o.restaurant_id = ?
 
+             AND kt.mode = 'kitchen'
+
             AND kt.status IN
             (
                 'new',
@@ -153,24 +153,24 @@ exports.getActiveTickets = async (
 
 };
 
-exports.updateTicketStatus = async (
-    ticketId,
-    status
-) => {
+// exports.updateTicketStatus = async (
+//     ticketId,
+//     status
+// ) => {
 
-    await db.runAsync(
-        `
-        UPDATE kitchen_tickets
-        SET status = ?
-        WHERE id = ?
-        `,
-        [
-            status,
-            ticketId
-        ]
-    );
+//     await db.runAsync(
+//         `
+//         UPDATE kitchen_tickets
+//         SET status = ?
+//         WHERE id = ?
+//         `,
+//         [
+//             status,
+//             ticketId
+//         ]
+//     );
 
-};
+// };
 
 exports.getTicketItems = async (
     ticketId
@@ -269,6 +269,8 @@ exports.getTicketById = async (
             kt.ticket_number,
 
             kt.status,
+
+            kt.mode,
 
             o.restaurant_id,
 
@@ -698,6 +700,99 @@ exports.closeAllTicketsByOrder = async (
             )
         `,
         [orderId]
+    );
+
+};
+exports.markTicketReadyDirect = async (
+    ticketId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_tickets
+        SET
+            status = 'ready',
+            ready_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        `,
+        [
+            ticketId
+        ]
+    );
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_ticket_items
+        SET
+            status = 'ready',
+            ready_at = CURRENT_TIMESTAMP
+        WHERE ticket_id = ?
+        `,
+        [
+            ticketId
+        ]
+    );
+
+};
+
+exports.getTicketPrintData = async (
+    ticketId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            kt.id AS ticket_id,
+            kt.status,
+            kt.created_at,
+            o.id AS order_id,
+            t.name AS table_name,
+            a.name AS area_name
+
+        FROM kitchen_tickets kt
+
+        INNER JOIN orders o
+            ON o.id = kt.order_id
+
+        INNER JOIN tables t
+            ON t.id = o.table_id
+
+        INNER JOIN dining_areas a
+            ON a.id = t.area_id
+
+        WHERE kt.id = ?
+        `,
+        [
+            ticketId
+        ]
+    );
+
+};
+
+exports.getTicketPrintItems = async (
+    ticketId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            item_name AS name,
+
+            variant_name,
+
+            quantity
+
+        FROM kitchen_ticket_items
+
+        WHERE ticket_id = ?
+
+        ORDER BY id
+        `,
+        [
+            ticketId
+        ]
     );
 
 };

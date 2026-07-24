@@ -619,7 +619,15 @@ document
     .getElementById("sendKitchenBtn")
     .addEventListener(
         "click",
-        sendToKitchen
+        () => sendToKitchen("kitchen")
+    );
+    
+
+document
+    .getElementById("printReadyBtn")
+    ?.addEventListener(
+        "click",
+        () => sendToKitchen("print_ready")
     );
 
 const checkoutBtn =
@@ -631,13 +639,22 @@ if (checkoutBtn) {
 
     checkoutBtn.addEventListener(
         "click",
-        sendToKitchen
+        () => sendToKitchen("kitchen")
     );
 
 }
 
+document
+    .getElementById("mobilePrintReadyBtn")
+    ?.addEventListener(
+        "click",
+        () => sendToKitchen("print_ready")
+    );
+
+
 
 initialize();
+
 function updateQuickItemLink() {
 
     const addQuickItemButton =
@@ -1555,7 +1572,9 @@ function closeCart() {
         .classList.add("hidden");
 
 }
-async function sendToKitchen() {
+async function sendToKitchen(
+    mode = "kitchen"
+) {
 
     if (Align.Order.state.cart.length === 0) {
 
@@ -1618,6 +1637,8 @@ if (cartButton) {
         const payload = {
 
     table_id: Number(tableId),
+
+    mode,
 
     items: Align.Order.state.cart.map(item => ({
 
@@ -1688,6 +1709,17 @@ if (cartButton) {
 
 }
 
+if (
+    mode === "print_ready" &&
+    data.ticketId
+) {
+
+    window.open(
+        `/admin/kot-print.html?ticket=${data.ticketId}`,
+        "_blank"
+    );
+
+}
         Toast.show(
     onlyQuickItems
         ? "Quick items saved"
@@ -1846,9 +1878,6 @@ ${
         });
 
     });
-
-    // Agar selected category available nahi hai,
-    // to automatically "All" select kar do
 
     const exists = categories.some(
 
