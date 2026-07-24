@@ -32,6 +32,11 @@ router.patch(
     kitchenController.updateTicketItemStatus
 );
 router.patch(
+    "/items/:itemId/note",
+    authMiddleware,
+    kitchenController.updateTicketItemNote
+);
+router.patch(
     "/items/:itemId/cancel",
     authMiddleware,
     kitchenController.cancelTicketItem

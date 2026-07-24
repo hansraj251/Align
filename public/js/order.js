@@ -8,6 +8,7 @@ let selectedFoodType = "all";
 const selectedVariants = {};
 let currentOrder = null;
 let isTakeAway = false;
+let currentNoteItem = null;
 
 if (!API.getToken()) {
     window.location.href = "/login.html";
@@ -738,6 +739,8 @@ async function loadExistingOrder() {
 
     active_ticket_item_id:
         item.active_ticket_item_id,
+    note:
+        item.note,    
 
     pending_count:
         item.pending_count || 0,
@@ -1070,6 +1073,16 @@ ${item.variant_name || ""}
     Cancel Item
 
 </button>
+
+` : ""}
+${canEditNote(item) ? `
+<button
+    onclick="openNoteModal(${item.active_ticket_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600">
+
+    Note
+
+</button>
 ` : ""}
 
 ${item.is_quick_item &&
@@ -1140,6 +1153,16 @@ if (cartSheet) {
     class="mt-2 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white">
 
     Cancel Item
+
+</button>
+
+` : ""}
+${canEditNote(item) ? `
+<button
+    onclick="openNoteModal(${item.active_ticket_item_id})"
+    class="mt-2 ml-2 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600">
+
+    Note
 
 </button>
 ` : ""}
@@ -2519,3 +2542,108 @@ document
         openQuickItemsModal
     );
    
+function openNoteModal(
+    ticketItemId
+) {
+
+    const item =
+        existingItems.find(
+            item =>
+                item.active_ticket_item_id ===
+                ticketItemId
+        );
+
+    currentNoteItem =
+        ticketItemId;
+
+    Modal.open(
+
+        "Kitchen Note",
+
+        `
+<textarea
+    id="kitchenNote"
+    class="w-full rounded-lg border p-3"
+    rows="5"
+    maxlength="300"
+    placeholder="Enter kitchen note...">${item?.note || ""}</textarea>
+`,
+
+        saveItemNote,
+
+        {
+
+            buttonText:
+                "Save Note",
+
+            loadingText:
+                "Saving..."
+
+        }
+
+    );
+
+}
+
+async function saveItemNote() {
+
+    const note =
+        document.getElementById(
+            "kitchenNote"
+        ).value;
+
+    try {
+
+        const data =
+            await API.patch(
+
+                `/api/kitchen/items/${currentNoteItem}/note`,
+
+                {
+                    note
+                }
+
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Modal.close();
+
+        Toast.show(
+            "Kitchen note updated",
+            "success"
+        );
+
+        await loadExistingOrder();
+
+        renderCart();
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
+function canEditNote(item) {
+
+    return (
+        item.pending_count > 0 ||
+        item.preparing_count > 0
+    );
+
+}

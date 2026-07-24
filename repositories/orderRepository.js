@@ -237,6 +237,24 @@ exports.getActiveOrderByTable = async (
             oi.quantity,
 
             oi.unit_price,
+            (
+    SELECT
+        kti.note
+    FROM
+        kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status IN (
+            'pending',
+            'preparing'
+        )
+    ORDER BY
+        CASE
+            WHEN kti.status = 'preparing' THEN 2
+            WHEN kti.status = 'pending' THEN 1
+        END DESC
+    LIMIT 1
+) AS note,
 
             oi.total_price,
 
@@ -538,6 +556,24 @@ exports.getOrderItems = async (
             oi.quantity,
 
             oi.unit_price,
+            (
+    SELECT
+        kti.note
+    FROM
+        kitchen_ticket_items kti
+    WHERE
+        kti.order_item_id = oi.id
+        AND kti.status IN (
+            'pending',
+            'preparing'
+        )
+    ORDER BY
+        CASE
+            WHEN kti.status = 'preparing' THEN 2
+            WHEN kti.status = 'pending' THEN 1
+        END DESC
+    LIMIT 1
+) AS note,
 
             (
     SELECT id

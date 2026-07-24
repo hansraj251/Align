@@ -251,3 +251,39 @@ exports.getTicketPrintData = async (
     }
 
 };
+
+exports.updateTicketItemNote = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await kitchenService.updateTicketItemNote(
+
+                req.params.itemId,
+
+                req.body.note
+
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

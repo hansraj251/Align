@@ -618,24 +618,61 @@ exports.getTicketPrintData = async (ticketId) => {
             ticketId
         );
 
-    console.log("ticket =", ticket);
+   
 
     const items =
         await kitchenRepository.getTicketPrintItems(
             ticketId
         );
 
-    console.log("items =", items);
-    console.log(
-        "isArray =",
-        Array.isArray(items)
-    );
+  
 
     return {
 
         ...ticket,
 
         items
+
+    };
+
+};
+exports.updateTicketItemNote = async (
+    ticketItemId,
+    note
+) => {
+
+    const item =
+        await kitchenRepository.getTicketItem(
+            ticketItemId
+        );
+
+    if (!item) {
+
+        throw new Error(
+            "Kitchen item not found"
+        );
+
+    }
+
+    if (
+        item.status !== "pending" &&
+        item.status !== "preparing"
+    ) {
+
+        throw new Error(
+            "Note can only be updated for pending or preparing items"
+        );
+
+    }
+
+    await kitchenRepository.updateTicketItemNote(
+        ticketItemId,
+        note?.trim() || null
+    );
+
+    return {
+
+        success: true
 
     };
 

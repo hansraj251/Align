@@ -125,79 +125,40 @@ function canServeItem(item) {
 }
 async function serveOrderItem(ticketItemId) {
 
-   Modal.confirm(
+    const data =
+        await API.patch(
 
-    isTakeAway
-        ? "Hand Over Item"
-        : "Serve Item",
+            `/api/kitchen/items/${ticketItemId}/status`,
 
-    isTakeAway
-        ? "Mark this item as handed over?"
-        : "Mark this item as served?",
-
-        async () => {
-
-            const data =
-                await API.patch(
-
-                    `/api/kitchen/items/${ticketItemId}/status`,
-
-                    {
-                        status: "served"
-                    }
-
-                );
-
-            if (!data.success) {
-
-                Toast.show(
-                    data.message,
-                    "error"
-                );
-
-                return;
-
+            {
+                status: "served"
             }
 
-            Modal.close();
+        );
 
-            Toast.show(
-    isTakeAway
-        ? "Item Handed Over"
-        : "Item Served",
-    "success"
-);
+    if (!data.success) {
 
-            await loadExistingOrder();
+        Toast.show(
+            data.message,
+            "error"
+        );
 
-            renderCart();
-            
-            
+        return;
 
-        },
+    }
 
-        {
+    Toast.show(
 
-            buttonText:
+        isTakeAway
+            ? "Item Handed Over"
+            : "Item Served",
 
-    isTakeAway
-
-        ? "Hand Over"
-
-        : "Serve",
-
-            buttonClass: "bg-green-600",
-
-            loadingText:
-
-    isTakeAway
-
-        ? "Handing Over..."
-
-        : "Serving..."
-
-        }
+        "success"
 
     );
+
+    await loadExistingOrder();
+
+    renderCart();
 
 }

@@ -19,37 +19,29 @@ async function init() {
 
     }
 
-    const response =
-        await API.get(
-            `/api/kitchen/tickets/${ticketId}/print`
-        );
+   const response =
+    await API.get(
+        `/api/kitchen/tickets/${ticketId}/print`
+    );
 
-    if (!response.success) {
+if (!response.success) {
 
-        return;
+    return;
 
-    }
-console.log(response);
-console.log(
-    JSON.stringify(
-        response,
-        null,
-        2
-    )
+}
+
+renderTicket(
+    response.ticket
 );
-console.log(Array.isArray(response.ticket.items));
-    renderTicket(
-        response.ticket
-    );
 
-    setTimeout(
-        () => {
+setTimeout(
+    () => {
 
-            window.print();
+        window.print();
 
-        },
-        300
-    );
+    },
+    300
+);
 
 }
 
@@ -118,14 +110,14 @@ function renderTicket(
                         }
 
                         ${
-                            item.notes
-                                ? `
-                                    <div class="text-xs italic">
-                                        ${item.notes}
-                                    </div>
-                                `
-                                : ""
-                        }
+    item.note
+        ? `
+            <div class="mt-1 text-xs">
+    <strong>NOTE:</strong> ${item.note}
+</div>
+        `
+        : ""
+}
 
                     </div>
 

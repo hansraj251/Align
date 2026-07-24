@@ -196,7 +196,8 @@ exports.getTicketItems = async (
 
             unit_price,
 
-            status
+            status,
+            note
 
         FROM kitchen_ticket_items
 
@@ -782,7 +783,8 @@ exports.getTicketPrintItems = async (
 
             variant_name,
 
-            quantity
+            quantity,
+            note
 
         FROM kitchen_ticket_items
 
@@ -792,6 +794,30 @@ exports.getTicketPrintItems = async (
         `,
         [
             ticketId
+        ]
+    );
+
+};
+exports.updateTicketItemNote = async (
+    ticketItemId,
+    note
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE kitchen_ticket_items
+        SET
+            note = ?
+        WHERE
+            id = ?
+            AND status IN (
+                'pending',
+                'preparing'
+            )
+        `,
+        [
+            note,
+            ticketItemId
         ]
     );
 

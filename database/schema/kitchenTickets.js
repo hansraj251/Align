@@ -23,6 +23,8 @@ exports.createKitchenTables = async () => {
 
     ready_at DATETIME,
 
+    note TEXT,
+
     FOREIGN KEY(order_id)
         REFERENCES orders(id)
 
@@ -55,6 +57,8 @@ exports.createKitchenTables = async () => {
     ready_at DATETIME,
 
     served_at DATETIME,
+
+    note TEXT,
 
     FOREIGN KEY(ticket_id)
         REFERENCES kitchen_tickets(id),

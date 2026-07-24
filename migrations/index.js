@@ -120,6 +120,12 @@ const migrations = [
     require(
         "./025_add_table_reservation_columns"
     )
+],
+[
+    "026_add_note_to_pending_ticket_items",
+    require(
+        "./026_add_note_to_pending_ticket_items"
+    )
 ]
 
 ];
