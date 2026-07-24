@@ -238,11 +238,13 @@ table.is_reserved
     : "border-slate-200 bg-white"
 } p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
 
+<div class="flex-1">
+
 <div class="flex items-center justify-between">
 
 <h3 class="text-base font-bold md:text-lg">
 
- ${table.name}
+${table.name}
 
 </h3>
 
@@ -266,25 +268,18 @@ ${
 
 </div>
 
+${
+table.system_key === "takeaway"
+
+? ""
+
+: `
 <p class="mt-2 text-xs text-slate-500 md:mt-3 md:text-sm">
 
 👥 ${table.capacity} Seats
 
 </p>
-
-${
-table.status === "available" &&
-!table.is_reserved
-? `
-<button
-    onclick="event.stopPropagation(); reserveTable(${table.id})"
-    class="mt-auto w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50">
-
-    Reserve
-
-</button>
 `
-: ""
 }
 
 ${
@@ -292,32 +287,19 @@ table.is_reserved
 ? `
 <div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
 
-    <div class="font-medium text-amber-700">
+<div class="font-medium text-amber-700">
 
-        Reserved
-
-    </div>
-
-    <div class="text-slate-700">
-
-        ${table.reserved_name}
-
-    </div>
+Reserved
 
 </div>
-`
-: ""
-}
-${
-table.is_reserved
-? `
-<button
-    onclick="event.stopPropagation(); clearReservation(${table.id})"
-    class="mt-auto w-full rounded-lg bg-amber-600 py-2 text-sm text-white">
 
-    Clear Reservation
+<div class="text-slate-700">
 
-</button>
+${table.reserved_name}
+
+</div>
+
+</div>
 `
 : ""
 }
@@ -328,7 +310,7 @@ table.status !== "available"
 ? `
 <div class="mt-2 text-sm font-medium text-red-600 md:text-base">
 
-    ⏱ ${table.minutes ?? 0} min
+⏱ ${table.minutes ?? 0} min
 
 </div>
 
@@ -336,7 +318,7 @@ table.status !== "available"
 
 <div class="flex justify-between">
 
-<span> Items</span>
+<span>Items</span>
 
 <strong>${table.total_items}</strong>
 
@@ -351,11 +333,48 @@ table.status !== "available"
 </div>
 
 </div>
-
 `
 
 : ""
 
+}
+
+</div>
+
+${
+table.status === "available"
+
+? `
+<div class="mt-4">
+
+${
+table.is_reserved
+
+? `
+<button
+onclick="event.stopPropagation(); clearReservation(${table.id})"
+class="w-full rounded-lg bg-amber-600 py-2 text-sm font-medium text-white">
+
+Clear Reservation
+
+</button>
+`
+
+: `
+<button
+onclick="event.stopPropagation(); reserveTable(${table.id})"
+class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50">
+
+Reserve
+
+</button>
+`
+}
+
+</div>
+`
+
+: ""
 }
 
 </div>
