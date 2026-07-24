@@ -103,6 +103,7 @@ class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden items-center justify-between bg
         </div>
 
     </main>
+     <div id="modalContainer"></div>
 <script src="/js/indexedDb.js"></script>
 <script src="/js/cacheService.js"></script>
 <script src="/js/components.js"></script>
@@ -135,7 +136,15 @@ class="sticky top-0 z-30 -mx-6 -mt-6 mb-6 hidden items-center justify-between bg
 });
 
 </script>
+<script>
 
+loadComponent(
+    "modalContainer",
+    "/components/modal.html"
+);
+</script>
+<script src="/js/modal.js"></script>
+<script src="/js/tableReservation.js"></script>
 <script src="/js/tableOccupancy.js"></script>
 
 </body>

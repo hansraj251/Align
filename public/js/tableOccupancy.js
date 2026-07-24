@@ -222,7 +222,7 @@ function renderRows(
     </button>
 
     <div
-        class="row-scroll flex gap-4 overflow-x-auto px-10">
+        class="row-scroll flex items-stretch gap-4 overflow-x-auto px-10">
 
 ${
 
@@ -232,7 +232,11 @@ rowTables.length
 
 <div
 onclick="openDashboardOrder(${table.id}, ${table.area_id})"
-class="mt-2.5 ml-1 flex min-w-[150px] cursor-pointer flex-col rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
+class="mt-2.5 ml-1 flex min-w-[150px] self-stretch cursor-pointer flex-col rounded-lg border ${
+table.is_reserved
+    ? "border-amber-300 bg-amber-50"
+    : "border-slate-200 bg-white"
+} p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
 
 <div class="flex items-center justify-between">
 
@@ -243,15 +247,19 @@ class="mt-2.5 ml-1 flex min-w-[150px] cursor-pointer flex-col rounded-lg border 
 </h3>
 
 <span class="${
-    table.status === "available"
-        ? "text-green-600"
-        : "text-red-600"
+    table.status === "occupied"
+        ? "text-red-600"
+        : table.is_reserved
+            ? "text-amber-600"
+            : "text-green-600"
 }">
 
 ${
-    table.status === "available"
-        ? " Available"
-        : " Occupied"
+    table.status === "occupied"
+        ? "Occupied"
+        : table.is_reserved
+            ? "Reserved"
+            : "Available"
 }
 
 </span>
@@ -263,6 +271,56 @@ ${
 👥 ${table.capacity} Seats
 
 </p>
+
+${
+table.status === "available" &&
+!table.is_reserved
+? `
+<button
+    onclick="event.stopPropagation(); reserveTable(${table.id})"
+    class="mt-auto w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50">
+
+    Reserve
+
+</button>
+`
+: ""
+}
+
+${
+table.is_reserved
+? `
+<div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
+
+    <div class="font-medium text-amber-700">
+
+        Reserved
+
+    </div>
+
+    <div class="text-slate-700">
+
+        ${table.reserved_name}
+
+    </div>
+
+</div>
+`
+: ""
+}
+${
+table.is_reserved
+? `
+<button
+    onclick="event.stopPropagation(); clearReservation(${table.id})"
+    class="mt-auto w-full rounded-lg bg-amber-600 py-2 text-sm text-white">
+
+    Clear Reservation
+
+</button>
+`
+: ""
+}
 
 ${
 table.status !== "available"
@@ -439,3 +497,5 @@ function openDashboardOrder(
 
 }
 loadArea();
+window.refreshReservationView =
+    loadArea;
