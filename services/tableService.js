@@ -279,3 +279,102 @@ exports.getTakeAwayTable = async (
     );
 
 };
+
+exports.reserveTable = async (
+    restaurantId,
+    tableId,
+    reservedName
+) => {
+
+    const table =
+        await tableRepository.getById(
+            restaurantId,
+            tableId
+        );
+
+    if (!table) {
+
+        throw new Error(
+            "Table not found"
+        );
+
+    }
+
+    reservedName =
+        (reservedName || "").trim();
+
+    if (!reservedName) {
+
+        throw new Error(
+            "Customer name is required"
+        );
+
+    }
+
+    if (table.is_reserved) {
+
+        throw new Error(
+            "Table is already reserved"
+        );
+
+    }
+
+    await tableRepository.reserveTable(
+        restaurantId,
+        tableId,
+        reservedName
+    );
+
+    return {
+
+        success: true,
+
+        message:
+            "Table reserved successfully"
+
+    };
+
+};
+
+exports.clearReservation = async (
+    restaurantId,
+    tableId
+) => {
+
+    const table =
+        await tableRepository.getById(
+            restaurantId,
+            tableId
+        );
+
+    if (!table) {
+
+        throw new Error(
+            "Table not found"
+        );
+
+    }
+
+    if (!table.is_reserved) {
+
+        throw new Error(
+            "Table is not reserved"
+        );
+
+    }
+
+    await tableRepository.clearReservation(
+        restaurantId,
+        tableId
+    );
+
+    return {
+
+        success: true,
+
+        message:
+            "Reservation cleared successfully"
+
+    };
+
+};

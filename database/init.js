@@ -108,6 +108,29 @@ await createKitchenTables();
 
 await runMigrations();
 
+const sqlite3 =
+    require("sqlite3").verbose();
+
+const testDb =
+    new sqlite3.Database(
+        "/Users/hansrajmeena/Desktop/Align/database/align.db"
+    );
+
+testDb.all(
+    `
+    SELECT
+        id,
+        migration_name
+    FROM schema_migrations
+    ORDER BY id
+    `,
+    (err, rows) => {
+
+        testDb.close();
+
+    }
+);
+
 await seedPlans();
 
 await seedPlanLimits();

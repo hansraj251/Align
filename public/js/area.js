@@ -218,15 +218,19 @@ ${table.name}
 </h3>
 
 <span class="${
-    table.status === "available"
-        ? "text-green-600"
-        : "text-red-600"
+    table.status === "occupied"
+    ? "bg-red-100 text-red-700"
+    : table.is_reserved
+        ? "bg-amber-100 text-amber-700"
+        : "bg-green-100 text-green-700"
 }">
 
 ${
-    table.status === "available"
-        ? "Available"
-        : "Occupied"
+    table.status === "occupied"
+    ? "Occupied"
+    : table.is_reserved
+        ? "Reserved"
+        : "Available"
 }
 
 </span>
@@ -351,7 +355,11 @@ rowTables.length
 
 <div
 onclick="openDashboardOrder(${table.id}, ${table.area_id})"
-class="mt-2.5 ml-1 flex min-w-[150px] cursor-pointer flex-col rounded-lg border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
+class="mt-2.5 ml-1 flex min-w-[150px] cursor-pointer flex-col rounded-lg border ${
+table.is_reserved
+    ? "border-amber-300 bg-amber-50"
+    : "border-slate-200 bg-white"
+} p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
 
 <div class="flex items-center justify-between">
 
@@ -362,15 +370,19 @@ class="mt-2.5 ml-1 flex min-w-[150px] cursor-pointer flex-col rounded-lg border 
 </h3>
 
 <span class="${
-    table.status === "available"
-        ? "text-green-600"
-        : "text-red-600"
+    table.status === "occupied"
+        ? "text-red-600"
+        : table.is_reserved
+            ? "text-amber-600"
+            : "text-green-600"
 }">
 
 ${
-    table.status === "available"
-        ? " Available"
-        : " Occupied"
+    table.status === "occupied"
+        ? "Occupied"
+        : table.is_reserved
+            ? "Reserved"
+            : "Available"
 }
 
 </span>
@@ -389,6 +401,28 @@ table.system_key === "takeaway"
 
 </p>
 `
+}
+
+${
+table.is_reserved
+? `
+<div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
+
+<div class="font-medium text-amber-700">
+
+Reserved
+
+</div>
+
+<div class="text-slate-700">
+
+${table.reserved_name}
+
+</div>
+
+</div>
+`
+: ""
 }
 
 ${
@@ -425,6 +459,41 @@ table.status !== "available"
 
 : ""
 
+}
+${
+table.status === "available"
+
+? `
+<div class="mt-auto pt-3">
+
+${
+table.is_reserved
+
+? `
+<button
+onclick="event.stopPropagation(); clearReservation(${table.id})"
+class="w-full rounded-lg border border-amber-300 px-3 py-2 text-sm font-medium text-amber-700 hover:bg-amber-50">
+
+Clear Reservation
+
+</button>
+`
+
+: `
+<button
+onclick="event.stopPropagation(); reserveTable(${table.id})"
+class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50">
+
+Reserve
+
+</button>
+`
+}
+
+</div>
+`
+
+: ""
 }
 </div>
 
@@ -560,4 +629,138 @@ function openDashboardOrder(
         `/admin/order.html?table=${tableId}&area=${areaId}`;
 
 }
+
 loadArea();
+
+async function reserveTable(
+    tableId
+) {
+
+    Modal.open(
+
+        "Reserve Table",
+
+        `
+<div>
+
+<label class="mb-2 block text-sm font-medium">
+
+Customer Name
+
+</label>
+
+<input
+    id="reservedName"
+    type="text"
+    class="w-full rounded-lg border border-slate-300 px-3 py-2"
+    placeholder="Enter customer name"
+    maxlength="100"
+>
+
+</div>
+`,
+
+        async () => {
+
+            const reservedName =
+                document
+                    .getElementById(
+                        "reservedName"
+                    )
+                    .value
+                    .trim();
+
+            if (!reservedName) {
+
+                Toast.show(
+                    "Customer name is required",
+                    "error"
+                );
+
+                return;
+
+            }
+
+            const response =
+                await API.put(
+
+                    `/api/tables/${tableId}/reserve`,
+
+                    {
+
+                        reserved_name:
+                            reservedName
+
+                    }
+
+                );
+
+            if (!response.success) {
+
+                Toast.show(
+                    response.message,
+                    "error"
+                );
+
+                return;
+
+            }
+
+            Modal.close();
+
+            Toast.show(
+                response.message,
+                "success"
+            );
+
+            await loadArea();
+
+        }
+
+    );
+
+}
+async function clearReservation(
+    tableId
+) {
+
+    Modal.confirm(
+
+        "Clear Reservation",
+
+        "Are you sure you want to clear this reservation?",
+
+        async () => {
+
+            const response =
+                await API.put(
+
+                    `/api/tables/${tableId}/clear-reservation`
+
+                );
+
+            if (!response.success) {
+
+                Toast.show(
+                    response.message,
+                    "error"
+                );
+
+                return;
+
+            }
+
+            Modal.close();
+
+            Toast.show(
+                response.message,
+                "success"
+            );
+
+            await loadArea();
+
+        }
+
+    );
+
+}

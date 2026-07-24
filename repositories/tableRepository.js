@@ -116,6 +116,8 @@ exports.getAll = async (restaurantId) => {
             t.name,
             t.capacity,
             t.status,
+            t.is_reserved,
+            t.reserved_name,
             t.area_id,
              t.system_key,
             t.display_row,
@@ -222,7 +224,9 @@ exports.getById = async (
     area_id,
     system_key,
     display_row,
-    display_order
+    display_order,
+    is_reserved,
+    reserved_name
         FROM tables
         WHERE
             id = ?
@@ -300,6 +304,12 @@ exports.getTableDetails = async (
 
             t.name,
 
+            t.status,
+
+            t.is_reserved,
+
+            t.reserved_name,
+
             a.name AS area_name
 
         FROM tables t
@@ -321,7 +331,6 @@ exports.getTableDetails = async (
     );
 
 };
-
 exports.getTakeAwayTable = async (restaurantId) => {
 
     return await db.getAsync(
@@ -412,5 +421,52 @@ async (
         );
 
     return result.lastID;
+
+};
+exports.reserveTable = async (
+    restaurantId,
+    tableId,
+    reservedName
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE tables
+        SET
+            is_reserved = 1,
+            reserved_name = ?
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            reservedName,
+            tableId,
+            restaurantId
+        ]
+    );
+
+};
+
+exports.clearReservation = async (
+    restaurantId,
+    tableId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE tables
+        SET
+            is_reserved = 0,
+            reserved_name = NULL
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            tableId,
+            restaurantId
+        ]
+    );
 
 };

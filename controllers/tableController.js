@@ -202,3 +202,68 @@ exports.getTable = async (
     }
 
 };
+exports.reserveTable = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await tableService.reserveTable(
+
+                req.user.restaurantId,
+
+                req.params.id,
+
+                req.body.reserved_name
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.clearReservation = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await tableService.clearReservation(
+
+                req.user.restaurantId,
+
+                req.params.id
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

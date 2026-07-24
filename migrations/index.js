@@ -1,3 +1,4 @@
+console.log("Loaded migrations/index.js");
 const db =
     require("../db");
 
@@ -113,6 +114,12 @@ const migrations = [
 [
     "024_add_mode_to_kitchen_tickets",
     require("./024_add_mode_to_kitchen_tickets")
+],
+[
+    "025_add_table_reservation_columns",
+    require(
+        "./025_add_table_reservation_columns"
+    )
 ]
 
 ];
@@ -125,31 +132,39 @@ module.exports = async () => {
 
     await ensureMigrationTable();
 
+    const rows = await db.allAsync(`
+    SELECT
+        id,
+        migration_name
+    FROM schema_migrations
+    ORDER BY id
+`);
+
     for (const [
 
-        name,
+    name,
 
-        migration
+    migration
 
-    ] of migrations) {
+] of migrations) {
 
-        if (
-            await hasRun(name)
-        ) {
+    if (
+        await hasRun(name)
+    ) {
 
-            continue;
-
-        }
-
-        await migration(db);
-
-        await markAsRun(name);
-
-        console.log(
-            `✓ ${name}`
-        );
+        continue;
 
     }
+
+    await migration(db);
+
+    await markAsRun(name);
+
+    console.log(
+        `✓ ${name}`
+    );
+
+}
 
     console.log(
         "✅ Migrations completed."

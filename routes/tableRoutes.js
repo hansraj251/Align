@@ -44,7 +44,19 @@ router.put(
     adminMiddleware,
     tableController.updateTable
 );
+router.put(
+    "/:id/reserve",
+    authMiddleware,
+    adminMiddleware,
+    tableController.reserveTable
+);
 
+router.put(
+    "/:id/clear-reservation",
+    authMiddleware,
+    adminMiddleware,
+    tableController.clearReservation
+);
 
 
 module.exports = router;

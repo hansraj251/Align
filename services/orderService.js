@@ -92,6 +92,16 @@ if (!table) {
     );
 
 }
+if (
+    table.is_reserved &&
+    table.status === "available"
+) {
+
+    throw new Error(
+        `This table is reserved for ${table.reserved_name}`
+    );
+
+}
 const settings =
     await settingsRepository.getSettings(
         restaurantId

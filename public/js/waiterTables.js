@@ -84,19 +84,25 @@ No Tables
     }
 
     tables.forEach(table => {
-         let icon = "🟢";
+        let icon = "🟢";
 
-    if (table.status === "occupied") {
+if (table.status === "occupied") {
 
-        icon = "🔴";
+    icon = "🔴";
 
-    }
+}
 
-    else if (table.status === "billing") {
+else if (table.is_reserved) {
 
-        icon = "🔵";
+    icon = "🟡";
 
-    }
+}
+
+else if (table.status === "billing") {
+
+    icon = "🔵";
+
+}
 
         list.innerHTML += `
 
@@ -161,7 +167,13 @@ ${Align.formatCurrency(table.total || 0, 2)}
 
 <div class="pt-2 font-medium">
 
-${table.status}
+${
+    table.status === "occupied"
+        ? "Occupied"
+        : table.is_reserved
+            ? "Reserved"
+            : "Available"
+}
 
 </div>
 
