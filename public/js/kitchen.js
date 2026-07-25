@@ -1,3 +1,4 @@
+let diningAreas = [];
 function toggleKitchenHeader() {
 
     const staff = JSON.parse(
@@ -12,17 +13,18 @@ function toggleKitchenHeader() {
 
     }
     [
-    "kitchenHeaderButtons",
-    "kitchenHeaderButtonsMobile"
+    "kitchenActions",
+    "kitchenActionsMobile"
 ].forEach(id => {
 
     document
         .getElementById(id)
-        ?.classList.add(
+        ?.classList.remove(
             "hidden"
         );
 
 });
+    
 
 [
     "kitchenLogoutBtn",
@@ -49,6 +51,11 @@ const params =
 
 const areaId =
     params.get("area");
+
+const AREA_FILTER_STORAGE_KEY =
+    "kitchenAreaFilter";
+
+let kitchenAreaFilter = {};    
 
 const backButtons = [
 
@@ -118,9 +125,21 @@ backButtons.forEach(button => {
 });
 
 }
-toggleKitchenHeader();
+(async () => {
 
-setupBackButton();
+    toggleKitchenHeader();
+
+    await setupBackButton();
+
+    loadAreaFilter();
+
+    await loadDiningAreas();
+
+    setupAreaFilter();
+
+    await loadKitchenOrders();
+
+})();
 
 function renderTicket(
     ticket
@@ -324,7 +343,7 @@ async function loadKitchenOrders() {
         await API.get(
             "/api/kitchen"
         );
-    console.log(data.tickets);    
+    console.log(data.tickets[0]);
 
     const container =
         document.getElementById(
@@ -358,10 +377,29 @@ async function loadKitchenOrders() {
 
     }
 
-    container.innerHTML =
-        data.tickets
-            .map(renderTicket)
-            .join("");
+    const visibleTickets =
+    data.tickets.filter(
+        isAreaVisible
+    );
+
+if (visibleTickets.length === 0) {
+
+    container.innerHTML = `
+        <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
+
+            No Pending Orders
+
+        </div>
+    `;
+
+    return;
+
+}
+
+container.innerHTML =
+    visibleTickets
+        .map(renderTicket)
+        .join("");
 
 }
 async function refreshTicket(
@@ -423,14 +461,23 @@ async function refreshTicket(
     return;
 
 }
-    card.outerHTML =
-        renderTicket(
-            ticket
-        );
+    if (
+    !isAreaVisible(ticket)
+) {
+
+    card.remove();
+
+    return;
 
 }
 
-loadKitchenOrders();
+card.outerHTML =
+    renderTicket(
+        ticket
+    );
+
+}
+
 async function closeCancelledTicket(
     ticketId
 ) {
@@ -604,6 +651,267 @@ await refreshTicket(
         
 
 });
+function loadAreaFilter() {
+
+    try {
+
+        kitchenAreaFilter =
+            JSON.parse(
+                localStorage.getItem(
+                    AREA_FILTER_STORAGE_KEY
+                ) || "{}"
+            );
+
+    } catch {
+
+        kitchenAreaFilter = {};
+
+    }
+
+}
+
+function saveAreaFilter() {
+
+    localStorage.setItem(
+        AREA_FILTER_STORAGE_KEY,
+        JSON.stringify(
+            kitchenAreaFilter
+        )
+    );
+
+}
+
+function isAreaVisible(
+    ticket
+) {
+
+    if (
+        ticket.area_id == null
+    ) {
+
+        return true;
+
+    }
+
+    if (
+        kitchenAreaFilter[
+            ticket.area_id
+        ] === undefined
+    ) {
+
+        kitchenAreaFilter[
+            ticket.area_id
+        ] = true;
+
+        saveAreaFilter();
+
+    }
+
+    return kitchenAreaFilter[
+        ticket.area_id
+    ];
+
+}
+async function loadDiningAreas() {
+
+    const data =
+        await API.get(
+            "/api/dining-areas"
+        );
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    diningAreas =
+        data.areas;
+
+    let changed =
+        false;
+
+    diningAreas.forEach(area => {
+
+        if (
+            kitchenAreaFilter[
+                area.id
+            ] === undefined
+        ) {
+
+            kitchenAreaFilter[
+                area.id
+            ] = true;
+
+            changed = true;
+
+        }
+
+    });
+    
+
+    if (changed) {
+
+        saveAreaFilter();
+
+    }
+    renderAreaFilter(
+    "areaFilterDropdown"
+);
+
+renderAreaFilter(
+    "areaFilterDropdownMobile"
+);
+
+}function renderAreaFilter(dropdownId) {
+
+    const dropdown =
+        document.getElementById(
+            dropdownId
+        );
+
+    if (!dropdown) {
+
+        return;
+
+    }
+
+    dropdown.innerHTML =
+        diningAreas
+            .map(area => `
+
+                <label
+                    class="flex cursor-pointer items-center gap-3 border-b px-4 py-3 last:border-b-0">
+
+                    <input
+                        type="checkbox"
+                        class="area-filter-checkbox"
+                        data-area-id="${area.id}"
+                        ${
+                            kitchenAreaFilter[
+                                area.id
+                            ]
+                                ? "checked"
+                                : ""
+                        }>
+
+                    <span>
+
+                        ${area.name}
+
+                    </span>
+
+                </label>
+
+            `)
+            .join("");
+
+}
+function setupAreaFilter() {
+
+    [
+        {
+            buttonId:
+                "areaFilterBtn",
+            dropdownId:
+                "areaFilterDropdown"
+        },
+        {
+            buttonId:
+                "areaFilterBtnMobile",
+            dropdownId:
+                "areaFilterDropdownMobile"
+        }
+    ].forEach(item => {
+
+        const button =
+            document.getElementById(
+                item.buttonId
+            );
+
+        const dropdown =
+            document.getElementById(
+                item.dropdownId
+            );
+
+        if (
+            !button ||
+            !dropdown
+        ) {
+
+            return;
+
+        }
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                dropdown.classList.toggle(
+                    "hidden"
+                );
+
+            }
+        );
+        dropdown.addEventListener(
+    "change",
+    event => {
+
+        const checkbox =
+            event.target;
+
+        if (
+            !checkbox.classList.contains(
+                "area-filter-checkbox"
+            )
+        ) {
+
+            return;
+
+        }
+
+        kitchenAreaFilter[
+            Number(
+                checkbox.dataset.areaId
+            )
+        ] =
+            checkbox.checked;
+
+        saveAreaFilter();
+
+        loadKitchenOrders();
+
+    }
+);
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    !dropdown.contains(
+                        event.target
+                    ) &&
+                    !button.contains(
+                        event.target
+                    )
+                ) {
+
+                    dropdown.classList.add(
+                        "hidden"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
 setInterval(
     loadKitchenOrders,
     60000

@@ -117,6 +117,8 @@ exports.getActiveTickets = async (
 
     o.order_number,
 
+    t.area_id,
+
     o.area_name,
 
     o.table_name,
@@ -125,9 +127,11 @@ exports.getActiveTickets = async (
 
         FROM kitchen_tickets kt
 
-        JOIN orders o
+JOIN orders o
+    ON o.id = kt.order_id
 
-            ON o.id = kt.order_id
+LEFT JOIN tables t
+    ON t.id = o.table_id
 
         WHERE
 
@@ -279,6 +283,8 @@ exports.getTicketById = async (
 
             o.table_id,
 
+            t.area_id,
+
             o.table_name,
 
             o.area_name
@@ -287,6 +293,9 @@ exports.getTicketById = async (
 
         JOIN orders o
             ON o.id = kt.order_id
+
+        LEFT JOIN tables t
+            ON t.id = o.table_id    
 
         WHERE kt.id = ?
         `,
