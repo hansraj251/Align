@@ -13,6 +13,18 @@ function toggleKitchenHeader() {
 
     }
     [
+    "kitchenHeaderButtons",
+    "kitchenHeaderButtonsMobile"
+].forEach(id => {
+
+    document
+        .getElementById(id)
+        ?.classList.add(
+            "hidden"
+        );
+
+});
+    [
     "kitchenActions",
     "kitchenActionsMobile"
 ].forEach(id => {

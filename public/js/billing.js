@@ -1,7 +1,12 @@
 if (!API.getToken()) {
     window.location.href = "/login.html";
 }
+let diningAreas = [];
 
+const AREA_FILTER_STORAGE_KEY =
+    "billingAreaFilter";
+
+let billingAreaFilter = {};
 function initializeBillingPage() {
 
     const staff =
@@ -25,6 +30,21 @@ function initializeBillingPage() {
         element.remove();
 
     });
+    document
+    .getElementById(
+        "billingAreaFilter"
+    )
+    ?.classList.remove(
+        "hidden"
+    );
+
+document
+    .getElementById(
+        "billingAreaFilterMobile"
+    )
+    ?.classList.remove(
+        "hidden"
+    );
 
     document
         .getElementById(
@@ -67,21 +87,34 @@ function initializeBillingPage() {
 }
 async function loadBillingOrders() {
 
-    const data = await API.get("/api/billing");
+    const data =
+    await API.get("/api/billing");
 
-    const container =
-        document.getElementById("billingOrders");
-        
+const container =
+    document.getElementById(
+        "billingOrders"
+    );
 
-    container.innerHTML = "";
+container.innerHTML = "";
+
+if (!data.success) {
+
+    Toast.show(
+        data.message,
+        "error"
+    );
+
+    return;
+
+}
+
+const visibleOrders =
+    data.orders.filter(
+        isAreaVisible
+    );
+
 window.billingOrders =
-    data.orders;
-    if (!data.success) {
-
-        Toast.show(data.message, "error");
-        return;
-
-    }
+    visibleOrders;
 
     if (data.orders.length === 0) {
 
@@ -96,8 +129,23 @@ window.billingOrders =
         return;
 
     }
+    if (
+    visibleOrders.length === 0
+) {
 
-    data.orders.forEach(order => {
+    container.innerHTML = `
+        <div class="col-span-1 rounded-xl bg-white p-8 text-center shadow">
+
+            No Pending Order
+
+        </div>
+    `;
+
+    return;
+
+}
+
+    visibleOrders.forEach(order => {
 
         container.innerHTML += `
             <div class="rounded-xl bg-white p-6 shadow">
@@ -231,30 +279,279 @@ async function payOrder(
 
 }
 
-initializeBillingPage();
-loadBillingOrders();
-// const socket = io();
+(async () => {
 
-// const staff =
-//     StaffAuth.staff();
+    initializeBillingPage();
 
-// socket.emit(
-//     "joinBilling",
-//     staff.restaurant_id
-// );
+    loadAreaFilter();
 
-// socket.on(
-//     "ready-for-billing",
-//     async data => {
+    await loadDiningAreas();
 
-//         Toast.show(
-//             `Table ${data.tableName} is ready for billing`
-//         );
+    setupAreaFilter();
 
-//         await loadBillingOrders();
+    await loadBillingOrders();
 
-//     }
-// );
+})();
+
+function loadAreaFilter() {
+
+    try {
+
+        billingAreaFilter =
+            JSON.parse(
+                localStorage.getItem(
+                    AREA_FILTER_STORAGE_KEY
+                ) || "{}"
+            );
+
+    } catch {
+
+        billingAreaFilter = {};
+
+    }
+
+}
+
+function saveAreaFilter() {
+
+    localStorage.setItem(
+        AREA_FILTER_STORAGE_KEY,
+        JSON.stringify(
+            billingAreaFilter
+        )
+    );
+
+}
+
+function isAreaVisible(order) {
+
+    if (!order.area_name) {
+
+        return true;
+
+    }
+
+    if (
+
+        billingAreaFilter[
+            order.area_name
+        ] === undefined
+
+    ) {
+
+        billingAreaFilter[
+            order.area_name
+        ] = true;
+
+        saveAreaFilter();
+
+    }
+
+    return billingAreaFilter[
+        order.area_name
+    ];
+
+}
+
+async function loadDiningAreas() {
+
+    const data =
+        await API.get(
+            "/api/dining-areas"
+        );
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    diningAreas =
+        data.areas;
+
+    let changed =
+        false;
+
+    diningAreas.forEach(area => {
+
+        if (
+            billingAreaFilter[
+                area.name
+            ] === undefined
+        ) {
+
+            billingAreaFilter[
+                area.name
+            ] = true;
+
+            changed = true;
+
+        }
+
+    });
+    
+
+    if (changed) {
+
+        saveAreaFilter();
+
+    }
+    renderAreaFilter(
+    "areaFilterDropdown"
+);
+
+renderAreaFilter(
+    "areaFilterDropdownMobile"
+);
+
+}function renderAreaFilter(dropdownId) {
+
+    const dropdown =
+        document.getElementById(
+            dropdownId
+        );
+
+    if (!dropdown) {
+
+        return;
+
+    }
+
+    dropdown.innerHTML =
+        diningAreas
+            .map(area => `
+
+                <label
+                    class="flex cursor-pointer items-center gap-3 border-b px-4 py-3 last:border-b-0">
+
+                    <input
+                        type="checkbox"
+                        class="area-filter-checkbox"
+                        data-area-name="${area.name}"
+                        ${
+                            billingAreaFilter[
+                                area.name
+                            ]
+                                ? "checked"
+                                : ""
+                        }>
+
+                    <span>
+
+                        ${area.name}
+
+                    </span>
+
+                </label>
+
+            `)
+            .join("");
+
+}
+function setupAreaFilter() {
+
+    [
+        {
+            buttonId:
+                "areaFilterBtn",
+            dropdownId:
+                "areaFilterDropdown"
+        },
+        {
+            buttonId:
+                "areaFilterBtnMobile",
+            dropdownId:
+                "areaFilterDropdownMobile"
+        }
+    ].forEach(item => {
+
+        const button =
+            document.getElementById(
+                item.buttonId
+            );
+
+        const dropdown =
+            document.getElementById(
+                item.dropdownId
+            );
+
+        if (
+            !button ||
+            !dropdown
+        ) {
+
+            return;
+
+        }
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                dropdown.classList.toggle(
+                    "hidden"
+                );
+
+            }
+        );
+        dropdown.addEventListener(
+    "change",
+    event => {
+
+        const checkbox =
+            event.target;
+
+        if (
+            !checkbox.classList.contains(
+                "area-filter-checkbox"
+            )
+        ) {
+
+            return;
+
+        }
+
+        billingAreaFilter[
+    checkbox.dataset.areaName
+] =
+    checkbox.checked;
+
+        saveAreaFilter();
+
+        loadBillingOrders();
+
+    }
+);
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    !dropdown.contains(
+                        event.target
+                    ) &&
+                    !button.contains(
+                        event.target
+                    )
+                ) {
+
+                    dropdown.classList.add(
+                        "hidden"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
 
 setInterval(
     loadBillingOrders,

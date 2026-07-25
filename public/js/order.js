@@ -1958,11 +1958,32 @@ function updateCategorySelection() {
 }
 
 function renderFoodFilters() {
+    
 
     const container =
         document.getElementById(
             "foodFilters"
         );
+    const availableFoodTypes =
+    [
+        ...new Set(
+            allMenuItems.map(
+                item => item.food_type
+            )
+        )
+    ];
+
+if (availableFoodTypes.length <= 1) {
+
+    container.classList.add(
+        "hidden"
+    );
+
+    selectedFoodType = "all";
+
+    return;
+
+}    
 
     container.innerHTML = "";
 

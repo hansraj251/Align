@@ -1602,6 +1602,30 @@ function renderFoodTypes() {
         document.getElementById(
             "foodTypeList"
         );
+    const availableFoodTypes =
+    [
+        ...new Set(
+            allMenuItems.map(
+                item => item.food_type
+            )
+        )
+    ];
+
+if (availableFoodTypes.length <= 1) {
+
+    container.classList.add(
+        "hidden"
+    );
+
+    selectedFoodType = "all";
+
+    return;
+
+}
+
+container.classList.remove(
+    "hidden"
+);    
 
     container.innerHTML = "";
 
