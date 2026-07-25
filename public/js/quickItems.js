@@ -360,11 +360,11 @@ function resetForm() {
         ).value =
         "";
 
-    document
-        .getElementById(
-            "quickItemSortOrder"
-        ).value =
-        0;
+   document
+    .getElementById(
+        "quickItemSortOrder"
+    ).value =
+    "";
 
     document
     .getElementById(
