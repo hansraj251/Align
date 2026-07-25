@@ -30,6 +30,17 @@ async function openQuickItemsModal() {
 
     await loadQuickItems();
 
+const search =
+    document.getElementById(
+        "quickItemSearch"
+    );
+
+if (search) {
+
+    search.value = "";
+
+}
+
     const modal =
         document.getElementById(
             "quickItemsModal"
@@ -90,14 +101,16 @@ async function loadQuickItems() {
     renderQuickItems();
 
 }
-function renderQuickItems() {
+function renderQuickItems(
+    items = quickItems
+) {
 
     const container =
         document.getElementById(
             "quickItemsList"
         );
 
-    if (!quickItems.length) {
+    if (!items.length) {
 
         container.innerHTML =
             `
@@ -111,7 +124,7 @@ function renderQuickItems() {
     }
 
     container.innerHTML =
-        quickItems.map(
+    items.map(
             item => `
                 <div
                     class="flex items-center justify-between rounded-lg border p-3">
@@ -191,5 +204,34 @@ function bindQuickItemEvents() {
             );
 
         });
+document
+    .getElementById(
+        "quickItemSearch"
+    )
+    ?.addEventListener(
+        "input",
+        event => {
 
+            const keyword =
+                event.target.value
+                    .trim()
+                    .toLowerCase();
+
+            const filtered =
+                quickItems.filter(
+                    item =>
+                        [
+    item.name
+]
+.join(" ")
+.toLowerCase()
+.includes(keyword)
+                );
+
+            renderQuickItems(
+                filtered
+            );
+
+        }
+    );
 }

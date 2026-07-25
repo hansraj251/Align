@@ -116,6 +116,7 @@ exports.getAll = async (restaurantId) => {
             t.name,
             t.capacity,
             t.status,
+            t.is_locked,
             t.is_reserved,
             t.reserved_name,
             t.area_id,
@@ -221,6 +222,7 @@ exports.getById = async (
     id,
     name,
     capacity,
+     is_locked,
     area_id,
     system_key,
     display_row,
@@ -305,6 +307,7 @@ exports.getTableDetails = async (
             t.name,
 
             t.status,
+            t.is_locked,
 
             t.is_reserved,
 
@@ -464,6 +467,30 @@ exports.clearReservation = async (
             AND restaurant_id = ?
         `,
         [
+            tableId,
+            restaurantId
+        ]
+    );
+
+};
+
+exports.updateLock = async (
+    restaurantId,
+    tableId,
+    isLocked
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE tables
+        SET
+            is_locked = ?
+        WHERE
+            id = ?
+            AND restaurant_id = ?
+        `,
+        [
+            isLocked,
             tableId,
             restaurantId
         ]

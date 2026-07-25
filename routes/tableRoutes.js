@@ -45,6 +45,12 @@ router.put(
     tableController.updateTable
 );
 router.put(
+    "/:id/lock",
+    authMiddleware,
+    adminMiddleware,
+    tableController.updateLock
+);
+router.put(
     "/:id/reserve",
     authMiddleware,
     adminMiddleware,

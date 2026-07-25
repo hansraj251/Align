@@ -267,3 +267,36 @@ exports.clearReservation = async (
     }
 
 };
+exports.updateLock = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await tableService.updateLock(
+
+                req.user.restaurantId,
+
+                req.params.id,
+
+                req.body.is_locked
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

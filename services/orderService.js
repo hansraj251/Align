@@ -92,6 +92,13 @@ if (!table) {
     );
 
 }
+if (table.is_locked) {
+
+    throw new Error(
+        "Table is locked."
+    );
+
+}
 if (
     table.is_reserved &&
     table.status === "available"

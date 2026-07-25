@@ -126,6 +126,12 @@ const migrations = [
     require(
         "./026_add_note_to_pending_ticket_items"
     )
+],
+[
+    "027_add_is_locked_to_tables",
+    require(
+        "./027_add_is_locked_to_tables"
+    )
 ]
 
 ];

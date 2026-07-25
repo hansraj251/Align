@@ -84,9 +84,15 @@ No Tables
     }
 
     tables.forEach(table => {
-        let icon = "🟢";
+       let icon = "🟢";
 
-if (table.status === "occupied") {
+if (table.is_locked) {
+
+    icon = "⚫";
+
+}
+
+else if (table.status === "occupied") {
 
     icon = "🔴";
 
@@ -108,9 +114,13 @@ else if (table.status === "billing") {
 
 <div
 
-onclick="openTable(${table.id})"
+onclick="openTable(${table.id}, ${table.is_locked}, ${table.is_reserved})"
 
-class="cursor-pointer rounded-xl bg-white p-6 shadow hover:shadow-xl">
+class="cursor-pointer rounded-xl ${
+    table.is_locked
+        ? "bg-slate-100 border border-slate-300"
+        : "bg-white"
+} p-6 shadow hover:shadow-xl">
 
 <div class="flex items-center justify-between">
 
@@ -168,11 +178,13 @@ ${Align.formatCurrency(table.total || 0, 2)}
 <div class="pt-2 font-medium">
 
 ${
-    table.status === "occupied"
-        ? "Occupied"
-        : table.is_reserved
-            ? "Reserved"
-            : "Available"
+    table.is_locked
+        ? "Locked"
+        : table.status === "occupied"
+            ? "Occupied"
+            : table.is_reserved
+                ? "Reserved"
+                : "Available"
 }
 
 </div>
@@ -187,7 +199,33 @@ ${
 
 }
 
-function openTable(tableId) {
+function openTable(
+    tableId,
+    isLocked,
+    isReserved
+) {
+
+    if (isLocked) {
+
+        Toast.show(
+            "This table is locked.",
+            "warning"
+        );
+
+        return;
+
+    }
+
+    if (isReserved) {
+
+        Toast.show(
+            "This table is reserved.",
+            "warning"
+        );
+
+        return;
+
+    }
 
     window.location.href =
         `/waiter/order.html?table=${tableId}&area=${areaId}`;

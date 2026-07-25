@@ -378,3 +378,57 @@ exports.clearReservation = async (
     };
 
 };
+exports.updateLock = async (
+    restaurantId,
+    tableId,
+    isLocked
+) => {
+
+    const table =
+        await tableRepository.getById(
+            restaurantId,
+            tableId
+        );
+
+    if (!table) {
+
+        throw new Error(
+            "Table not found"
+        );
+
+    }
+
+    const activeOrders =
+        await orderRepository.getActiveOrdersByTable(
+            tableId,
+            0
+        );
+
+    if (
+        isLocked &&
+        activeOrders > 0
+    ) {
+
+        throw new Error(
+            "Cannot lock table with an active order"
+        );
+
+    }
+
+    await tableRepository.updateLock(
+        restaurantId,
+        tableId,
+        isLocked ? 1 : 0
+    );
+
+    return {
+
+        success: true,
+
+        message: isLocked
+            ? "Table locked successfully"
+            : "Table unlocked successfully"
+
+    };
+
+};
