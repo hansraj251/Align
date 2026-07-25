@@ -914,5 +914,5 @@ function setupAreaFilter() {
 
 setInterval(
     loadKitchenOrders,
-    60000
+    5000
 );

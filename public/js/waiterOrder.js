@@ -18,6 +18,7 @@ let selectedCategory = "all";
 let selectedFoodType = "all";
 let selectedVariants = {};
 let tables = [];
+let currentNoteItem = null;
 
 
 async function initialize() {
@@ -1258,6 +1259,8 @@ async function loadCurrentOrder() {
         document.getElementById(
             "currentOrder"
         );
+    box.__dataItems =
+    data.order.items;    
 
     if (
 
@@ -1399,6 +1402,29 @@ item.pending_count > 0
     class="rounded-lg bg-red-600 px-3 py-1 text-xs font-semibold text-white">
 
     Cancel
+
+</button>
+
+`
+
+: ""
+
+}
+
+${
+
+item.pending_count > 0 ||
+item.preparing_count > 0
+
+?
+
+`
+
+<button
+    onclick="openNoteModal(${item.active_ticket_item_id})"
+    class="rounded-lg bg-amber-500 px-3 py-1 text-xs font-semibold text-white">
+
+    Note
 
 </button>
 
@@ -1746,6 +1772,108 @@ async function serveItem(ticketItemId) {
             buttonClass: "bg-green-600",
 
             loadingText: "Serving..."
+
+        }
+
+    );
+
+}
+
+async function saveItemNote() {
+
+    const note =
+        document.getElementById(
+            "kitchenNote"
+        ).value;
+
+    try {
+
+        const data =
+            await API.patch(
+
+                `/api/kitchen/items/${currentNoteItem}/note`,
+
+                {
+                    note
+                }
+
+            );
+
+        if (!data.success) {
+
+            Toast.show(
+                data.message,
+                "error"
+            );
+
+            return;
+
+        }
+
+        Modal.close();
+
+        Toast.show(
+            "Kitchen note updated",
+            "success"
+        );
+
+        await loadCurrentOrder();
+
+    }
+
+    catch (err) {
+
+        Toast.show(
+            err.message,
+            "error"
+        );
+
+    }
+
+}
+
+function openNoteModal(
+    ticketItemId
+) {
+
+    const item =
+        document
+            .getElementById(
+                "currentOrder"
+            )
+            ?.
+            __dataItems
+            ?.find(
+                item =>
+                    item.active_ticket_item_id ===
+                    ticketItemId
+            );
+
+    currentNoteItem =
+        ticketItemId;
+
+    Modal.open(
+
+        "Kitchen Note",
+
+        `
+<textarea
+    id="kitchenNote"
+    class="w-full rounded-lg border p-3"
+    rows="5"
+    maxlength="300"
+    placeholder="Enter kitchen note...">${item?.note || ""}</textarea>
+`,
+
+        saveItemNote,
+
+        {
+
+            buttonText:
+                "Save Note",
+
+            loadingText:
+                "Saving..."
 
         }
 
