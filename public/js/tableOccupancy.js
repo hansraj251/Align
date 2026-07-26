@@ -231,11 +231,18 @@ rowTables.length
 ? rowTables.map(table => `
 
 <div
-onclick="openDashboardOrder(${table.id}, ${table.area_id})"
+onclick="openDashboardOrder(
+    ${table.id},
+    ${table.area_id},
+    ${table.is_locked},
+    ${table.is_reserved}
+)"
 class="mt-2.5 ml-1 flex min-w-[150px] self-stretch cursor-pointer flex-col rounded-lg border ${
-table.is_reserved
-    ? "border-amber-300 bg-amber-50"
-    : "border-slate-200 bg-white"
+table.is_locked
+    ? "border-slate-400 bg-slate-100"
+    : table.is_reserved
+        ? "border-amber-300 bg-amber-50"
+        : "border-slate-200 bg-white"
 } p-3 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500 hover:bg-blue-50 hover:shadow-2xl active:scale-[0.99] md:min-w-[220px] md:rounded-xl md:p-5">
 
 <div class="flex-1">
@@ -249,7 +256,9 @@ ${table.name}
 </h3>
 
 <span class="${
-    table.status === "occupied"
+    table.is_locked
+    ? "text-slate-600"
+    : table.status === "occupied"
         ? "text-red-600"
         : table.is_reserved
             ? "text-amber-600"
@@ -257,7 +266,9 @@ ${table.name}
 }">
 
 ${
-    table.status === "occupied"
+    table.is_locked
+    ? "Locked"
+    : table.status === "occupied"
         ? "Occupied"
         : table.is_reserved
             ? "Reserved"
@@ -265,6 +276,34 @@ ${
 }
 
 </span>
+
+${
+
+(table.status === "available" || table.is_locked)
+
+&&
+
+!table.is_reserved
+
+? `
+<label
+    class="table-lock-switch"
+    onclick="event.stopPropagation();">
+
+    <input
+        type="checkbox"
+        class="table-lock-toggle"
+        data-id="${table.id}"
+        ${table.is_locked ? "checked" : ""}>
+
+    <span class="table-lock-slider"></span>
+
+</label>
+`
+
+: ""
+
+}
 
 </div>
 
@@ -344,6 +383,10 @@ table.status !== "available"
 ${
 table.status === "available"
 
+&&
+
+!table.is_locked
+
 ? `
 <div class="mt-4">
 
@@ -411,6 +454,7 @@ No tables
 requestAnimationFrame(() => {
 
     initializeRowScrolls();
+    bindTableLockEvents();
 
 });}
 
@@ -506,10 +550,83 @@ function initializeRowScrolls() {
 
 }
 
+function bindTableLockEvents() {
+
+    document
+        .querySelectorAll(
+            ".table-lock-toggle"
+        )
+        .forEach(toggle => {
+
+            toggle.addEventListener(
+                "change",
+                async event => {
+
+                    const tableId =
+                        Number(
+                            event.target.dataset.id
+                        );
+
+                    const isLocked =
+                        event.target.checked;
+
+                    const response =
+                        await API.put(
+                            `/api/tables/${tableId}/lock`,
+                            {
+                                is_locked: isLocked
+                            }
+                        );
+
+                    if (!response.success) {
+
+                        Toast.show(
+                            response.message,
+                            "error"
+                        );
+
+                        event.target.checked =
+                            !isLocked;
+
+                        return;
+
+                    }
+
+                    Toast.show(
+                        response.message,
+                        "success"
+                    );
+
+                    await loadArea();
+
+                }
+            );
+
+        });
+
+}
+
 function openDashboardOrder(
     tableId,
-    areaId
+    areaId,
+    isLocked,
+    isReserved
 ) {
+    if (isLocked) {
+    Toast.show(
+        "This table is locked.",
+        "warning"
+    );
+    return;
+}
+
+if (isReserved) {
+    Toast.show(
+        "This table is reserved.",
+        "warning"
+    );
+    return;
+}
 
     window.location.href =
         `/admin/order.html?table=${tableId}&area=${areaId}`;
