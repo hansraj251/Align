@@ -5,7 +5,15 @@ const staffSessionRepository =
 const planRepository =
     require("../repositories/planRepository");    
 const staffSessionAdminService =
-    require("./staffSessionAdminService");       
+    require("./staffSessionAdminService");     
+const fs =
+    require("fs");
+
+const path =
+    require("path");
+
+const archiver =
+    require("archiver");      
 
 exports.getDashboardStats =
 async () => {
@@ -141,5 +149,131 @@ async (
             Number(days)
 
         );
+
+};
+exports.createDatabaseBackup =
+async () => {
+
+    const dbPath =
+        process.env.RENDER
+            ? "/var/data/align.db"
+            : path.join(
+                __dirname,
+                "..",
+                "database",
+                "align.db"
+            );
+
+    if (
+        !fs.existsSync(
+            dbPath
+        )
+    ) {
+
+        throw new Error(
+            "Database not found."
+        );
+
+    }
+
+    const backupDir =
+        path.join(
+            __dirname,
+            "..",
+            "backups"
+        );
+
+    if (
+        !fs.existsSync(
+            backupDir
+        )
+    ) {
+
+        fs.mkdirSync(
+            backupDir,
+            {
+                recursive: true
+            }
+        );
+
+    }
+
+    const timestamp =
+        new Date()
+            .toISOString()
+            .replace(/:/g, "-")
+            .replace(/\..+/, "");
+
+    const fileName =
+        `align-backup-${timestamp}.zip`;
+
+    const filePath =
+        path.join(
+            backupDir,
+            fileName
+        );
+
+    await new Promise(
+
+        (
+            resolve,
+            reject
+        ) => {
+
+            const output =
+                fs.createWriteStream(
+                    filePath
+                );
+
+            const archive =
+                archiver(
+                    "zip",
+                    {
+                        zlib: {
+                            level: 9
+                        }
+                    }
+                );
+
+            output.on(
+                "close",
+                resolve
+            );
+
+            output.on(
+                "error",
+                reject
+            );
+
+            archive.on(
+                "error",
+                reject
+            );
+
+            archive.pipe(
+                output
+            );
+
+            archive.file(
+                dbPath,
+                {
+                    name:
+                        "align.db"
+                }
+            );
+
+            archive.finalize();
+
+        }
+
+    );
+
+    return {
+
+        fileName,
+
+        filePath
+
+    };
 
 };

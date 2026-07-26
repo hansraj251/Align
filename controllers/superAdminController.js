@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs =
+    require("fs");
 const db = require("../db");
 
 const superAdminService =
@@ -310,6 +312,65 @@ async (req, res) => {
         });
 
     } catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.downloadBackup =
+async (req, res) => {
+
+    try {
+
+        const backup =
+            await superAdminService
+                .createDatabaseBackup();
+
+       res.download(
+
+    backup.filePath,
+
+    backup.fileName,
+
+    err => {
+
+        if (err) {
+
+            console.error(err);
+
+        }
+
+        fs.unlink(
+
+            backup.filePath,
+
+            unlinkErr => {
+
+                if (unlinkErr) {
+
+                    console.error(unlinkErr);
+
+                }
+
+            }
+
+        );
+
+    }
+
+);
+
+    } catch (err) {
+
+        console.error(err);
 
         return res.status(500).json({
 

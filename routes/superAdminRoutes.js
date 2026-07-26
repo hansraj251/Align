@@ -76,5 +76,9 @@ router.put(
     "/pricing/:id",
     planPricingController.updatePricing
 );
+router.get(
+    "/backup",
+    superAdminController.downloadBackup
+);
 
 module.exports = router;

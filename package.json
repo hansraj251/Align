@@ -17,7 +17,7 @@
   "type": "commonjs",
   "dependencies": {
     "@getbrevo/brevo": "^6.0.2",
-    "archiver": "^8.0.0",
+    "archiver": "^6.0.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -26,6 +26,7 @@
     "firebase-admin": "^14.2.0",
     "googleapis": "^173.0.0",
     "jsonwebtoken": "^9.0.3",
+    "mime-types": "^3.0.2",
     "multer": "^2.2.0",
     "pdfkit": "^0.19.1",
     "razorpay": "^2.9.6",
