@@ -677,3 +677,33 @@ exports.updateTicketItemNote = async (
     };
 
 };
+exports.getKitchenFilters =
+    async (
+        restaurantId
+    ) => {
+
+    const foodTypes =
+        await kitchenRepository.getFoodTypes(
+            restaurantId
+        );
+
+    const categories =
+        await kitchenRepository.getCategories(
+            restaurantId
+        );
+
+    return {
+
+        foodTypes:
+            foodTypes.map(
+                item => item.food_type
+            ),
+
+        categories:
+            categories.map(
+                item => item.name
+            )
+
+    };
+
+};

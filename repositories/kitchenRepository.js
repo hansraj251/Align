@@ -157,24 +157,7 @@ LEFT JOIN tables t
 
 };
 
-// exports.updateTicketStatus = async (
-//     ticketId,
-//     status
-// ) => {
 
-//     await db.runAsync(
-//         `
-//         UPDATE kitchen_tickets
-//         SET status = ?
-//         WHERE id = ?
-//         `,
-//         [
-//             status,
-//             ticketId
-//         ]
-//     );
-
-// };
 
 exports.getTicketItems = async (
     ticketId
@@ -184,30 +167,41 @@ exports.getTicketItems = async (
         `
         SELECT
 
-            id,
+            kti.id,
 
-            ticket_id,
+            kti.ticket_id,
 
-            order_item_id,
+            kti.order_item_id,
 
-            menu_item_id,
+            kti.menu_item_id,
 
-            item_name,
+            kti.item_name,
 
-            variant_name,
+            kti.variant_name,
 
-            quantity,
+            kti.quantity,
 
-            unit_price,
+            kti.unit_price,
 
-            status,
-            note
+            kti.status,
 
-        FROM kitchen_ticket_items
+            kti.note,
 
-        WHERE ticket_id = ?
+            mi.food_type,
 
-        ORDER BY id
+            mc.name AS category_name
+
+        FROM kitchen_ticket_items kti
+
+        LEFT JOIN menu_items mi
+            ON mi.id = kti.menu_item_id
+
+        LEFT JOIN menu_categories mc
+            ON mc.id = mi.category_id
+
+        WHERE kti.ticket_id = ?
+
+        ORDER BY kti.id
         `,
         [
             ticketId
@@ -827,6 +821,51 @@ exports.updateTicketItemNote = async (
         [
             note,
             ticketItemId
+        ]
+    );
+
+};
+exports.getFoodTypes = async (
+    restaurantId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT DISTINCT
+            food_type
+        FROM menu_items
+        WHERE
+    restaurant_id = ?
+    AND status = 1
+    AND is_available = 1
+    AND food_type IS NOT NULL
+    AND TRIM(food_type) != ''
+        ORDER BY
+            food_type
+        `,
+        [
+            restaurantId
+        ]
+    );
+
+};
+exports.getCategories = async (
+    restaurantId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+    id,
+    name
+FROM menu_categories
+WHERE
+    restaurant_id = ?
+ORDER BY
+    name;
+        `,
+        [
+            restaurantId
         ]
     );
 

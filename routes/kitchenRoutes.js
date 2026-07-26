@@ -15,6 +15,12 @@ router.get(
     kitchenController.getKitchenOrders
 );
 router.get(
+    "/filters",
+    authMiddleware,
+    kitchenMiddleware,
+    kitchenController.getKitchenFilters
+);
+router.get(
     "/:ticketId",
     authMiddleware,
     kitchenMiddleware,

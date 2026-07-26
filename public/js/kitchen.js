@@ -68,6 +68,19 @@ const AREA_FILTER_STORAGE_KEY =
     "kitchenAreaFilter";
 
 let kitchenAreaFilter = {};    
+const FOOD_TYPE_FILTER_STORAGE_KEY =
+    "kitchenFoodTypeFilter";
+
+const CATEGORY_FILTER_STORAGE_KEY =
+    "kitchenCategoryFilter";
+
+let kitchenFoodTypeFilter = {};
+
+let kitchenCategoryFilter = {};
+
+let foodTypes = [];
+
+let categories = [];
 
 const backButtons = [
 
@@ -145,9 +158,19 @@ backButtons.forEach(button => {
 
     loadAreaFilter();
 
+    loadFoodTypeFilter();
+
+    loadCategoryFilter();
+
     await loadDiningAreas();
 
+    await loadKitchenFilters();
+
     setupAreaFilter();
+
+    setupFoodTypeFilter();
+
+    setupCategoryFilter();
 
     await loadKitchenOrders();
 
@@ -355,7 +378,7 @@ async function loadKitchenOrders() {
         await API.get(
             "/api/kitchen"
         );
-    console.log(data.tickets[0]);
+    
 
     const container =
         document.getElementById(
@@ -390,9 +413,18 @@ async function loadKitchenOrders() {
     }
 
     const visibleTickets =
-    data.tickets.filter(
-        isAreaVisible
-    );
+    data.tickets
+        .map(ticket => ({
+
+            ...ticket,
+
+            items:
+                [...(ticket.items || [])]
+
+        }))
+        .filter(
+            isTicketVisible
+        );
 
 if (visibleTickets.length === 0) {
 
@@ -414,6 +446,7 @@ container.innerHTML =
         .join("");
 
 }
+
 async function refreshTicket(
     ticketId
 ) {
@@ -682,12 +715,90 @@ function loadAreaFilter() {
 
 }
 
+function loadFoodTypeFilter() {
+
+    const savedFilter =
+        localStorage.getItem(
+            FOOD_TYPE_FILTER_STORAGE_KEY
+        );
+
+    if (!savedFilter) {
+
+        kitchenFoodTypeFilter = {};
+
+        return;
+
+    }
+
+    try {
+
+        kitchenFoodTypeFilter =
+            JSON.parse(savedFilter);
+
+    } catch {
+
+        kitchenFoodTypeFilter = {};
+
+    }
+
+}
+
 function saveAreaFilter() {
 
     localStorage.setItem(
         AREA_FILTER_STORAGE_KEY,
         JSON.stringify(
             kitchenAreaFilter
+        )
+    );
+
+}
+
+function saveFoodTypeFilter() {
+
+    localStorage.setItem(
+        FOOD_TYPE_FILTER_STORAGE_KEY,
+        JSON.stringify(
+            kitchenFoodTypeFilter
+        )
+    );
+
+}
+
+function loadCategoryFilter() {
+
+    const savedFilter =
+        localStorage.getItem(
+            CATEGORY_FILTER_STORAGE_KEY
+        );
+
+    if (!savedFilter) {
+
+        kitchenCategoryFilter = {};
+
+        return;
+
+    }
+
+    try {
+
+        kitchenCategoryFilter =
+            JSON.parse(savedFilter);
+
+    } catch {
+
+        kitchenCategoryFilter = {};
+
+    }
+
+}
+
+function saveCategoryFilter() {
+
+    localStorage.setItem(
+        CATEGORY_FILTER_STORAGE_KEY,
+        JSON.stringify(
+            kitchenCategoryFilter
         )
     );
 
@@ -722,6 +833,88 @@ function isAreaVisible(
     return kitchenAreaFilter[
         ticket.area_id
     ];
+
+}
+function isFoodTypeVisible(
+    item
+) {
+
+    if (!item.food_type) {
+
+        return true;
+
+    }
+
+    if (
+        kitchenFoodTypeFilter[
+            item.food_type
+        ] === undefined
+    ) {
+
+        kitchenFoodTypeFilter[
+            item.food_type
+        ] = true;
+
+        saveFoodTypeFilter();
+
+    }
+
+    return kitchenFoodTypeFilter[
+        item.food_type
+    ];
+
+}
+function isCategoryVisible(
+    item
+) {
+
+    if (!item.category_name) {
+
+        return true;
+
+    }
+
+    if (
+        kitchenCategoryFilter[
+            item.category_name
+        ] === undefined
+    ) {
+
+        kitchenCategoryFilter[
+            item.category_name
+        ] = true;
+
+        saveCategoryFilter();
+
+    }
+
+    return kitchenCategoryFilter[
+        item.category_name
+    ];
+
+}
+function isTicketVisible(
+    ticket
+) {
+
+    if (
+        !isAreaVisible(
+            ticket
+        )
+    ) {
+
+        return false;
+
+    }
+
+    ticket.items =
+        (ticket.items || []).filter(
+            item =>
+                isFoodTypeVisible(item) &&
+                isCategoryVisible(item)
+        );
+
+    return ticket.items.length > 0;
 
 }
 async function loadDiningAreas() {
@@ -819,6 +1012,100 @@ renderAreaFilter(
             .join("");
 
 }
+function renderFoodTypeFilter() {
+
+    const dropdown =
+        document.getElementById(
+            "foodTypeFilterDropdown"
+        );
+
+    const dropdownMobile =
+        document.getElementById(
+            "foodTypeFilterDropdownMobile"
+        );
+
+    const html =
+        foodTypes.map(foodType => `
+            <label
+                class="flex cursor-pointer items-center gap-2 border-b px-4 py-2 hover:bg-slate-100">
+
+                <input
+                    type="checkbox"
+                    class="food-type-filter-checkbox"
+                    data-food-type="${foodType}"
+                    ${kitchenFoodTypeFilter[foodType] ? "checked" : ""}>
+
+                <span>
+                    ${foodType}
+                </span>
+
+            </label>
+        `).join("");
+
+    if (dropdown) {
+
+        dropdown.innerHTML =
+            html;
+
+    }
+
+    if (dropdownMobile) {
+
+        dropdownMobile.innerHTML =
+            html;
+
+    }
+
+}
+
+function renderCategoryFilter() {
+
+    const dropdown =
+        document.getElementById(
+            "categoryFilterDropdown"
+        );
+
+    const dropdownMobile =
+        document.getElementById(
+            "categoryFilterDropdownMobile"
+        );
+
+    const html =
+        categories.map(category => `
+            <label
+                class="flex cursor-pointer items-center gap-2 border-b px-4 py-2 hover:bg-slate-100">
+
+                <input
+                    type="checkbox"
+                    class="category-filter-checkbox"
+                    data-category="${category}"
+                    ${kitchenCategoryFilter[category] ? "checked" : ""}>
+
+                <span>
+
+                    ${category}
+
+                </span>
+
+            </label>
+        `).join("");
+
+    if (dropdown) {
+
+        dropdown.innerHTML =
+            html;
+
+    }
+
+    if (dropdownMobile) {
+
+        dropdownMobile.innerHTML =
+            html;
+
+    }
+
+}
+
 function setupAreaFilter() {
 
     [
@@ -921,6 +1208,234 @@ function setupAreaFilter() {
         );
 
     });
+
+}
+function setupFoodTypeFilter() {
+
+    [
+        {
+            buttonId:
+                "foodTypeFilterBtn",
+            dropdownId:
+                "foodTypeFilterDropdown"
+        },
+        {
+            buttonId:
+                "foodTypeFilterBtnMobile",
+            dropdownId:
+                "foodTypeFilterDropdownMobile"
+        }
+    ].forEach(item => {
+
+        const button =
+            document.getElementById(
+                item.buttonId
+            );
+
+        const dropdown =
+            document.getElementById(
+                item.dropdownId
+            );
+
+        if (
+            !button ||
+            !dropdown
+        ) {
+
+            return;
+
+        }
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                dropdown.classList.toggle(
+                    "hidden"
+                );
+
+            }
+        );
+
+        dropdown.addEventListener(
+            "change",
+            event => {
+
+                const checkbox =
+                    event.target;
+
+                if (
+                    checkbox.dataset.foodType ===
+                    undefined
+                ) {
+
+                    return;
+
+                }
+
+                kitchenFoodTypeFilter[
+                    checkbox.dataset.foodType
+                ] =
+                    checkbox.checked;
+
+                saveFoodTypeFilter();
+
+                loadKitchenOrders();
+
+            }
+        );
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    !dropdown.contains(
+                        event.target
+                    ) &&
+                    !button.contains(
+                        event.target
+                    )
+                ) {
+
+                    dropdown.classList.add(
+                        "hidden"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+}
+function setupCategoryFilter() {
+
+    [
+        {
+            buttonId:
+                "categoryFilterBtn",
+            dropdownId:
+                "categoryFilterDropdown"
+        },
+        {
+            buttonId:
+                "categoryFilterBtnMobile",
+            dropdownId:
+                "categoryFilterDropdownMobile"
+        }
+    ].forEach(item => {
+
+        const button =
+            document.getElementById(
+                item.buttonId
+            );
+
+        const dropdown =
+            document.getElementById(
+                item.dropdownId
+            );
+
+        if (
+            !button ||
+            !dropdown
+        ) {
+
+            return;
+
+        }
+
+        button.addEventListener(
+            "click",
+            event => {
+
+                event.stopPropagation();
+
+                dropdown.classList.toggle(
+                    "hidden"
+                );
+
+            }
+        );
+
+        dropdown.addEventListener(
+            "change",
+            event => {
+
+                const checkbox =
+                    event.target;
+
+                if (
+                    checkbox.dataset.category ===
+                    undefined
+                ) {
+
+                    return;
+
+                }
+
+                kitchenCategoryFilter[
+                    checkbox.dataset.category
+                ] =
+                    checkbox.checked;
+
+                saveCategoryFilter();
+
+                loadKitchenOrders();
+
+            }
+        );
+
+        document.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    !dropdown.contains(
+                        event.target
+                    ) &&
+                    !button.contains(
+                        event.target
+                    )
+                ) {
+
+                    dropdown.classList.add(
+                        "hidden"
+                    );
+
+                }
+
+            }
+        );
+
+    });
+
+}
+async function loadKitchenFilters() {
+
+    const data =
+        await API.get(
+            "/api/kitchen/filters"
+        );
+
+    if (!data.success) {
+
+        return;
+
+    }
+
+    foodTypes =
+        data.foodTypes;
+
+    categories =
+        data.categories;
+
+    renderFoodTypeFilter();
+
+    renderCategoryFilter();
 
 }
 

@@ -287,3 +287,44 @@ exports.updateTicketItemNote = async (
     }
 
 };
+exports.getKitchenFilters =
+    async (
+        req,
+        res
+    ) => {
+
+    try {
+
+        const filters =
+            await kitchenService.getKitchenFilters(
+                req.user.restaurantId
+            );
+
+        res.json({
+
+            success: true,
+
+            foodTypes:
+                filters.foodTypes,
+
+            categories:
+                filters.categories
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+
+            success: false,
+
+            message:
+                "Failed to load kitchen filters"
+
+        });
+
+    }
+
+};
