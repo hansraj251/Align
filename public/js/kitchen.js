@@ -1,55 +1,38 @@
 let diningAreas = [];
 function toggleKitchenHeader() {
 
-    const staff = JSON.parse(
-        localStorage.getItem("staff") || "{}"
-    );
+    const staff =
+        JSON.parse(
+            localStorage.getItem("staff") || "{}"
+        );
 
-    if (
-        staff.role !== "kitchen"
-    ) {
+    if (staff.role !== "kitchen") {
 
         return;
 
     }
+
     [
-    "kitchenHeaderButtons",
-    "kitchenHeaderButtonsMobile"
-].forEach(id => {
+        "kitchenHeaderButtons",
+        "kitchenHeaderButtonsMobile"
+    ].forEach(id => {
 
-    document
-        .getElementById(id)
-        ?.classList.add(
-            "hidden"
-        );
+        document
+            .getElementById(id)
+            ?.classList.add("hidden");
 
-});
+    });
+
     [
-    "kitchenActions",
-    "kitchenActionsMobile"
-].forEach(id => {
+        "kitchenLogoutBtn",
+        "kitchenLogoutBtnMobile"
+    ].forEach(id => {
 
-    document
-        .getElementById(id)
-        ?.classList.remove(
-            "hidden"
-        );
+        document
+            .getElementById(id)
+            ?.classList.remove("hidden");
 
-});
-    
-
-[
-    "kitchenLogoutBtn",
-    "kitchenLogoutBtnMobile"
-].forEach(id => {
-
-    document
-        .getElementById(id)
-        ?.classList.remove(
-            "hidden"
-        );
-
-});
+    });
 
 }
 
