@@ -1433,6 +1433,104 @@ async function loadKitchenFilters() {
     categories =
         data.categories;
 
+    let foodTypeChanged =
+        false;
+
+    foodTypes.forEach(foodType => {
+
+        if (
+            kitchenFoodTypeFilter[
+                foodType
+            ] === undefined
+        ) {
+
+            kitchenFoodTypeFilter[
+                foodType
+            ] = true;
+
+            foodTypeChanged =
+                true;
+
+        }
+
+    });
+
+    Object.keys(
+        kitchenFoodTypeFilter
+    ).forEach(foodType => {
+
+        if (
+            !foodTypes.includes(
+                foodType
+            )
+        ) {
+
+            delete kitchenFoodTypeFilter[
+                foodType
+            ];
+
+            foodTypeChanged =
+                true;
+
+        }
+
+    });
+
+    if (foodTypeChanged) {
+
+        saveFoodTypeFilter();
+
+    }
+
+    let categoryChanged =
+        false;
+
+    categories.forEach(category => {
+
+        if (
+            kitchenCategoryFilter[
+                category
+            ] === undefined
+        ) {
+
+            kitchenCategoryFilter[
+                category
+            ] = true;
+
+            categoryChanged =
+                true;
+
+        }
+
+    });
+
+    Object.keys(
+        kitchenCategoryFilter
+    ).forEach(category => {
+
+        if (
+            !categories.includes(
+                category
+            )
+        ) {
+
+            delete kitchenCategoryFilter[
+                category
+            ];
+
+            categoryChanged =
+                true;
+
+        }
+
+    });
+
+    if (categoryChanged) {
+
+        saveCategoryFilter();
+
+    }
+
     renderFoodTypeFilter();
 
     renderCategoryFilter();
