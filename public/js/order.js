@@ -2049,7 +2049,7 @@ if (availableFoodTypes.length <= 1) {
 
 onclick="selectFoodType('${type.id}')"
 
-class="food-chip rounded-full border px-3 py-1.5 text-xs lg:px-4 lg:py-2 lg:text-sm"
+class="food-chip rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50"
 
 data-id="${type.id}">
 
@@ -2093,14 +2093,14 @@ function updateFoodSelection() {
             ) {
 
                 btn.className =
-"food-chip rounded-full bg-slate-600 px-3 py-1.5 text-xs text-white lg:px-4 lg:py-2 lg:text-sm";
+"food-chip rounded-lg border border-slate-200 bg-slate-600 px-3 py-2 text-sm font-medium text-white";
 
             }
 
             else {
 
                 btn.className =
-"food-chip rounded-full border px-3 py-1.5 text-xs lg:px-4 lg:py-2 lg:text-sm";
+"food-chip rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50";
 
             }
 
