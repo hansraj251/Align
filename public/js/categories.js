@@ -24,6 +24,7 @@ allCategories = data.categories;
 
 renderCategories(allCategories);
 
+
 }
 function renderCategories(categories) {
 
@@ -45,20 +46,6 @@ function renderCategories(categories) {
         ${category.name}
 
     </h3>
-
-    ${
-        category.is_system
-            ? `
-                <span class="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
-                    System
-                </span>
-            `
-            : `
-                <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
-                    Custom
-                </span>
-            `
-    }
 
 </div>
 
