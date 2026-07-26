@@ -437,6 +437,63 @@ for (const staffId of participants) {
 };
 
 };
+exports.serveAllTicketItems = async (
+    ticketId,
+    ticketItemIds
+) => {
+
+    const ticket =
+        await kitchenRepository.getTicketById(
+            ticketId
+        );
+
+    if (!ticket) {
+
+        throw new Error(
+            "Kitchen ticket not found"
+        );
+
+    }
+
+    await kitchenRepository.updateTicketItemsStatusByIds(
+        ticketItemIds,
+        "served"
+    );
+
+    const readyItems =
+        await kitchenRepository.getReadyTicketItems(
+            ticketId
+        );
+
+    if (readyItems === 0) {
+
+        await kitchenRepository.updateTicketStatus(
+            ticketId,
+            "served"
+        );
+
+    }
+
+    const io = getIO();
+
+    io.to(
+        `restaurant_${ticket.restaurant_id}`
+    ).emit(
+        "order-updated",
+        {
+            orderId: ticket.order_id,
+            ticketId,
+            status: "served"
+        }
+    );
+
+    return {
+
+        success: true
+
+    };
+
+};
 exports.cancelTicketItem = async (
     ticketItemId
 ) => {

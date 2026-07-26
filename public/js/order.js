@@ -147,6 +147,7 @@ Align.Order.state.cartKey = cartKey;
 
 Align.Order.cart.load();
 let existingItems = [];    
+let readyItems = [];
 
 async function loadMenu() {
 
@@ -842,6 +843,27 @@ document
     return;
 
 }
+const serveAllContainer =
+    document.getElementById(
+        "serveAllContainer"
+    );
+
+const mobileServeAllContainer =
+    document.getElementById(
+        "mobileServeAllContainer"
+    );
+if (serveAllContainer) {
+
+    serveAllContainer.innerHTML = "";
+
+}
+
+if (mobileServeAllContainer) {
+
+    mobileServeAllContainer.innerHTML = "";
+
+}
+
 const cartSheet =
     document.getElementById(
         "cartItemsList"
@@ -1030,9 +1052,47 @@ ${item.variant_name}
 
 }
 
-    });
+    });    
 
 if (existingItems.length > 0) {
+
+    readyItems =
+    existingItems.filter(
+        item =>
+            item.ready_count > 0
+    );
+
+    if (readyItems.length >= 2) {
+
+        if (serveAllContainer) {
+
+    serveAllContainer.innerHTML = `
+<button
+    onclick="serveAllOrderItems()"
+    class="w-full rounded-lg bg-green-600 px-3 py-2 font-medium text-white hover:bg-green-700">
+
+    ${isTakeAway ? "Hand Over All" : "Serve All"} (${readyItems.length})
+
+</button>
+`;
+
+}
+
+if (mobileServeAllContainer) {
+
+    mobileServeAllContainer.innerHTML = `
+<button
+    onclick="serveAllOrderItems()"
+    class="w-full rounded-lg bg-green-600 px-3 py-2 font-medium text-white hover:bg-green-700">
+
+    ${isTakeAway ? "Hand Over All" : "Serve All"} (${readyItems.length})
+
+</button>
+`;
+
+}
+
+}
 
     existingItems.forEach(item => {
 

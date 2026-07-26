@@ -95,6 +95,41 @@ exports.updateTicketItemStatus = async (
     }
 
 };
+exports.serveAllTicketItems = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await kitchenService.serveAllTicketItems(
+
+                req.params.ticketId,
+
+                req.body.ticketItemIds
+
+            );
+
+        res.json(result);
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
 
 exports.cancelTicketItem = async (
     req,

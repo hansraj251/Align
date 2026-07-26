@@ -33,6 +33,12 @@ router.patch(
     kitchenController.updateTicketStatus
 );
 router.patch(
+    "/:ticketId/serve-all",
+    authMiddleware,
+    kitchenMiddleware,
+    kitchenController.serveAllTicketItems
+);
+router.patch(
     "/items/:itemId/status",
     authMiddleware,
     kitchenController.updateTicketItemStatus

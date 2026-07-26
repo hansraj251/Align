@@ -629,7 +629,56 @@ exports.updateTicketItemStatus = async (
     
 
 };
+exports.updateTicketItemsStatusByIds = async (
+    ticketItemIds,
+    status
+) => {
 
+    if (!ticketItemIds.length) {
+
+        return;
+
+    }
+
+    let query = `
+        UPDATE kitchen_ticket_items
+        SET
+            status = ?
+    `;
+
+    const params = [
+        status
+    ];
+
+    if (status === "served") {
+
+        query += `,
+            served_at = CURRENT_TIMESTAMP`;
+
+    }
+
+    query += `
+        WHERE id IN (${ticketItemIds.map(() => "?").join(",")})
+    `;
+
+    params.push(
+        ...ticketItemIds
+    );
+
+    if (status === "served") {
+
+        query += `
+            AND status = 'ready'
+        `;
+
+    }
+
+    await db.runAsync(
+        query,
+        params
+    );
+
+};
 exports.cancelTicketItem = async (
     ticketItemId
 ) => {

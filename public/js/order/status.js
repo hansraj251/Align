@@ -162,3 +162,48 @@ async function serveOrderItem(ticketItemId) {
     renderCart();
 
 }
+async function serveAllOrderItems() {
+
+    const readyItemIds =
+        readyItems.map(
+            item =>
+                item.ready_ticket_item_id
+        );
+
+    const data =
+        await API.patch(
+
+            `/api/kitchen/${currentOrder.ticket_id}/serve-all`,
+
+            {
+                ticketItemIds: readyItemIds
+            }
+
+        );
+
+    if (!data.success) {
+
+        Toast.show(
+            data.message,
+            "error"
+        );
+
+        return;
+
+    }
+
+    Toast.show(
+
+        isTakeAway
+            ? "Items Handed Over"
+            : "Items Served",
+
+        "success"
+
+    );
+
+    await loadExistingOrder();
+
+    renderCart();
+
+}
