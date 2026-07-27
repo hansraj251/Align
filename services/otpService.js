@@ -39,7 +39,7 @@ async function sendOtpEmail(
 
     sender: {
     name: "AlignOS",
-    email: "hans004333@gmail.com"
+    email: "alignos.in@gmail.com"
 },
 
     to: [
