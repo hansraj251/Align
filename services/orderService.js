@@ -397,6 +397,7 @@ if (kitchenItems.length > 0) {
     kitchenTicket =
         await kitchenService.createKitchenTicket(
             orderId,
+            restaurantId,
             kitchenItems,
             mode
         );

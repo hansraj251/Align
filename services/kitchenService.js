@@ -21,6 +21,7 @@ const notificationService =
 
 exports.createKitchenTicket = async (
     orderId,
+    restaurantId,
     items,
     mode = "kitchen"
 ) => {
@@ -32,7 +33,10 @@ exports.createKitchenTicket = async (
     );
 
 const lastKot =
-    await kitchenRepository.getLastKotNumberForToday();
+    await kitchenRepository
+        .getLastKotNumberForToday(
+            restaurantId
+        );
 
 const ticketNumber =
     generateNumber(

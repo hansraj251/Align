@@ -371,7 +371,7 @@ exports.getActiveTicketCountByOrder = async (
     return row.total;
 
 };
-exports.getLastKotNumberForToday = async () => {
+exports.getLastKotNumberForToday = async (restaurantId) => {
 
     const today = new Date();
 
@@ -381,16 +381,21 @@ exports.getLastKotNumberForToday = async () => {
     return await db.getAsync(
         `
         SELECT
-            ticket_number
-        FROM kitchen_tickets
-        WHERE
-            ticket_number LIKE ?
-        ORDER BY id DESC
-        LIMIT 1
+    kt.ticket_number
+FROM kitchen_tickets kt
+INNER JOIN orders o
+    ON o.id = kt.order_id
+WHERE
+    o.restaurant_id = ?
+    AND kt.ticket_number LIKE ?
+ORDER BY
+    kt.id DESC
+LIMIT 1;
         `,
         [
-            `KOT-${date}-%`
-        ]
+    restaurantId,
+    `KOT-${date}-%`
+]
     );
 
 };
@@ -795,13 +800,13 @@ exports.getTicketPrintData = async (
     return await db.getAsync(
         `
         SELECT
-
-            kt.id AS ticket_id,
-            kt.status,
-            kt.created_at,
-            o.id AS order_id,
-            t.name AS table_name,
-            a.name AS area_name
+    kt.id AS ticket_id,
+    kt.ticket_number,
+    kt.status,
+    kt.created_at,
+    o.id AS order_id,
+    t.name AS table_name,
+    a.name AS area_name
 
         FROM kitchen_tickets kt
 
