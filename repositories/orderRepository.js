@@ -757,7 +757,9 @@ exports.getActiveOrdersByTable = async (
     return row.total;
 
 };
-exports.getLastOrderNumberForToday = async () => {
+exports.getLastOrderNumberForToday = async (
+    restaurantId
+) => {
 
     const today = new Date();
 
@@ -766,17 +768,20 @@ exports.getLastOrderNumberForToday = async () => {
 
     return await db.getAsync(
         `
-        SELECT
-            order_number
-        FROM orders
-        WHERE
-            order_number LIKE ?
-        ORDER BY id DESC
-        LIMIT 1
+       SELECT
+    order_number
+FROM orders
+WHERE
+    restaurant_id = ?
+    AND order_number LIKE ?
+ORDER BY
+    id DESC
+LIMIT 1
         `,
         [
-            `ORD-${date}-%`
-        ]
+    restaurantId,
+    `ORD-${date}-%`
+]
     );
 
 };

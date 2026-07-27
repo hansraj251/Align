@@ -138,7 +138,9 @@ orderId =
     );
 
     const lastOrder =
-    await orderRepository.getLastOrderNumberForToday();
+    await orderRepository.getLastOrderNumberForToday(
+    restaurantId
+);
 
 const orderNumber =
     generateNumber(
