@@ -58,12 +58,8 @@ function renderTicket(
         `
        <div class="text-center">
 
-    <h2 class="text-xl font-bold">
-        KOT
-    </h2>
-
     <p>
-        KOT #${ticket.ticket_number || ticket.ticket_id}
+        #${ticket.ticket_number || ticket.ticket_id}
     </p>
 
     ${
