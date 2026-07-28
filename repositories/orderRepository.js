@@ -441,6 +441,7 @@ exports.getOrderDetails = async (
             id,
             table_id,
             table_name,
+            order_number,
             status,
             subtotal,
             tax,
