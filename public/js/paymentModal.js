@@ -207,8 +207,8 @@ function populatePaymentSummary(order)
 <div class="flex justify-between">
     <span>Order</span>
     <span class="font-medium">
-        #${order.id}
-    </span>
+    ${order.order_number ?? `#${order.id}`}
+</span>
 </div>
 
 <div class="flex justify-between">

@@ -11,7 +11,7 @@ async function createOrdersTable() {
 
             table_id INTEGER,
 
-            order_number TEXT UNIQUE,
+            order_number TEXT,
 
             table_name TEXT,
 
@@ -47,7 +47,8 @@ async function createOrdersTable() {
                 ON DELETE SET NULL
             FOREIGN KEY (created_by_staff_id)
                 REFERENCES staff(id)
-                ON DELETE SET NULL    
+                ON DELETE SET NULL,
+                UNIQUE (restaurant_id, order_number)   
 
         )
     `;
