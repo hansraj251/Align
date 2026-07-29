@@ -84,7 +84,7 @@ const remainingDays =
 
 <h2 class="mb-6 text-2xl font-bold">
 
-Restaurant Information
+User Information
 
 </h2>
 

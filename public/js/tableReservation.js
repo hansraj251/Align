@@ -79,11 +79,11 @@ Customer Name
                 "success"
             );
 
-            if (typeof window.refreshReservationView === "function") {
-
-    await window.refreshReservationView();
-
-}
+           updateTableReservationUI(
+    tableId,
+    true,
+    reservedName
+);
 
         }
 
@@ -127,11 +127,10 @@ async function clearReservation(
                 "success"
             );
 
-            if (typeof window.refreshReservationView === "function") {
-
-    await window.refreshReservationView();
-
-}
+           updateTableReservationUI(
+    tableId,
+    false
+);
 
         }
 

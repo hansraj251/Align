@@ -44,7 +44,7 @@ async function createOrdersTable() {
 
             FOREIGN KEY (table_id)
                 REFERENCES tables(id)
-                ON DELETE SET NULL
+                ON DELETE SET NULL,
             FOREIGN KEY (created_by_staff_id)
                 REFERENCES staff(id)
                 ON DELETE SET NULL,
