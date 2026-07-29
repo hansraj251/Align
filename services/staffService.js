@@ -177,30 +177,33 @@ if (!existingStaff) {
     const changes =
         await staffRepository.updateStaff(
 
-            restaurantId,
+    restaurantId,
 
-            staffId,
+    staffId,
 
-            staff.name,
+    staff.name,
 
-            staff.mobile,
-            staff.username,
+    staff.mobile,
 
-            staff.role,
+    staff.username,
 
-            staff.salary_type,
+    password,
 
-            staff.basic_salary,
+    staff.role,
 
-            staff.joining_date,
+    staff.salary_type,
 
-            staff.address,
+    staff.basic_salary,
 
-            staff.emergency_contact,
+    staff.joining_date,
 
-            staff.status
+    staff.address,
 
-        );
+    staff.emergency_contact,
+
+    staff.status
+
+);
 
     if (!changes) {
 
