@@ -82,6 +82,7 @@ exports.updateStaff = async (
     name,
     mobile,
     username,
+    password,
     role,
     salaryType,
     basicSalary,
@@ -100,6 +101,8 @@ exports.updateStaff = async (
 
             mobile=?,
             username=?,
+
+             password=?,
 
             role=?,
 
@@ -129,7 +132,7 @@ exports.updateStaff = async (
 
             mobile,
             username,
-
+            password,
             role,
 
             salaryType,
@@ -444,6 +447,7 @@ exports.getStaffById = async (
         `
         SELECT
             id,
+            password,
             status
         FROM
             staff

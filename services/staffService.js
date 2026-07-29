@@ -153,6 +153,19 @@ exports.updateStaff = async (
         staffId
     );
 
+let password =
+    existingStaff.password;
+
+if (staff.password) {
+
+    password =
+        await bcrypt.hash(
+            staff.password,
+            10
+        );
+
+}    
+
 if (!existingStaff) {
 
     throw new Error(
