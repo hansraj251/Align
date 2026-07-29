@@ -295,8 +295,8 @@ function openStaffModal(staff = null) {
         type="password"
         placeholder="${
             staff
-                ? "Leave blank to keep current password"
-                : "Minimum 8 characters"
+                ? "Blank/New password"
+                : "Minimum 1 characters"
         }"
         class="w-full rounded-lg border p-3">
 

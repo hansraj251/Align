@@ -152,6 +152,19 @@ exports.updateStaff = async (
         restaurantId,
         staffId
     );
+const existingUsername =
+    await staffRepository.usernameExistsExceptId(
+        staff.username,
+        staffId
+    );
+
+if (existingUsername) {
+
+    throw new Error(
+        "This username is already in use. Please choose a different username."
+    );
+
+}    
 
 let password =
     existingStaff.password;

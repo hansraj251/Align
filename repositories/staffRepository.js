@@ -462,3 +462,23 @@ exports.getStaffById = async (
     );
 
 };
+exports.usernameExistsExceptId = async (
+    username,
+    staffId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT id
+        FROM staff
+        WHERE
+            LOWER(username) = LOWER(?)
+            AND id != ?
+        `,
+        [
+            username,
+            staffId
+        ]
+    );
+
+};
