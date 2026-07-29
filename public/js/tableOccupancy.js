@@ -231,11 +231,12 @@ rowTables.length
 ? rowTables.map(table => `
 
 <div
+id="table-card-${table.id}"
+data-locked="${table.is_locked ? 1 : 0}"
+data-reserved="${table.is_reserved ? 1 : 0}"
 onclick="openDashboardOrder(
     ${table.id},
-    ${table.area_id},
-    ${table.is_locked},
-    ${table.is_reserved}
+    ${table.area_id}
 )"
 class="mt-2.5 ml-1 flex min-w-[150px] self-stretch cursor-pointer flex-col rounded-lg border ${
 table.is_locked
@@ -255,7 +256,8 @@ ${table.name}
 
 </h3>
 
-<span class="${
+<span id="table-status-${table.id}"
+class="${
     table.is_locked
     ? "text-slate-600"
     : table.status === "occupied"
@@ -324,7 +326,8 @@ table.system_key === "takeaway"
 ${
 table.is_reserved
 ? `
-<div class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
+<div  id="reservation-info-${table.id}"
+class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm">
 
 <div class="font-medium text-amber-700">
 
@@ -332,7 +335,9 @@ Reserved
 
 </div>
 
-<div class="text-slate-700">
+<div
+    id="reservation-name-${table.id}"
+    class="text-slate-700">
 
 ${table.reserved_name}
 
@@ -388,7 +393,9 @@ table.status === "available"
 !table.is_locked
 
 ? `
-<div class="mt-4">
+<div
+    id="reservation-action-${table.id}"
+    class="mt-4">
 
 ${
 table.is_reserved
@@ -597,7 +604,10 @@ function bindTableLockEvents() {
                         "success"
                     );
 
-                    await loadArea();
+                    updateTableLockUI(
+    tableId,
+    isLocked
+);
 
                 }
             );
@@ -608,10 +618,18 @@ function bindTableLockEvents() {
 
 function openDashboardOrder(
     tableId,
-    areaId,
-    isLocked,
-    isReserved
+    areaId
 ) {
+    const card =
+    document.getElementById(
+        `table-card-${tableId}`
+    );
+
+const isLocked =
+    card?.dataset.locked === "1";
+
+const isReserved =
+    card?.dataset.reserved === "1";
     if (isLocked) {
     Toast.show(
         "This table is locked.",
@@ -630,6 +648,212 @@ if (isReserved) {
 
     window.location.href =
         `/admin/order.html?table=${tableId}&area=${areaId}`;
+
+}
+function updateTableLockUI(
+    tableId,
+    isLocked
+) {
+
+    const card =
+        document.getElementById(
+            `table-card-${tableId}`
+        );
+
+    const status =
+        document.getElementById(
+            `table-status-${tableId}`
+        );
+
+    if (
+        !card ||
+        !status
+    ) {
+
+        return;
+
+    }
+
+    card.dataset.locked =
+        isLocked ? "1" : "0";
+
+    status.textContent =
+        isLocked
+            ? "Locked"
+            : "Available";
+
+    status.classList.remove(
+        "text-green-600",
+        "text-slate-600"
+    );
+
+    status.classList.add(
+        isLocked
+            ? "text-slate-600"
+            : "text-green-600"
+    );
+
+    card.classList.remove(
+        "border-slate-200",
+        "bg-white",
+        "border-slate-400",
+        "bg-slate-100"
+    );
+
+    if (isLocked) {
+
+        card.classList.add(
+            "border-slate-400",
+            "bg-slate-100"
+        );
+
+    } else {
+
+        card.classList.add(
+            "border-slate-200",
+            "bg-white"
+        );
+
+    }
+
+}
+function updateTableReservationUI(
+    tableId,
+    isReserved,
+    reservedName = ""
+) {
+
+    const card =
+        document.getElementById(
+            `table-card-${tableId}`
+        );
+
+    const status =
+        document.getElementById(
+            `table-status-${tableId}`
+        );
+
+    const action =
+        document.getElementById(
+            `reservation-action-${tableId}`
+        );
+
+    if (
+        !card ||
+        !status ||
+        !action
+    ) {
+
+        return;
+
+    }
+
+    card.dataset.reserved =
+        isReserved ? "1" : "0";
+
+    status.textContent =
+        isReserved
+            ? "Reserved"
+            : "Available";
+
+    status.classList.remove(
+        "text-green-600",
+        "text-amber-600"
+    );
+
+    status.classList.add(
+        isReserved
+            ? "text-amber-600"
+            : "text-green-600"
+    );
+
+    card.classList.remove(
+        "border-slate-200",
+        "bg-white",
+        "border-amber-300",
+        "bg-amber-50"
+    );
+
+    if (isReserved) {
+
+        card.classList.add(
+            "border-amber-300",
+            "bg-amber-50"
+        );
+
+    } else {
+
+        card.classList.add(
+            "border-slate-200",
+            "bg-white"
+        );
+
+    }
+
+    let info =
+        document.getElementById(
+            `reservation-info-${tableId}`
+        );
+
+    if (isReserved) {
+
+        if (!info) {
+
+            info =
+                document.createElement(
+                    "div"
+                );
+
+            info.id =
+                `reservation-info-${tableId}`;
+
+            info.className =
+                "mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm";
+
+            info.innerHTML = `
+<div class="font-medium text-amber-700">
+Reserved
+</div>
+<div
+    id="reservation-name-${tableId}"
+    class="text-slate-700"
+></div>
+`;
+
+            action.before(info);
+
+        }
+
+        document.getElementById(
+            `reservation-name-${tableId}`
+        ).textContent =
+            reservedName;
+
+        action.innerHTML = `
+<button
+    onclick="event.stopPropagation(); clearReservation(${tableId})"
+    class="mt-auto w-full rounded-lg bg-amber-600 py-2 text-sm text-white">
+    Clear Reservation
+</button>
+`;
+
+    } else {
+
+        if (info) {
+
+            info.remove();
+
+        }
+
+        action.innerHTML = `
+<button
+    onclick="event.stopPropagation(); reserveTable(${tableId})"
+    class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50">
+    Reserve
+</button>
+`;
+
+    }
 
 }
 loadArea();
