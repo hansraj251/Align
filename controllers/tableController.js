@@ -300,3 +300,34 @@ exports.updateLock = async (
     }
 
 };
+exports.createBulkTables = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const result =
+            await tableService.createBulk(
+
+                req.user.restaurantId,
+
+                req.body
+
+            );
+
+        res.json(result);
+
+    } catch (err) {
+
+        res.status(400).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};

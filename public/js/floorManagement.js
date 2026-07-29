@@ -550,20 +550,27 @@ const defaultTableName =
 
         `
 <label class="mb-2 block">
-
-Table Name
-
+    Table Prefix
 </label>
 
 <input
-    id="tableName"
-    value="${defaultTableName}"
+    id="tablePrefix"
+    value="${prefix}"
     class="mb-4 w-full rounded-lg border p-3">
 
 <label class="mb-2 block">
+    Number of Tables
+</label>
 
-Capacity
+<input
+    id="tableCount"
+    type="number"
+    min="1"
+    value="1"
+    class="mb-4 w-full rounded-lg border p-3">
 
+<label class="mb-2 block">
+    Capacity
 </label>
 
 <input
@@ -573,67 +580,120 @@ Capacity
     max="100"
     value="4"
     class="w-full rounded-lg border p-3">
+
 `,
         async () => {
 
-            const name =
-                document
-                    .getElementById("tableName")
-                    .value
-                    .trim();
+            const prefix =
+    document
+        .getElementById("tablePrefix")
+        .value
+        .trim();
 
-            const capacity =
+const count =
+    Number(
+        document
+            .getElementById("tableCount")
+            .value
+    );
+
+const capacity =
     Number(
         document
             .getElementById("tableCapacity")
             .value
     );
 
+if (!prefix) {
 
-            if (!name) {
+    Toast.show(
+        "Table prefix is required",
+        "error"
+    );
 
-                Toast.show(
-                    "Table name is required",
-                    "error"
+    return;
+
+}
+
+let data;
+
+if (count === 1) {
+
+    const areaTables =
+        floorTables.filter(
+            table =>
+                table.area_id === areaId
+        );
+
+    let highest = 0;
+
+    const regex =
+        new RegExp(
+            `^${prefix}\\s*(\\d+)$`,
+            "i"
+        );
+
+    areaTables.forEach(table => {
+
+        const match =
+            table.name.match(regex);
+
+        if (match) {
+
+            highest =
+                Math.max(
+                    highest,
+                    Number(match[1])
                 );
 
-                return;
+        }
 
+    });
+
+    data =
+        await API.post(
+            "/api/tables",
+            {
+                name:
+                    `${prefix} ${highest + 1}`,
+                capacity,
+                area_id: areaId
             }
+        );
 
-            const data =
-                await API.post(
-                    "/api/tables",
-                    {
+} else {
 
-                        name,
-
-                        capacity,
-
-                        area_id: areaId,
-                
-
-                    }
-                );
-
-            if (!data.success) {
-
-                Toast.show(
-                    data.message,
-                    "error"
-                );
-
-                return;
-
+    data =
+        await API.post(
+            "/api/tables/bulk",
+            {
+                prefix,
+                count,
+                capacity,
+                area_id: areaId
             }
+        );
 
-            Modal.close();
+}
 
-            Toast.show(
-                "Table created successfully"
-            );
+if (!data.success) {
 
-            loadFloorManagement();
+    Toast.show(
+        data.message,
+        "error"
+    );
+
+    return;
+
+}
+
+Modal.close();
+
+Toast.show(
+    data.message
+);
+
+loadFloorManagement();
 
         }
 

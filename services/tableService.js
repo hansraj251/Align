@@ -432,3 +432,126 @@ exports.updateLock = async (
     };
 
 };
+exports.createBulk = async (
+    restaurantId,
+    data
+) => {
+
+    const prefix =
+        (data.prefix || "").trim();
+
+    const count =
+        Number(data.count);
+
+    const capacity =
+        Number(data.capacity || 4);
+
+    if (!prefix) {
+
+        throw new Error(
+            "Table prefix is required"
+        );
+
+    }
+
+    if (
+        !Number.isInteger(count) ||
+        count < 1
+    ) {
+
+        throw new Error(
+            "Invalid table count"
+        );
+
+    }
+
+    if (
+        !Number.isInteger(capacity) ||
+        capacity < 1
+    ) {
+
+        throw new Error(
+            "Capacity must be at least 1"
+        );
+
+    }
+
+    if (data.area_id) {
+
+        const area =
+            await diningAreaRepository.getById(
+                restaurantId,
+                data.area_id
+            );
+
+        if (!area) {
+
+            throw new Error(
+                "Invalid dining area"
+            );
+
+        }
+
+    }
+
+    const tables =
+        await tableRepository.getByArea(
+            restaurantId,
+            data.area_id
+        );
+
+    let highest = 0;
+
+    const regex =
+        new RegExp(
+            `^${prefix}\\s*(\\d+)$`,
+            "i"
+        );
+
+    tables.forEach(table => {
+
+        const match =
+            table.name.match(regex);
+
+        if (match) {
+
+            highest =
+                Math.max(
+                    highest,
+                    Number(match[1])
+                );
+
+        }
+
+    });
+
+    for (
+        let i = 1;
+        i <= count;
+        i++
+    ) {
+
+        await tableRepository.create(
+
+            restaurantId,
+
+            `${prefix} ${highest + i}`,
+
+            capacity,
+
+            data.area_id
+
+        );
+
+    }
+
+    return {
+
+        success: true,
+
+        message:
+            `${count} tables created successfully`
+
+    };
+
+};

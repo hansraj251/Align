@@ -497,3 +497,24 @@ exports.updateLock = async (
     );
 
 };
+exports.getByArea = async (
+    restaurantId,
+    areaId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+            name
+        FROM tables
+        WHERE
+            restaurant_id = ?
+            AND area_id = ?
+        `,
+        [
+            restaurantId,
+            areaId
+        ]
+    );
+
+};

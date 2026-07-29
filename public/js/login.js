@@ -3,6 +3,24 @@ Auth.redirectIfLoggedIn();
 document
     .getElementById("loginBtn")
     .addEventListener("click", login);
+document.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (event.key !== "Enter") {
+
+            return;
+
+        }
+
+        event.preventDefault();
+
+        document
+            .getElementById("loginBtn")
+            .click();
+
+    }
+);
 
 async function login() {
 

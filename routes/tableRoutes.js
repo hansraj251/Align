@@ -18,6 +18,12 @@ router.post(
     adminMiddleware,
     tableController.createTable
 );
+router.post(
+    "/bulk",
+    authMiddleware,
+    adminMiddleware,
+    tableController.createBulkTables
+);
 
 router.get(
     "/",
