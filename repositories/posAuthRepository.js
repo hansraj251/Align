@@ -27,12 +27,20 @@ exports.getUserWithRestaurantByEmail = async (email) => {
             r.pincode,
             r.logo,
             r.restaurant_code,
+
             r.plan_id,
             r.subscription_status,
             r.plan_start,
             r.plan_end,
+
+            p.slug AS plan_slug,
             p.display_name,
+            p.description AS plan_description,
+            p.sort_order,
+            p.status AS plan_status,
+
             pl.limit_value AS allowed_devices,
+
             r.trial_used,
             r.status AS restaurant_status
 
@@ -40,12 +48,13 @@ exports.getUserWithRestaurantByEmail = async (email) => {
 
         INNER JOIN restaurants r
             ON r.id = u.restaurant_id
-        LEFT JOIN plans p
-    ON p.id = r.plan_id
 
-LEFT JOIN plan_limits pl
-    ON pl.plan_id = r.plan_id
-   AND pl.limit_key = 'waiter_devices'    
+        LEFT JOIN plans p
+            ON p.id = r.plan_id
+
+        LEFT JOIN plan_limits pl
+            ON pl.plan_id = r.plan_id
+           AND pl.limit_key = 'waiter_devices'
 
         WHERE u.email = ?
     `;

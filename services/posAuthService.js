@@ -37,93 +37,94 @@ exports.login = async (
 
     return {
 
-        restaurant: {
+    restaurant: {
 
-            id:
-                data.restaurant_id,
+        id: data.restaurant_id,
 
-            name:
-                data.restaurant_name,
+        name: data.restaurant_name,
 
-            owner_name:
-                data.owner_name,
+        owner_name: data.owner_name,
 
-            mobile:
-                data.restaurant_mobile,
+        mobile: data.restaurant_mobile,
 
-            email:
-                data.restaurant_email,
+        email: data.restaurant_email,
 
-            gst_number:
-                data.gst_number,
+        gst_number: data.gst_number,
 
-            fssai_number:
-                data.fssai_number,
+        fssai_number: data.fssai_number,
 
-            address:
-                data.address,
+        address: data.address,
 
-            city:
-                data.city,
+        city: data.city,
 
-            state:
-                data.state,
+        state: data.state,
 
-            pincode:
-                data.pincode,
+        pincode: data.pincode,
 
-            logo:
-                data.logo,
+        logo: data.logo,
 
-            restaurant_code:
-                data.restaurant_code,
+        restaurant_code: data.restaurant_code,
 
-            plan_id:
-                data.plan_id,
+        plan_id: data.plan_id,
 
-            subscription_status:
-                data.subscription_status,
+        subscription_status: data.subscription_status,
 
-            plan_start:
-                data.plan_start,
+        plan_start: data.plan_start,
 
-            plan_end:
-                data.plan_end,
+        plan_end: data.plan_end,
 
-            trial_used:
-                data.trial_used,
+        trial_used: data.trial_used,
 
-            status:
-                data.restaurant_status
+        status: data.restaurant_status
 
-        },
+    },
 
-        user: {
+    user: {
 
-            id:
-                data.id,
+        id: data.id,
 
-            restaurant_id:
-                data.restaurant_id,
+        restaurant_id: data.restaurant_id,
 
-            name:
-                data.name,
+        name: data.name,
 
-            email:
-                data.email,
+        email: data.email,
 
-            mobile:
-                data.mobile,
+        mobile: data.mobile,
 
-            password_hash: data.password,
+        password_hash: data.password,
 
-            role:
-                data.role,
+        role: data.role,
 
-            status:
-                data.status
+        status: data.status
 
-        }
+    },
+
+    plan: {
+
+        id: data.plan_id,
+
+        slug: data.plan_slug,
+
+        display_name: data.display_name,
+
+        description: data.plan_description,
+
+        sort_order: data.sort_order,
+
+        status: data.plan_status
+
+    },
+
+    planLimit: {
+
+        plan_id: data.plan_id,
+
+        limit_key: "waiter_devices",
+
+        limit_value: data.allowed_devices
+
+    }
+        
 
     };
 
