@@ -70,7 +70,9 @@ const superAdminAccountRoutes =
         "./routes/superAdminAccountRoutes"
     );    
 const firebaseService =
-    require("./services/firebaseService");              
+    require("./services/firebaseService");     
+const posAuthRoutes =
+    require("./routes/posAuthRoutes");             
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menu/categories", menuCategoryRoutes);
 app.use("/api/menu/items", menuItemRoutes);
@@ -178,6 +180,10 @@ app.use(
 app.use(
     "/api/super-admin/accounts",
     superAdminAccountRoutes
+);
+app.use(
+    "/api/pos",
+    posAuthRoutes
 );
 app.get("/", (req, res) => {
     res.redirect("/login.html");
