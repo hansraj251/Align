@@ -42,18 +42,19 @@ exports.login = async (
 
         return res.json({
 
-            success: true,
+    success: true,
 
-            message:
-                "Login Successful",
+    message: "Login Successful",
 
-            restaurant:
-                result.restaurant,
+    restaurant: result.restaurant,
 
-            user:
-                result.user
+    user: result.user,
 
-        });
+    plan: result.plan,
+
+    planLimit: result.planLimit
+
+});
 
     }
     catch (err) {
