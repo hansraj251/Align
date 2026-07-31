@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
-
+const jwt =
+    require("jsonwebtoken");
 const posAuthRepository =
     require("../repositories/posAuthRepository");
 
@@ -34,8 +35,35 @@ exports.login = async (
         );
 
     }
+    const token =
+    jwt.sign(
+
+        {
+
+            restaurantId:
+                data.restaurant_id,
+
+            userId:
+                data.id,
+
+            role:
+                data.role
+
+        },
+
+        process.env.JWT_SECRET,
+
+        {
+
+            expiresIn:
+                "5y"
+
+        }
+
+    );
 
     return {
+         token,
 
     restaurant: {
 

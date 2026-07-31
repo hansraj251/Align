@@ -46,6 +46,8 @@ exports.login = async (
 
     message: "Login Successful",
 
+    token: result.token,
+
     restaurant: result.restaurant,
 
     user: result.user,

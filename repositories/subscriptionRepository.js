@@ -91,3 +91,44 @@ exports.updateSubscription =
     );
 
 };
+
+exports.getSubscriptionSyncData = async (
+    restaurantId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+
+            r.plan_id,
+
+            r.subscription_status,
+
+            r.plan_start,
+
+            r.plan_end,
+
+            p.slug,
+            p.display_name,
+            p.description,
+            p.sort_order,
+            p.status AS plan_status,
+
+            pl.limit_key,
+            pl.limit_value
+
+        FROM restaurants r
+
+        LEFT JOIN plans p
+            ON p.id = r.plan_id
+
+        LEFT JOIN plan_limits pl
+            ON pl.plan_id = r.plan_id
+           AND pl.limit_key = 'waiter_devices'
+
+        WHERE r.id = ?
+        `,
+        [restaurantId]
+    );
+
+};

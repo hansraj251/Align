@@ -49,6 +49,12 @@ router.post(
     subscriptionController.logoutActiveDevice
 );
 
+router.get(
+    "/sync",
+    auth,
+    subscriptionController.getSubscriptionSyncData
+);
+
 
 module.exports =
     router;

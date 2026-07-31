@@ -623,3 +623,78 @@ if (
         );
 
 };
+
+exports.getSubscriptionSyncData = async (
+    restaurantId
+) => {
+
+    const subscription =
+        await subscriptionRepository
+            .getSubscriptionSyncData(
+                restaurantId
+            );
+
+    if (!subscription) {
+
+        throw new Error(
+            "Subscription not found."
+        );
+
+    }
+
+    return {
+
+        restaurant: {
+
+            plan_id:
+                subscription.plan_id,
+
+            subscription_status:
+                subscription.subscription_status,
+
+            plan_start:
+                subscription.plan_start,
+
+            plan_end:
+                subscription.plan_end
+
+        },
+
+        plan: {
+
+            id:
+                subscription.plan_id,
+
+            slug:
+                subscription.slug,
+
+            display_name:
+                subscription.display_name,
+
+            description:
+                subscription.plan_description,
+
+            sort_order:
+                subscription.sort_order,
+
+            status:
+                subscription.plan_status
+
+        },
+
+        planLimit: {
+
+            plan_id:
+                subscription.plan_id,
+
+            limit_key:
+                subscription.limit_key,
+
+            limit_value:
+                subscription.limit_value
+
+        }
+
+    };
+
+};
