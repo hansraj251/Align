@@ -13,8 +13,13 @@ exports.login = async (
         await posAuthRepository.getUserWithRestaurantByEmail(
             email
         );
+        console.log("Login Email:", email);
+console.log("User Found:", !!data);
 
     if (!data) {
+         console.log("DB Email:", data.email);
+
+    console.log("Hash Exists:", !!data.password);
 
         throw new Error(
             "Invalid email or password"
@@ -22,11 +27,15 @@ exports.login = async (
 
     }
 
+    console.log("Input Password:", password);
+console.log("Stored Hash:", data.password);
+
     const passwordMatched =
         await bcrypt.compare(
             password.trim(),
             data.password.trim()
         );
+        console.log("Password Matched:", passwordMatched);
 
     if (!passwordMatched) {
 
