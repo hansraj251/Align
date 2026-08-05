@@ -311,15 +311,14 @@ ${buttonText}
 
 </button>
 
-<button
+<a
 
-onclick="downloadPOS()"
-
+href="/downloads/AlignPOSSetup.zip"
 class="rounded-xl bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-700">
 
-Download POS
+Download POS for Windows 
 
-</button>
+</a>
 
  <a
     href="/downloads/AlignOS.apk"
