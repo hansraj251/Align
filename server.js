@@ -1,94 +1,51 @@
 require("dotenv").config();
-const http = require("http");
+
+const http =
+    require("http");
 
 require("./db");
-const path = require("path");
-const initializeDatabase = require("./database/init");
-const express = require("express");
 
-const socket = require("./utils/socket");
+const path =
+    require("path");
 
-const cors = require("cors");
+const express =
+    require("express");
 
-const app = express();
-const server = http.createServer(app);
+const cors =
+    require("cors");
+
+const initializeDatabase =
+    require("./database/init");
+
+const app =
+    express();
+
+const server =
+    http.createServer(app);
 
 app.use(cors());
+
 app.use(
     "/api/subscription/webhook",
     express.raw({
         type: "application/json"
     })
 );
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-const authRoutes = require("./routes/authRoutes");
-app.use("/api/auth", authRoutes);
-const staffAuthRoutes =
-    require("./routes/staffAuthRoutes");
-const restaurantRoutes = require("./routes/restaurantRoutes");
-const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
-const menuItemRoutes = require("./routes/menuItemRoutes");
-const quickItemRoutes =
-    require("./routes/quickItemRoutes");
-const dashboardRoutes = require("./routes/dashboardRoutes");
-const tableRoutes = require("./routes/tableRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const checkoutRoutes =
-    require("./routes/checkoutRoutes");
-const kitchenRoutes = require("./routes/kitchenRoutes");
-const orderStatusRoutes =
-    require("./routes/orderStatusRoutes");    
-const billingRoutes =
-    require("./routes/billingRoutes");    
-const paymentRoutes =
-    require("./routes/paymentRoutes");    
-const receiptRoutes =
-    require("./routes/receiptRoutes");   
-const settingsRoutes =
-    require("./routes/settingsRoutes");   
-const diningAreaRoutes =
-    require("./routes/diningAreaRoutes");     
-const staffRoutes =
-    require("./routes/staffRoutes");   
-const menuVariantRoutes =
-    require("./routes/menuVariantRoutes");    
-const orderItemRoutes =
-    require("./routes/orderItemRoutes");   
-const reportRoutes =
-    require("./routes/reportRoutes");  
-const superAdminRoutes =
-    require("./routes/superAdminRoutes");  
-const subscriptionRoutes =
-    require("./routes/subscriptionRoutes");    
-const subscriptionRequestRoutes =
-    require("./routes/subscriptionRequestRoutes");   
-const waiterRoutes =
-    require("./routes/waiterRoutes"); 
-const superAdminAccountRoutes =
-    require(
-        "./routes/superAdminAccountRoutes"
-    );    
-const firebaseService =
-    require("./services/firebaseService");     
-const posAuthRoutes =
-    require("./routes/posAuthRoutes");             
-app.use("/api/restaurants", restaurantRoutes);
-app.use("/api/menu/categories", menuCategoryRoutes);
-app.use("/api/menu/items", menuItemRoutes);
+
 app.use(
-    "/api/quick-items",
-    quickItemRoutes
+    express.json()
 );
-app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/tables", tableRoutes);
+
 app.use(
-    "/api/orders/checkout",
-    checkoutRoutes
+    express.urlencoded({
+        extended: true
+    })
 );
-app.use("/api/orders", orderRoutes);
-app.use("/api/kitchen", kitchenRoutes);
-app.use(express.static("public"));
+
+app.use(
+    express.static("public")
+);
+
 const uploadsPath =
     process.env.RENDER
         ? "/var/data/uploads"
@@ -103,117 +60,79 @@ app.use(
         uploadsPath
     )
 );
-app.use(
 
-    "/api/staff-auth",
+/* -------------------- ROUTES -------------------- */
 
-    staffAuthRoutes
-);
-app.use("/api/orders", orderStatusRoutes);
-app.use("/api/billing", billingRoutes);
-app.use("/api/payment", paymentRoutes);
 app.use(
-    "/api/receipt",
-    receiptRoutes
+    "/api/auth",
+    require("./routes/authRoutes")
 );
-app.use(
-    "/api/settings",
-    settingsRoutes
-);
-app.use(
-    "/api/dining-areas",
-    diningAreaRoutes
-);
-app.use(
-    "/api/staff",
-    staffRoutes
-);
-app.use(
-    "/api/system/categories",
-    require("./routes/systemCategoryRoutes")
-);
-app.use(
-    "/api/category-search",
-    require("./routes/categorySearchRoutes")
-);
-app.use(
-"/api/system-menu-search",
-require("./routes/systemMenuItemRoutes")
-);
-app.use(
 
-    "/api/menu/items",
-
-    menuVariantRoutes
-
-);
 app.use(
-
-    "/api/order-items",
-
-    orderItemRoutes
-
+    "/api/restaurants",
+    require("./routes/restaurantRoutes")
 );
+
 app.use(
-
-    "/api/reports",
-
-    reportRoutes
-
+    "/api/subscription",
+    require("./routes/subscriptionRoutes")
 );
+
 app.use(
     "/api/super-admin",
-    superAdminRoutes
+    require("./routes/superAdminRoutes")
 );
-app.use(
-    "/api/subscription",
-    subscriptionRoutes
-);
-app.use(
-    "/api/subscription",
-    subscriptionRequestRoutes
-);
-app.use(
-    "/api/waiter",
-    waiterRoutes
-);
+
 app.use(
     "/api/super-admin/accounts",
-    superAdminAccountRoutes
+    require("./routes/superAdminAccountRoutes")
 );
+
 app.use(
     "/api/pos",
-    posAuthRoutes
+    require("./routes/posAuthRoutes")
 );
-app.get("/", (req, res) => {
-    res.redirect("/login.html");
-});
 
+app.use(
+    "/api/pos",
+    require("./routes/posRoutes")
+);
 
-initializeDatabase()
-    .then(() => {
+app.get(
+    "/",
+    (
+        req,
+        res
+    ) => {
 
-        firebaseService.initialize();
-
-        const PORT =
-            process.env.PORT || 3000;
-
-        console.log(
-            "🚀 SOCKET VERSION: 2026-07-10-V3"
+        res.redirect(
+            "/login.html"
         );
 
-        socket.init(server);
+    }
+);
+
+initializeDatabase()
+
+    .then(() => {
+
+        const PORT =
+            process.env.PORT
+            || 3000;
 
         server.listen(
             PORT,
             () => {
 
                 console.log(
-                    `🚀 Align Server running on http://localhost:${PORT}`
+                    `🚀 Align Cloud running on http://localhost:${PORT}`
                 );
 
             }
         );
 
     })
-    .catch(console.error);
+
+    .catch(
+        console.error
+    );

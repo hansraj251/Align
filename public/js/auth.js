@@ -2,22 +2,24 @@ const Auth = {
 
     requireLogin() {
 
-        const adminToken =
-    localStorage.getItem("token");
+        const token =
+            localStorage.getItem(
+                "token"
+            );
 
-const staffToken =
-    localStorage.getItem("staffToken");
+        const superAdminToken =
+            localStorage.getItem(
+                "superAdminToken"
+            );
 
-const superAdminToken =
-    localStorage.getItem("superAdminToken");
+        if (
+            !token &&
+            !superAdminToken
+        ) {
 
-       if (
-    !adminToken &&
-    !staffToken &&
-    !superAdminToken
-) {
+            window.location.href =
+                "/login.html";
 
-            window.location.href = "/login.html";
             return false;
 
         }
@@ -26,123 +28,71 @@ const superAdminToken =
 
     },
 
-   async logout() {
+    logout() {
 
-    const staffToken =
-        localStorage.getItem("staffToken");
+        localStorage.removeItem(
+            "token"
+        );
 
-    if (staffToken) {
+        localStorage.removeItem(
+            "superAdminToken"
+        );
 
-        try {
+        localStorage.removeItem(
+            "superAdmin"
+        );
 
-            await fetch("/api/staff-auth/logout", {
+        sessionStorage.clear();
 
-                method: "POST",
+        window.location.replace(
+            "/login.html"
+        );
 
-                headers: {
-
-                    Authorization:
-                        "Bearer " + staffToken
-
-                }
-
-            });
-
-        } catch (err) {
-
-            console.error(
-                "Logout API failed:",
-                err
-            );
-
-        }
-
-    }
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("staffToken");
-    localStorage.removeItem("staff");
-    localStorage.removeItem("restaurantName");
-    localStorage.removeItem(
-    "superAdminToken"
-);
-
-localStorage.removeItem(
-    "superAdmin"
-);
-
-    sessionStorage.clear();
-
-    window.location.replace("/login.html");
-
-},
+    },
 
     isLoggedIn() {
 
         return !!(
 
-    localStorage.getItem("token") ||
+            localStorage.getItem(
+                "token"
+            ) ||
 
-    localStorage.getItem("staffToken") ||
+            localStorage.getItem(
+                "superAdminToken"
+            )
 
-    localStorage.getItem("superAdminToken")
+        );
 
-);
     },
 
     redirectIfLoggedIn() {
 
         if (
-    localStorage.getItem(
-        "superAdminToken"
-    )
-) {
 
-    window.location.href =
-        "/super-admin/dashboard.html";
+            localStorage.getItem(
+                "superAdminToken"
+            )
 
-    return;
-
-}
-
-        if (localStorage.getItem("token")) {
+        ) {
 
             window.location.href =
-                "/admin/dashboard.html";
+                "/super-admin/dashboard.html";
 
             return;
 
         }
 
-        if (localStorage.getItem("staffToken")) {
+        if (
 
-            const staff = JSON.parse(
-                localStorage.getItem("staff") || "{}"
-            );
+            localStorage.getItem(
+                "token"
+            )
 
-            switch (staff.role) {
+        ) {
 
-                case "owner":
-                case "manager":
-                    window.location.href = "/admin/dashboard.html";
-                    break;
-
-                case "waiter":
-case "device":
-
-    window.location.href =
-        "/waiter/dashboard.html";
-
-    break;
-
-                case "kitchen":
-                    window.location.href = "/admin/kitchen.html";
-                    break;
-
-                case "cashier":
-                    window.location.href = "/admin/billing.html";
-                    break;
-            }
+            window.location.href =
+                "/admin/subscription.html";
 
         }
 

@@ -1,9 +1,7 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const db =
-    require("../db");
-const defaultSetupService =
-require("../services/defaultSetupService");
+
+const authService =
+    require("../services/authService");
 
 const authSignupService =
     require("../services/authSignupService");      
@@ -55,29 +53,29 @@ exports.signup = async (req, res) => {
             message: "Password must be at least 8 characters"
         });
     }
-
-    
-    db.get(
-    `SELECT id FROM users WHERE email = ? OR mobile = ?`,
-    [email, mobile],
-    async (err, existingUser) => {
-
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: "Database error"
-            });
-        }
-
-        if (existingUser) {
-            return res.status(400).json({
-                success: false,
-                message: "Email or Mobile already registered"
-            });
-        }
-       
-
 try {
+
+    const existingUser =
+        await authService
+            .userExists(
+                email,
+                mobile
+            );
+
+    if (
+        existingUser
+    ) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                "Email or Mobile already registered"
+
+        });
+
+    }
 
     const hashedPassword =
         await bcrypt.hash(
@@ -93,18 +91,23 @@ try {
 
     await otpService.saveOtp({
 
-    email,
-    otp,
+        email,
 
-    purpose: "signup",
+        otp,
 
-    restaurantName,
-    ownerName,
-    mobile,
-    passwordHash: hashedPassword,
-    expiresAt
+        purpose: "signup",
 
-});
+        restaurantName,
+
+        ownerName,
+
+        mobile,
+
+        passwordHash: hashedPassword,
+
+        expiresAt
+
+    });
 
     await otpService.sendOtpEmail(
         email,
@@ -134,94 +137,89 @@ catch (err) {
 
 }
 
-    }
-);
-
 };
-exports.login = (req, res) => {
+exports.login =
+async (
+    req,
+    res
+) => {
 
-    const { email, password } = req.body;
+    const {
 
-    if (!email || !password) {
+        email,
+
+        password
+
+    } = req.body;
+
+    if (
+        !email ||
+        !password
+    ) {
+
         return res.status(400).json({
+
             success: false,
-            message: "Email and Password are required"
+
+            message:
+                "Email and Password are required"
+
         });
+
     }
 
-    db.get(
-        `SELECT * FROM users WHERE email = ?`,
-        [email],
-        async (err, user) => {
-            try {
+    try {
 
-            if (err) {
-                return res.status(500).json({
-                    success: false,
-                    message: "Database error"
-                });
+        const result =
+            await authService.login(
+
+                email,
+
+                password
+
+            );
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "Login Successful",
+
+            token:
+                result.token,
+
+            user: {
+
+                id:
+                    result.user.id,
+
+                name:
+                    result.user.name,
+
+                email:
+                    result.user.email,
+
+                role:
+                    result.user.role
+
             }
 
-            if (!user) {
-                return res.status(401).json({
-                    success: false,
-                    message: "Invalid email or password"
-                });
-            }
+        });
 
-const passwordMatched = await bcrypt.compare(
-    password.trim(),
-    user.password.trim()
-);
-
-
-if (!passwordMatched) {
-    return res.status(401).json({
-        success: false,
-        message: "Invalid email or password"
-    });
-}
-await defaultSetupService.ensureDefaultTakeAway(
-    user.restaurant_id
-);
-
-            const token = jwt.sign(
-    {
-        userId: user.id,
-        restaurantId: user.restaurant_id,
-        role: user.role
-    },
-    process.env.JWT_SECRET,
-    {
-        expiresIn: "7d"
     }
-);
+    catch (err) {
 
-return res.json({
-    success: true,
-    message: "Login Successful",
-    token,
-    user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role
+        return res.status(401).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
     }
-});
-        } catch (err) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: err.message
-
-            });
-
-        }
-
-        }
-    );
 
 };
 exports.verifyOtp =
@@ -308,13 +306,7 @@ try {
 }
 catch (err) {
 
-    console.error(
-
-        "Failed to delete OTP:",
-
-        err
-
-    );
+    console.error(err);
 
 }
 
@@ -344,13 +336,21 @@ return res.json({
     }
 
 };
-exports.forgotPassword = async (req, res) => {
+exports.forgotPassword =
+async (
+    req,
+    res
+) => {
 
     const {
+
         email
+
     } = req.body;
 
-    if (!email) {
+    if (
+        !email
+    ) {
 
         return res.status(400).json({
 
@@ -363,119 +363,92 @@ exports.forgotPassword = async (req, res) => {
 
     }
 
-    db.get(
+    try {
 
-        `
-        SELECT *
-        FROM users
-        WHERE email = ?
-        `,
-
-        [
-            email
-        ],
-
-        async (
-            err,
-            user
-        ) => {
-
-            if (err) {
-
-                return res.status(500).json({
-
-                    success: false,
-
-                    message:
-                        "Database error"
-
-                });
-
-            }
-
-            if (!user) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        "Email not found"
-
-                });
-
-            }
-
-            try {
-
-                const otp =
-                    otpService.generateOtp();
-
-                const expiresAt =
-                    otpService.generateExpiry();
-
-                await otpService.saveOtp({
-
-                    email,
-
-                    otp,
-
-                    purpose:
-                        "reset_password",
-
-                    restaurantName:
-                        null,
-
-                    ownerName:
-                        null,
-
-                    mobile:
-                        null,
-
-                    passwordHash:
-                        null,
-
-                    expiresAt
-
-                });
-
-                await otpService.sendOtpEmail(
-
-                    email,
-
-                    otp
-
+        const user =
+            await authService
+                .existsByEmail(
+                    email
                 );
 
-                return res.json({
+        if (
+            !user
+        ) {
 
-                    success: true,
+            return res.status(400).json({
 
-                    message:
-                        "OTP sent successfully"
+                success: false,
 
-                });
+                message:
+                    "Email not found"
 
-            }
-            catch (err) {
-
-                return res.status(500).json({
-
-                    success: false,
-
-                    message:
-                        err.message
-
-                });
-
-            }
+            });
 
         }
 
-    );
+        const otp =
+            otpService.generateOtp();
+
+        const expiresAt =
+            otpService.generateExpiry();
+
+        await otpService.saveOtp({
+
+            email,
+
+            otp,
+
+            purpose:
+                "reset_password",
+
+            restaurantName:
+                null,
+
+            ownerName:
+                null,
+
+            mobile:
+                null,
+
+            passwordHash:
+                null,
+
+            expiresAt
+
+        });
+
+        await otpService.sendOtpEmail(
+
+            email,
+
+            otp
+
+        );
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "OTP sent successfully"
+
+        });
+
+    }
+    catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
 
 };
-
 exports.resetPassword =
     async (
         req,

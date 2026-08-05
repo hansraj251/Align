@@ -1,39 +1,20 @@
-window.Align = window.Align || {};
-
-Align.Order = {};
-Align.Waiter = {};
-Align.Kitchen = {};
-Align.Cashier = {};
-Align.Admin = {};
-
-Align.Settings =
-    JSON.parse(
-        localStorage.getItem("appSettings")
-    ) || {
-
-        currency: "INR",
-
-        timeZone: "Asia/Kolkata"
-
-    };
+window.Align = {};
 
 Align.formatCurrency = function (
-    amount,
-    decimals = 0
+    amount
 ) {
 
-    const currency =
-        Align.Settings.currency || "INR";
-
     return new Intl.NumberFormat(
-        undefined,
+        "en-IN",
         {
             style: "currency",
-            currency,
-            minimumFractionDigits: decimals,
-            maximumFractionDigits: decimals
+            currency: "INR",
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
         }
-    ).format(Number(amount || 0));
+    ).format(
+        Number(amount || 0)
+    );
 
 };
 
@@ -47,19 +28,9 @@ Align.formatDateTime = function (
 
     }
 
-    const timeZone =
-        Align.Settings.timeZone ||
-        "Asia/Kolkata";
-
-    const date =
-        new Date(
-            dateTime.replace(
-                " ",
-                "T"
-            ) + "Z"
-        );
-
-    return date.toLocaleString(
+    return new Date(
+        dateTime
+    ).toLocaleString(
         "en-IN",
         {
             day: "2-digit",
@@ -68,7 +39,7 @@ Align.formatDateTime = function (
             hour: "2-digit",
             minute: "2-digit",
             hour12: true,
-            timeZone
+            timeZone: "Asia/Kolkata"
         }
     );
 

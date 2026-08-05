@@ -1,8 +1,5 @@
 const jwt = require("jsonwebtoken");
 
-const staffSessionService =
-    require("../services/staffSessionService");
-
 module.exports = async (req, res, next) => {
 
     const authHeader = req.headers.authorization;
@@ -42,9 +39,7 @@ module.exports = async (req, res, next) => {
 
     }
 
-    await staffSessionService.updateLastSeen(
-        decoded.sessionId
-    );
+    
 
 }
 

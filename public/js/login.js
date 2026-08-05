@@ -2,12 +2,18 @@ Auth.redirectIfLoggedIn();
 
 document
     .getElementById("loginBtn")
-    .addEventListener("click", login);
+    .addEventListener(
+        "click",
+        login
+    );
+
 document.addEventListener(
     "keydown",
     (event) => {
 
-        if (event.key !== "Enter") {
+        if (
+            event.key !== "Enter"
+        ) {
 
             return;
 
@@ -15,99 +21,98 @@ document.addEventListener(
 
         event.preventDefault();
 
-        document
-            .getElementById("loginBtn")
-            .click();
+        login();
 
     }
 );
 
 async function login() {
 
-    let fcmToken = "";
+    const loginId =
+        document
+            .getElementById(
+                "loginId"
+            )
+            .value
+            .trim();
 
-if (
-    window.Android &&
-    typeof Android.getFcmToken === "function"
-) {
+    const password =
+        document
+            .getElementById(
+                "password"
+            )
+            .value;
 
-    fcmToken =
-        Android.getFcmToken();
-
-}
-
-    const loginId = document
-        .getElementById("loginId")
-        .value
-        .trim();
-
-    const password = document
-        .getElementById("password")
-        .value;
-
-    const result = document.getElementById("result");
+    const result =
+        document.getElementById(
+            "result"
+        );
 
     result.textContent = "";
 
-    // Try Super Admin Login first
-if (!loginId || !password) {
+    if (
+        !loginId ||
+        !password
+    ) {
 
         result.textContent =
-            "Username/Email and Password are required.";
+            "Email/Username and Password are required.";
 
         return;
 
-    }  
-    
+    }
+
     try {
-const superAdmin =
-    await API.post(
-        "/api/super-admin/login",
-        {
-            username: loginId,
-            password
+
+        const superAdmin =
+            await API.post(
+                "/api/super-admin/login",
+                {
+                    username:
+                        loginId,
+                    password
+                }
+            );
+
+        if (
+            superAdmin.success
+        ) {
+
+            localStorage.setItem(
+                "superAdminToken",
+                superAdmin.token
+            );
+
+            localStorage.setItem(
+                "superAdmin",
+                JSON.stringify(
+                    superAdmin.admin
+                )
+            );
+
+            window.location.href =
+                "/super-admin/dashboard.html";
+
+            return;
+
         }
-    );
 
-if (superAdmin.success) {
+        const data =
+            await API.post(
+                "/api/auth/login",
+                {
+                    email:
+                        loginId,
+                    password
+                }
+            );
 
-    localStorage.setItem(
-        "superAdminToken",
-        superAdmin.token
-    );
+        if (
+            !data.success
+        ) {
 
-    localStorage.setItem(
-        "superAdmin",
-        JSON.stringify(
-            superAdmin.admin
-        )
-    );
-
-    window.location.href =
-        "/super-admin/dashboard.html";
-
-    return;
-
-}
-
-    let data;
-
-    if (loginId.includes("@")) {
-
-        // Owner / Admin Login
-
-        data = await API.post(
-            "/api/auth/login",
-            {
-                email: loginId,
-                password
-            }
-        );
-        
-
-        if (!data.success) {
-
-            result.textContent = data.message;
+            result.textContent =
+                data.message;
 
             return;
 
@@ -117,98 +122,25 @@ if (superAdmin.success) {
             "token",
             data.token
         );
-        const payload = JSON.parse(
-    atob(data.token.split(".")[1])
-);
 
-localStorage.setItem(
-    "restaurant_id",
-    payload.restaurantId
-);
+        const payload =
+            JSON.parse(
+                atob(
+                    data.token
+                        .split(".")[1]
+                )
+            );
+
+        localStorage.setItem(
+            "restaurant_id",
+            payload.restaurantId
+        );
 
         window.location.href =
-            "/admin/dashboard.html";
-
-    } else {
-
-        // Staff Login
-
-        data = await API.post(
-    "/api/staff-auth/login",
-    {
-        username: loginId,
-        password,
-        fcmToken
-    }
-);
-        
-
-        if (!data.success) {
-
-            result.textContent = data.message;
-
-            return;
-
-        }
-
-        localStorage.setItem(
-            "staffToken",
-            data.token
-        );
-
-
-localStorage.setItem(
-    "restaurant_id",
-    data.restaurant_id
-);
-
-
-localStorage.setItem(
-    "staff",
-    JSON.stringify({
-        ...data.staff,
-        restaurant_id: data.restaurant_id,
-        restaurant_name: data.restaurant_name
-    })
-);
-
-        localStorage.setItem(
-            "restaurantName",
-            data.restaurant_name || ""
-        );
-        
-
-        switch (data.staff.role) {
-
-            case "owner":
-            case "manager":
-                window.location.href = "/admin/dashboard.html";
-                break;
-
-            case "waiter":
-            case "device":
-
-    window.location.href =
-        "/waiter/dashboard.html";
-
-    break;
-
-            case "kitchen":
-                window.location.href = "/admin/kitchen.html";
-                break;
-
-            case "cashier":
-                window.location.href = "/admin/billing.html";
-                break;
-
-            default:
-                result.textContent = "Unknown role";
-        }
-        
+            "/admin/subscription.html";
 
     }
-
-} catch (err) {
+    catch (err) {
 
         console.error(err);
 

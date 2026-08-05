@@ -1,49 +1,30 @@
-const restaurantRepository =
-    require("../repositories/restaurantRepository");
+const restaurantService =
+    require("../services/restaurantService");
 
-module.exports = async (
+exports.getRestaurant =
+async (
     req,
-    res,
-    next
+    res
 ) => {
 
     try {
 
-        const subscriptionService =
-    require("../services/subscriptionService");
+        const restaurant =
+            await restaurantService
+                .getRestaurant(
+                    req.user.restaurantId
+                );
 
-module.exports = async (
-    req,
-    res,
-    next
-) => {
+        return res.json({
 
-    try {
+            success: true,
 
-        await subscriptionService
-            .validateRestaurant(
-                req.user.restaurantId
-            );
-
-        next();
-
-    } catch (err) {
-
-        return res.status(403).json({
-
-            success: false,
-
-            message: err.message
+            restaurant
 
         });
 
     }
-
-};
-
-    } catch (err) {
-
-        console.error(err);
+    catch (err) {
 
         return res.status(500).json({
 

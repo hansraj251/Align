@@ -287,57 +287,6 @@ ${remainingText}
 
 </div>
 
-<div id="allowedDevicesSection">
-
-<p class="text-sm text-slate-500">
-
-Allowed Devices
-
-</p>
-
-<p class="mt-2 text-xl font-semibold">
-
-${
-    subscription.allowed_devices === -1
-        ? "Unlimited"
-        : subscription.allowed_devices
-}
-
-</p>
-
-</div>
-
-<div
-id="activeDevicesSection"
-class="cursor-pointer rounded-xl p-3 transition hover:bg-slate-100"
-onclick="showActiveDevices()">
-
-<div class="flex items-center justify-between">
-
-<div>
-
-<p class="text-sm text-slate-500">
-
-Active Devices
-
-</p>
-
-<p class="mt-2 text-xl font-semibold">
-
-${subscription.active_devices}
-
-</p>
-
-</div>
-
-<div class="text-2xl text-slate-400">
-
-›
-
-</div>
-
-</div>
-
 </div>
 
 `
@@ -350,7 +299,7 @@ ${
     showUpgradeButton
         ? `
 
-<div class="mt-10">
+<div class="mt-10 flex flex-wrap gap-3">
 
 <button
 
@@ -362,7 +311,27 @@ ${buttonText}
 
 </button>
 
+<button
+
+onclick="downloadPOS()"
+
+class="rounded-xl bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-700">
+
+Download POS
+
+</button>
+
+ <a
+    href="/downloads/AlignOS.apk"
+    download
+    class="rounded-xl bg-emerald-600 px-6 py-3 text-white hover:bg-emerald-700">
+
+    Download Align Android App
+
+</a>
+
 </div>
+
 
 `
         : ""
@@ -682,6 +651,96 @@ function startSubscriptionAutoRefresh() {
         );
 
 }
+async function downloadPOS() {
+
+    const token =
+        localStorage.getItem(
+            "token"
+        );
+
+    const response =
+        await fetch(
+            "/api/pos/download",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+    if (!response.ok) {
+
+        const error =
+            await response.json();
+
+        Notify.error(
+            error.message
+        );
+
+        return;
+
+    }
+
+    const blob =
+        await response.blob();
+
+    const url =
+        window.URL.createObjectURL(
+            blob
+        );
+
+    const a =
+        document.createElement(
+            "a"
+        );
+
+    a.href =
+        url;
+
+    a.download =
+        "AlignPOS.zip";
+
+    document.body.appendChild(
+        a
+    );
+
+    a.click();
+
+    a.remove();
+
+    window.URL.revokeObjectURL(
+        url
+    );
+
+}
 loadSubscription();
 
 startSubscriptionAutoRefresh();
+
+function logout() {
+
+    localStorage.clear();
+
+    window.location.href =
+        "/login.html";
+
+}
+
+document
+    .getElementById(
+        "logoutBtnMobile"
+    )
+    ?.addEventListener(
+        "click",
+        logout
+    );
+
+document
+    .getElementById(
+        "logoutBtnDesktop"
+    )
+    ?.addEventListener(
+        "click",
+        logout
+    );

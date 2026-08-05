@@ -1,7 +1,5 @@
 const subscriptionService =
-    require("../services/subscriptionService");
-const staffSessionService =
-    require("../services/staffSessionService");    
+    require("../services/subscriptionService"); 
 
 exports.getSubscription =
 async (req, res) => {
@@ -195,11 +193,6 @@ exports.getActiveDevices = async (req, res) => {
 
     try {
 
-        const sessions =
-            await staffSessionService.getActiveSessionsByRestaurant(
-                req.user.restaurantId
-            );
-
         return res.json({
             success: true,
             sessions
@@ -223,11 +216,6 @@ exports.logoutActiveDevice = async (
 ) => {
 
     try {
-
-        await staffSessionService.logoutSession(
-            req.params.sessionId,
-            req.user.restaurantId
-        );
 
         return res.json({
             success: true,

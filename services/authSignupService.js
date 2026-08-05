@@ -1,8 +1,6 @@
 const db =
     require("../db");
 
-const defaultSetupService =
-    require("./defaultSetupService");
 async function createRestaurantAccount(
     signupData
 ) {
@@ -108,58 +106,13 @@ async function createRestaurantAccount(
            
                    const userId = this.lastID;
            
-                   db.run(
-                       `
-                       INSERT INTO restaurant_settings
-           (
-               restaurant_id,
-               footer_message,
-               cgst,
-               sgst,
-               currency,
-               time_zone
-           )
-           VALUES (?, ?, ?, ?, ?, ?)
-                       `,
-                       [
-               restaurantId,
-               "Thank You! Visit Again.",
-               2.5,
-               2.5,
-               "INR",
-               "Asia/Kolkata"
-           ],
-                       function (err) {
-           
-                           if (err) {
-           
-                               return reject(err);
-           
-                           }
-                           
-              defaultSetupService
-               .ensureDefaultTakeAway(
-                   restaurantId
-               )
-               .then(() => {
-           
-                   resolve({
+                  resolve({
 
     restaurantId,
 
     userId
 
 });
-           
-               })
-               .catch(err => {
-
-    reject(err);
-
-});
-           
-                       }
-                   );
            
                }
            );

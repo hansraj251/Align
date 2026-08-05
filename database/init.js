@@ -1,123 +1,66 @@
-const createDiningAreasTable =
-    require("./schema/diningAreas");
-const createRestaurantsTable = require("./schema/restaurants");
-const createUsersTable = require("./schema/users");
-const createTablesTable =
+const createRestaurantsTable =
+    require("./schema/restaurants");
 
-    require("./tables/createTablesTable");
-const {
-    createKitchenTables
-} = require("./schema/kitchenTickets");    
-const createMenuCategoriesTable = require("./schema/menuCategories");
-const createMenuItemsTable = require("./schema/menuItems");
-const createOrdersTable =
-    require("./orders/createOrdersTable");
+const createUsersTable =
+    require("./schema/users");
 
-const createOrderItemsTable =
-    require("./orders/createOrderItemsTable");
-const runMigrations =
-    require("../migrations");    
-const createStaffTable =
+const createEmailOtpsTable =
+    require("./schema/emailOtps");
 
-    require("./schema/staff");
-const createSuperAdminTable =
-    require("./schema/superAdmin");     
-const seedSuperAdmin =
-    require("./seed/superAdminSeed");    
 const createPlansTable =
-    require("./schema/plans");       
-const seedPlans =
-    require("./seed/planSeed");  
+    require("./schema/plans");
+
 const createPlanPricingTable =
-    require("./schema/planPricing");      
+    require("./schema/planPricing");
+
 const createPlanLimitsTable =
     require("./schema/planLimits");
 
-const seedPlanLimits =
-    require("./seed/planLimitSeed");   
-const createSubscriptionRequestsTable =
-    require("./schema/subscriptionRequests"); 
-const createSystemCategoriesTable =
-    require("./schema/systemCategories");
-
-const createSystemMenuItemsTable =
-    require("./schema/systemMenuItems");
-
-const seedSystemMenu =
-    require("./seed/systemMenuSeed");  
-const createEmailOtpsTable =
-    require("./schema/emailOtps"); 
-const createQuickItemsTable =
-    require("./schema/quickItems");  
-const createOrderStaffParticipantsTable =
-    require("./schema/orderStaffParticipants"); 
-const createPaymentSplitsTable =
-    require("./schema/paymentSplits"); 
-const createStaffSessionsTable =
-    require("./schema/staffSessions");
 const createSubscriptionOrdersTable =
-    require("./schema/subscriptionOrders");                     
+    require("./schema/subscriptionOrders");
+
+const createSubscriptionRequestsTable =
+    require("./schema/subscriptionRequests");
+
+const createSuperAdminTable =
+    require("./schema/superAdmin");
+
+const seedPlans =
+    require("./seed/planSeed");
+
+const seedPlanLimits =
+    require("./seed/planLimitSeed");
+
+const seedSuperAdmin =
+    require("./seed/superAdminSeed");
+
 async function initializeDatabase() {
-    console.log("📦 Initializing database...");
 
-await createRestaurantsTable();
+    await createRestaurantsTable();
 
-await createUsersTable();
+    await createUsersTable();
 
-await createEmailOtpsTable();
+    await createEmailOtpsTable();
 
-await createDiningAreasTable();
+    await createPlansTable();
 
-await createTablesTable();
+    await createPlanPricingTable();
 
-await createMenuCategoriesTable();
+    await createPlanLimitsTable();
 
-await createMenuItemsTable();
+    await createSubscriptionOrdersTable();
 
-await createQuickItemsTable();
+    await createSubscriptionRequestsTable();
 
-await createStaffTable();
+    await createSuperAdminTable();
 
-await createStaffSessionsTable();
+    await seedPlans();
 
-await createSystemCategoriesTable();
+    await seedPlanLimits();
 
-await createSystemMenuItemsTable();
+    await seedSuperAdmin();
 
-await createPlansTable();
-
-await createPlanPricingTable();
-
-await createPlanLimitsTable();
-
-await createSubscriptionOrdersTable();
-
-await createSubscriptionRequestsTable();
-
-await createSuperAdminTable();
-
-await createOrdersTable();
-
-await createOrderItemsTable();
-
-await createOrderStaffParticipantsTable();
-
-await createPaymentSplitsTable();
-
-await createKitchenTables();
-
-await runMigrations();
-
-await seedPlans();
-
-await seedPlanLimits();
-
-await seedSystemMenu();
-
-await seedSuperAdmin();
-
-
-    console.log("✅ Database initialization completed.");
 }
 
-module.exports = initializeDatabase;
+module.exports =
+    initializeDatabase;

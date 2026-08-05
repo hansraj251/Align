@@ -1,7 +1,0 @@
-window.ExistingOrder = {
-
-    async load() {
-
-    }
-
-};

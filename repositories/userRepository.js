@@ -2,52 +2,26 @@ const db =
     require("../db");
 
 exports.updatePassword =
-    (
-        email,
-        passwordHash
-    ) => {
+async (
+    email,
+    passwordHash
+) => {
 
-        return new Promise(
+    await db.runAsync(
+        `
+        UPDATE users
 
-            (
-                resolve,
-                reject
-            ) => {
+        SET
 
-                db.run(
+            password = ?
 
-                    `
-                    UPDATE users
-                    SET password = ?
-                    WHERE email = ?
-                    `,
+        WHERE
+            email = ?
+        `,
+        [
+            passwordHash,
+            email
+        ]
+    );
 
-                    [
-                        passwordHash,
-                        email
-                    ],
-
-                    function (err) {
-
-                        if (err) {
-
-                            return reject(err);
-
-                        }
-
-                        resolve({
-
-                            changes:
-                                this.changes
-
-                        });
-
-                    }
-
-                );
-
-            }
-
-        );
-
-    };
+};

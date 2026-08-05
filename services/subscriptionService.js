@@ -4,8 +4,6 @@ const subscriptionRepository =
 const planLimitRepository =
     require("../repositories/planLimitRepository");
 
-const staffSessionRepository =
-    require("../repositories/staffSessionRepository");
 const planRepository =
     require("../repositories/planRepository");
 
@@ -41,18 +39,6 @@ exports.getSubscription = async (
         );
 
     }
-
-    subscription.allowed_devices =
-        await planLimitRepository
-            .getWaiterDeviceLimit(
-                subscription.plan_id
-            );
-
-    subscription.active_devices =
-    await staffSessionRepository
-        .countActiveSessions(
-            restaurantId
-        );
 
 const plans =
     await planRepository.getAll();

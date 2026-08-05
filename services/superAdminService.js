@@ -1,11 +1,9 @@
 const superAdminRepository =
     require("../repositories/superAdminRepository");
-const staffSessionRepository =
-    require("../repositories/staffSessionRepository"); 
+
 const planRepository =
     require("../repositories/planRepository");    
-const staffSessionAdminService =
-    require("./staffSessionAdminService");     
+   
 const fs =
     require("fs");
 
@@ -33,39 +31,12 @@ async () => {
 
     for (const restaurant of restaurants) {
 
-        restaurant.active_devices =
-            await staffSessionRepository
-                .countActiveSessions(
-                    restaurant.id
-                );
-
     }
 
     return restaurants;
 
 };
-exports.getActiveSessions =
-async (restaurantId) => {
 
-    return await
-        staffSessionRepository
-            .getActiveSessions(
-                restaurantId
-            );
-
-};
-
-exports.forceLogout =
-async (sessionId) => {
-
-
-    return await
-        staffSessionAdminService
-            .forceLogout(
-                sessionId
-            );
-
-};
 
 exports.getRestaurantById =
 async (restaurantId) => {
@@ -81,12 +52,6 @@ async (restaurantId) => {
         return null;
 
     }
-
-    restaurant.active_devices =
-        await staffSessionRepository
-            .countActiveSessions(
-                restaurant.id
-            );
 
     return restaurant;
 

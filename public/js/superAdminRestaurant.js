@@ -301,29 +301,6 @@ class="mt-2 w-full rounded-lg border border-slate-300 p-3">
 
 </div>
 
-<div id="deviceUsageSection">
-
-<p class="text-sm text-slate-500">
-
-Device Usage
-
-</p>
-
-<p class="text-lg font-semibold">
-
-${restaurant.active_devices}
-/
-${
-    restaurant.allowed_devices < 0 ||
-    restaurant.allowed_devices >= 999
-        ? "Unlimited"
-        : restaurant.allowed_devices
-}
-
-</p>
-
-</div>
-
 </div>
 
 <div class="mt-8">
@@ -388,14 +365,7 @@ function updateSubscriptionForm() {
             "hidden",
             hideValidity
         );
-    document
-    .getElementById(
-        "deviceUsageSection"
-    )
-    .classList.toggle(
-        "hidden",
-        hideValidity
-    );  
+     
 
     const saveButton =
     document.getElementById(
