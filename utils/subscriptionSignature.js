@@ -11,7 +11,9 @@ const privateKeyPath =
     process.env
         .SUBSCRIPTION_PRIVATE_KEY_PATH ||
     "./keys/private.pem";
-
+console.log(
+    process.env.SUBSCRIPTION_PRIVATE_KEY_PATH
+);
 const privateKey =
     fs.readFileSync(
         path.resolve(
