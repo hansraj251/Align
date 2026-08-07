@@ -7,16 +7,17 @@ const path =
 const crypto =
     require("crypto");
 
+const privateKeyPath =
+    process.env
+        .SUBSCRIPTION_PRIVATE_KEY_PATH ||
+    "./keys/private.pem";
+
 const privateKey =
     fs.readFileSync(
-
-        path.join(
-            __dirname,
-            "../keys/private.pem"
+        path.resolve(
+            privateKeyPath
         ),
-
         "utf8"
-
     );
 
 exports.sign =
