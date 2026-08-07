@@ -21,6 +21,10 @@ const planPricingRepository =
     require("../repositories/planPricingRepository");    
 const dateUtils =
     require("../utils/date");    
+const subscriptionSignature =
+    require(
+        "../utils/subscriptionSignature"
+    );    
 
 exports.getSubscription = async (
     restaurantId
@@ -619,6 +623,19 @@ exports.getSubscriptionSyncData = async (
             .getSubscriptionSyncData(
                 restaurantId
             );
+    const payload =
+    [
+        restaurantId,
+        subscription.plan_id,
+        subscription.subscription_status,
+        subscription.plan_start,
+        subscription.plan_end
+    ].join("|");
+
+const signature =
+    subscriptionSignature.sign(
+        payload
+    );        
 
     if (!subscription) {
 
@@ -632,19 +649,22 @@ exports.getSubscriptionSyncData = async (
 
         restaurant: {
 
-            plan_id:
-                subscription.plan_id,
+    plan_id:
+        subscription.plan_id,
 
-            subscription_status:
-                subscription.subscription_status,
+    subscription_status:
+        subscription.subscription_status,
 
-            plan_start:
-                subscription.plan_start,
+    plan_start:
+        subscription.plan_start,
 
-            plan_end:
-                subscription.plan_end
+    plan_end:
+        subscription.plan_end,
 
-        },
+    subscription_signature:
+        signature
+
+},
 
         plan: {
 

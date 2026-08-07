@@ -39,6 +39,8 @@ plan_start DATE,
 
 plan_end DATE,
 
+subscription_signature TEXT,
+
 trial_used INTEGER
     DEFAULT 0,
 
@@ -69,6 +71,36 @@ trial_used INTEGER
         throw err;
 
     }
+    try {
+
+    await db.runAsync(
+        `
+        ALTER TABLE restaurants
+
+        ADD COLUMN
+
+        subscription_signature TEXT
+        `
+    );
+
+    console.log(
+        "✅ subscription_signature column added"
+    );
+
+}
+catch (err) {
+
+    if (
+        !err.message.includes(
+            "duplicate column name"
+        )
+    ) {
+
+        throw err;
+
+    }
+
+}
 
 }
 
