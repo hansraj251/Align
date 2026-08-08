@@ -662,7 +662,10 @@ const signature =
         subscription.plan_end,
 
     subscription_signature:
-        signature
+        signature,
+
+    active_device_id:
+        subscription.active_device_id
 
 },
 

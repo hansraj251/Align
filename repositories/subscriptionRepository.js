@@ -107,6 +107,7 @@ exports.getSubscriptionSyncData = async (
             r.plan_start,
 
             r.plan_end,
+            r.active_device_id,
 
             p.slug,
             p.display_name,

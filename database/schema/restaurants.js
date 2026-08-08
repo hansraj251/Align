@@ -40,6 +40,7 @@ plan_start DATE,
 plan_end DATE,
 
 subscription_signature TEXT,
+active_device_id TEXT,
 
 trial_used INTEGER
     DEFAULT 0,
@@ -85,6 +86,31 @@ trial_used INTEGER
 
     console.log(
         "✅ subscription_signature column added"
+    );
+
+}
+catch (err) {
+
+    if (
+        !err.message.includes(
+            "duplicate column name"
+        )
+    ) {
+
+        throw err;
+
+    }
+
+}
+try {
+
+    await db.runAsync(`
+        ALTER TABLE restaurants
+        ADD COLUMN active_device_id TEXT
+    `);
+
+    console.log(
+        "✅ active_device_id column added"
     );
 
 }

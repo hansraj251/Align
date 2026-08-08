@@ -10,10 +10,11 @@ exports.login = async (
 
         const {
 
-            email,
-            password
+    email,
+    password,
+    deviceId
 
-        } = req.body;
+} = req.body;
 
         if (
             !email ||
@@ -32,13 +33,15 @@ exports.login = async (
         }
 
         const result =
-            await posAuthService.login(
+    await posAuthService.login(
 
-                email,
+        email,
 
-                password
+        password,
 
-            );
+        deviceId
+
+    );
 
         return res.json({
 
@@ -61,14 +64,67 @@ exports.login = async (
     }
     catch (err) {
 
-        return res.status(401).json({
+    return res.status(401).json({
 
-            success: false,
+        success: false,
 
-            message:
-                err.message
+        code:
+            err.code,
+
+        message:
+            err.message
+
+    });
+
+}
+
+};
+exports.replaceDevice = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const {
+
+            email,
+            password,
+            deviceId
+
+        } = req.body;
+
+        await posAuthService
+            .replaceDevice(
+
+                email,
+
+                password,
+
+                deviceId
+
+            );
+
+        res.json({
+
+            success: true
 
         });
+
+    }
+    catch (
+        err
+    ) {
+
+        res.status(401)
+            .json({
+
+                success: false,
+
+                message:
+                    err.message
+
+            });
 
     }
 

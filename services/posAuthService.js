@@ -6,7 +6,8 @@ const posAuthRepository =
 
 exports.login = async (
     email,
-    password
+    password,
+    deviceId
 ) => {
 
     const data =
@@ -44,6 +45,36 @@ console.log("Stored Hash:", data.password);
         );
 
     }
+    if (
+    !data.active_device_id
+) {
+
+    await posAuthRepository
+    .updateActiveDeviceId(
+        data.restaurant_id,
+        deviceId
+    );
+
+data.active_device_id =
+    deviceId; 
+
+}
+else if (
+    data.active_device_id !==
+    deviceId
+) {
+
+    const err =
+    new Error(
+        "This account is already active on another computer."
+    );
+
+err.code =
+    "DEVICE_CONFLICT";
+
+throw err;
+
+}
     const token =
     jwt.sign(
 
@@ -162,6 +193,57 @@ console.log("Stored Hash:", data.password);
 
     }
         
+
+    };
+
+};
+exports.replaceDevice = async (
+    email,
+    password,
+    deviceId
+) => {
+
+    const data =
+        await posAuthRepository
+            .getUserWithRestaurantByEmail(
+                email
+            );
+
+    if (
+        !data
+    ) {
+
+        throw new Error(
+            "Invalid email or password"
+        );
+
+    }
+
+    const passwordMatched =
+        await bcrypt.compare(
+            password.trim(),
+            data.password.trim()
+        );
+
+    if (
+        !passwordMatched
+    ) {
+
+        throw new Error(
+            "Invalid email or password"
+        );
+
+    }
+
+    await posAuthRepository
+        .replaceActiveDevice(
+            data.restaurant_id,
+            deviceId
+        );
+
+    return {
+
+        success: true
 
     };
 

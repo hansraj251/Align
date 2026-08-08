@@ -27,6 +27,7 @@ exports.getUserWithRestaurantByEmail = async (email) => {
             r.pincode,
             r.logo,
             r.restaurant_code,
+            r.active_device_id,
 
             r.plan_id,
             r.subscription_status,
@@ -62,6 +63,51 @@ exports.getUserWithRestaurantByEmail = async (email) => {
     return await db.getAsync(
         sql,
         [email]
+    );
+
+};
+exports.updateActiveDeviceId = async (
+    restaurantId,
+    deviceId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE restaurants
+
+        SET
+
+            active_device_id = ?
+
+        WHERE id = ?
+        `,
+        [
+            deviceId,
+            restaurantId
+        ]
+    );
+
+};
+
+exports.replaceActiveDevice = async (
+    restaurantId,
+    deviceId
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE restaurants
+
+        SET
+
+            active_device_id = ?
+
+        WHERE id = ?
+        `,
+        [
+            deviceId,
+            restaurantId
+        ]
     );
 
 };

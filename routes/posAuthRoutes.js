@@ -11,6 +11,10 @@ router.post(
     "/login",
     posAuthController.login
 );
+router.post(
+    "/replace-device",
+    controller.replaceDevice
+);
 
 module.exports =
     router;
