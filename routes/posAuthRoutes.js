@@ -13,7 +13,7 @@ router.post(
 );
 router.post(
     "/replace-device",
-    controller.replaceDevice
+    posAuthController.replaceDevice
 );
 
 module.exports =
