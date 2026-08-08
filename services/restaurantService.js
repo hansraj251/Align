@@ -17,7 +17,7 @@ async (
     ) {
 
         throw new Error(
-            "Restaurant not found"
+            "Account not found"
         );
 
     }
