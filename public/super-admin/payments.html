@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Payments</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body>
+
+<script src="/js/components.js"></script>
+<script src="/js/superAdminAuth.js"></script>
+<script src="/js/notify.js"></script>
+<script src="/js/modal.js"></script>
+<script src="/js/superAdminLayout.js"></script>
+<script src="/js/superAdminPayments.js"></script>
+
+<script>
+
+loadSuperAdminLayout({
+
+    title: "Payments History",
+
+    active: "payments"
+
+});
+
+document.getElementById(
+    "pageContent"
+).innerHTML = `
+
+<div class="overflow-x-auto rounded-2xl bg-white shadow">
+
+    <table class="min-w-[1200px] w-full">
+
+        <thead class="bg-slate-100">
+
+            <tr>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Date
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Restaurant
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Plan
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Duration
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Amount
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Payment Method
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Payment ID
+                </th>
+
+                <th class="whitespace-nowrap p-4 text-left">
+                    Status
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="paymentsTable">
+
+            <tr>
+
+                <td
+                    colspan="8"
+                    class="p-6 text-center">
+
+                    Loading...
+
+                </td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+`;
+
+loadPaymentHistory();
+
+</script>
+
+</body>
+
+</html>

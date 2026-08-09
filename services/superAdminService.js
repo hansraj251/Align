@@ -3,6 +3,8 @@ const superAdminRepository =
 
 const planRepository =
     require("../repositories/planRepository");    
+const subscriptionOrderRepository =
+require("../repositories/subscriptionOrderRepository");    
    
 const fs =
     require("fs");
@@ -36,7 +38,13 @@ async () => {
     return restaurants;
 
 };
+exports.getPaymentHistory =
+async () => {
 
+    return await subscriptionOrderRepository
+        .getPaymentHistory();
+
+};
 
 exports.getRestaurantById =
 async (restaurantId) => {

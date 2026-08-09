@@ -106,3 +106,61 @@ exports.getByRazorpayOrderId =
         );
 
     };    
+
+exports.getPaymentHistory =
+async () => {
+
+    return await db.allAsync(
+        `
+        SELECT
+
+            subscription_orders.id,
+
+            subscription_orders.restaurant_id,
+
+            restaurants.name
+                AS restaurant_name,
+
+            restaurants.restaurant_code,
+
+            plans.display_name
+                AS plan_name,
+
+            plan_pricing.duration_days,
+
+            subscription_orders.amount,
+
+            subscription_orders.currency,
+
+            subscription_orders.razorpay_order_id,
+
+            subscription_orders.razorpay_payment_id,
+
+            subscription_orders.payment_method,
+
+            subscription_orders.status,
+
+            subscription_orders.paid_at,
+
+            subscription_orders.created_at
+
+        FROM subscription_orders
+
+        INNER JOIN restaurants
+            ON restaurants.id =
+                subscription_orders.restaurant_id
+
+        INNER JOIN plans
+            ON plans.id =
+                subscription_orders.plan_id
+
+        INNER JOIN plan_pricing
+            ON plan_pricing.id =
+                subscription_orders.plan_pricing_id
+
+        ORDER BY
+            subscription_orders.created_at DESC
+        `
+    );
+
+};    

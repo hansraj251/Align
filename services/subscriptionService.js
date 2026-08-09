@@ -236,104 +236,109 @@ return {
 
 };
 exports.verifyPayment =
-    async (
-        restaurantId,
-        paymentData
-    ) => {
+async (
+    restaurantId,
+    paymentData
+) => {
 
-        const {
+    const {
 
-            razorpay_order_id,
+        razorpay_order_id,
 
-            razorpay_payment_id,
+        razorpay_payment_id,
 
-            razorpay_signature
+        razorpay_signature
 
-        } = paymentData;
+    } = paymentData;
 
-        const expectedSignature =
-            crypto
-                .createHmac(
-                    "sha256",
-                    process.env
-                        .RAZORPAY_KEY_SECRET
-                )
-                .update(
-                    `${razorpay_order_id}|${razorpay_payment_id}`
-                )
-                .digest("hex");
+    const expectedSignature =
+        crypto
+            .createHmac(
+                "sha256",
+                process.env
+                    .RAZORPAY_KEY_SECRET
+            )
+            .update(
+                `${razorpay_order_id}|${razorpay_payment_id}`
+            )
+            .digest("hex");
 
-        if (
-            expectedSignature !==
-            razorpay_signature
-        ) {
+    if (
+        expectedSignature !==
+        razorpay_signature
+    ) {
 
-            throw new Error(
-                "Invalid payment signature."
+        throw new Error(
+            "Invalid payment signature."
+        );
+
+    }
+
+    const order =
+        await subscriptionOrderRepository
+            .getByRazorpayOrderId(
+                razorpay_order_id
             );
 
-        }
+    if (!order) {
 
-        const order =
-            await subscriptionOrderRepository
-                .getByRazorpayOrderId(
-                    razorpay_order_id
-                );
+        throw new Error(
+            "Order not found."
+        );
 
-        if (!order) {
+    }
 
-            throw new Error(
-                "Order not found."
-            );
+    if (
+        Number(order.restaurant_id) !==
+        Number(restaurantId)
+    ) {
 
-        }
+        throw new Error(
+            "Invalid restaurant."
+        );
 
-        if (
-            Number(order.restaurant_id) !==
-            Number(restaurantId)
-        ) {
+    }
 
-            throw new Error(
-                "Invalid restaurant."
-            );
-
-        }
-
-        if (
-            order.status === "paid"
-        ) {
-
-            return {
-
-                success: true,
-
-                message:
-                    "Payment already processed."
-
-            };
-
-        }
-
-        await processSuccessfulPayment(
-
-    order,
-
-    razorpay_payment_id,
-
-    null
-
-);
+    if (
+        order.status === "paid"
+    ) {
 
         return {
 
             success: true,
 
             message:
-                "Payment verified successfully."
+                "Payment already processed."
 
         };
 
+    }
+
+    const payment =
+        await razorpay.payments.fetch(
+            razorpay_payment_id
+        );
+
+    await processSuccessfulPayment(
+
+        order,
+
+        razorpay_payment_id,
+
+        payment.method
+
+    );
+
+    return {
+
+        success: true,
+
+        message:
+            "Payment verified successfully."
+
     };
+
+};
 exports.getPlans = async () => {
 
     const plans =

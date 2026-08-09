@@ -199,6 +199,41 @@ exports.getRestaurants = async (
     }
 
 };
+exports.getPaymentHistory =
+async (req, res) => {
+
+    try {
+
+        const payments =
+            await superAdminService
+                .getPaymentHistory();
+
+        return res.json({
+
+            success: true,
+
+            payments
+
+        });
+
+    } catch (err) {
+
+        console.error(
+            "GET PAYMENT HISTORY ERROR:",
+            err
+        );
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
 exports.getActiveSessions =
 async (req, res) => {
 

@@ -100,6 +100,19 @@ Pricing
     </a>
 
 </div>
+<div>
+
+    <a
+        href="/super-admin/payments.html"
+        class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "payments"
+            ? "bg-slate-800 font-semibold"
+            : "hover:bg-slate-800"}">
+
+        Payments
+
+    </a>
+
+</div>
 
 </nav>
 <div class="border-t border-slate-700 p-4">

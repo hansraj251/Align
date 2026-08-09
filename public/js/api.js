@@ -2,15 +2,25 @@ let redirectingToLogin =
     false;
 const API = {
 
-    getToken() {
+   getToken() {
 
     return (
 
-        localStorage.getItem("token")
+        localStorage.getItem(
+            "superAdminToken"
+        )
 
         ||
 
-        localStorage.getItem("staffToken")
+        localStorage.getItem(
+            "token"
+        )
+
+        ||
+
+        localStorage.getItem(
+            "staffToken"
+        )
 
     );
 
