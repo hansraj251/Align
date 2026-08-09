@@ -24,7 +24,9 @@ const dateUtils =
 const subscriptionSignature =
     require(
         "../utils/subscriptionSignature"
-    );    
+    ); 
+const appVersionRepository =
+    require("../repositories/appVersionRepository");       
 
 exports.getSubscription = async (
     restaurantId
@@ -649,6 +651,9 @@ const signature =
         );
 
     }
+const appVersion =
+    await appVersionRepository
+        .getLatestVersion();    
 
     return {
 
@@ -707,7 +712,11 @@ const signature =
             limit_value:
                 subscription.limit_value
 
-        }
+        },
+        latest_version:
+    appVersion
+        ? appVersion.latest_version
+        : null,
 
     };
 

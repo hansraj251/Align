@@ -11,7 +11,9 @@ const planPricingController =
 const authMiddleware =
 require("../middlewares/authMiddleware");       
 const superAdminMiddleware =
-require("../middlewares/superAdminMiddleware");    
+require("../middlewares/superAdminMiddleware");  
+const appVersionController =
+    require("../controllers/appVersionController");  
 
 router.post(
     "/login",
@@ -127,6 +129,20 @@ router.get(
     authMiddleware,
     superAdminMiddleware,
     superAdminController.downloadBackup
+);
+router.get(
+    "/app-version",
+    authMiddleware,
+    superAdminMiddleware,
+    appVersionController.getLatestVersion
+);
+
+
+router.put(
+    "/app-version",
+    authMiddleware,
+    superAdminMiddleware,
+    appVersionController.setLatestVersion
 );
 
 module.exports = router;

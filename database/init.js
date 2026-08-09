@@ -24,6 +24,8 @@ const createSubscriptionRequestsTable =
 
 const createSuperAdminTable =
     require("./schema/superAdmin");
+const createAppVersionTable =
+require("./schema/appVersion");    
 
 const seedPlans =
     require("./seed/planSeed");
@@ -33,6 +35,7 @@ const seedPlanLimits =
 
 const seedSuperAdmin =
     require("./seed/superAdminSeed");
+    
 
 async function initializeDatabase() {
 
@@ -53,6 +56,8 @@ async function initializeDatabase() {
     await createSubscriptionRequestsTable();
 
     await createSuperAdminTable();
+
+    await createAppVersionTable();
 
     await seedPlans();
 
