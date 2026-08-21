@@ -107,6 +107,10 @@ cancelDesignationBtn.addEventListener(
     "click",
     closeDesignationForm
 );
+designationFormElement.addEventListener(
+    "submit",
+    createDesignation
+);
 
 function closeDesignationForm() {
 
@@ -135,6 +139,77 @@ teacherFormElement.addEventListener(
     "submit",
     createTeacher
 );
+async function createDesignation(
+    event
+) {
+
+    event.preventDefault();
+
+    designationResult.textContent =
+        "Saving designation...";
+
+    designationResult.className =
+        "mt-4 text-sm font-medium text-slate-500";
+
+    const name =
+        document
+            .getElementById(
+                "designationName"
+            )
+            .value
+            .trim();
+
+    try {
+
+        const data =
+            await API.post(
+                "/api/designations",
+                {
+                    name
+                }
+            );
+
+        if (
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to create designation"
+            );
+
+        }
+
+        designationResult.textContent =
+            "Designation created successfully.";
+
+        designationResult.className =
+            "mt-4 text-sm font-medium text-emerald-600";
+
+        designationFormElement.reset();
+
+        await loadDesignations();
+
+        setTimeout(
+            closeDesignationForm,
+            500
+        );
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        designationResult.textContent =
+            err.message ||
+            "Unable to create designation.";
+
+        designationResult.className =
+            "mt-4 text-sm font-medium text-red-600";
+
+    }
+
+}
 
 loadTeachers();
 loadDesignations();
