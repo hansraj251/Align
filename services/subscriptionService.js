@@ -60,7 +60,37 @@ subscription.is_highest_plan =
 return subscription;
 
 };
+exports.getSchoolSubscription =
+async (
+    schoolId
+) => {
 
+    const subscription =
+        await subscriptionRepository
+            .getSchoolSubscription(
+                schoolId
+            );
+
+    if (!subscription) {
+
+        throw new Error(
+            "School subscription not found."
+        );
+
+    }
+
+    const activeStudentLimit =
+        await planLimitRepository
+            .getActiveStudentLimit(
+                subscription.plan_id
+            );
+
+    subscription.active_student_limit =
+        activeStudentLimit;
+
+    return subscription;
+
+};
 exports.validateRestaurant = async (
     restaurantId
 ) => {
@@ -237,6 +267,135 @@ return {
 };
 
 };
+exports.createSchoolOrder = async (
+    schoolId,
+    pricingId
+) => {
+
+    const pricing =
+        await planPricingRepository
+            .getById(
+                pricingId
+            );
+
+    if (!pricing) {
+
+        throw new Error(
+            "Pricing not found."
+        );
+
+    }
+
+    if (
+        pricing.status !== "active"
+    ) {
+
+        throw new Error(
+            "Pricing is inactive."
+        );
+
+    }
+
+    const plan =
+        await planRepository
+            .getById(
+                pricing.plan_id
+            );
+
+    if (!plan) {
+
+        throw new Error(
+            "Plan not found."
+        );
+
+    }
+
+    if (
+        plan.status !== "active"
+    ) {
+
+        throw new Error(
+            "Plan is inactive."
+        );
+
+    }
+
+    if (
+        plan.plan_type !== "school"
+    ) {
+
+        throw new Error(
+            "Invalid school plan."
+        );
+
+    }
+
+    if (
+        Number(pricing.price) <= 0
+    ) {
+
+        throw new Error(
+            "Invalid pricing amount."
+        );
+
+    }
+
+    const order =
+        await razorpay.orders.create({
+
+            amount:
+                Math.round(
+                    Number(pricing.price) * 100
+                ),
+
+            currency:
+                pricing.currency,
+
+            receipt:
+                `school_${schoolId}_${Date.now()}`,
+
+            notes: {
+
+                schoolId:
+                    String(schoolId),
+
+                planId:
+                    String(plan.id)
+
+            }
+
+        });
+
+    await subscriptionOrderRepository
+        .createSchoolOrder(
+
+            schoolId,
+
+            plan.id,
+
+            pricing.id,
+
+            order.id,
+
+            pricing.price,
+
+            pricing.currency,
+
+            pricing.duration_days
+
+        );
+
+    return {
+
+        key:
+            process.env
+                .RAZORPAY_KEY_ID,
+
+        order
+
+    };
+
+};
 exports.verifyPayment =
 async (
     restaurantId,
@@ -341,6 +500,110 @@ async (
     };
 
 };
+exports.verifySchoolPayment =
+async (
+    schoolId,
+    paymentData
+) => {
+
+    const {
+
+        razorpay_order_id,
+
+        razorpay_payment_id,
+
+        razorpay_signature
+
+    } = paymentData;
+
+    const expectedSignature =
+        crypto
+            .createHmac(
+                "sha256",
+                process.env
+                    .RAZORPAY_KEY_SECRET
+            )
+            .update(
+                `${razorpay_order_id}|${razorpay_payment_id}`
+            )
+            .digest("hex");
+
+    if (
+        expectedSignature !==
+        razorpay_signature
+    ) {
+
+        throw new Error(
+            "Invalid payment signature."
+        );
+
+    }
+
+    const order =
+        await subscriptionOrderRepository
+            .getByRazorpayOrderId(
+                razorpay_order_id
+            );
+
+    if (!order) {
+
+        throw new Error(
+            "Order not found."
+        );
+
+    }
+
+    if (
+        Number(order.school_id) !==
+        Number(schoolId)
+    ) {
+
+        throw new Error(
+            "Invalid school."
+        );
+
+    }
+
+    if (
+        order.status === "paid"
+    ) {
+
+        return {
+
+            success: true,
+
+            message:
+                "Payment already processed."
+
+        };
+
+    }
+
+    const payment =
+        await razorpay.payments.fetch(
+            razorpay_payment_id
+        );
+
+    await processSuccessfulSchoolPayment(
+
+        order,
+
+        razorpay_payment_id,
+
+        payment.method
+
+    );
+
+    return {
+
+        success: true,
+
+        message:
+            "Payment verified successfully."
+
+    };
+
+};
 exports.getPlans = async () => {
 
     const plans =
@@ -360,6 +623,42 @@ exports.getPlans = async () => {
     }
 
     return plans;
+
+};
+exports.getSchoolPlans = async () => {
+
+    const plans =
+        await planRepository.getByType(
+            "school"
+        );
+
+    const pricingList =
+        await planPricingRepository
+            .getAllActive();
+
+    for (const plan of plans) {
+
+        if (
+            plan.status !== "active"
+        ) {
+
+            continue;
+
+        }
+
+        plan.pricing =
+            pricingList.filter(
+                pricing =>
+                    pricing.plan_id ===
+                    plan.id
+            );
+
+    }
+
+    return plans.filter(
+        plan =>
+            plan.status === "active"
+    );
 
 };
 exports.processWebhook =
@@ -465,7 +764,33 @@ await exports.activateSubscription(
 );
 
 }    
+async function processSuccessfulSchoolPayment(
+    order,
+    razorpayPaymentId,
+    paymentMethod = null
+) {
 
+    if (
+        order.status === "paid"
+    ) {
+
+        return;
+
+    }
+
+    await subscriptionOrderRepository
+        .markPaid(
+            order.razorpay_order_id,
+            razorpayPaymentId,
+            paymentMethod
+        );
+
+    await exports.activateSchoolSubscription(
+        order.school_id,
+        order.plan_pricing_id
+    );
+
+}
 exports.activateSubscription = async (
     restaurantId,
     pricingId
@@ -620,7 +945,172 @@ if (
         );
 
 };
+exports.activateSchoolSubscription =
+async (
+    schoolId,
+    pricingId
+) => {
 
+    const pricing =
+        await planPricingRepository
+            .getById(
+                pricingId
+            );
+
+    if (!pricing) {
+
+        throw new Error(
+            "Pricing not found."
+        );
+
+    }
+
+    const subscription =
+        await subscriptionRepository
+            .getSchoolSubscription(
+                schoolId
+            );
+
+    if (!subscription) {
+
+        throw new Error(
+            "School subscription not found."
+        );
+
+    }
+
+    const today =
+        new Date();
+
+    today.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    let planStart;
+
+    let renewalBase;
+
+    let currentPlanEnd = null;
+
+    if (
+        subscription.plan_end
+    ) {
+
+        currentPlanEnd =
+            new Date(
+                subscription.plan_end
+            );
+
+        currentPlanEnd.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+    }
+
+    if (
+
+        currentPlanEnd &&
+
+        currentPlanEnd >= today &&
+
+        (
+            subscription.subscription_status ===
+            "active" ||
+
+            subscription.subscription_status ===
+            "trial"
+        )
+
+    ) {
+
+        const isUpgrade =
+            subscription.plan_id !==
+            pricing.plan_id;
+
+        if (isUpgrade) {
+
+            planStart =
+                new Date(
+                    today
+                );
+
+        } else if (
+            subscription.plan_start
+        ) {
+
+            planStart =
+                new Date(
+                    subscription.plan_start
+                );
+
+            planStart.setHours(
+                0,
+                0,
+                0,
+                0
+            );
+
+        } else {
+
+            planStart =
+                new Date(
+                    today
+                );
+
+        }
+
+        renewalBase =
+            currentPlanEnd;
+
+    } else {
+
+        planStart =
+            today;
+
+        renewalBase =
+            today;
+
+    }
+
+    const planEnd =
+        new Date(
+            renewalBase
+        );
+
+    planEnd.setDate(
+
+        planEnd.getDate() +
+
+        Number(
+            pricing.duration_days
+        )
+
+    );
+
+    await subscriptionRepository
+        .updateSchoolSubscription(
+
+            schoolId,
+
+            pricing.plan_id,
+
+            dateUtils.formatDate(
+                planStart
+            ),
+
+            dateUtils.formatDate(
+                planEnd
+            )
+
+        );
+
+};
 exports.getSubscriptionSyncData = async (
     restaurantId
 ) => {

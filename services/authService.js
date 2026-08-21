@@ -9,22 +9,34 @@ const authRepository =
 
 exports.login =
 async (
-    email,
+    identifier,
     password
 ) => {
 
-    const user =
+    let user =
         await authRepository
             .getByEmail(
-                email
+                identifier
             );
 
     if (
         !user
     ) {
 
+        user =
+            await authRepository
+                .getByUsername(
+                    identifier
+                );
+
+    }
+
+    if (
+        !user
+    ) {
+
         throw new Error(
-            "Invalid email or password"
+            "Invalid user ID or password"
         );
 
     }
@@ -40,29 +52,35 @@ async (
     ) {
 
         throw new Error(
-            "Invalid email or password"
-        );
+    "Invalid user ID or password"
+);
 
     }
 
     const token =
-        jwt.sign(
-            {
-                userId:
-                    user.id,
+    jwt.sign(
+        {
+            userId:
+                user.id,
 
-                restaurantId:
-                    user.restaurant_id,
+            restaurantId:
+                user.restaurant_id,
 
-                role:
-                    user.role
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn:
-                    "7d"
-            }
-        );
+            schoolId:
+                user.school_id,
+
+            businessType:
+                user.business_type,
+
+            role:
+                user.role
+        },
+        process.env.JWT_SECRET,
+        {
+            expiresIn:
+                "7d"
+        }
+    );
 
     return {
 

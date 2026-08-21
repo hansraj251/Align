@@ -4,6 +4,28 @@ const createRestaurantsTable =
 const createUsersTable =
     require("./schema/users");
 
+const createSchoolsTable =
+    require("./schema/schools");
+const createStudentsTable =
+    require("./schema/students");
+const createFeeStructuresTable =
+    require("./schema/feeStructures");
+const createFeePaymentsTable =
+    require("./schema/feePayments");
+const createAttendanceTable =
+    require("./schema/attendance");
+const createHolidaysTable =
+    require("./schema/holidays");
+const createTeachersTable =
+    require("./schema/teachers");
+const createDesignationsTable =
+    require("./schema/designations");
+const createAttendanceUserClassesTable =
+    require("./schema/attendanceUserClasses");
+const createSalaryStructuresTable =
+    require("./schema/salaryStructures");
+const createClassesTable =
+    require("./schema/classes");
 const createEmailOtpsTable =
     require("./schema/emailOtps");
 
@@ -25,7 +47,7 @@ const createSubscriptionRequestsTable =
 const createSuperAdminTable =
     require("./schema/superAdmin");
 const createAppVersionTable =
-require("./schema/appVersion");    
+require("./schema/appVersion");
 
 const seedPlans =
     require("./seed/planSeed");
@@ -35,13 +57,34 @@ const seedPlanLimits =
 
 const seedSuperAdmin =
     require("./seed/superAdminSeed");
-    
+const runMigrations =
+    require("./migrate");
 
 async function initializeDatabase() {
 
     await createRestaurantsTable();
 
     await createUsersTable();
+
+    await createSchoolsTable();
+
+    await createStudentsTable();
+
+    await createFeeStructuresTable();
+
+    await createFeePaymentsTable();
+
+    await createAttendanceTable();
+    await createHolidaysTable();
+
+    await createTeachersTable();
+
+    await createDesignationsTable();
+    await createAttendanceUserClassesTable();
+
+    await createSalaryStructuresTable();
+
+    await createClassesTable();
 
     await createEmailOtpsTable();
 
@@ -58,6 +101,8 @@ async function initializeDatabase() {
     await createSuperAdminTable();
 
     await createAppVersionTable();
+
+    await runMigrations();
 
     await seedPlans();
 

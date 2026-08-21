@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Classes</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body class="min-h-screen bg-slate-100">
+
+    <main class="min-h-screen">
+
+        <header
+    class="sticky top-0 z-50 border-slate-200 bg-white shadow-sm">
+
+            <div
+    class="mx-auto flex min-h-[60px] w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:min-h-[72px] sm:px-6 sm:py-4">
+    <button
+        id="backBtn"
+        type="button"
+        class="shrink-0 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:px-4 sm:py-2.5">
+
+        ← Back
+
+    </button>
+
+    <button
+        id="addClassBtn"
+        type="button"
+        class="shrink-0 rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 sm:px-5 sm:py-3">
+
+        + Add Class
+
+    </button>
+
+</div>
+
+        </header>
+
+        <section
+    class="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-8">
+
+            <div
+    id="classForm"
+    class="mb-5 hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:mb-6 sm:p-6">
+
+                <div
+    class="mb-5 flex items-center justify-between border-slate-100 pb-4 sm:mb-6">
+
+                    <h2
+    id="classFormTitle"
+    class="min-w-0 text-lg font-semibold text-slate-800 sm:text-xl">
+
+                        Add Class
+
+                    </h2>
+
+                    <button
+    id="closeFormBtn"
+    type="button"
+    class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-2xl leading-none text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                        &times;
+
+                    </button>
+
+                </div>
+
+                <form id="classFormElement">
+
+                    <div
+    class="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
+
+                        <div>
+
+                            <label
+                                class="mb-1 block text-sm font-medium text-slate-700">
+
+                                Class
+
+                            </label>
+
+                            <input
+                                id="className"
+                                type="text"
+                                required
+                                class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                placeholder="e.g. 5">
+
+                        </div>
+
+                        <div>
+
+                            <label
+                                class="mb-1 block text-sm font-medium text-slate-700">
+
+                                Section
+
+                            </label>
+
+                            <input
+                                id="section"
+                                type="text"
+                                required
+                                class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                                placeholder="e.g. A">
+
+                        </div>
+
+                    </div>
+
+                    <p
+    id="formResult"
+    class="mt-4 text-sm font-medium break-words">
+</p>
+
+                    <div
+    class="mt-5 flex flex-col-reverse gap-3 border-slate-100 pt-5 sm:flex-row sm:justify-end sm:gap-3">
+
+                        <button
+                            type="submit"
+                            class="w-full rounded-xl bg-blue-600 px-5 py-3 text-center font-semibold text-white transition hover:bg-blue-700 sm:w-auto">
+
+                            Save Class
+
+                        </button>
+
+                        <button
+                            id="cancelFormBtn"
+                            type="button"
+                            class="w-full rounded-xl bg-slate-200 px-5 py-3 text-center font-semibold text-slate-700 transition hover:bg-slate-300 sm:w-auto">
+
+                            Cancel
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <div
+    class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+                <div
+                    class="px-4 py-4 sm:px-6">
+
+                    <h3
+    class="text-sm font-semibold text-slate-800 sm:text-base">
+
+                        Classes & Sections
+
+                    </h3>
+
+                    <p
+                        class="mt-1 text-sm text-slate-500">
+
+                        Manage class details and availability.
+
+                    </p>
+
+                </div>
+
+                <div
+                    class="overflow-x-auto">
+
+                    <table
+                        class="min-w-full text-left">
+
+                        <thead
+                            class="bg-slate-50">
+
+                            <tr class="align-middle">
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-sm font-semibold text-slate-600 sm:px-6 sm:py-4">
+
+                                    #
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-sm font-semibold text-slate-600 sm:px-6 sm:py-4">
+
+                                    Class
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-sm font-semibold text-slate-600 sm:px-6 sm:py-4">
+
+                                    Section
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-sm font-semibold text-slate-600 sm:px-6 sm:py-4">
+
+                                    Status
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-sm font-semibold text-slate-600 sm:px-6 sm:py-4">
+
+                                    Actions
+
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody
+                            id="classesTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="5"
+                                    class="px-4 py-10 text-center text-slate-500 sm:px-6">
+
+                                    Loading classes...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="/js/api.js"></script>
+
+    <script src="/js/auth.js"></script>
+
+    <script src="/js/classes.js"></script>
+
+    <script>
+
+        document.getElementById(
+            "backBtn"
+        ).addEventListener(
+            "click",
+            () => {
+
+                window.location.href =
+                    "/school/dashboard.html";
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

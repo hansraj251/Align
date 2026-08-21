@@ -13,6 +13,8 @@ async function createPlansTable() {
 
             description TEXT,
 
+            plan_type TEXT NOT NULL DEFAULT 'food',
+
             sort_order INTEGER NOT NULL,
 
             status TEXT DEFAULT 'active',

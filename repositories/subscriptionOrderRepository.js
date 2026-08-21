@@ -57,7 +57,63 @@ duration_days
         );
 
     };
- 
+exports.createSchoolOrder = async (
+
+    schoolId,
+
+    planId,
+
+    planPricingId,
+
+    razorpayOrderId,
+
+    amount,
+
+    currency,
+
+    durationDays
+
+) => {
+
+    await db.runAsync(
+        `
+        INSERT INTO
+            subscription_orders
+        (
+
+            school_id,
+            plan_id,
+            plan_pricing_id,
+            razorpay_order_id,
+            amount,
+            currency,
+            duration_days
+
+        )
+        VALUES
+        (
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?,
+            ?
+        )
+        `,
+        [
+            schoolId,
+            planId,
+            planPricingId,
+            razorpayOrderId,
+            amount,
+            currency,
+            durationDays
+        ]
+    );
+
+};
+
 exports.markPaid =
     async (
         razorpayOrderId,
@@ -105,7 +161,7 @@ exports.getByRazorpayOrderId =
             ]
         );
 
-    };    
+    };
 
 exports.getPaymentHistory =
 async () => {
@@ -163,4 +219,4 @@ async () => {
         `
     );
 
-};    
+};

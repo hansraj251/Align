@@ -34,6 +34,72 @@ exports.getPlans = async (
     }
 
 };
+exports.getSchoolPlans = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const plans =
+            await planService.getSchoolPlans();
+
+        return res.json({
+
+            success: true,
+
+            plans
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.getAllPlans = async (
+    req,
+    res
+) => {
+
+    try {
+
+        const plans =
+            await planService.getAllPlans();
+
+        return res.json({
+
+            success: true,
+
+            plans
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
 exports.getPlan = async (
     req,
     res
@@ -84,7 +150,7 @@ exports.updatePlan = async (
 
     req.body.sort_order,
 
-    req.body.waiter_devices,
+    req.body.limit_value,
 
     req.body.status
 
@@ -127,9 +193,11 @@ exports.createPlan = async (
 
         req.body.sort_order,
 
-        req.body.waiter_devices,
+        req.body.limit_value,
 
-        req.body.status
+        req.body.status,
+
+        req.body.plan_type
 
     );
 

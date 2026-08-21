@@ -69,7 +69,18 @@ class="fixed left-0 top-0 z-50 flex h-full w-72 max-w-[85vw] md:w-64 -translate-
 
 : "hover:bg-slate-800"}">
 
-    Plans
+    Food Plans
+
+</a>
+</div>
+<div>
+
+       <a
+    href="/super-admin/school-plans.html"
+    class="block rounded-lg px-4 py-3 transition hover:bg-slate-800 ${active === "school-plans" ? "bg-slate-800 font-semibold"
+: "hover:bg-slate-800"}">
+
+    School Plans
 
 </a>
 </div>

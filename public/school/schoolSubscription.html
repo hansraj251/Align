@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>Subscription</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body class="min-h-screen bg-slate-100">
+
+    <main class="min-h-screen">
+
+        <header
+            class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+
+            <div
+                class="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
+
+                <button
+                    type="button"
+                    onclick="history.back()"
+                    class="flex min-w-[72px] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 sm:min-w-0 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-sm">
+
+                    <span class="text-base">
+                        ←
+                    </span>
+
+                    Back
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <section
+            class="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-6 xl:px-8 xl:py-8">
+
+            <div
+                class="rounded-2xl bg-white p-5 shadow-sm sm:p-6 lg:p-8">
+
+                <h1
+                    class="mb-6 text-2xl font-bold text-slate-800 sm:mb-8 sm:text-3xl">
+
+                    Subscription
+
+                </h1>
+
+                <div
+                    id="subscriptionCard">
+
+                    Loading...
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <div id="modalContainer"></div>
+
+
+    <script src="/js/api.js"></script>
+
+    <script src="/js/auth.js"></script>
+
+    <script src="/js/notify.js"></script>
+
+    <script src="/js/components.js"></script>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script src="/js/schoolSubscriptionPayment.js"></script>
+
+    <script src="/js/align.js"></script>
+
+    <script src="/js/schoolSubscription.js"></script>
+
+    <script src="/js/modal.js"></script>
+
+
+    <script>
+
+        loadComponent(
+            "modalContainer",
+            "/components/modal.html"
+        );
+
+    </script>
+
+</body>
+
+</html>

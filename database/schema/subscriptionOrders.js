@@ -8,7 +8,9 @@ async function createSubscriptionOrdersTable() {
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-            restaurant_id INTEGER NOT NULL,
+            restaurant_id INTEGER,
+
+            school_id INTEGER,
 
             plan_id INTEGER NOT NULL,
 
@@ -34,6 +36,9 @@ async function createSubscriptionOrdersTable() {
 
             FOREIGN KEY (restaurant_id)
                 REFERENCES restaurants(id),
+
+            FOREIGN KEY (school_id)
+                REFERENCES schools(id),
 
             FOREIGN KEY (plan_id)
                 REFERENCES plans(id),

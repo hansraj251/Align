@@ -7,9 +7,79 @@ const planLimitRepository =
 exports.getPlans = async () => {
 
     const plans =
+    await planRepository.getByType(
+        "food"
+    );
+
+    for (const plan of plans) {
+
+        if (
+            plan.plan_type === "school"
+        ) {
+
+            plan.active_students =
+                await planLimitRepository
+                    .getActiveStudentLimit(
+                        plan.id
+                    );
+
+            continue;
+
+        }
+
+        plan.waiter_devices =
+            await planLimitRepository
+                .getWaiterDeviceLimit(
+                    plan.id
+                );
+
+    }
+
+    return plans;
+
+};
+
+exports.getSchoolPlans = async () => {
+
+    const plans =
+        await planRepository.getByType(
+            "school"
+        );
+
+    for (const plan of plans) {
+
+        plan.active_students =
+            await planLimitRepository
+                .getActiveStudentLimit(
+                    plan.id
+                );
+
+    }
+
+    return plans;
+
+};
+
+exports.getAllPlans = async () => {
+
+    const plans =
         await planRepository.getAll();
 
     for (const plan of plans) {
+
+        if (
+            plan.plan_type === "school"
+        ) {
+
+            plan.active_students =
+                await planLimitRepository
+                    .getActiveStudentLimit(
+                        plan.id
+                    );
+
+            continue;
+
+        }
 
         plan.waiter_devices =
             await planLimitRepository
@@ -30,6 +100,20 @@ exports.getActivePlans = async () => {
 
     for (const plan of plans) {
 
+        if (
+            plan.plan_type === "school"
+        ) {
+
+            plan.active_students =
+                await planLimitRepository
+                    .getActiveStudentLimit(
+                        plan.id
+                    );
+
+            continue;
+
+        }
+
         plan.waiter_devices =
             await planLimitRepository
                 .getWaiterDeviceLimit(
@@ -42,7 +126,9 @@ exports.getActivePlans = async () => {
 
 };
 
-exports.getPlan = async (planId) => {
+exports.getPlan = async (
+    planId
+) => {
 
     const plan =
         await planRepository.getById(
@@ -57,11 +143,25 @@ exports.getPlan = async (planId) => {
 
     }
 
-    plan.waiter_devices =
-        await planLimitRepository
-            .getWaiterDeviceLimit(
-                planId
-            );
+    if (
+        plan.plan_type === "school"
+    ) {
+
+        plan.active_students =
+            await planLimitRepository
+                .getActiveStudentLimit(
+                    planId
+                );
+
+    } else {
+
+        plan.waiter_devices =
+            await planLimitRepository
+                .getWaiterDeviceLimit(
+                    planId
+                );
+
+    }
 
     return plan;
 
@@ -77,7 +177,7 @@ exports.updatePlan = async (
 
     sortOrder,
 
-    waiterDevices,
+    limitValue,
 
     status
 
@@ -98,26 +198,45 @@ exports.updatePlan = async (
 
     await planRepository.update(
 
-    planId,
+        planId,
 
-    displayName,
+        displayName,
 
-    description,
+        description,
 
-    sortOrder,
+        sortOrder,
 
-    status
+        status,
 
-);
+        existingPlan.plan_type
 
-    await planLimitRepository
-        .updateWaiterDeviceLimit(
+    );
 
-            planId,
+    if (
+        existingPlan.plan_type === "school"
+    ) {
 
-            waiterDevices
+        await planLimitRepository
+            .updateActiveStudentLimit(
 
-        );
+                planId,
+
+                limitValue
+
+            );
+
+    } else {
+
+        await planLimitRepository
+            .updateWaiterDeviceLimit(
+
+                planId,
+
+                limitValue
+
+            );
+
+    }
 
 };
 
@@ -131,9 +250,11 @@ exports.createPlan = async (
 
     sortOrder,
 
-    waiterDevices,
+    limitValue,
 
-    status = "active"
+    status = "active",
+
+    planType = "food"
 
 ) => {
 
@@ -150,29 +271,59 @@ exports.createPlan = async (
 
     }
 
+    if (
+        planType !== "food" &&
+        planType !== "school"
+    ) {
+
+        throw new Error(
+            "Invalid plan type."
+        );
+
+    }
+
     const planId =
-    await planRepository.create(
+        await planRepository.create(
 
-        slug,
+            slug,
 
-        displayName,
+            displayName,
 
-        description,
+            description,
 
-        sortOrder,
+            sortOrder,
 
-        status
+            status,
 
-    );
-
-    await planLimitRepository
-        .updateWaiterDeviceLimit(
-
-            planId,
-
-            waiterDevices
+            planType
 
         );
+
+    if (
+        planType === "school"
+    ) {
+
+        await planLimitRepository
+            .updateActiveStudentLimit(
+
+                planId,
+
+                limitValue
+
+            );
+
+    } else {
+
+        await planLimitRepository
+            .updateWaiterDeviceLimit(
+
+                planId,
+
+                limitValue
+
+            );
+
+    }
 
     return planId;
 

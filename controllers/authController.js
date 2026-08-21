@@ -12,12 +12,29 @@ const passwordResetService =
 exports.signup = async (req, res) => {
 
     const {
+        businessType,
         restaurantName,
         ownerName,
         email,
         mobile,
         password
     } = req.body;
+
+    if (
+    businessType !== "food" &&
+    businessType !== "school"
+) {
+
+    return res.status(400).json({
+
+        success: false,
+
+        message:
+            "Invalid business type"
+
+    });
+
+}
 
     if (!restaurantName || restaurantName.trim() === "") {
         return res.status(400).json({
@@ -97,6 +114,8 @@ try {
 
         purpose: "signup",
 
+        businessType,
+
         restaurantName,
 
         ownerName,
@@ -145,67 +164,78 @@ async (
 ) => {
 
     const {
+    email,
+    identifier,
+    password
+} = req.body;
 
-        email,
+const loginIdentifier =
+    identifier ||
+    email;
 
-        password
+if (
+    !loginIdentifier ||
+    !password
+) {
 
-    } = req.body;
+    return res.status(400).json({
 
-    if (
-        !email ||
-        !password
-    ) {
+        success: false,
 
-        return res.status(400).json({
+        message:
+            "Email/User ID and Password are required"
 
-            success: false,
+    });
 
-            message:
-                "Email and Password are required"
-
-        });
-
-    }
+}
 
     try {
 
         const result =
-            await authService.login(
+    await authService.login(
 
-                email,
+        loginIdentifier,
 
-                password
+        password
 
-            );
+    );
 
         return res.json({
 
-            success: true,
+    success: true,
 
-            message:
-                "Login Successful",
+    message:
+        "Login Successful",
 
-            token:
-                result.token,
+    token:
+        result.token,
 
-            user: {
+    businessType:
+        result.user.business_type,
 
-                id:
-                    result.user.id,
+    restaurantId:
+        result.user.restaurant_id || null,
 
-                name:
-                    result.user.name,
+    schoolId:
+        result.user.school_id || null,
 
-                email:
-                    result.user.email,
+    user: {
 
-                role:
-                    result.user.role
+        id:
+            result.user.id,
 
-            }
+        name:
+            result.user.name,
 
-        });
+        email:
+            result.user.email,
+
+        role:
+            result.user.role
+
+    }
+
+});
 
     }
     catch (err) {
@@ -273,25 +303,56 @@ if (!verificationResult.success) {
 const otpData =
     verificationResult.data;
 
-const result =
-    await authSignupService.createRestaurantAccount({
+let result;
 
-        restaurantName:
-            otpData.restaurant_name,
+if (
+    otpData.business_type === "school"
+) {
 
-        ownerName:
-            otpData.owner_name,
+    result =
+        await authSignupService.createSchoolAccount({
 
-        email:
-            otpData.email,
+            schoolName:
+                otpData.restaurant_name,
 
-        mobile:
-            otpData.mobile,
+            ownerName:
+                otpData.owner_name,
 
-        passwordHash:
-            otpData.password_hash
+            email:
+                otpData.email,
 
-    });
+            mobile:
+                otpData.mobile,
+
+            passwordHash:
+                otpData.password_hash
+
+        });
+
+}
+else {
+
+    result =
+        await authSignupService.createRestaurantAccount({
+
+            restaurantName:
+                otpData.restaurant_name,
+
+            ownerName:
+                otpData.owner_name,
+
+            email:
+                otpData.email,
+
+            mobile:
+                otpData.mobile,
+
+            passwordHash:
+                otpData.password_hash
+
+        });
+
+}
 
 try {
 
@@ -317,8 +378,14 @@ return res.json({
     message:
         "Signup Successful",
 
+    businessType:
+        otpData.business_type,
+
     restaurantId:
-        result.restaurantId,
+        result.restaurantId || null,
+
+    schoolId:
+        result.schoolId || null,
 
     userId:
         result.userId

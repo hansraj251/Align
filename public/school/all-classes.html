@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>All Classes</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body
+    class="min-h-screen bg-slate-100">
+
+    <main
+        class="min-h-screen">
+
+        <header
+            class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+
+            <div
+                class="mx-auto flex max-w-7xl items-center px-6 py-4">
+
+                <button
+                    id="backBtn"
+                    type="button"
+                    onclick="history.back()"
+                    class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+
+                    <span
+                        class="text-lg">
+
+                        ←
+
+                    </span>
+
+                    Back
+
+                </button>
+                <button
+    id="logoutBtn"
+    type="button"
+    class="ml-auto hidden rounded-xl bg-slate-800 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">
+
+    Logout
+
+</button>
+
+            </div>
+
+        </header>
+
+
+        <section
+            class="mx-auto max-w-7xl px-6 py-8">
+
+            <div
+                class="mb-6">
+
+                <p
+                    id="classesSummary"
+                    class="mt-1 text-sm text-slate-500">
+
+                    Loading classes...
+
+                </p>
+
+            </div>
+
+
+            <div
+                id="classesGrid"
+                class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+                <div
+                    class="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+
+                    <p
+                        class="text-sm text-slate-500">
+
+                        Loading classes...
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="/js/api.js"></script>
+
+    <script src="/js/auth.js"></script>
+
+    <script src="/js/allClasses.js"></script>
+
+</body>
+
+</html>

@@ -24,7 +24,7 @@ async function loadPricing() {
 
     const plansResponse =
         await API.get(
-            "/api/super-admin/plans"
+            "/api/super-admin/all-plans"
         );
 
     if (!plansResponse.success) {

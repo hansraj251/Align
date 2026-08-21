@@ -56,7 +56,7 @@ async function login() {
     ) {
 
         result.textContent =
-            "Email/Username and Password are required.";
+            "Email/User ID and Password are required.";
 
         return;
 
@@ -98,14 +98,14 @@ async function login() {
         }
 
         const data =
-            await API.post(
-                "/api/auth/login",
-                {
-                    email:
-                        loginId,
-                    password
-                }
-            );
+    await API.post(
+        "/api/auth/login",
+        {
+            identifier:
+                loginId,
+            password
+        }
+    );
 
         if (
             !data.success
@@ -131,13 +131,39 @@ async function login() {
                 )
             );
 
-        localStorage.setItem(
-            "restaurant_id",
-            payload.restaurantId
-        );
+        if (
+    payload.businessType === "school"
+) {
+
+    localStorage.setItem(
+        "school_id",
+        payload.schoolId
+    );
+
+    if (
+        payload.role === "attendance"
+    ) {
 
         window.location.href =
-            "/admin/subscription.html";
+    "/school/all-classes.html";
+        return;
+
+    }
+
+    window.location.href =
+        "/school/dashboard.html";
+
+    return;
+
+}
+
+localStorage.setItem(
+    "restaurant_id",
+    payload.restaurantId
+);
+
+window.location.href =
+    "/admin/subscription.html";
 
     }
     catch (err) {

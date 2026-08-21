@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Salary Management</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body class="min-h-screen bg-slate-100">
+
+    <main class="min-h-screen">
+
+       <header
+    class="sticky top-0 z-50 border-slate-200 bg-white shadow-sm">
+
+    <div
+        class="mx-auto flex min-h-[60px] w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:min-h-[72px] sm:px-6 sm:py-4">
+                <div
+                    class="flex items-center gap-4">
+
+                    <button
+                        type="button"
+                        onclick="history.back()"
+                        class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50">
+
+                        <span class="text-lg">
+                            ←
+                        </span>
+
+                        Back
+
+                    </button>
+
+                    <div
+                        class="hidden h-8 w-px bg-slate-200 sm:block">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <section
+    class="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 sm:py-8">
+
+
+            <div
+                class="overflow-hidden rounded-2xl bg-white shadow">
+
+                <div
+    class="w-full overflow-x-auto">
+
+                    <table
+    class="min-w-[850px] w-full text-left">
+
+                        <thead
+                            class="bg-slate-50">
+
+                            <tr>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Employee ID
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Staff
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Designation
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Basic Salary
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Total Earnings
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Status
+
+                                </th>
+
+                                <th
+                                    class="whitespace-nowrap px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6 sm:py-4 sm:text-sm">
+
+                                    Actions
+
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody
+                            id="salaryStaffTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="7"
+                                    class="px-4 py-10 text-center text-slate-500 sm:px-6">
+
+                                    Loading staff...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+            <div
+    id="salaryForm"
+    class="fixed inset-0 z-50 hidden overflow-y-auto bg-black/40 px-3 py-4 sm:px-4 sm:py-8">
+    <div
+        class="mx-auto w-full max-w-3xl rounded-2xl bg-white shadow-xl">
+
+        <div
+            class="flex items-center justify-between gap-3 border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
+
+            <div>
+
+                <h2
+                    id="salaryFormTitle"
+                    class="mt-1 text-lg font-semibold text-slate-800 sm:text-xl">
+
+                    Manage Salary
+
+                </h2>
+
+            </div>
+
+            <button
+                type="button"
+                id="closeSalaryFormBtn"
+                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100">
+
+                ✕
+
+            </button>
+
+        </div>
+
+
+        <form
+    id="salaryFormElement"
+    class="p-4 sm:p-6">
+
+            <input
+                type="hidden"
+                id="salaryTeacherId">
+
+
+            <div
+                class="mb-6 rounded-xl bg-slate-50 p-4">
+
+                <p
+                    id="salaryStaffName"
+                    class="font-semibold text-slate-800">
+
+                    -
+
+                </p>
+
+                <p
+                    id="salaryStaffDesignation"
+                    class="mt-1 text-sm text-slate-500">
+
+                    -
+
+                </p>
+
+            </div>
+
+
+            <div
+                class="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        Basic Salary
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="basicSalary"
+                        min="0"
+                        step="0.01"
+                        required
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        HRA
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="hra"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        Other Allowances
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="otherAllowances"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        PF
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="pf"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        ESI
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="esi"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        Professional Tax
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="professionalTax"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        Other Deductions
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="otherDeductions"
+                        min="0"
+                        step="0.01"
+                        value="0"
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+
+                <div>
+
+                    <label
+                        class="mb-2 block text-sm font-medium text-slate-700">
+
+                        Effective From
+
+                    </label>
+
+                    <input
+                        type="date"
+                        id="effectiveFrom"
+                        required
+                        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500">
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="mt-5 grid grid-cols-1 gap-3 rounded-xl bg-slate-50 p-4 sm:mt-6 sm:grid-cols-3 sm:gap-4 sm:p-5">
+
+                <div>
+
+                    <p
+                        class="text-xs text-slate-500">
+
+                        Gross Earnings
+
+                    </p>
+
+                    <p
+                        id="grossEarnings"
+                        class="mt-1 text-lg font-semibold text-slate-800">
+
+                        ₹0
+
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p
+                        class="text-xs text-slate-500">
+
+                        Total Deductions
+
+                    </p>
+
+                    <p
+                        id="totalDeductions"
+                        class="mt-1 text-lg font-semibold text-slate-800">
+
+                        ₹0
+
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <p
+                        class="text-xs text-slate-500">
+
+                        Net Salary
+
+                    </p>
+
+                    <p
+                        id="netSalary"
+                        class="mt-1 text-lg font-semibold text-emerald-600">
+
+                        ₹0
+
+                    </p>
+
+                </div>
+
+            </div>
+            <div
+    class="mt-6">
+
+    <div
+        class="mb-3 flex items-center justify-between">
+
+        <div>
+
+            <p
+                class="text-sm font-semibold text-slate-800">
+
+                Salary History
+
+            </p>
+
+            <p
+                class="text-xs text-slate-500">
+
+                Salary record for this staff member
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div
+    class="w-full overflow-x-auto rounded-xl border border-slate-200">
+
+        <table
+    class="min-w-[650px] w-full text-left">
+
+            <thead
+                class="bg-slate-50">
+
+                <tr>
+
+                    <th
+                        class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+                        Effective From
+
+                    </th>
+
+                    <th
+                        class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+                        Basic
+
+                    </th>
+
+                    <th
+                        class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+                        Gross
+
+                    </th>
+
+                    <th
+                        class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+                        Deductions
+
+                    </th>
+
+                    <th
+                        class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+                        Net
+
+                    </th>
+
+                    <th
+                        class="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+
+                        Status
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody
+                id="salaryHistoryBody">
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="px-4 py-6 text-center text-sm text-slate-500">
+
+                        No salary history.
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+            <p
+                id="salaryFormResult"
+                class="mt-4 text-sm">
+            </p>
+
+
+            <div
+    class="mt-5 flex flex-col-reverse gap-3 border-slate-100 pt-5 sm:mt-6 sm:flex-row sm:justify-end">
+
+                <button
+                    type="button"
+                    id="cancelSalaryBtn"
+                    class="rounded-xl border border-slate-300 px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    id="saveSalaryBtn"
+                    class="rounded-xl bg-blue-600 px-5 py-3 text-sm font-medium text-white hover:bg-blue-700">
+
+                    Save Salary
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+        </section>
+
+    </main>
+
+
+    <script
+        src="/js/api.js">
+    </script>
+
+    <script
+        src="/js/auth.js">
+    </script>
+
+    <script
+        src="/js/salary.js">
+    </script>
+
+</body>
+
+</html>

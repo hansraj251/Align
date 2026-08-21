@@ -11,6 +11,7 @@ exports.getAll = async () => {
             description,
             sort_order,
             status,
+            plan_type,
             created_at,
             updated_at
         FROM plans
@@ -18,6 +19,34 @@ exports.getAll = async () => {
         sort_order,
          id
         `
+    );
+
+};
+exports.getByType = async (
+    planType
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+            id,
+            slug,
+            display_name,
+            description,
+            sort_order,
+            status,
+            plan_type,
+            created_at,
+            updated_at
+        FROM plans
+        WHERE plan_type = ?
+        ORDER BY
+            sort_order,
+            id
+        `,
+        [
+            planType
+        ]
     );
 
 };
@@ -33,6 +62,7 @@ exports.getActive = async () => {
             description,
             sort_order,
             status,
+            plan_type,
             created_at,
             updated_at
         FROM plans
@@ -56,6 +86,7 @@ exports.getById = async (id) => {
             description,
             sort_order,
             status,
+            plan_type,
             created_at,
             updated_at
         FROM plans
@@ -77,6 +108,7 @@ exports.getBySlug = async (slug) => {
             description,
             sort_order,
             status,
+            plan_type,
             created_at,
             updated_at
         FROM plans
@@ -92,7 +124,8 @@ exports.create = async (
     displayName,
     description,
     sortOrder,
-    status
+    status,
+    plan_type
 ) => {
 
     const result = await db.runAsync(
@@ -102,16 +135,18 @@ exports.create = async (
             display_name,
             description,
             sort_order,
-            status
+            status,
+            plan_type
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?)
         `,
         [
             slug,
             displayName,
             description,
             sortOrder,
-            status
+            status,
+            plan_type
         ]
     );
 
@@ -124,7 +159,8 @@ exports.update = async (
     displayName,
     description,
     sortOrder,
-    status
+    status,
+    plan_type
 ) => {
 
     await db.runAsync(
@@ -135,6 +171,7 @@ SET
     description = ?,
     sort_order = ?,
     status = ?,
+    plan_type = ?,
     updated_at = CURRENT_TIMESTAMP
 WHERE id = ?
         `,
@@ -143,6 +180,7 @@ WHERE id = ?
     description,
     sortOrder,
     status,
+    plan_type,
     id
 ]
     );

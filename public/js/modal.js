@@ -61,9 +61,13 @@ const Modal = {
 
     console.error(err);
 
-    alert(
-        err.message
-    );
+    document.getElementById(
+        "modalBody"
+    ).innerHTML = `
+        <p class="text-red-600">
+            ${err.message}
+        </p>
+    `;
 
 }
 

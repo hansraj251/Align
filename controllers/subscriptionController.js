@@ -152,6 +152,159 @@ exports.getPlans =
         }
 
     };    
+exports.getSchoolPlans =
+    async (req, res) => {
+
+        try {
+
+            const plans =
+                await subscriptionService
+                    .getSchoolPlans();
+
+            return res.json({
+
+                success: true,
+
+                plans
+
+            });
+
+        } catch (err) {
+
+            console.error(err);
+
+            return res.status(500).json({
+
+                success: false,
+
+                message: err.message
+
+            });
+
+        }
+
+    };
+exports.getSchoolSubscription =
+async (req, res) => {
+
+    try {
+
+        const subscription =
+            await subscriptionService
+                .getSchoolSubscription(
+                    req.user.schoolId
+                );
+
+        return res.json({
+
+            success: true,
+
+            subscription
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+exports.createSchoolOrder =
+async (req, res) => {
+
+    try {
+
+        const pricingId =
+            Number(req.body.pricingId);
+
+        if (!pricingId) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "Pricing is required."
+
+            });
+
+        }
+
+        const payment =
+            await subscriptionService
+                .createSchoolOrder(
+                    req.user.schoolId,
+                    pricingId
+                );
+
+        return res.json({
+
+            success: true,
+
+            ...payment
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
+
+exports.verifySchoolPayment =
+async (req, res) => {
+
+    try {
+
+        const result =
+            await subscriptionService
+                .verifySchoolPayment(
+                    req.user.schoolId,
+                    req.body
+                );
+
+        return res.json({
+
+            success: true,
+
+            data: result
+
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: err.message
+
+        });
+
+    }
+
+};
 exports.webhook =
     async (req, res) => {
 
@@ -209,7 +362,7 @@ exports.getActiveDevices = async (req, res) => {
 
     }
 
-};    
+};
 exports.logoutActiveDevice = async (
     req,
     res

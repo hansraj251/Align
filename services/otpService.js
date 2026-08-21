@@ -127,6 +127,7 @@ AND purpose = ?
     email,
     otp,
     purpose,
+    business_type,
     restaurant_name,
     owner_name,
     mobile,
@@ -134,14 +135,15 @@ AND purpose = ?
     expires_at
 )
                         VALUES
-                        (
-                            ?, ?, ?, ?, ?, ?, ?, ?
-                        )
+(
+    ?, ?, ?, ?, ?, ?, ?, ?, ?
+)
                         `,
                         [
     data.email,
     data.otp,
     data.purpose,
+    data.businessType,
     data.restaurantName,
     data.ownerName,
     data.mobile,

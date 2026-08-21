@@ -74,6 +74,58 @@ app.use(
 );
 
 app.use(
+    "/api/schools",
+    require("./routes/schoolRoutes")
+);
+
+app.use(
+    "/api/students",
+    require("./routes/studentRoutes")
+);
+
+app.use(
+    "/api/teachers",
+    require("./routes/teacherRoutes")
+);
+
+app.use(
+    "/api/classes",
+    require("./routes/classRoutes")
+);
+app.use(
+    "/api/users",
+    require("./routes/userRoutes")
+);
+
+
+app.use(
+    "/api/designations",
+    require("./routes/designationRoutes")
+);
+
+app.use(
+    "/api/salary-structures",
+    require("./routes/salaryStructureRoutes")
+);
+app.use(
+    "/api/fee-structures",
+    require("./routes/feeStructureRoutes")
+);
+
+app.use(
+    "/api/fee-payments",
+    require("./routes/feePaymentRoutes")
+);
+app.use(
+    "/api/attendance",
+    require("./routes/attendanceRoutes")
+);
+
+app.use(
+    "/api/holidays",
+    require("./routes/holidayRoutes")
+);
+app.use(
     "/api/subscription",
     require("./routes/subscriptionRoutes")
 );

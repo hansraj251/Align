@@ -14,6 +14,9 @@ document
 
 async function signup() {
 
+    const businessType =
+    document.getElementById("businessType").value;
+
     const restaurantName =
         document.getElementById("restaurantName").value.trim();
 
@@ -37,6 +40,7 @@ async function signup() {
     const data = await API.post(
         "/api/auth/signup",
         {
+            businessType,
             restaurantName,
             ownerName,
             email,

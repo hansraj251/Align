@@ -9,6 +9,8 @@ async function createUsersTable() {
 
             restaurant_id INTEGER,
 
+            school_id INTEGER,
+
             name TEXT NOT NULL,
 
             email TEXT UNIQUE,
@@ -28,7 +30,9 @@ async function createUsersTable() {
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (restaurant_id)
-                REFERENCES restaurants(id)
+                REFERENCES restaurants(id),
+            FOREIGN KEY (school_id)
+                REFERENCES schools(id)
 
         )
     `;

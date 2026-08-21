@@ -398,12 +398,12 @@ Inactive
 
     ),    
 
-        waiter_devices:
-            Number(
-                document.getElementById(
-                    "planWaiterDevices"
-                ).value
-            ),
+        limit_value:
+    Number(
+        document.getElementById(
+            "planWaiterDevices"
+        ).value
+    ),
 
         status:
             document.getElementById(
@@ -452,8 +452,8 @@ Inactive
 
     payload.sort_order,    
 
-                    waiter_devices:
-                        payload.waiter_devices,
+                    limit_value:
+    payload.limit_value,
 
                     status:
                         payload.status

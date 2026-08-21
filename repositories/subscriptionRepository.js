@@ -29,7 +29,38 @@ exports.getSubscription = async (
     );
 
 };
+exports.getSchoolSubscription =
+async (
+    schoolId
+) => {
 
+    return await db.getAsync(
+        `
+        SELECT
+
+            s.plan_id,
+
+            p.display_name,
+
+            s.subscription_status,
+
+            s.plan_start,
+
+            s.plan_end
+
+        FROM schools s
+
+        LEFT JOIN plans p
+            ON p.id = s.plan_id
+
+        WHERE s.id = ?
+        `,
+        [
+            schoolId
+        ]
+    );
+
+};
 exports.expireSubscription =
 async (restaurantId) => {
 
@@ -91,7 +122,43 @@ exports.updateSubscription =
     );
 
 };
+exports.updateSchoolSubscription =
+async (
+    schoolId,
+    planId,
+    planStart,
+    planEnd
+) => {
 
+    await db.runAsync(
+        `
+        UPDATE schools
+
+        SET
+
+            plan_id = ?,
+
+            subscription_status =
+                'active',
+
+            plan_start = ?,
+
+            plan_end = ?,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+        `,
+        [
+            planId,
+            planStart,
+            planEnd,
+            schoolId
+        ]
+    );
+
+};
 exports.getSubscriptionSyncData = async (
     restaurantId
 ) => {

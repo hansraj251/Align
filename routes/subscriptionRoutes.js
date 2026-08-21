@@ -22,6 +22,27 @@ router.get(
     subscriptionController.getPlans
 );
 router.get(
+    "/school-plans",
+    auth,
+    subscriptionController.getSchoolPlans
+);
+router.get(
+    "/school",
+    auth,
+    subscriptionController.getSchoolSubscription
+);
+router.post(
+    "/school/create-order",
+    auth,
+    subscriptionController.createSchoolOrder
+);
+
+router.post(
+    "/school/verify-payment",
+    auth,
+    subscriptionController.verifySchoolPayment
+);
+router.get(
     "/active-devices",
     auth,
     subscriptionController.getActiveDevices

@@ -49,6 +49,7 @@ const API = {
             headers
         });
 
+
   if (
 
     response.status === 401 &&
@@ -147,15 +148,18 @@ return data;
 
     },
 
-    async delete(url) {
+    async delete(url, data) {
 
-        return this.request(url, {
+    return this.request(url, {
 
-            method: "DELETE"
+        method: "DELETE",
 
-        });
+        body:
+            JSON.stringify(data)
 
-    }
-    
+    });
+
+}
+
 
 };

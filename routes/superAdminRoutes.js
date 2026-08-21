@@ -74,7 +74,18 @@ router.get(
     superAdminMiddleware,
     planController.getPlans
 );
-
+router.get(
+    "/school-plans",
+    authMiddleware,
+    superAdminMiddleware,
+    planController.getSchoolPlans
+);
+router.get(
+    "/all-plans",
+    authMiddleware,
+    superAdminMiddleware,
+    planController.getAllPlans
+);
 router.post(
     "/plans",
     authMiddleware,

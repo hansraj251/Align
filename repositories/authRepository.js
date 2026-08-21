@@ -8,7 +8,15 @@ async (
 
     return await db.getAsync(
         `
-        SELECT *
+        SELECT
+            *,
+            CASE
+                WHEN school_id IS NOT NULL
+                    THEN 'school'
+                WHEN restaurant_id IS NOT NULL
+                    THEN 'food'
+                ELSE NULL
+            END AS business_type
         FROM users
         WHERE email = ?
         `,
@@ -81,6 +89,32 @@ async (
         `,
         [
             email
+        ]
+    );
+
+};
+
+exports.getByUsername =
+async (
+    username
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            *,
+            CASE
+                WHEN school_id IS NOT NULL
+                    THEN 'school'
+                WHEN restaurant_id IS NOT NULL
+                    THEN 'food'
+                ELSE NULL
+            END AS business_type
+        FROM users
+        WHERE username = ?
+        `,
+        [
+            username
         ]
     );
 

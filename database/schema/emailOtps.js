@@ -17,6 +17,7 @@ async function createEmailOtpsTable() {
     email TEXT NOT NULL,
     otp TEXT NOT NULL,
     purpose TEXT NOT NULL,
+    business_type TEXT,
     restaurant_name TEXT,
     owner_name TEXT,
     mobile TEXT,
