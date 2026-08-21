@@ -274,3 +274,56 @@ if (
     });
 
 };
+exports.getPendingFees =
+async (
+    schoolId
+) => {
+
+    const today =
+        new Date();
+
+    const year =
+        today.getFullYear();
+
+    const month =
+        today.getMonth() + 1;
+
+    const startYear =
+        month >= 4
+            ? year
+            : year - 1;
+
+    const academicYear =
+        `${startYear}-${String(
+            startYear + 1
+        ).slice(-2)}`;
+
+    const result =
+        await feePaymentRepository.getPendingFees(
+            schoolId,
+            academicYear
+        );
+
+    const totalFee =
+        Number(
+            result?.total_fee || 0
+        );
+
+    const totalPaid =
+        Number(
+            result?.total_paid || 0
+        );
+
+    const pendingAmount =
+        Math.max(
+            totalFee - totalPaid,
+            0
+        );
+
+    return {
+        academicYear,
+        totalFee,
+        totalPaid,
+        pendingAmount
+    };
+};

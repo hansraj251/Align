@@ -380,7 +380,89 @@ async function loadTodayAttendance() {
     }
 
 }
+function getCurrentAcademicYear() {
 
+    const today =
+        new Date();
+
+    const year =
+        today.getFullYear();
+
+    const month =
+        today.getMonth() + 1;
+
+    const startYear =
+        month >= 4
+            ? year
+            : year - 1;
+
+    return `${startYear}-${String(
+        startYear + 1
+    ).slice(-2)}`;
+}
+
+async function loadPendingFees() {
+
+    try {
+
+        const academicYear =
+            getCurrentAcademicYear();
+
+        const data =
+            await API.get(
+                "/api/fee-payments/pending"
+            );
+
+        if (
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load pending fees"
+            );
+
+        }
+
+        const pendingFees =
+            document.getElementById(
+                "pendingFees"
+            );
+
+        if (
+            pendingFees
+        ) {
+
+            pendingFees.textContent =
+                `₹${Number(
+                    data.pendingAmount || 0
+                ).toLocaleString(
+                    "en-IN"
+                )}`;
+
+        }
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        const pendingFees =
+            document.getElementById(
+                "pendingFees"
+            );
+
+        if (
+            pendingFees
+        ) {
+
+            pendingFees.textContent =
+                "₹0";
+
+        }
+
+    }
+}
 async function loadStaffCount() {
 
     try {
@@ -461,6 +543,7 @@ loadClasses();
 loadStudentCount();
 loadStaffCount();
 loadTodayAttendance();
+loadPendingFees();
 window.addEventListener(
     "pageshow",
     () => {
@@ -476,6 +559,7 @@ setInterval(
         loadTodayAttendance();
 
         loadClasses();
+        loadPendingFees();
 
     },
     10000

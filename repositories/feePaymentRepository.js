@@ -163,3 +163,49 @@ async (
     );
 
 };
+exports.getPendingFees =
+async (
+    schoolId,
+    academicYear
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            COALESCE(
+                SUM(fee_structures.amount),
+                0
+            ) AS total_fee,
+
+            COALESCE(
+                (
+                    SELECT
+                        SUM(fee_payments.amount)
+                    FROM fee_payments
+                    WHERE fee_payments.school_id = ?
+                    AND fee_payments.academic_year = ?
+                ),
+                0
+            ) AS total_paid
+
+        FROM fee_structures
+
+        INNER JOIN students
+            ON students.id =
+                fee_structures.student_id
+
+        WHERE fee_structures.school_id = ?
+        AND fee_structures.academic_year = ?
+        AND fee_structures.status = 'active'
+        AND students.school_id = ?
+        AND students.status = 'active'
+        `,
+        [
+            schoolId,
+            academicYear,
+            schoolId,
+            academicYear,
+            schoolId
+        ]
+    );
+};
