@@ -429,7 +429,59 @@ async function runMigrations() {
 
         }
 
+       }
+
+    /*
+     * Migration 3:
+     * email_otps.business_type
+     */
+
+    const emailOtpColumns =
+        await db.allAsync(
+            `
+            PRAGMA table_info(
+                email_otps
+            )
+            `
+        );
+
+    const hasBusinessType =
+        emailOtpColumns.some(
+            column =>
+                column.name ===
+                "business_type"
+        );
+
+    if (
+        hasBusinessType
+    ) {
+
+        console.log(
+            "✅ email_otps schema is up to date."
+        );
+
     }
+    else {
+
+        console.log(
+            "⚠️ Adding email_otps.business_type..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                email_otps
+            ADD COLUMN
+                business_type TEXT
+            `
+        );
+
+        console.log(
+            "✅ email_otps.business_type added successfully."
+        );
+
+    }
+
 }
 
 
