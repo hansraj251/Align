@@ -31,7 +31,7 @@ async function createRestaurantAccount(
                (
                    SELECT id
                    FROM plans
-                   WHERE slug = 'plus'
+                   WHERE slug = '100' AND plan_type = 'school'
                ),
                ?,
                DATE('now'),
@@ -152,7 +152,7 @@ async function createSchoolAccount(
                     (
                         SELECT id
                         FROM plans
-                        WHERE slug = 'plus'
+                        WHERE slug = '100' AND plan_type = 'school'
                     ),
                     ?,
                     DATE('now'),
