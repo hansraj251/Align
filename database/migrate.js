@@ -481,6 +481,57 @@ async function runMigrations() {
         );
 
     }
+        /*
+     * Migration 4:
+     * plans.plan_type
+     */
+
+    const planColumns =
+        await db.allAsync(
+            `
+            PRAGMA table_info(
+                plans
+            )
+            `
+        );
+
+    const hasPlanType =
+        planColumns.some(
+            column =>
+                column.name ===
+                "plan_type"
+        );
+
+    if (
+        hasPlanType
+    ) {
+
+        console.log(
+            "✅ plans schema is up to date."
+        );
+
+    }
+    else {
+
+        console.log(
+            "⚠️ Adding plans.plan_type..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                plans
+            ADD COLUMN
+                plan_type TEXT NOT NULL
+                DEFAULT 'food'
+            `
+        );
+
+        console.log(
+            "✅ plans.plan_type added successfully."
+        );
+
+    }
 
 }
 
