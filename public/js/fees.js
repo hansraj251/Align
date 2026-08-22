@@ -974,11 +974,13 @@ async function saveFeeStructure() {
 
 }
 
-function closeFeesPanel() {
+async function closeFeesPanel() {
 
     feesManagementPanel.classList.add(
         "hidden"
     );
+
+    await loadStudents();
 
 }
 async function openFees(
