@@ -8,7 +8,7 @@ const fs =
     require("fs");
 
 const uploadsPath =
-    process.env.NODE_ENV === "production"
+    process.env.RENDER
         ? "/var/data/uploads"
         : path.join(
             __dirname,
