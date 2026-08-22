@@ -123,9 +123,11 @@ gtag('config', 'G-NCFNFL6L1H');
 
 <body class="bg-slate-50">
 
-   <nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
+   <nav
+    class="sticky top-0 z-50 border-b border-slate-200 bg-white/90 backdrop-blur">
 
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <div
+        class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
 
         <a
             href="/"
@@ -135,7 +137,44 @@ gtag('config', 'G-NCFNFL6L1H');
 
         </a>
 
-        <div class="hidden items-center gap-8 md:flex">
+        <div
+            class="hidden items-center gap-8 md:flex">
+
+            <!-- Business Dropdown -->
+
+            <div
+                class="relative"
+                id="businessDropdown">
+
+                <button
+                    id="businessDropdownBtn"
+                    type="button"
+                    class="flex items-center gap-1 text-slate-600 transition hover:text-blue-600">
+
+                    Business
+
+                    <span>
+                        ▾
+                    </span>
+
+                </button>
+
+                <div
+                    id="businessDropdownMenu"
+                    class="absolute left-0 top-full mt-2 hidden w-48 rounded-xl border border-slate-200 bg-white p-2 shadow-lg">
+
+
+                    <a
+                        href="/school-index.html"
+                        class="block rounded-lg px-4 py-3 text-sm text-slate-700 transition hover:bg-blue-50 hover:text-blue-600">
+
+                        School
+
+                    </a>
+
+                </div>
+
+            </div>
 
             <a
                 href="#about"
@@ -168,6 +207,7 @@ gtag('config', 'G-NCFNFL6L1H');
                 Start Free Trial
 
             </a>
+           
 
         </div>
 
@@ -1535,6 +1575,13 @@ gtag('config', 'G-NCFNFL6L1H');
                     Free Trial
 
                 </a>
+                 <a
+                    href="school-index.html"
+                    class="text-slate-400 hover:text-white">
+
+                    School
+
+            </a>
 
             </div>
 
@@ -1551,7 +1598,79 @@ gtag('config', 'G-NCFNFL6L1H');
 </footer>
 
 </div>
+<script>
 
+const businessDropdownBtn =
+    document.getElementById(
+        "businessDropdownBtn"
+    );
+
+const businessDropdownMenu =
+    document.getElementById(
+        "businessDropdownMenu"
+    );
+
+businessDropdownBtn?.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+        businessDropdownMenu.classList.toggle(
+            "hidden"
+        );
+
+    }
+);
+
+document.addEventListener(
+    "click",
+    () => {
+
+        businessDropdownMenu?.classList.add(
+            "hidden"
+        );
+
+    }
+);
+
+businessDropdownMenu?.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+    }
+);
+
+const currentPath =
+    window.location.pathname;
+
+if (
+    currentPath === "/" ||
+    currentPath === "/index.html"
+) {
+
+    const foodBusinessLink =
+        businessDropdownMenu?.querySelector(
+            'a[href="/"]'
+        );
+
+    if (
+        foodBusinessLink
+    ) {
+
+        foodBusinessLink.classList.add(
+            "bg-blue-50",
+            "font-medium",
+            "text-blue-600"
+        );
+
+    }
+
+}
+
+</script>
 </body>
 
 </html>

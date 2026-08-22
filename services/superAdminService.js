@@ -38,6 +38,17 @@ async () => {
     return restaurants;
 
 };
+exports.getSchools =
+
+async () => {
+
+    const schools =
+        await superAdminRepository
+            .getSchools();
+
+    return schools;
+
+};
 exports.getPaymentHistory =
 async () => {
 
@@ -248,5 +259,107 @@ async () => {
         filePath
 
     };
+
+};
+exports.getSchoolById =
+
+async (
+
+    schoolId
+
+) => {
+
+    const school =
+        await superAdminRepository
+            .getSchoolById(
+                schoolId
+            );
+
+    if (
+        !school
+    ) {
+
+        return null;
+
+    }
+
+    return school;
+
+};
+
+
+exports.updateSchoolSubscription =
+
+async (
+
+    schoolId,
+
+    planId,
+
+    status,
+
+    days
+
+) => {
+
+    if (
+        !planId
+    ) {
+
+        throw new Error(
+            "Please select a plan."
+        );
+
+    }
+
+    const plan =
+        await planRepository
+            .getById(
+                planId
+            );
+
+    if (
+        !plan
+    ) {
+
+        throw new Error(
+            "Plan not found."
+        );
+
+    }
+
+    if (
+        plan.plan_type !==
+        "school"
+    ) {
+
+        throw new Error(
+            "Please select a valid school plan."
+        );
+
+    }
+
+    if (
+        Number(days) < 1
+    ) {
+
+        throw new Error(
+            "Validity days must be greater than zero."
+        );
+
+    }
+
+    await superAdminRepository
+        .updateSchoolSubscription(
+
+            schoolId,
+
+            planId,
+
+            status,
+
+            Number(days)
+
+        );
 
 };

@@ -199,6 +199,43 @@ exports.getRestaurants = async (
     }
 
 };
+exports.getSchools = async (
+
+    req,
+
+    res
+
+) => {
+
+    try {
+
+        const schools =
+            await superAdminService
+                .getSchools();
+
+        return res.json({
+
+            success: true,
+
+            schools
+
+        });
+
+    }
+    catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
+
+};
 exports.getPaymentHistory =
 async (req, res) => {
 
@@ -412,6 +449,110 @@ async (req, res) => {
             success: false,
 
             message: err.message
+
+        });
+
+    }
+
+};
+
+exports.getSchool = async (
+
+    req,
+
+    res
+
+) => {
+
+    try {
+
+        const school =
+            await superAdminService
+                .getSchoolById(
+                    req.params.schoolId
+                );
+
+        if (
+            !school
+        ) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message:
+                    "School not found"
+
+            });
+
+        }
+
+        return res.json({
+
+            success: true,
+
+            school
+
+        });
+
+    }
+    catch (err) {
+
+        return res.status(500).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
+
+};
+
+
+exports.updateSchoolSubscription = async (
+
+    req,
+
+    res
+
+) => {
+
+    try {
+
+        await superAdminService
+            .updateSchoolSubscription(
+
+                req.params.schoolId,
+
+                req.body.planId,
+
+                req.body.status,
+
+                req.body.days
+
+            );
+
+        return res.json({
+
+            success: true,
+
+            message:
+                "School subscription updated successfully"
+
+        });
+
+    }
+    catch (err) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                err.message
 
         });
 

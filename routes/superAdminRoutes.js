@@ -33,7 +33,40 @@ router.get(
     superAdminMiddleware,
     superAdminController.getRestaurants
 );
+router.get(
 
+    "/schools",
+
+    authMiddleware,
+
+    superAdminMiddleware,
+
+    superAdminController.getSchools
+
+);
+router.get(
+
+    "/schools/:schoolId",
+
+    authMiddleware,
+
+    superAdminMiddleware,
+
+    superAdminController.getSchool
+
+);
+
+router.put(
+
+    "/schools/:schoolId/subscription",
+
+    authMiddleware,
+
+    superAdminMiddleware,
+
+    superAdminController.updateSchoolSubscription
+
+);
 router.get(
     "/payments",
     authMiddleware,

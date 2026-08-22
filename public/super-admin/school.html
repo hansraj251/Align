@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>School</title>
+
+<link
+    rel="stylesheet"
+    href="/css/output.css">
+
+</head>
+
+<body>
+
+<div id="modalContainer"></div>
+
+<script src="/js/components.js"></script>
+<script src="/js/superAdminAuth.js"></script>
+<script src="/js/superAdminLayout.js"></script>
+<script src="/js/notify.js"></script>
+<script src="/js/modal.js"></script>
+<script src="/js/superAdminSchool.js"></script>
+
+<script>
+
+loadSuperAdminLayout({
+
+    title: "School",
+
+    active: "restaurants"
+
+});
+
+document.getElementById(
+    "pageContent"
+).innerHTML = `
+
+<div id="schoolContent">
+
+Loading...
+
+</div>
+
+`;
+
+loadSchool();
+
+</script>
+
+</body>
+
+</html>
