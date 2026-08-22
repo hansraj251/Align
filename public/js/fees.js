@@ -71,12 +71,7 @@ const recordPaymentBtn =
 const paymentForm =
     document.getElementById(
         "paymentForm"
-    );
-
-const paymentAmountInput =
-    document.getElementById(
-        "paymentAmount"
-    );
+    );  
 
 const paymentDateInput =
     document.getElementById(
@@ -204,7 +199,9 @@ function openFeeStructureForm() {
         "";
 
     feeEffectiveFromInput.value =
-        "";
+    new Date()
+        .toISOString()
+        .split("T")[0];
 
     feeStructureForm.classList.remove(
         "hidden"
@@ -221,7 +218,7 @@ function closeFeeStructureForm() {
     );
 
 }
-function openPaymentForm() {
+async function openPaymentForm() {
 
     paymentFormResult.textContent =
         "";
@@ -229,13 +226,228 @@ function openPaymentForm() {
     paymentFormResult.className =
         "text-sm";
 
-    paymentAmountInput.value =
-        "";
-    paymentAmountInput.max =
-    Number(
-        feesManagementPanel.dataset.balance ||
-        0
+const feeHeadOptions =
+
+    feesManagementPanel.dataset.feeStructures
+        ? JSON.parse(
+            feesManagementPanel.dataset.feeStructures
+        )
+        : [];
+
+const studentId =
+    feesManagementPanel.dataset.studentId;
+
+const academicYear =
+    getCurrentAcademicYear();
+
+const paymentFeeItems =
+    document.getElementById(
+        "paymentFeeItems"
     );
+
+paymentFeeItems.innerHTML = `
+
+    <div
+        class="py-6 text-center text-sm text-slate-500">
+
+        Loading fee heads...
+
+    </div>
+
+`;
+
+const paidData =
+    await API.get(
+
+        `/api/fee-payments/student/${studentId}/paid-by-head?academicYear=${encodeURIComponent(academicYear)}`
+
+    );
+
+if (
+    !paidData.success
+) {
+
+    throw new Error(
+        paidData.message ||
+        "Unable to load paid fee details"
+    );
+
+}
+
+const paidMap =
+    new Map();
+
+(
+    paidData.paidByFeeStructure ||
+    []
+).forEach(
+
+    item => {
+
+        paidMap.set(
+
+            Number(
+                item.fee_structure_id
+            ),
+
+            Number(
+                item.paid_amount || 0
+            )
+
+        );
+
+    }
+
+);
+
+paymentFeeItems.innerHTML = "";
+
+feeHeadOptions
+    .filter(
+
+        fee =>
+
+            fee.status === "active"
+
+    )
+    .forEach(
+
+        fee => {
+
+            const totalFee =
+                Number(
+                    fee.amount || 0
+                );
+
+            const paidAmount =
+                Number(
+                    paidMap.get(
+                        Number(
+                            fee.id
+                        )
+                    ) || 0
+                );
+
+            const outstanding =
+                Math.max(
+                    totalFee -
+                    paidAmount,
+                    0
+                );
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "rounded-xl border border-slate-200 bg-white p-4";
+
+            row.innerHTML = `
+
+                <div
+                    class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+
+                    <div>
+
+                        <p
+                            class="font-semibold text-slate-800">
+
+                            ${escapeHtml(
+                                fee.fee_head
+                            )}
+
+                        </p>
+
+                        <div
+                            class="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+
+                            <span>
+                                Total:
+                                ${formatCurrency(
+                                    totalFee
+                                )}
+                            </span>
+
+                            <span>
+                                Paid:
+                                ${formatCurrency(
+                                    paidAmount
+                                )}
+                            </span>
+
+                            <span
+                                class="${
+                                    outstanding > 0
+                                        ? "font-semibold text-red-600"
+                                        : "font-semibold text-emerald-600"
+                                }">
+
+                                Outstanding:
+                                ${formatCurrency(
+                                    outstanding
+                                )}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div
+                        class="w-full md:w-48">
+
+                        <input
+                            type="number"
+                            min="0"
+                            max="${outstanding}"
+                            step="0.01"
+                            value=""
+                            data-fee-structure-id="${fee.id}"
+                            data-fee-head="${escapeHtml(
+                                fee.fee_head
+                            )}"
+                            data-max-amount="${outstanding}"
+                            class="payment-fee-amount w-full rounded-xl border border-slate-300 bg-white p-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                            placeholder="Pay amount"
+                            ${
+                                outstanding <= 0
+                                    ? "disabled"
+                                    : ""
+                            }>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            paymentFeeItems.appendChild(
+                row
+            );
+
+        }
+
+    );
+
+    paymentFeeItems
+        .querySelectorAll(
+            ".payment-fee-amount"
+        )
+        .forEach(
+
+            input => {
+
+                input.addEventListener(
+                    "input",
+                    updatePaymentTotal
+                );
+
+            }
+
+        );
+
+    updatePaymentTotal();
 
     paymentDateInput.value =
         new Date()
@@ -245,9 +457,6 @@ function openPaymentForm() {
     paymentModeInput.value =
         "";
 
-    paymentReceiptNoInput.value =
-        "";
-
     paymentRemarksInput.value =
         "";
 
@@ -255,48 +464,69 @@ function openPaymentForm() {
         "hidden"
     );
 
-    paymentAmountInput.focus();
+    const firstAmountInput =
+        paymentFeeItems.querySelector(
+            ".payment-fee-amount"
+        );
 
-}
-paymentAmountInput.addEventListener(
-    "input",
-    () => {
+    if (
+        firstAmountInput
+    ) {
 
-        const balance =
-            Number(
-                feesManagementPanel.dataset.balance ||
-                0
-            );
-
-        const amount =
-            Number(
-                paymentAmountInput.value
-            );
-
-        if (
-            Number.isFinite(amount) &&
-            amount > balance
-        ) {
-
-            paymentFormResult.textContent =
-                `Maximum payable amount is ${formatCurrency(balance)}`;
-
-            paymentFormResult.className =
-                "text-sm text-red-600";
-
-        }
-        else {
-
-            paymentFormResult.textContent =
-                "";
-
-            paymentFormResult.className =
-                "text-sm";
-
-        }
+        firstAmountInput.focus();
 
     }
-);
+
+}
+function updatePaymentTotal() {
+
+    const inputs =
+        document.querySelectorAll(
+            ".payment-fee-amount"
+        );
+
+    let total = 0;
+
+    inputs.forEach(
+
+        input => {
+
+            const amount =
+                Number(
+                    input.value || 0
+                );
+
+            if (
+                Number.isFinite(
+                    amount
+                )
+            ) {
+
+                total += amount;
+
+            }
+
+        }
+
+    );
+
+    const totalElement =
+        document.getElementById(
+            "paymentTotalAmount"
+        );
+
+    if (
+        totalElement
+    ) {
+
+        totalElement.textContent =
+            formatCurrency(
+                total
+            );
+
+    }
+
+}
 function closePaymentForm() {
 
     paymentForm.classList.add(
@@ -308,6 +538,20 @@ function closePaymentForm() {
 
     paymentFormResult.className =
         "text-sm";
+
+    const paymentFeeItems =
+        document.getElementById(
+            "paymentFeeItems"
+        );
+
+    if (
+        paymentFeeItems
+    ) {
+
+        paymentFeeItems.innerHTML =
+            "";
+
+    }
 
 }
 async function savePayment() {
@@ -326,19 +570,11 @@ async function savePayment() {
         const academicYear =
             getCurrentAcademicYear();
 
-        const amount =
-            Number(
-                paymentAmountInput.value
-            );
-
         const paymentDate =
             paymentDateInput.value;
 
         const paymentMode =
             paymentModeInput.value;
-
-        const receiptNo =
-            paymentReceiptNoInput.value.trim();
 
         const remarks =
             paymentRemarksInput.value.trim();
@@ -353,13 +589,104 @@ async function savePayment() {
 
         }
 
+        const feeInputs =
+            document.querySelectorAll(
+                ".payment-fee-amount"
+            );
+
+        const items = [];
+
+        feeInputs.forEach(
+
+            input => {
+
+                const amount =
+                    Number(
+                        input.value || 0
+                    );
+
+                if (
+                    Number.isFinite(
+                        amount
+                    ) &&
+                    amount > 0
+                ) {
+
+                    const maxAmount =
+                        Number(
+                            input.dataset.maxAmount ||
+                            0
+                        );
+
+                    if (
+                        amount > maxAmount
+                    ) {
+
+                        throw new Error(
+                            `${input.dataset.feeHead} payment cannot exceed ${formatCurrency(maxAmount)}`
+                        );
+
+                    }
+
+                    items.push({
+
+                        feeStructureId:
+                            Number(
+                                input.dataset.feeStructureId
+                            ),
+
+                        feeHead:
+                            input.dataset.feeHead,
+
+                        amount
+
+                    });
+
+                }
+
+            }
+
+        );
+
         if (
-            !Number.isFinite(amount) ||
-            amount <= 0
+            items.length === 0
         ) {
 
             throw new Error(
-                "Enter a valid payment amount"
+                "Enter payment amount for at least one fee head"
+            );
+
+        }
+
+        const totalAmount =
+            items.reduce(
+
+                (
+                    total,
+                    item
+                ) =>
+
+                    total +
+                    Number(
+                        item.amount || 0
+                    ),
+
+                0
+
+            );
+
+        const balance =
+            Number(
+                feesManagementPanel.dataset.balance ||
+                0
+            );
+
+        if (
+            totalAmount > balance
+        ) {
+
+            throw new Error(
+                `Payment amount cannot exceed outstanding balance of ${formatCurrency(balance)}`
             );
 
         }
@@ -402,15 +729,14 @@ async function savePayment() {
 
                     academicYear,
 
-                    amount,
+                    amount:
+                        totalAmount,
+
+                    items,
 
                     paymentDate,
 
                     paymentMode,
-
-                    receiptNo:
-                        receiptNo ||
-                        null,
 
                     remarks:
                         remarks ||
@@ -489,6 +815,9 @@ async function saveFeeStructure() {
         const effectiveFrom =
             feeEffectiveFromInput.value;
 
+        const editingId =
+            feeStructureForm.dataset.editingId;
+
         if (
             !feeHead
         ) {
@@ -540,29 +869,51 @@ async function saveFeeStructure() {
             true;
 
         saveFeeStructureBtn.textContent =
-            "Saving...";
+            editingId
+                ? "Updating..."
+                : "Saving...";
 
+        let response;
 
-        const response =
-            await API.post(
-                "/api/fee-structures",
-                {
+        if (
+            editingId
+        ) {
 
-                    studentId:
-                        Number(
-                            studentId
-                        ),
+            response =
+                await API.put(
+                    `/api/fee-structures/${editingId}`,
+                    {
+                        academicYear,
+                        feeHead,
+                        amount,
+                        effectiveFrom
+                    }
+                );
 
-                    academicYear,
+        }
+        else {
 
-                    feeHead,
+            response =
+                await API.post(
+                    "/api/fee-structures",
+                    {
+                        studentId:
+                            Number(
+                                studentId
+                            ),
 
-                    amount,
+                        academicYear,
 
-                    effectiveFrom
+                        feeHead,
 
-                }
-            );
+                        amount,
+
+                        effectiveFrom
+
+                    }
+                );
+
+        }
 
         if (
             !response.success
@@ -570,16 +921,25 @@ async function saveFeeStructure() {
 
             throw new Error(
                 response.message ||
-                "Unable to save fee structure"
+                (
+                    editingId
+                        ? "Unable to update fee structure"
+                        : "Unable to save fee structure"
+                )
             );
 
         }
 
         feeStructureFormResult.textContent =
-            "Fee structure saved successfully.";
+            editingId
+                ? "Fee structure updated successfully."
+                : "Fee structure saved successfully.";
 
         feeStructureFormResult.className =
             "text-sm text-emerald-600";
+
+        feeStructureForm.dataset.editingId =
+            "";
 
         closeFeeStructureForm();
 
@@ -628,6 +988,8 @@ async function openFees(
     try {
         feesManagementPanel.dataset.studentId =
     studentId;
+    closePaymentForm();
+
 
         feesManagementPanel.classList.remove(
             "hidden"
@@ -760,6 +1122,10 @@ async function openFees(
                     ? "text-red-700"
                     : "text-emerald-700"
             }`;
+        feesManagementPanel.dataset.feeStructures =
+    JSON.stringify(
+        feeData.feeStructures || []
+    );    
 
         renderFeeStructures(
     feeData.feeStructures
@@ -1198,7 +1564,7 @@ function renderFeeStructures(
             <tr>
 
                 <td
-                    colspan="3"
+                    colspan="4"
                     class="px-4 py-6 text-center text-sm text-slate-500">
 
                     No fee structure found.
@@ -1250,13 +1616,84 @@ function renderFeeStructures(
 
                         </td>
 
+                        <td
+                            class="px-4 py-3 text-right">
+
+                            <button
+                                type="button"
+                                onclick="editFeeStructure(${fee.id})"
+                                class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-700 hover:bg-blue-100">
+
+                                Edit
+
+                            </button>
+
+                        </td>
+
                     </tr>
                 `
             )
             .join("");
 
 }
+function editFeeStructure(
+    feeStructureId
+) {
 
+    const feeStructures =
+        feesManagementPanel.dataset.feeStructures
+            ? JSON.parse(
+                feesManagementPanel.dataset.feeStructures
+            )
+            : [];
+
+    const fee =
+        feeStructures.find(
+            item =>
+                Number(
+                    item.id
+                ) ===
+                Number(
+                    feeStructureId
+                )
+        );
+
+    if (
+        !fee
+    ) {
+
+        return;
+
+    }
+
+    feeStructureForm.classList.remove(
+        "hidden"
+    );
+
+    feeHeadInput.value =
+        fee.fee_head || "";
+
+    feeAmountInput.value =
+        fee.amount ?? "";
+
+    feeEffectiveFromInput.value =
+        fee.effective_from || "";
+
+    feeStructureForm.dataset.editingId =
+        fee.id;
+
+    saveFeeStructureBtn.textContent =
+        "Update Fee";
+
+    feeStructureFormResult.textContent =
+        "";
+
+    feeStructureFormResult.className =
+        "text-sm";
+
+    feeHeadInput.focus();
+
+}
 
 async function loadPaymentHistory(
     studentId,
@@ -1376,14 +1813,18 @@ function renderPaymentHistory(
                         </td>
 
                         <td
-                            class="px-4 py-3 text-sm text-slate-600">
+    class="px-4 py-3 text-sm">
 
-                            ${escapeHtml(
-                                payment.receipt_no ||
-                                "-"
-                            )}
+    <button
+        type="button"
+        onclick="printFeeReceipt(${payment.id})"
+        class="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
 
-                        </td>
+        Print
+
+    </button>
+
+</td>
 
                     </tr>
                 `
@@ -1419,5 +1860,781 @@ function escapeHtml(
             /'/g,
             "&#039;"
         );
+
+}
+function numberToWords(
+    amount
+) {
+
+    const number =
+        Number(amount);
+
+    if (
+        !Number.isFinite(number)
+    ) {
+
+        return "Zero Rupees";
+
+    }
+
+    const rupees =
+        Math.floor(number);
+
+    const paise =
+        Math.round(
+            (
+                number -
+                rupees
+            ) * 100
+        );
+
+    const ones = [
+
+        "",
+
+        "One",
+
+        "Two",
+
+        "Three",
+
+        "Four",
+
+        "Five",
+
+        "Six",
+
+        "Seven",
+
+        "Eight",
+
+        "Nine",
+
+        "Ten",
+
+        "Eleven",
+
+        "Twelve",
+
+        "Thirteen",
+
+        "Fourteen",
+
+        "Fifteen",
+
+        "Sixteen",
+
+        "Seventeen",
+
+        "Eighteen",
+
+        "Nineteen"
+
+    ];
+
+    const tens = [
+
+        "",
+
+        "",
+
+        "Twenty",
+
+        "Thirty",
+
+        "Forty",
+
+        "Fifty",
+
+        "Sixty",
+
+        "Seventy",
+
+        "Eighty",
+
+        "Ninety"
+
+    ];
+
+    function convert(
+        value
+    ) {
+
+        if (
+            value < 20
+        ) {
+
+            return ones[value];
+
+        }
+
+        if (
+            value < 100
+        ) {
+
+            return (
+
+                tens[
+                    Math.floor(
+                        value / 10
+                    )
+                ] +
+
+                (
+
+                    value % 10
+                        ? " " +
+                            ones[
+                                value % 10
+                            ]
+                        : ""
+
+                )
+
+            );
+
+        }
+
+        if (
+            value < 1000
+        ) {
+
+            return (
+
+                ones[
+                    Math.floor(
+                        value / 100
+                    )
+                ] +
+
+                " Hundred" +
+
+                (
+
+                    value % 100
+                        ? " " +
+                            convert(
+                                value % 100
+                            )
+                        : ""
+
+                )
+
+            );
+
+        }
+
+        if (
+            value < 100000
+        ) {
+
+            return (
+
+                convert(
+                    Math.floor(
+                        value / 1000
+                    )
+                ) +
+
+                " Thousand" +
+
+                (
+
+                    value % 1000
+                        ? " " +
+                            convert(
+                                value % 1000
+                            )
+                        : ""
+
+                )
+
+            );
+
+        }
+
+        if (
+            value < 10000000
+        ) {
+
+            return (
+
+                convert(
+                    Math.floor(
+                        value / 100000
+                    )
+                ) +
+
+                " Lakh" +
+
+                (
+
+                    value % 100000
+                        ? " " +
+                            convert(
+                                value % 100000
+                            )
+                        : ""
+
+                )
+
+            );
+
+        }
+
+        return (
+
+            convert(
+                Math.floor(
+                    value / 10000000
+                )
+            ) +
+
+            " Crore" +
+
+            (
+
+                value % 10000000
+                    ? " " +
+                        convert(
+                            value % 10000000
+                        )
+                    : ""
+
+            )
+
+        );
+
+    }
+
+    let result =
+
+        rupees === 0
+            ? "Zero Rupees"
+            : convert(
+                rupees
+            ) +
+              " Rupees";
+
+    if (
+        paise > 0
+    ) {
+
+        result +=
+
+            " and " +
+
+            convert(
+                paise
+            ) +
+
+            " Paise";
+
+    }
+
+    return result;
+
+}
+async function printFeeReceipt(
+    paymentId
+) {
+
+    try {
+
+        const data =
+            await API.get(
+                `/api/fee-payments/${paymentId}/receipt`
+            );
+
+        if (
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load receipt"
+            );
+
+        }
+
+        const payment =
+            data.payment;
+        const paymentItems =
+            payment.items || [];    
+
+        const printWindow =
+            window.open(
+                "",
+                "_blank",
+                "width=800,height=900"
+            );
+
+        if (
+            !printWindow
+        ) {
+
+            throw new Error(
+                "Please allow pop-ups to print the receipt."
+            );
+
+        }
+
+        printWindow.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>
+RECEIPT - ${escapeHtml(
+    payment.receipt_no || ""
+)}
+</title>
+
+<style>
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 30px;
+    color: #111827;
+}
+
+.receipt {
+    max-width: 750px;
+    margin: auto;
+    border: 1px solid #d1d5db;
+    padding: 30px;
+}
+
+.header {
+    text-align: center;
+    border-bottom: 2px solid #111827;
+    padding-bottom: 15px;
+}
+
+.school-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.school-info {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.receipt-title {
+    margin-top: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.receipt-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.section-title {
+    margin-top: 25px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d1d5db;
+    font-weight: bold;
+}
+
+.details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.details td {
+    padding: 7px 4px;
+    vertical-align: top;
+}
+
+.label {
+    width: 35%;
+    font-weight: bold;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.payment-table th,
+.payment-table td {
+    border: 1px solid #d1d5db;
+    padding: 9px;
+    text-align: left;
+}
+
+.payment-table th:last-child,
+.payment-table td:last-child {
+    text-align: right;
+}
+
+.amount-words {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.signature {
+    margin-top: 70px;
+    text-align: right;
+}
+
+.footer {
+    margin-top: 35px;
+    padding-top: 12px;
+    border-top: 1px solid #d1d5db;
+    text-align: center;
+    font-size: 12px;
+    color: #4b5563;
+}
+
+@media print {
+
+    body {
+        padding: 0;
+    }
+
+    .receipt {
+        border: none;
+        max-width: none;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="receipt">
+
+    <div class="header">
+
+        <div class="school-name">
+
+            ${escapeHtml(
+                payment.school_name ||
+                "-"
+            )}
+
+        </div>
+
+        <div class="school-info">
+
+            ${escapeHtml(
+    [
+        payment.school_address,
+        payment.school_city,
+        payment.school_state,
+        payment.school_pincode
+    ]
+        .filter(Boolean)
+        .join(", ") ||
+    "-"
+)}
+
+            <br>
+
+            Contact:
+            ${escapeHtml(
+                payment.school_mobile ||
+                "-"
+            )}
+
+        </div>
+
+        
+
+    </div>
+
+    <div class="receipt-meta">
+
+        <div>
+
+            <strong>Receipt No.:</strong>
+
+            ${escapeHtml(
+                payment.receipt_no ||
+                "-"
+            )}
+
+        </div>
+
+        <div>
+
+            <strong>Date:</strong>
+
+            ${escapeHtml(
+                payment.payment_date ||
+                "-"
+            )}
+
+        </div>
+
+    </div>
+
+    <div class="section-title">
+
+        Student Information
+
+    </div>
+
+    <table class="details">
+
+        <tr>
+
+            <td class="label">
+                Student Name
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    payment.student_name ||
+                    "-"
+                )}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="label">
+                Father Name
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    payment.father_name ||
+                    "-"
+                )}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="label">
+                Contact No.
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    payment.student_mobile ||
+                    "-"
+                )}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="label">
+                Admission No.
+            </td>
+
+            <td>
+                ${escapeHtml(
+                    payment.admission_no ||
+                    "-"
+                )}
+            </td>
+
+        </tr>
+
+        <tr>
+
+            <td class="label">
+                Class / Section
+            </td>
+
+            <td>
+
+                ${escapeHtml(
+                    payment.class_name ||
+                    "-"
+                )}
+
+                /
+
+                ${escapeHtml(
+                    payment.section ||
+                    "-"
+                )}
+
+            </td>
+
+        </tr>
+
+    </table>
+
+    <div class="section-title">
+
+        Payment Details
+
+    </div>
+    <div
+    style="margin-top: 10px; font-size: 14px;">
+
+    <strong>Payment Mode:</strong>
+
+    ${escapeHtml(
+        payment.payment_mode ||
+        "-"
+    )}
+
+</div>
+
+    <table class="payment-table">
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Title
+                </th>
+
+                <th>
+                    Amount
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            ${paymentItems
+    .map(
+        item => `
+            <tr>
+
+                <td>
+                    ${escapeHtml(
+                        item.fee_head ||
+                        "-"
+                    )}
+                </td>
+
+                <td>
+                    ${formatCurrency(
+                        Number(
+                            item.amount ||
+                            0
+                        )
+                    )}
+                </td>
+
+            </tr>
+        `
+    )
+    .join("")}
+
+<tr>
+
+    <td
+        style="text-align: right; font-weight: bold;">
+
+        Total
+
+    </td>
+
+    <td
+        style="font-weight: bold;">
+
+        ${formatCurrency(
+            Number(
+                payment.amount ||
+                0
+            )
+        )}
+
+    </td>
+
+</tr>
+
+        </tbody>
+
+    </table>
+
+    <div class="amount-words">
+
+        Amount in Words:
+
+        ${numberToWords(
+            Number(
+                payment.amount ||
+                0
+            )
+        )}
+
+        Only
+
+    </div>
+
+    <div class="signature">
+
+       
+
+        <br>
+
+        <strong>
+            Authorized Signatory
+        </strong>
+
+    </div>
+
+    <div class="footer">
+
+        This is a computer-generated receipt.
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
+
+        `);
+
+        printWindow.document.close();
+
+        printWindow.focus();
+
+        setTimeout(
+            () => {
+
+                printWindow.print();
+
+            },
+            300
+        );
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        Notify.error(
+            err.message ||
+            "Unable to print receipt"
+        );
+
+    }
 
 }

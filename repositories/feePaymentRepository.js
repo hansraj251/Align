@@ -76,7 +76,67 @@ async (
     );
 
 };
+exports.getPaidByFeeStructure =
 
+async (
+
+    schoolId,
+
+    studentId,
+
+    academicYear
+
+) => {
+
+    return await db.allAsync(
+
+        `
+        SELECT
+
+            fee_payment_items.fee_structure_id,
+
+            COALESCE(
+
+                SUM(
+                    fee_payment_items.amount
+                ),
+
+                0
+
+            ) AS paid_amount
+
+        FROM fee_payment_items
+
+        INNER JOIN fee_payments
+
+            ON fee_payments.id =
+                fee_payment_items.payment_id
+
+        WHERE fee_payments.school_id = ?
+
+        AND fee_payments.student_id = ?
+
+        AND fee_payments.academic_year = ?
+
+        GROUP BY
+
+            fee_payment_items.fee_structure_id
+
+        `,
+
+        [
+
+            schoolId,
+
+            studentId,
+
+            academicYear
+
+        ]
+
+    );
+
+};
 exports.getAllBySchool =
 async (
     schoolId,
@@ -120,47 +180,252 @@ async (
     );
 
 };
+async function generateReceiptNo(
 
-exports.create =
-async (
-    data
-) => {
+    schoolId
+
+) {
+
+    const currentYear =
+
+        new Date()
+
+            .getFullYear();
+
+    const prefix =
+
+        `REC-${currentYear}-`;
 
     const result =
-        await db.runAsync(
+
+        await db.getAsync(
+
             `
-            INSERT INTO fee_payments
-            (
-                school_id,
-                student_id,
-                academic_year,
-                amount,
-                payment_date,
-                payment_mode,
-                receipt_no,
-                remarks
-            )
-            VALUES
-            (
-                ?, ?, ?, ?, ?, ?, ?, ?
-            )
+
+            SELECT
+
+                MAX(
+
+                    CAST(
+
+                        SUBSTR(
+                            receipt_no,
+                            ?
+                        ) AS INTEGER
+
+                    )
+
+                ) AS last_number
+
+            FROM fee_payments
+
+            WHERE school_id = ?
+
+            AND receipt_no LIKE ?
+
             `,
+
             [
-                data.schoolId,
-                data.studentId,
-                data.academicYear,
-                data.amount,
-                data.paymentDate,
-                data.paymentMode,
-                data.receiptNo,
-                data.remarks
+
+                prefix.length + 1,
+
+                schoolId,
+
+                `${prefix}%`
+
             ]
+
         );
 
-    return await exports.getById(
-        data.schoolId,
-        result.lastID
+    const nextNumber =
+
+        Number(
+            result?.last_number || 0
+        ) + 1;
+
+    return (
+
+        prefix +
+
+        String(
+            nextNumber
+        ).padStart(
+            6,
+            "0"
+        )
+
     );
+
+}
+exports.create =
+
+async (
+
+    data
+
+) => {
+
+    await db.runAsync(
+
+        `
+        BEGIN TRANSACTION
+        `
+
+    );
+
+    try {
+        const receiptNo =
+
+    await generateReceiptNo(
+
+        data.schoolId
+
+    );
+
+        const result =
+
+            await db.runAsync(
+
+                `
+                INSERT INTO fee_payments
+
+                (
+
+                    school_id,
+
+                    student_id,
+
+                    academic_year,
+
+                    amount,
+
+                    payment_date,
+
+                    payment_mode,
+
+                    receipt_no,
+
+                    remarks
+
+                )
+
+                VALUES
+
+                (
+
+                    ?, ?, ?, ?, ?, ?, ?, ?
+
+                )
+
+                `,
+
+                [
+
+                    data.schoolId,
+
+                    data.studentId,
+
+                    data.academicYear,
+
+                    data.amount,
+
+                    data.paymentDate,
+
+                    data.paymentMode,
+
+                    receiptNo,
+
+                    data.remarks
+
+                ]
+
+            );
+
+        const paymentId =
+
+            result.lastID;
+
+        for (
+
+            const item of
+                data.items
+
+        ) {
+
+            await db.runAsync(
+
+                `
+                INSERT INTO
+                    fee_payment_items
+
+                (
+
+                    payment_id,
+
+                    fee_structure_id,
+
+                    fee_head,
+
+                    amount
+
+                )
+
+                VALUES
+
+                (
+
+                    ?, ?, ?, ?
+
+                )
+
+                `,
+
+                [
+
+                    paymentId,
+
+                    item.feeStructureId,
+
+                    item.feeHead,
+
+                    item.amount
+
+                ]
+
+            );
+
+        }
+
+        await db.runAsync(
+
+            `
+            COMMIT
+            `
+
+        );
+
+        return await exports.getById(
+
+            data.schoolId,
+
+            paymentId
+
+        );
+
+    }
+    catch (err) {
+
+        await db.runAsync(
+
+            `
+            ROLLBACK
+            `
+
+        );
+
+        throw err;
+
+    }
 
 };
 exports.getPendingFees =
@@ -208,4 +473,141 @@ async (
             schoolId
         ]
     );
+};
+
+exports.getReceiptData =
+
+async (
+
+    schoolId,
+
+    paymentId
+
+) => {
+
+    const payment =
+
+        await db.getAsync(
+
+            `
+            SELECT
+
+                fee_payments.id,
+
+                fee_payments.receipt_no,
+
+                fee_payments.payment_date,
+
+                fee_payments.amount,
+
+                fee_payments.payment_mode,
+
+                fee_payments.remarks,
+
+                students.name AS student_name,
+
+                students.father_name,
+
+                students.mobile AS student_mobile,
+
+                students.admission_no,
+
+                students.class_name,
+
+                students.section,
+
+                schools.name AS school_name,
+
+                schools.address AS school_address,
+
+                schools.city AS school_city,
+
+                schools.state AS school_state,
+
+                schools.pincode AS school_pincode,
+
+                schools.mobile AS school_mobile
+
+            FROM fee_payments
+
+            INNER JOIN students
+
+                ON students.id =
+                    fee_payments.student_id
+
+            INNER JOIN schools
+
+                ON schools.id =
+                    fee_payments.school_id
+
+            WHERE fee_payments.id = ?
+
+            AND fee_payments.school_id = ?
+
+            `,
+
+            [
+
+                paymentId,
+
+                schoolId
+
+            ]
+
+        );
+
+    if (
+        !payment
+    ) {
+
+        return null;
+
+    }
+
+    const items =
+
+        await db.allAsync(
+
+            `
+            SELECT
+
+                fee_payment_items.id,
+
+                fee_payment_items.fee_structure_id,
+
+                fee_payment_items.fee_head,
+
+                fee_payment_items.amount
+
+            FROM fee_payment_items
+
+            INNER JOIN fee_payments
+
+                ON fee_payments.id =
+                    fee_payment_items.payment_id
+
+            WHERE fee_payment_items.payment_id = ?
+
+            AND fee_payments.school_id = ?
+
+            ORDER BY
+                fee_payment_items.id ASC
+
+            `,
+
+            [
+
+                paymentId,
+
+                schoolId
+
+            ]
+
+        );
+
+    payment.items =
+        items || [];
+
+    return payment;
+
 };

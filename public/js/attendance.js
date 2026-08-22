@@ -315,7 +315,9 @@ isHoliday =
     holidayResponse.success &&
     !!holidayResponse.holiday;
 
-        renderStudents();
+updateHolidayButton();
+
+renderStudents();
 
 if (
     markAllPresentBtn
@@ -1147,5 +1149,5 @@ setInterval(
         await loadAttendance();
 
     },
-    30000
+    15000
 );

@@ -324,12 +324,10 @@ async (
     ) {
 
         attendancePercentage =
-            Math.round(
-                (
-                    presentStudents /
-                    totalStudents
-                ) * 100
-            );
+    (
+        presentStudents /
+        totalStudents
+    ) * 100;
 
     }
 

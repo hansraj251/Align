@@ -3,6 +3,8 @@ const feeStructureRepository =
 
 const studentRepository =
     require("../repositories/studentRepository");
+const feePaymentRepository =
+    require("../repositories/feePaymentRepository");    
 
 exports.getFeeStructures =
 async (
@@ -285,6 +287,46 @@ async (
         );
 
     }
+
+    const paidResult =
+    await feePaymentRepository
+        .getPaidByFeeStructure(
+            schoolId,
+            existing.student_id,
+            String(
+                data.academicYear
+            ).trim()
+        );
+
+const paidItem =
+    (
+        paidResult ||
+        []
+    ).find(
+        item =>
+            Number(
+                item.fee_structure_id
+            ) ===
+            Number(
+                feeStructureId
+            )
+    );
+
+const paidAmount =
+    Number(
+        paidItem?.paid_amount ||
+        0
+    );
+
+if (
+    amount < paidAmount
+) {
+
+    throw new Error(
+        `Fee amount cannot be less than the paid amount of ${paidAmount}`
+    );
+
+}
 
     return await feeStructureRepository.update(
         schoolId,

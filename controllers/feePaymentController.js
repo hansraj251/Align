@@ -84,6 +84,48 @@ async (
 
 };
 
+exports.getPaidByFeeStructure =
+async (
+    req,
+    res
+) => {
+
+    try {
+
+        const paidByFeeStructure =
+            await feePaymentService
+                .getPaidByFeeStructure(
+                    req.user.schoolId,
+                    req.params.studentId,
+                    req.query.academicYear
+                );
+
+        return res.json({
+
+            success: true,
+
+            paidByFeeStructure
+
+        });
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
+
+};
+
 exports.getAllPayments =
 async (
     req,
@@ -163,7 +205,54 @@ async (
     }
 
 };
+exports.getReceiptData =
 
+async (
+
+    req,
+
+    res
+
+) => {
+
+    try {
+
+        const payment =
+
+            await feePaymentService
+                .getReceiptData(
+
+                    req.user.schoolId,
+
+                    req.params.paymentId
+
+                );
+
+        return res.json({
+
+            success: true,
+
+            payment
+
+        });
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        return res.status(404).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
+
+};
 exports.createPayment =
 async (
     req,

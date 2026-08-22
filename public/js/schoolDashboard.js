@@ -332,7 +332,9 @@ async function loadTodayAttendance() {
         ) {
 
             attendanceElement.textContent =
-                `${data.attendancePercentage}%`;
+    `${Number(
+        data.attendancePercentage || 0
+    ).toFixed(1)}%`;
 
         }
 

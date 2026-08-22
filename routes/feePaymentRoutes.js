@@ -21,6 +21,11 @@ router.get(
     authMiddleware,
     feePaymentController.getTotalPaid
 );
+router.get(
+    "/student/:studentId/paid-by-head",
+    authMiddleware,
+    feePaymentController.getPaidByFeeStructure
+);
 
 router.get(
     "/",
@@ -34,7 +39,15 @@ router.get(
     authMiddleware,
     feePaymentController.getPendingFees
 );
+router.get(
 
+    "/:paymentId/receipt",
+
+    authMiddleware,
+
+    feePaymentController.getReceiptData
+
+);
 
 router.get(
     "/:id",

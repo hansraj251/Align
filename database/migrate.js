@@ -584,6 +584,103 @@ async function runMigrations() {
     console.log(
         "✅ salary_payments schema is up to date."
     );
+        /*
+     * Migration 6:
+     * fee_payments.fee_head
+     */
+
+    const feePaymentColumns =
+
+        await db.allAsync(
+
+            `
+            PRAGMA table_info(
+                fee_payments
+            )
+            `
+
+        );
+
+    const hasFeeHead =
+
+        feePaymentColumns.some(
+
+            column =>
+
+                column.name ===
+                "fee_head"
+
+        );
+
+    if (
+        hasFeeHead
+    ) {
+
+        console.log(
+            "✅ fee_payments schema is up to date."
+        );
+
+    }
+    else {
+
+        console.log(
+            "⚠️ Adding fee_payments.fee_head..."
+        );
+
+        await db.runAsync(
+
+            `
+            ALTER TABLE
+                fee_payments
+            ADD COLUMN
+                fee_head TEXT
+            `
+
+        );
+
+        console.log(
+            "✅ fee_payments.fee_head added successfully."
+        );
+
+    }
+    /*
+ * Migration 7:
+ * fee_payment_items
+ */
+
+await db.runAsync(
+
+    `
+    CREATE TABLE IF NOT EXISTS fee_payment_items (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        payment_id INTEGER NOT NULL,
+
+        fee_structure_id INTEGER NOT NULL,
+
+        fee_head TEXT NOT NULL,
+
+        amount REAL NOT NULL DEFAULT 0,
+
+        created_at DATETIME
+            DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY (payment_id)
+            REFERENCES fee_payments(id)
+            ON DELETE CASCADE,
+
+        FOREIGN KEY (fee_structure_id)
+            REFERENCES fee_structures(id)
+
+    )
+    `
+
+);
+
+console.log(
+    "✅ fee_payment_items table ready."
+);
 
 }
 
