@@ -66,23 +66,18 @@
     class="relative flex items-center justify-center">
 
         <div
-            class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
+    class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
 
-            <img
-                id="sidebarSchoolLogo"
-                src=""
-                alt="School Logo"
-                class="hidden h-18 w-18 object-contain">
+    <img
+        id="sidebarSchoolLogo"
+        src=""
+        alt=""
+        class="hidden h-28 w-28 object-contain"
+        onerror="
+            this.classList.add('hidden');
+        ">
 
-            <span
-                id="sidebarSchoolLogoPlaceholder"
-                class="text-xs text-slate-400">
-
-                Logo
-
-            </span>
-
-        </div>
+</div>
 
         <button
             id="closeSidebarBtn"

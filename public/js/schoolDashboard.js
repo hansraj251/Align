@@ -31,11 +31,6 @@ async function loadSchool() {
         "sidebarSchoolLogo"
     );
 
-const sidebarSchoolLogoPlaceholder =
-    document.getElementById(
-        "sidebarSchoolLogoPlaceholder"
-    );
-
 if (
     school.logo
 ) {
@@ -47,11 +42,7 @@ if (
         "hidden"
     );
 
-    sidebarSchoolLogoPlaceholder.classList.add(
-        "hidden"
-    );
-
-}    
+}
 
 
     }
