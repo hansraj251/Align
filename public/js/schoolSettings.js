@@ -14,6 +14,29 @@ const result =
     document.getElementById(
         "result"
     );
+const schoolLogoInput =
+    document.getElementById(
+        "schoolLogoInput"
+    );
+
+const schoolLogoPreview =
+    document.getElementById(
+        "schoolLogoPreview"
+    );
+
+const schoolLogoPlaceholder =
+    document.getElementById(
+        "schoolLogoPlaceholder"
+    );
+
+const schoolLogoResult =
+    document.getElementById(
+        "schoolLogoResult"
+    );  
+const schoolLogoPicker =
+    document.getElementById(
+        "schoolLogoPicker"
+    );      
 
 async function loadSchoolSettings() {
 
@@ -37,6 +60,22 @@ async function loadSchoolSettings() {
 
         const school =
             data.school;
+        if (
+    school.logo
+) {
+
+    schoolLogoPreview.src =
+        school.logo;
+
+    schoolLogoPreview.classList.remove(
+        "hidden"
+    );
+
+    schoolLogoPlaceholder.classList.add(
+        "hidden"
+    );
+
+}    
 
         document.getElementById(
             "schoolName"
@@ -77,6 +116,10 @@ async function loadSchoolSettings() {
             "pincode"
         ).value =
             school.pincode || "";
+        document.getElementById(
+    "receiptFooterMessage"
+).value =
+    school.receipt_footer_message || "";    
 
     }
     catch (err) {
@@ -143,7 +186,11 @@ async function saveSettings() {
                     pincode:
                         document.getElementById(
                             "pincode"
-                        ).value.trim()
+                        ).value.trim(),
+                    receiptFooterMessage:
+    document.getElementById(
+        "receiptFooterMessage"
+    ).value.trim()    
                 }
             );
 
@@ -223,5 +270,132 @@ document.getElementById(
 
     }
 );
+async function uploadSchoolLogo(
+    file
+) {
 
+    if (
+        !file
+    ) {
+
+        return;
+
+    }
+
+    schoolLogoResult.textContent =
+        "Uploading...";
+
+    schoolLogoResult.className =
+        "mt-2 text-sm text-slate-500";
+
+    schoolLogoInput.disabled =
+        true;
+
+    try {
+
+        const formData =
+            new FormData();
+
+        formData.append(
+            "logo",
+            file
+        );
+
+        const token =
+            localStorage.getItem(
+                "token"
+            );
+
+        const response =
+            await fetch(
+                "/api/schools/me/logo",
+                {
+                    method: "PUT",
+
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    },
+
+                    body: formData
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to upload school logo"
+            );
+
+        }
+
+        schoolLogoPreview.src =
+            data.school.logo;
+
+        schoolLogoPreview.classList.remove(
+            "hidden"
+        );
+
+        schoolLogoPlaceholder.classList.add(
+            "hidden"
+        );
+
+        schoolLogoResult.textContent =
+            "School logo updated successfully.";
+
+        schoolLogoResult.className =
+            "mt-2 text-sm font-medium text-emerald-600";
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        schoolLogoResult.textContent =
+            err.message ||
+            "Unable to upload school logo";
+
+        schoolLogoResult.className =
+            "mt-2 text-sm font-medium text-red-600";
+
+    }
+    finally {
+
+        schoolLogoInput.disabled =
+            false;
+
+        schoolLogoInput.value =
+            "";
+
+    }
+
+}
+schoolLogoPicker.addEventListener(
+    "click",
+    () => {
+
+        schoolLogoInput.click();
+
+    }
+);
+schoolLogoInput.addEventListener(
+    "change",
+    () => {
+
+        const file =
+            schoolLogoInput.files[0];
+
+        uploadSchoolLogo(
+            file
+        );
+
+    }
+);
 loadSchoolSettings();

@@ -2217,11 +2217,22 @@ body {
     text-align: center;
     border-bottom: 2px solid #111827;
     padding-bottom: 15px;
-}
+} 
 
 .school-name {
     font-size: 24px;
     font-weight: bold;
+}
+.school-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+.school-logo img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
 }
 
 .school-info {
@@ -2326,7 +2337,24 @@ body {
 
     <div class="header">
 
-        <div class="school-name">
+    ${
+        payment.school_logo
+            ? `
+                <div class="school-logo">
+
+                    <img
+    src="${escapeHtml(
+        payment.school_logo
+    )}"
+    alt=""
+    onerror="this.parentElement.style.display='none';">
+
+                </div>
+            `
+            : ""
+    }
+
+    <div class="school-name">
 
             ${escapeHtml(
                 payment.school_name ||
@@ -2602,9 +2630,12 @@ body {
 
     <div class="footer">
 
-        This is a computer-generated receipt.
+    ${escapeHtml(
+        payment.receipt_footer_message ||
+        ""
+    )}
 
-    </div>
+</div>
 
 </div>
 

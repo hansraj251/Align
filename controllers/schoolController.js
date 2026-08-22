@@ -76,3 +76,57 @@ async (
     }
 
 };
+exports.uploadSchoolLogo =
+async (
+    req,
+    res
+) => {
+
+    try {
+
+        if (
+            !req.file
+        ) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message:
+                    "School logo is required"
+
+            });
+
+        }
+
+        const school =
+            await schoolService.updateLogo(
+                req.user.schoolId,
+                `/uploads/${req.file.filename}`
+            );
+
+        return res.json({
+
+            success: true,
+
+            school
+
+        });
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
+
+};

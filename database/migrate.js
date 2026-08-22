@@ -681,6 +681,56 @@ await db.runAsync(
 console.log(
     "✅ fee_payment_items table ready."
 );
+    /*
+     * Migration 8:
+     * schools.receipt_footer_message
+     */
+
+    const schoolColumns =
+        await db.allAsync(
+            `
+            PRAGMA table_info(
+                schools
+            )
+            `
+        );
+
+    const hasReceiptFooterMessage =
+        schoolColumns.some(
+            column =>
+                column.name ===
+                "receipt_footer_message"
+        );
+
+    if (
+        hasReceiptFooterMessage
+    ) {
+
+        console.log(
+            "✅ schools.receipt_footer_message schema is up to date."
+        );
+
+    }
+    else {
+
+        console.log(
+            "⚠️ Adding schools.receipt_footer_message..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                schools
+            ADD COLUMN
+                receipt_footer_message TEXT
+            `
+        );
+
+        console.log(
+            "✅ schools.receipt_footer_message added successfully."
+        );
+
+    }
 
 }
 

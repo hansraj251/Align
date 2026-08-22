@@ -35,6 +35,7 @@ async (
             city = ?,
             state = ?,
             pincode = ?,
+            receipt_footer_message = ?,
             updated_at = CURRENT_TIMESTAMP
         WHERE id = ?
         `,
@@ -46,6 +47,7 @@ async (
             data.city,
             data.state,
             data.pincode,
+            data.receiptFooterMessage,
             schoolId
         ]
     );
@@ -53,4 +55,28 @@ async (
     return await exports.getById(
         schoolId
     );
+};
+exports.updateLogo =
+async (
+    schoolId,
+    logo
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            UPDATE schools
+            SET
+                logo = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            `,
+            [
+                logo,
+                schoolId
+            ]
+        );
+
+    return result.changes;
+
 };

@@ -79,6 +79,10 @@ async (
         String(
             data.pincode || ""
         ).trim();
+    const receiptFooterMessage =
+    String(
+        data.receiptFooterMessage || ""
+    ).trim();    
 
     if (
         !name
@@ -119,8 +123,36 @@ async (
             address: address || null,
             city: city || null,
             state: state || null,
-            pincode: pincode || null
+            pincode: pincode || null,
+            receiptFooterMessage:
+    receiptFooterMessage || null
         }
+    );
+
+};
+exports.updateLogo =
+async (
+    schoolId,
+    logo
+) => {
+
+    if (
+        !logo
+    ) {
+
+        throw new Error(
+            "School logo is required"
+        );
+
+    }
+
+    await schoolRepository.updateLogo(
+        schoolId,
+        logo
+    );
+
+    return await schoolRepository.getById(
+        schoolId
     );
 
 };

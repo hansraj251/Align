@@ -526,7 +526,10 @@ async (
 
                 schools.pincode AS school_pincode,
 
-                schools.mobile AS school_mobile
+                schools.mobile AS school_mobile,
+                schools.logo AS school_logo,
+                schools.receipt_footer_message
+                    AS receipt_footer_message
 
             FROM fee_payments
 

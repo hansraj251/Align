@@ -57,17 +57,43 @@
 
                 <!-- Sidebar Header -->
 
-                <div
-    class="flex justify-end border-b border-slate-200 p-4">
+                <!-- Sidebar Header -->
 
-    <button
-        id="closeSidebarBtn"
-        type="button"
-        class="rounded-lg bg-slate-100 px-2 py-1 text-slate-500 hover:bg-slate-200 md:hidden">
+<div
+    class="border-b border-slate-200 p-4">
 
-        ✕
+    <div
+    class="relative flex items-center justify-center">
 
-    </button>
+        <div
+            class="flex h-32 w-32 items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-white">
+
+            <img
+                id="sidebarSchoolLogo"
+                src=""
+                alt="School Logo"
+                class="hidden h-18 w-18 object-contain">
+
+            <span
+                id="sidebarSchoolLogoPlaceholder"
+                class="text-xs text-slate-400">
+
+                Logo
+
+            </span>
+
+        </div>
+
+        <button
+            id="closeSidebarBtn"
+            type="button"
+            class="absolute right-0 rounded-lg bg-slate-100 px-2 py-1 text-slate-500 hover:bg-slate-200 md:hidden">
+
+            ✕
+
+        </button>
+
+    </div>
 
 </div>
 

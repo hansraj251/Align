@@ -9,7 +9,8 @@ const schoolController =
 
 const authMiddleware =
     require("../middlewares/authMiddleware");
-
+const uploadSchoolLogo =
+    require("../middlewares/uploadMiddleware");
 router.get(
     "/me",
     authMiddleware,
@@ -19,6 +20,17 @@ router.put(
     "/me",
     authMiddleware,
     schoolController.updateSchoolProfile
+);
+router.put(
+
+    "/me/logo",
+
+    authMiddleware,
+
+    uploadSchoolLogo,
+
+    schoolController.uploadSchoolLogo
+
 );
 
 module.exports =

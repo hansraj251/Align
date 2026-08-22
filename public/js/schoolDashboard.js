@@ -26,6 +26,32 @@ async function loadSchool() {
             "schoolName"
         ).textContent =
             school.name;
+        const sidebarSchoolLogo =
+    document.getElementById(
+        "sidebarSchoolLogo"
+    );
+
+const sidebarSchoolLogoPlaceholder =
+    document.getElementById(
+        "sidebarSchoolLogoPlaceholder"
+    );
+
+if (
+    school.logo
+) {
+
+    sidebarSchoolLogo.src =
+        school.logo;
+
+    sidebarSchoolLogo.classList.remove(
+        "hidden"
+    );
+
+    sidebarSchoolLogoPlaceholder.classList.add(
+        "hidden"
+    );
+
+}    
 
 
     }
