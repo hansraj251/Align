@@ -15,6 +15,11 @@ router.get(
     authMiddleware,
     schoolController.getSchool
 );
+router.put(
+    "/me",
+    authMiddleware,
+    schoolController.updateSchoolProfile
+);
 
 module.exports =
     router;

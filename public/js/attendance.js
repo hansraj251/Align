@@ -99,6 +99,8 @@ let filteredStudents = [];
 
 let attendanceRecords = [];
 let isHoliday = false;
+let isLoadingAttendance =
+    false;
 
 const urlParams =
     new URLSearchParams(
@@ -143,11 +145,31 @@ function getToday() {
 }
 
 
-attendanceDate.value =
-    getToday();
+if (
+    attendanceDate
+) {
+
+    attendanceDate.value =
+        getToday();
+
+    attendanceDate.max =
+        getToday();
+
+}
+
 
 
 async function loadAttendance() {
+    if (
+    isLoadingAttendance
+) {
+
+    return;
+
+}
+
+isLoadingAttendance =
+    true;
 
     try {
 
@@ -294,17 +316,25 @@ isHoliday =
     !!holidayResponse.holiday;
 
         renderStudents();
-    markAllPresentBtn.disabled =
-    isHoliday;
-    markAllPresentBtn.classList.toggle(
-    "opacity-50",
-    isHoliday
-);
 
-markAllPresentBtn.classList.toggle(
-    "cursor-not-allowed",
-    isHoliday
-);
+if (
+    markAllPresentBtn
+) {
+
+    markAllPresentBtn.disabled =
+        isHoliday;
+
+    markAllPresentBtn.classList.toggle(
+        "opacity-50",
+        isHoliday
+    );
+
+    markAllPresentBtn.classList.toggle(
+        "cursor-not-allowed",
+        isHoliday
+    );
+
+}
 
     }
     catch (err) {
@@ -333,6 +363,12 @@ markAllPresentBtn.classList.toggle(
             "Unable to load attendance";
 
     }
+    finally {
+
+    isLoadingAttendance =
+        false;
+
+}
 
 }
 async function loadHoliday() {
@@ -379,11 +415,19 @@ async function loadHoliday() {
 function updateHolidayButton() {
 
     if (
+        !holidayBtn
+    ) {
+
+        return;
+
+    }
+
+    if (
         isHoliday
     ) {
 
         holidayBtn.textContent =
-            "Remove Holiday";
+             "Remove Holiday";
 
         holidayBtn.classList.remove(
             "bg-orange-500",
@@ -471,7 +515,7 @@ async function removeHoliday() {
     }
 
 }
-holidayBtn.addEventListener(
+holidayBtn?.addEventListener(
     "click",
     async () => {
 
@@ -629,7 +673,7 @@ function renderStudents() {
                 return `
 
                     <tr
-                        class="border-t border-slate-100 hover:bg-slate-50">
+                        class="border-t border-slate-100 hover:bg-slate-200">
 
                         <td
                             class="px-3 py-4 sm:px-6">
@@ -765,7 +809,7 @@ function updateSummary() {
 }
 
 
-attendanceStudentTableBody.addEventListener(
+attendanceStudentTableBody?.addEventListener(
     "click",
     async event => {
 
@@ -811,11 +855,9 @@ studentSearch?.addEventListener(
 );
 
 
-attendanceDate.addEventListener(
+attendanceDate?.addEventListener(
     "change",
     async () => {
-
-        await loadHoliday();
 
         await loadAttendance();
 
@@ -823,7 +865,7 @@ attendanceDate.addEventListener(
 );
 
 
-markAllPresentBtn.addEventListener(
+markAllPresentBtn?.addEventListener(
     "click",
     markAllPresent
 );
@@ -1095,7 +1137,7 @@ function escapeHtml(
     return div.innerHTML;
 
 }
-loadHoliday();
+
 
 loadAttendance();
 
@@ -1105,5 +1147,5 @@ setInterval(
         await loadAttendance();
 
     },
-    10000
+    30000
 );

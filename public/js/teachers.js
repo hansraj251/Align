@@ -286,7 +286,7 @@ function renderTeachers(
                 (
                     teacher
                 ) => `
-                    <tr class="border-t border-slate-200 align-middle transition-colors hover:bg-slate-50">
+                    <tr class="border-t border-slate-200 align-middle transition-colors hover:bg-slate-200">
 
                         <td class="whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4">
                             ${escapeHtml(

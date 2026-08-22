@@ -11,7 +11,27 @@ document
         await signup();
 
     });
+const businessTypeInput =
+    document.getElementById(
+        "businessType"
+    );
 
+const restaurantNameInput =
+    document.getElementById(
+        "restaurantName"
+    );
+
+businessTypeInput.addEventListener(
+    "change",
+    () => {
+
+        restaurantNameInput.placeholder =
+            businessTypeInput.value === "school"
+                ? "School Name"
+                : "Business Name";
+
+    }
+);
 async function signup() {
 
     const businessType =

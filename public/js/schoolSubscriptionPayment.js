@@ -141,7 +141,7 @@ ${plan.description || ""}
 
                 html += `
 
-<label class="mb-2 flex cursor-pointer items-center rounded-lg border p-3 hover:bg-slate-50">
+<label class="mb-2 flex cursor-pointer items-center rounded-lg border p-3 hover:bg-slate-200">
 
 <input
 type="radio"

@@ -103,7 +103,7 @@ function renderClasses(
                 index
             ) => `
                 <tr
-    class="border-b last:border-b-0 align-middle transition-colors hover:bg-slate-50">
+    class="border-b last:border-b-0 align-middle transition-colors hover:bg-slate-200">
 
                     <td class="whitespace-nowrap px-3 py-3 sm:px-6 sm:py-4">
     ${index + 1}

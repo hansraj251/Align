@@ -165,29 +165,7 @@ const data =
 
     `
         <div
-            class="mt-4 grid grid-cols-3 gap-2">
-
-            <div
-                class="rounded-lg bg-white p-2 text-center">
-
-                <p
-                    class="text-xs text-slate-500">
-
-                    Total
-
-                </p>
-
-                <p
-                    class="mt-1 text-lg font-bold text-slate-800">
-
-                    ${
-                        classItem.totalStudents ||
-                        0
-                    }
-
-                </p>
-
-            </div>
+            class="mt-4 grid grid-cols-2 gap-2">
 
 
             <div
@@ -463,6 +441,66 @@ async function loadPendingFees() {
 
     }
 }
+async function loadPendingSalaries() {
+
+    try {
+
+        const data =
+            await API.get(
+                "/api/salary-payments/pending"
+            );
+
+        if (
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to load pending salaries"
+            );
+
+        }
+
+        const pendingSalaries =
+            document.getElementById(
+                "pendingSalaries"
+            );
+
+        if (
+            pendingSalaries
+        ) {
+
+            pendingSalaries.textContent =
+                `₹${Number(
+                    data.pendingAmount || 0
+                ).toLocaleString(
+                    "en-IN"
+                )}`;
+
+        }
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        const pendingSalaries =
+            document.getElementById(
+                "pendingSalaries"
+            );
+
+        if (
+            pendingSalaries
+        ) {
+
+            pendingSalaries.textContent =
+                "₹0";
+
+        }
+
+    }
+
+}
 async function loadStaffCount() {
 
     try {
@@ -544,6 +582,7 @@ loadStudentCount();
 loadStaffCount();
 loadTodayAttendance();
 loadPendingFees();
+loadPendingSalaries();
 window.addEventListener(
     "pageshow",
     () => {
@@ -560,6 +599,7 @@ setInterval(
 
         loadClasses();
         loadPendingFees();
+        loadPendingSalaries();
 
     },
     10000

@@ -107,6 +107,7 @@ app.use(
     "/api/salary-structures",
     require("./routes/salaryStructureRoutes")
 );
+
 app.use(
     "/api/fee-structures",
     require("./routes/feeStructureRoutes")
@@ -115,6 +116,10 @@ app.use(
 app.use(
     "/api/fee-payments",
     require("./routes/feePaymentRoutes")
+);
+app.use(
+    "/api/salary-payments",
+    require("./routes/salaryPaymentRoutes")
 );
 app.use(
     "/api/attendance",

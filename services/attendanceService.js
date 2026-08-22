@@ -70,6 +70,21 @@ async (
         );
 
     }
+    const today =
+    new Date()
+        .toISOString()
+        .split("T")[0];
+
+if (
+    data.attendanceDate >
+    today
+) {
+
+    throw new Error(
+        "Attendance cannot be marked for a future date"
+    );
+
+}
     const holiday =
     await holidayRepository.getByDate(
         schoolId,

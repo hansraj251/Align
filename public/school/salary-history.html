@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Salary History</title>
+
+    <link
+        rel="stylesheet"
+        href="/css/output.css">
+
+</head>
+
+<body class="min-h-screen bg-slate-100">
+
+<main class="min-h-screen">
+
+    <header
+        class="sticky top-0 z-50 border-b border-slate-200 bg-white shadow-sm">
+
+        <div
+            class="mx-auto flex max-w-7xl items-center px-4 py-4 md:px-6">
+
+            <button
+                type="button"
+                onclick="history.back()"
+                class="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-200">
+
+                <span class="text-lg">
+                    ←
+                </span>
+
+                Back
+
+            </button>
+
+            <h1
+                class="ml-4 text-xl font-bold text-slate-800">
+
+                Salary History
+
+            </h1>
+
+        </div>
+
+    </header>
+
+    <div
+        class="mx-auto max-w-7xl p-4 md:p-6 xl:p-8">
+
+        <div
+            class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+
+            <div>
+
+                <h2
+                    class="text-2xl font-bold text-slate-800">
+
+                    Salary Payment History
+
+                </h2>
+
+                <p
+                    class="mt-1 text-sm text-slate-500">
+
+                    View all salary payments for the selected month.
+
+                </p>
+
+            </div>
+
+            <div>
+
+                <label
+                    for="salaryMonth"
+                    class="mb-2 block text-sm font-semibold text-slate-700">
+
+                    Salary Month
+
+                </label>
+
+                <input
+                    id="salaryMonth"
+                    type="month"
+                    class="rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-800 outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100">
+
+            </div>
+
+        </div>
+
+        <div
+            class="mb-6 grid gap-4 md:grid-cols-3">
+
+            <div
+                class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+
+                <p
+                    class="text-sm font-medium text-slate-500">
+
+                    Total Salary
+
+                </p>
+
+                <p
+                    id="totalSalary"
+                    class="mt-2 text-2xl font-bold text-slate-800">
+
+                    ₹0
+
+                </p>
+
+            </div>
+
+            <div
+                class="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
+
+                <p
+                    class="text-sm font-medium text-emerald-600">
+
+                    Total Paid
+
+                </p>
+
+                <p
+                    id="totalPaid"
+                    class="mt-2 text-2xl font-bold text-emerald-700">
+
+                    ₹0
+
+                </p>
+
+            </div>
+
+            <div
+                class="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
+
+                <p
+                    class="text-sm font-medium text-blue-600">
+
+                    Transactions
+
+                </p>
+
+                <p
+                    id="transactionCount"
+                    class="mt-2 text-2xl font-bold text-blue-700">
+
+                    0
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div
+            class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+            <div
+                class="border-b border-slate-200 px-5 py-4">
+
+                <h3
+                    class="font-semibold text-slate-800">
+
+                    Payment Records
+
+                </h3>
+
+            </div>
+
+            <div
+                class="overflow-x-auto">
+
+                <table
+                    class="w-full min-w-[1200px]">
+
+                    <thead
+                        class="bg-slate-50">
+
+                        <tr>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Employee
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Staff
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Designation
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">
+
+                                Salary
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">
+
+                                Paid
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Payment Date
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Mode
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Reference
+
+                            </th>
+
+                            <th
+                                class="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">
+
+                                Remarks
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="salaryHistoryBody">
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="px-4 py-8 text-center text-sm text-slate-500">
+
+                                Loading...
+
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <p
+            id="result"
+            class="mt-4 text-sm font-medium">
+
+        </p>
+
+    </div>
+
+</main>
+
+<script src="/js/api.js"></script>
+
+<script src="/js/auth.js"></script>
+
+<script src="/js/salaryHistory.js"></script>
+
+</body>
+
+</html>

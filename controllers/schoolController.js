@@ -37,3 +37,42 @@ async (
     }
 
 };
+exports.updateSchoolProfile =
+async (
+    req,
+    res
+) => {
+
+    try {
+
+        const school =
+            await schoolService.updateProfile(
+                req.user.schoolId,
+                req.body
+            );
+
+        return res.json({
+
+            success: true,
+
+            school
+
+        });
+
+    }
+    catch (err) {
+
+        console.error(err);
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+                err.message
+
+        });
+
+    }
+
+};
