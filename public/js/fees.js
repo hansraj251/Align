@@ -2400,7 +2400,7 @@ body {
         <tr>
 
             <td class="label">
-                Student Name
+                Name
             </td>
 
             <td>
@@ -2415,7 +2415,7 @@ body {
         <tr>
 
             <td class="label">
-                Father Name
+                Father's Name
             </td>
 
             <td>
