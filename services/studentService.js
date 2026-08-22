@@ -88,22 +88,28 @@ async (
     ) {
 
         const existingRollNo =
-            await studentRepository.getByClassSectionAndRollNo(
-                schoolId,
-                data.className.trim(),
-                data.section.trim(),
-                data.rollNo.trim()
-            );
+    await studentRepository.getByClassSectionAndRollNo(
+        schoolId,
+        data.className.trim(),
+        data.section.trim(),
+        data.rollNo.trim()
+    );
 
-        if (
-            existingRollNo
-        ) {
+if (
+    existingRollNo &&
+    Number(
+        existingRollNo.id
+    ) !==
+    Number(
+        studentId
+    )
+) {
 
-            throw new Error(
-                "Roll number already exists in this class and section"
-            );
+    throw new Error(
+        "Roll number already exists in this class and section"
+    );
 
-        }
+}
 
     }
 
@@ -266,22 +272,28 @@ async (
     ) {
 
         const existingRollNo =
-            await studentRepository.getByClassSectionAndRollNo(
-                schoolId,
-                data.className.trim(),
-                data.section.trim(),
-                data.rollNo.trim()
-            );
+    await studentRepository.getByClassSectionAndRollNo(
+        schoolId,
+        data.className.trim(),
+        data.section.trim(),
+        data.rollNo.trim()
+    );
 
-        if (
-            existingRollNo
-        ) {
+if (
+    existingRollNo &&
+    Number(
+        existingRollNo.id
+    ) !==
+    Number(
+        studentId
+    )
+) {
 
-            throw new Error(
-                "Roll number already exists in this class and section"
-            );
+    throw new Error(
+        "Roll number already exists in this class and section"
+    );
 
-        }
+}
 
     }
 
