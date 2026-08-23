@@ -327,7 +327,7 @@ href="/downloads/Align.apk"
 
 download
 
-class="rounded-xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 hover:bg-slate-50">
+class="rounded-xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 hover:bg-slate-200">
 
 Download Align School App
 

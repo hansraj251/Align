@@ -311,6 +311,30 @@ ${buttonText}
 
 </button>
 
+<a
+
+href="/downloads/Align.apk"
+
+download
+
+class="rounded-xl bg-emerald-600 px-6 py-3 font-medium text-white hover:bg-emerald-700">
+
+Download Align Android App
+
+</a>
+
+<a
+
+href="/downloads/AlignPOSSetup.zip"
+
+download
+
+class="rounded-xl bg-emerald-600 px-6 py-3 font-medium text-white hover:bg-emerald-700">
+
+Download Align POS for Windows
+
+</a>
+
 </div>
 
 
