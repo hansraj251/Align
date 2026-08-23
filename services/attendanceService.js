@@ -7,6 +7,8 @@ const holidayRepository =
     require("../repositories/holidayRepository");
 const attendanceUserClassRepository =
     require("../repositories/attendanceUserClassRepository");
+const dateUtil =
+    require("../utils/date");    
 exports.getByDate =
 async (
     schoolId,
@@ -71,9 +73,9 @@ async (
 
     }
     const today =
-    new Date()
-        .toISOString()
-        .split("T")[0];
+    dateUtil.formatDate(
+        new Date()
+    );
 
 if (
     data.attendanceDate >

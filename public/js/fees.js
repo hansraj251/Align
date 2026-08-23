@@ -199,9 +199,7 @@ function openFeeStructureForm() {
         "";
 
     feeEffectiveFromInput.value =
-    new Date()
-        .toISOString()
-        .split("T")[0];
+    getLocalDate()
 
     feeStructureForm.classList.remove(
         "hidden"
@@ -457,9 +455,7 @@ feeHeadOptions
     updatePaymentTotal();
 
     paymentDateInput.value =
-        new Date()
-            .toISOString()
-            .split("T")[0];
+        getLocalDate()
 
     paymentModeInput.value =
         "";

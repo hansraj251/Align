@@ -432,9 +432,7 @@ function openSalaryPayment(
         staff.pendingAmount;
 
     salaryPaymentDate.value =
-        new Date()
-            .toISOString()
-            .split("T")[0];
+          getLocalDate();
 
     salaryPaymentMode.value =
         "";

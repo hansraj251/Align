@@ -1,6 +1,7 @@
 const classService =
     require("../services/classService");
-
+const dateUtil =
+    require("../utils/date");
 exports.getClasses =
 async (
     req,
@@ -48,9 +49,9 @@ async (
     try {
 
         const today =
-            new Date()
-                .toISOString()
-                .split("T")[0];
+    dateUtil.formatDate(
+        new Date()
+    );
 
         const classes =
             await classService

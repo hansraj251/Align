@@ -1,6 +1,7 @@
 const attendanceService =
     require("../services/attendanceService");
-
+const dateUtil =
+    require("../utils/date");
 exports.getByDate =
 async (
     req,
@@ -135,9 +136,9 @@ async (
     try {
 
         const today =
-            new Date()
-                .toISOString()
-                .split("T")[0];
+    dateUtil.formatDate(
+        new Date()
+    );
 
         const summary =
             await attendanceService

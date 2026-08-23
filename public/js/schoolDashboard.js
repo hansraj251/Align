@@ -92,9 +92,7 @@ async function loadClasses() {
     try {
 
         const today =
-    new Date()
-        .toISOString()
-        .split("T")[0];
+    getLocalDate();
 
 const data =
     await API.get(
