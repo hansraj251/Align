@@ -334,6 +334,13 @@ feeHeadOptions
                     paidAmount,
                     0
                 );
+                if (
+    outstanding <= 0
+) {
+
+    return;
+
+}
 
             const row =
                 document.createElement(
