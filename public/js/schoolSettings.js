@@ -75,7 +75,12 @@ async function loadSchoolSettings() {
         "hidden"
     );
 
-}    
+    localStorage.setItem(
+        "schoolLogo",
+        school.logo
+    );
+
+}
 
         document.getElementById(
             "schoolName"
@@ -337,15 +342,20 @@ async function uploadSchoolLogo(
         }
 
         schoolLogoPreview.src =
-            data.school.logo;
+    data.school.logo;
 
-        schoolLogoPreview.classList.remove(
-            "hidden"
-        );
+schoolLogoPreview.classList.remove(
+    "hidden"
+);
 
-        schoolLogoPlaceholder.classList.add(
-            "hidden"
-        );
+schoolLogoPlaceholder.classList.add(
+    "hidden"
+);
+
+localStorage.setItem(
+    "schoolLogo",
+    data.school.logo
+);
 
         schoolLogoResult.textContent =
             "School logo updated successfully.";

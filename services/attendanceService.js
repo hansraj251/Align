@@ -300,6 +300,31 @@ async (
     attendanceDate
 ) => {
 
+    const holiday =
+        await holidayRepository.getByDate(
+            schoolId,
+            attendanceDate
+        );
+
+    if (
+        holiday
+    ) {
+
+        return {
+
+            totalStudents: 0,
+
+            presentStudents: 0,
+
+            attendancePercentage: 0,
+
+            isHoliday: true
+
+        };
+
+    }
+
+
     const summary =
         await attendanceRepository
             .getTodaySummary(
@@ -324,10 +349,10 @@ async (
     ) {
 
         attendancePercentage =
-    (
-        presentStudents /
-        totalStudents
-    ) * 100;
+            (
+                presentStudents /
+                totalStudents
+            ) * 100;
 
     }
 
@@ -337,7 +362,9 @@ async (
 
         presentStudents,
 
-        attendancePercentage
+        attendancePercentage,
+
+        isHoliday: false
 
     };
 
