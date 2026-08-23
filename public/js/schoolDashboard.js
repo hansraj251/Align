@@ -125,29 +125,45 @@ const data =
     href="/school/attendance.html?classId=${encodeURIComponent(
         classItem.id
     )}"
-                class="rounded-xl border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-1 hover:bg-white hover:shadow-md">
+                class="group rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-purple-50/40 to-indigo-50/50 p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-purple-200 hover:shadow-md">
 
                 <div
                     class="flex items-start justify-between gap-3">
 
-                    <div>
+                    <div class="flex items-center gap-3">
 
-                        <p
-                            class="text-base font-semibold text-slate-800">
+    <p
+        class="text-lg font-bold"
+        style="
+            background: linear-gradient(
+                90deg,
+                #c13bbd 0%,
+                #7b3fc6 50%,
+                #2454c7 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        ">
 
-                            ${classItem.name || "-"}
+        ${classItem.name || "-"}
 
-                        </p>
+    </p>
 
-                        <p
-                            class="mt-1 text-sm text-slate-500">
+    <span class="text-indigo-200">
+        |
+    </span>
 
-                            Section:
-                            ${classItem.section || "-"}
+    <p
+        class="text-sm font-medium text-indigo-600">
 
-                        </p>
+        Section:
+        ${classItem.section || "-"}
 
-                    </div>
+    </p>
+
+</div>
 
                 </div>
 
@@ -159,17 +175,17 @@ const data =
 
     `
         <div
-            class="mt-4 rounded-lg bg-amber-50 p-3 text-center">
+            class="mt-4 rounded-xl border border-indigo-100 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 text-center">
 
             <p
-                class="text-xs font-medium text-amber-600">
+                class="text-xs font-medium text-purple-600">
 
                 Today
 
             </p>
 
             <p
-                class="mt-1 text-lg font-bold text-amber-700">
+                class="mt-1 text-lg font-bold text-indigo-700">
 
                 Holiday
 
@@ -186,49 +202,73 @@ const data =
 
 
             <div
-                class="rounded-lg bg-emerald-50 p-2 text-center">
+    class="rounded-xl border border-indigo-100 bg-white/80 p-3 text-center shadow-sm">
 
-                <p
-                    class="text-xs text-emerald-600">
+    <p
+        class="text-xs font-semibold text-green-600">
 
-                    Present
+        Present
 
-                </p>
+    </p>
 
-                <p
-                    class="mt-1 text-lg font-bold text-emerald-700">
+    <p
+        class="mt-1 text-xl font-bold"
+        style="
+            background: linear-gradient(
+                90deg,
+                #c13bbd 0%,
+                #7b3fc6 50%,
+                #2454c7 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        ">
 
-                    ${
-                        classItem.presentStudents ||
-                        0
-                    }
+        ${
+            classItem.presentStudents ||
+            0
+        }
 
-                </p>
+    </p>
 
-            </div>
+</div>
 
 
             <div
-                class="rounded-lg bg-red-50 p-2 text-center">
+    class="rounded-xl border border-indigo-100 bg-white/80 p-3 text-center shadow-sm">
 
-                <p
-                    class="text-xs text-red-600">
+    <p
+        class="text-xs font-semibold text-red-600">
 
-                    Absent
+        Absent
 
-                </p>
+    </p>
 
-                <p
-                    class="mt-1 text-lg font-bold text-red-700">
+    <p
+        class="mt-1 text-xl font-bold"
+        style="
+            background: linear-gradient(
+                90deg,
+                #7b3fc6 0%,
+                #4f46a5 50%,
+                #2454c7 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        ">
 
-                    ${
-                        classItem.absentStudents ||
-                        0
-                    }
+        ${
+            classItem.absentStudents ||
+            0
+        }
 
-                </p>
+    </p>
 
-            </div>
+</div>
 
         </div>
     `
