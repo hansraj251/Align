@@ -313,7 +313,7 @@ ${buttonText}
 
 <a
 
-href="/downloads/Align.apk"
+href="/downloads/AlignOS.apk"
 
 download
 
