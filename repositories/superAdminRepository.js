@@ -10,10 +10,21 @@ exports.getDashboardStats = async () => {
             `
         );
 
+    const totalSchools =
+        await db.getAsync(
+            `
+            SELECT COUNT(*) AS total
+            FROM schools
+            `
+        );
+
     return {
 
         totalRestaurants:
-            totalRestaurants.total
+            totalRestaurants.total,
+
+        totalSchools:
+            totalSchools.total
 
     };
 

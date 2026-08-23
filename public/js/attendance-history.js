@@ -356,7 +356,7 @@ const attendanceRecords =
                 return `
 
                     <tr
-                        class="border-t border-slate-100 hover:bg-slate-200">
+                        class="border-slate-100 hover:bg-slate-200">
 
                         <td
                             class="px-6 py-4 text-sm font-medium text-slate-700">

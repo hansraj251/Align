@@ -352,6 +352,41 @@
                 #c4b5fd;
 
         }
+        #classForm {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(5px);
+}
+
+#classForm:not(.hidden) {
+    display: flex;
+}
+
+#classForm .class-modal-content {
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 1rem;
+}
+
+@media (max-width: 640px) {
+
+    #classForm {
+        padding: 0.75rem;
+    }
+
+    #classForm .class-modal-content {
+        max-height: 92vh;
+    }
+
+}
 
     </style>
 
@@ -479,16 +514,12 @@
 
         <!-- Form -->
 
-        <div
-            id="classForm"
-            class="
-                premium-panel
-                mb-6
-                hidden
-                rounded-2xl
-                p-4
-                sm:p-6
-            ">
+       <div
+    id="classForm"
+    class="hidden">
+
+    <div
+        class="class-modal-content premium-panel rounded-2xl p-4 sm:p-6">
 
             <div
                 class="
@@ -501,19 +532,6 @@
                 ">
 
                 <div>
-
-                    <p
-                        class="
-                            text-xs
-                            font-semibold
-                            uppercase
-                            tracking-wider
-                            text-indigo-500
-                        ">
-
-                        Class Setup
-
-                    </p>
 
                     <h2
                         id="classFormTitle"
@@ -655,7 +673,6 @@
                         flex
                         flex-col-reverse
                         gap-3
-                        border-t
                         border-slate-100
                         pt-5
                         sm:flex-row
@@ -702,6 +719,7 @@
                 </div>
 
             </form>
+            </div>
 
         </div>
 

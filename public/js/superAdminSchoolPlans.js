@@ -67,7 +67,7 @@ function renderPlans(plans) {
 
         tbody.innerHTML += `
 
-<tr class="border-t">
+<tr>
 
 <td class="p-4 font-semibold">
 

@@ -276,7 +276,7 @@ function renderClasses() {
 
 
                         <div
-                            class="mt-5 flex items-end justify-between border-t border-slate-100 pt-4">
+                            class="mt-5 flex items-end justify-between border-slate-100 pt-4">
 
                             <div>
 

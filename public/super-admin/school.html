@@ -17,7 +17,7 @@
 
 </head>
 
-<body>
+<body class="min-h-screen bg-slate-100">
 
 <div id="modalContainer"></div>
 
@@ -43,9 +43,40 @@ document.getElementById(
     "pageContent"
 ).innerHTML = `
 
-<div id="schoolContent">
+<div
+    class="
+        min-h-[200px]
+        rounded-2xl
+        border
+        border-slate-200
+        bg-gradient-to-br
+        from-white
+        via-purple-50/40
+        to-indigo-50/50
+        p-5
+        shadow-sm
+        sm:p-6
+    ">
 
-Loading...
+    <div
+        id="schoolContent"
+        class="min-w-0">
+
+        <div
+            class="
+                flex
+                min-h-[160px]
+                items-center
+                justify-center
+                text-sm
+                text-slate-500
+            ">
+
+            Loading...
+
+        </div>
+
+    </div>
 
 </div>
 

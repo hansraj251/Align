@@ -125,7 +125,7 @@ const data =
     href="/school/attendance.html?classId=${encodeURIComponent(
         classItem.id
     )}"
-                class="group rounded-2xl border border-indigo-100 bg-gradient-to-br from-white via-purple-50/40 to-indigo-50/50 p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-purple-200 hover:shadow-md">
+                class="group rounded-2xl border border-slate-200 bg-gradient-to-br from-white via-purple-50/40 to-indigo-50/50 p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-purple-200 hover:shadow-md">
 
                 <div
                     class="flex items-start justify-between gap-3">
@@ -202,7 +202,7 @@ const data =
 
 
             <div
-    class="rounded-xl border border-indigo-100 bg-white/80 p-3 text-center shadow-sm">
+    class="rounded-xl border border-slate-200 bg-white/80 p-3 text-center shadow-sm">
 
     <p
         class="text-xs font-semibold text-green-600">
@@ -237,7 +237,7 @@ const data =
 
 
             <div
-    class="rounded-xl border border-indigo-100 bg-white/80 p-3 text-center shadow-sm">
+    class="rounded-xl border border-slate-200 bg-white/80 p-3 text-center shadow-sm">
 
     <p
         class="text-xs font-semibold text-red-600">

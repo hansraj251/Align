@@ -30,19 +30,9 @@ async function loadDashboard() {
 
         if (!data.success) {
 
-           if (data.success) {
-
-    Notify.success(
-        data.message
-    );
-
-} else {
-
-    Notify.error(
-        data.message
-    );
-
-}
+            Notify.error(
+                data.message
+            );
 
             return;
 
@@ -53,9 +43,18 @@ async function loadDashboard() {
         ).textContent =
             data.totalRestaurants;
 
+        document.getElementById(
+            "totalSchools"
+        ).textContent =
+            data.totalSchools;
+
     } catch (err) {
 
         console.error(err);
+
+        Notify.error(
+            "Failed to load dashboard."
+        );
 
     }
 

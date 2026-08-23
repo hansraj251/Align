@@ -334,6 +334,40 @@
                 #7b3fc6;
 
         }
+        #attendanceUserForm {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(5px);
+}
+
+#attendanceUserForm:not(.hidden) {
+    display: flex;
+}
+
+#attendanceUserForm > .attendance-user-modal-content {
+    width: 100%;
+    max-width: 760px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 1rem;
+}
+
+@media (max-width: 640px) {
+
+    #attendanceUserForm {
+        padding: 0.75rem;
+    }
+
+    #attendanceUserForm > .attendance-user-modal-content {
+        max-height: 92vh;
+    }
+
+}
 
     </style>
 
@@ -472,16 +506,18 @@
         <!-- Create User Form -->
 
         <div
-            id="attendanceUserForm"
-            class="
-                premium-panel
-                mb-6
-                hidden
-                w-full
-                rounded-2xl
-                p-4
-                sm:p-6
-            ">
+    id="attendanceUserForm"
+    class="hidden">
+
+    <div
+        class="
+            attendance-user-modal-content
+            premium-panel
+            rounded-2xl
+            p-4
+            shadow-2xl
+            sm:p-6
+        ">
 
 
             <div
@@ -495,19 +531,6 @@
                 ">
 
                 <div>
-
-                    <p
-                        class="
-                            text-xs
-                            font-semibold
-                            uppercase
-                            tracking-wider
-                            text-indigo-500
-                        ">
-
-                        New User
-
-                    </p>
 
                     <h2
                         class="
@@ -790,6 +813,8 @@
 
 
             </form>
+            </div>
+
 
         </div>
 
@@ -813,19 +838,6 @@
                     py-4
                     sm:px-6
                 ">
-
-                <p
-                    class="
-                        text-xs
-                        font-semibold
-                        uppercase
-                        tracking-wider
-                        text-indigo-500
-                    ">
-
-                    User Management
-
-                </p>
 
                 <h2
                     class="

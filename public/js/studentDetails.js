@@ -149,7 +149,7 @@ function renderStudents(
 
 
                     <div
-                        class="mt-5 border-t border-slate-100 pt-4">
+                        class="mt-5 border-slate-100 pt-4">
 
                         <div
                             class="grid grid-cols-2 gap-4">
@@ -244,7 +244,7 @@ function renderStudents(
 
 
                     <div
-                        class="mt-5 border-t border-slate-100 pt-4">
+                        class="mt-5 border-slate-100 pt-4">
 
                         <p
                             class="text-xs font-semibold uppercase tracking-wide text-slate-500">

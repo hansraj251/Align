@@ -257,7 +257,7 @@ function renderStaff(
                 return `
 
                     <tr
-                        class="border-t border-slate-200 transition-colors hover:bg-slate-200">
+                        class="border-slate-200 transition-colors hover:bg-slate-200">
 
                         <td
                             class="whitespace-nowrap px-4 py-4 text-sm text-slate-600">

@@ -10,9 +10,7 @@
         content="width=device-width, initial-scale=1.0">
 
     <title>
-
         Align Super Admin
-
     </title>
 
     <link
@@ -21,12 +19,15 @@
 
 </head>
 
-<body>
-
+<body class="min-h-screen bg-slate-100">
 <script src="/js/components.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/align.js"></script>
+<script src="/js/notify.js"></script>
+<script src="/js/toast.js"></script>
+<script src="/js/modal.js"></script>
 <script src="/js/superAdminAuth.js"></script>
 <script src="/js/superAdminLayout.js"></script>
-
 <script src="/js/superAdminAccounts.js"></script>
 
 <script>
@@ -45,64 +46,151 @@ document.getElementById(
     "pageContent"
 ).innerHTML = `
 
-<div class="rounded-2xl bg-white p-6 shadow">
+<div
+    class="
+        rounded-2xl
+        border
+        border-slate-200
+        bg-gradient-to-br
+        from-white
+        via-purple-50/40
+        to-indigo-50/50
+        p-5
+        shadow-sm
+        sm:p-6
+    ">
 
-    <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div
+        class="
+            mb-6
+            flex
+            flex-col
+            gap-4
+            md:flex-row
+            md:items-center
+            md:justify-between
+        ">
 
-        <div>
-
-            <p class="mt-1 text-sm text-slate-500">
-
-                Manage Super Admin accounts
-
-            </p>
-
-        </div>
 
         <button
     id="addAccountBtn"
-    class="w-full rounded-lg bg-slate-600 px-4 py-2 text-white hover:bg-blue-700 md:w-auto">
-            Add Super Admin
+    type="button"
+    class="
+        w-full
+        rounded-xl
+        bg-indigo-500
+        px-5
+        py-2.5
+        text-sm
+        font-semibold
+        text-white
+        shadow-sm
+        transition
+        hover:bg-indigo-700
+        md:w-auto
+    ">
 
-        </button>
+    + Add Super Admin
+
+</button>
 
     </div>
 
-    <div class="overflow-x-auto">
 
-       <table class="min-w-[900px] w-full">
+    <div
+        class="
+            overflow-x-auto
+            rounded-2xl
+            border
+            border-slate-200
+            bg-white/80
+        ">
 
-            <thead>
+        <table
+            class="min-w-[900px] w-full">
 
-                <tr class="border-b">
+            <thead
+                class="bg-slate-50/80">
 
-                    <th class="w-[240px] whitespace-nowrap py-3 text-left">
+                <tr
+                    class="border-b border-slate-200">
 
-    Name
+                    <th
+                        class="
+                            w-[240px]
+                            whitespace-nowrap
+                            px-5
+                            py-3
+                            text-left
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-wide
+                            text-slate-500
+                        ">
 
-</th>
+                        Name
 
-<th class="w-[220px] whitespace-nowrap py-3 text-left">
+                    </th>
 
-    Username
+                    <th
+                        class="
+                            w-[220px]
+                            whitespace-nowrap
+                            px-5
+                            py-3
+                            text-left
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-wide
+                            text-slate-500
+                        ">
 
-</th>
+                        Username
 
-<th class="w-[140px] whitespace-nowrap py-3 text-left">
+                    </th>
 
-    Status
+                    <th
+                        class="
+                            w-[140px]
+                            whitespace-nowrap
+                            px-5
+                            py-3
+                            text-left
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-wide
+                            text-slate-500
+                        ">
 
-</th>
+                        Status
 
-<th class="w-[260px] whitespace-nowrap py-3 text-right">
+                    </th>
 
-    Actions
+                    <th
+                        class="
+                            w-[260px]
+                            whitespace-nowrap
+                            px-5
+                            py-3
+                            text-right
+                            text-xs
+                            font-semibold
+                            uppercase
+                            tracking-wide
+                            text-slate-500
+                        ">
 
-</th>
+                        Actions
+
+                    </th>
 
                 </tr>
 
             </thead>
+
 
             <tbody
                 id="accountsTableBody">
@@ -115,17 +203,49 @@ document.getElementById(
 
 </div>
 
+
 <div
     id="accountModal"
-    class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/50 p-4">
+    class="
+        fixed
+        inset-0
+        z-50
+        hidden
+        items-center
+        justify-center
+        overflow-y-auto
+        bg-slate-950/50
+        p-4
+        backdrop-blur-sm
+    ">
 
-    <div class="w-full max-w-md rounded-xl bg-white p-6">
+    <div
+        class="
+            w-full
+            max-w-md
+            rounded-2xl
+            border
+            border-slate-200
+            bg-white
+            p-6
+            shadow-2xl
+        ">
 
-        <div class="mb-5 flex items-center justify-between">
+        <div
+            class="
+                mb-5
+                flex
+                items-center
+                justify-between
+            ">
 
             <h2
                 id="accountModalTitle"
-                class="text-xl font-semibold">
+                class="
+                    text-xl
+                    font-semibold
+                    text-slate-800
+                ">
 
                 Add Super Admin
 
@@ -133,13 +253,27 @@ document.getElementById(
 
             <button
                 id="closeAccountModal"
-                class="text-2xl leading-none text-slate-500">
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-2xl
+                    leading-none
+                    text-slate-400
+                    transition
+                    hover:bg-slate-100
+                    hover:text-slate-700
+                ">
 
                 &times;
 
             </button>
 
         </div>
+
 
         <form
             id="accountForm"
@@ -149,9 +283,17 @@ document.getElementById(
                 id="accountId"
                 type="hidden">
 
+
             <div>
 
-                <label class="mb-1 block text-sm">
+                <label
+                    class="
+                        mb-1.5
+                        block
+                        text-sm
+                        font-medium
+                        text-slate-700
+                    ">
 
                     Name
 
@@ -160,13 +302,35 @@ document.getElementById(
                 <input
                     id="accountName"
                     autocomplete="name"
-                    class="w-full rounded-lg border px-3 py-2">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        text-slate-800
+                        outline-none
+                        transition
+                        focus:border-purple-500
+                        focus:ring-2
+                        focus:ring-purple-100
+                    ">
 
             </div>
 
+
             <div>
 
-                <label class="mb-1 block text-sm">
+                <label
+                    class="
+                        mb-1.5
+                        block
+                        text-sm
+                        font-medium
+                        text-slate-700
+                    ">
 
                     Username
 
@@ -175,14 +339,36 @@ document.getElementById(
                 <input
                     id="accountUsername"
                     autocomplete="username"
-                    class="w-full rounded-lg border px-3 py-2">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        text-slate-800
+                        outline-none
+                        transition
+                        focus:border-purple-500
+                        focus:ring-2
+                        focus:ring-purple-100
+                    ">
 
             </div>
+
 
             <div
                 id="passwordField">
 
-                <label class="mb-1 block text-sm">
+                <label
+                    class="
+                        mb-1.5
+                        block
+                        text-sm
+                        font-medium
+                        text-slate-700
+                    ">
 
                     Password
 
@@ -192,13 +378,35 @@ document.getElementById(
                     id="accountPassword"
                     type="password"
                     autocomplete="new-password"
-                    class="w-full rounded-lg border px-3 py-2">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        text-slate-800
+                        outline-none
+                        transition
+                        focus:border-purple-500
+                        focus:ring-2
+                        focus:ring-purple-100
+                    ">
 
             </div>
 
+
             <div>
 
-                <label class="mb-1 block text-sm">
+                <label
+                    class="
+                        mb-1.5
+                        block
+                        text-sm
+                        font-medium
+                        text-slate-700
+                    ">
 
                     Status
 
@@ -206,30 +414,61 @@ document.getElementById(
 
                 <select
                     id="accountStatus"
-                    class="w-full rounded-lg border px-3 py-2">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        text-slate-800
+                        outline-none
+                        transition
+                        focus:border-purple-500
+                        focus:ring-2
+                        focus:ring-purple-100
+                    ">
 
                     <option value="active">
-
                         Active
-
                     </option>
 
                     <option value="inactive">
-
                         Inactive
-
                     </option>
 
                 </select>
 
             </div>
 
-            <div class="flex flex-col-reverse gap-3 md:flex-row md:justify-end">
+
+            <div
+                class="
+                    flex
+                    flex-col-reverse
+                    gap-3
+                    pt-3
+                    md:flex-row
+                    md:justify-end
+                ">
 
                 <button
                     type="button"
                     id="cancelAccountBtn"
-                    class="w-full rounded-lg border px-4 py-2 md:w-auto">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        px-4
+                        py-2.5
+                        font-medium
+                        text-slate-700
+                        transition
+                        hover:bg-slate-100
+                        md:w-auto
+                    ">
 
                     Cancel
 
@@ -238,7 +477,20 @@ document.getElementById(
                 <button
     id="saveAccountBtn"
     type="submit"
-    class="w-full rounded-lg bg-slate-600 px-4 py-2 text-white md:w-auto">
+    class="
+        w-full
+        rounded-xl
+        bg-indigo-500
+        px-5
+        py-2.5
+        text-sm
+        font-semibold
+        text-white
+        shadow-sm
+        transition
+        hover:bg-indigo-700
+        md:w-auto
+    ">
 
     Save
 
@@ -252,15 +504,47 @@ document.getElementById(
 
 </div>
 
+
 <div
     id="passwordModal"
-    class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    class="
+        fixed
+        inset-0
+        z-50
+        hidden
+        items-center
+        justify-center
+        bg-slate-950/50
+        p-4
+        backdrop-blur-sm
+    ">
 
-    <div class="w-full max-w-md rounded-xl bg-white p-6">
+    <div
+        class="
+            w-full
+            max-w-md
+            rounded-2xl
+            border
+            border-slate-200
+            bg-white
+            p-6
+            shadow-2xl
+        ">
 
-        <div class="mb-5 flex items-center justify-between">
+        <div
+            class="
+                mb-5
+                flex
+                items-center
+                justify-between
+            ">
 
-            <h2 class="text-xl font-semibold">
+            <h2
+                class="
+                    text-xl
+                    font-semibold
+                    text-slate-800
+                ">
 
                 Change Password
 
@@ -268,7 +552,20 @@ document.getElementById(
 
             <button
                 id="closePasswordModal"
-                class="text-2xl text-slate-500">
+                class="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-lg
+                    text-2xl
+                    leading-none
+                    text-slate-400
+                    transition
+                    hover:bg-slate-100
+                    hover:text-slate-700
+                ">
 
                 &times;
 
@@ -276,15 +573,26 @@ document.getElementById(
 
         </div>
 
-        <form id="passwordForm">
+
+        <form
+            id="passwordForm">
 
             <input
                 id="passwordAccountId"
                 type="hidden">
 
-            <div class="mb-4">
 
-                <label class="mb-1 block text-sm">
+            <div
+                class="mb-4">
+
+                <label
+                    class="
+                        mb-1.5
+                        block
+                        text-sm
+                        font-medium
+                        text-slate-700
+                    ">
 
                     New Password
 
@@ -293,16 +601,51 @@ document.getElementById(
                 <input
                     id="newPassword"
                     type="password"
-                    class="w-full rounded-lg border px-3 py-2">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        bg-white
+                        px-3
+                        py-2.5
+                        text-slate-800
+                        outline-none
+                        transition
+                        focus:border-purple-500
+                        focus:ring-2
+                        focus:ring-purple-100
+                    ">
 
             </div>
 
-            <div class="flex flex-col-reverse gap-3 md:flex-row md:justify-end">
+
+            <div
+                class="
+                    flex
+                    flex-col-reverse
+                    gap-3
+                    pt-3
+                    md:flex-row
+                    md:justify-end
+                ">
 
                 <button
                     type="button"
                     id="cancelPasswordBtn"
-                    class="w-full rounded-lg border px-4 py-2 md:w-auto">
+                    class="
+                        w-full
+                        rounded-xl
+                        border
+                        border-slate-300
+                        px-4
+                        py-2.5
+                        font-medium
+                        text-slate-700
+                        transition
+                        hover:bg-slate-100
+                        md:w-auto
+                    ">
 
                     Cancel
 
@@ -310,7 +653,20 @@ document.getElementById(
 
                 <button
                     type="submit"
-                    class="w-full rounded-lg bg-slate-600 px-4 py-2 text-white md:w-auto">
+                    class="
+        w-full
+        rounded-xl
+        bg-indigo-500
+        px-5
+        py-2.5
+        text-sm
+        font-semibold
+        text-white
+        shadow-sm
+        transition
+        hover:bg-indigo-700
+        md:w-auto
+    ">
 
                     Update
 
@@ -319,6 +675,122 @@ document.getElementById(
             </div>
 
         </form>
+
+    </div>
+
+</div>
+
+<br>
+<div
+    class="
+        mt-6
+        rounded-2xl
+        border
+        border-slate-200
+        bg-gradient-to-br
+        from-white
+        via-purple-50/40
+        to-indigo-50/50
+        p-5
+        shadow-sm
+        sm:p-6
+    ">
+
+    <div
+        class="mb-5">
+
+        <div
+            class="
+                text-lg
+                font-semibold
+                text-slate-800
+            ">
+
+            POS Version
+
+        </div>
+
+        <div
+            class="
+                mt-1
+                text-sm
+                text-slate-500
+            ">
+
+            Set the latest Align POS version available.
+
+        </div>
+
+    </div>
+
+
+    <div
+        class="
+            flex
+            flex-col
+            gap-3
+            sm:flex-row
+            sm:items-end
+        ">
+
+        <div
+            class="w-full sm:max-w-xs">
+
+            <label
+                for="latestPosVersion"
+                class="
+                    mb-1.5
+                    block
+                    text-sm
+                    font-medium
+                    text-slate-700
+                ">
+
+                Latest Version
+
+            </label>
+
+            <input
+                id="latestPosVersion"
+                type="text"
+                placeholder="1.0.0"
+                class="
+                    w-full
+                    rounded-xl
+                    border
+                    border-slate-300
+                    bg-white
+                    p-3
+                    text-slate-800
+                    outline-none
+                    transition
+                    focus:border-indigo-500
+                    focus:ring-2
+                    focus:ring-indigo-100
+                ">
+
+        </div>
+
+
+        <button
+            id="savePosVersionBtn"
+            onclick="saveLatestPosVersion()"
+            class="
+                rounded-xl
+                bg-indigo-500
+                px-5
+                py-3
+                text-sm
+                font-semibold
+                text-white
+                shadow-sm
+                transition
+                hover:bg-indigo-700
+            ">
+
+            Save Version
+
+        </button>
 
     </div>
 

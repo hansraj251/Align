@@ -675,7 +675,7 @@ function renderStudents() {
                 return `
 
                     <tr
-                        class="border-t border-slate-100 hover:bg-slate-200">
+                        class="border-slate-100 hover:bg-slate-200">
 
                         <td
                             class="px-3 py-4 sm:px-6">

@@ -302,7 +302,7 @@ function renderStaff(
                     return `
 
                         <tr
-    class="border-t border-slate-200 align-middle transition-colors hover:bg-slate-200">
+    class="border-slate-200 align-middle transition-colors hover:bg-slate-200">
 
                             <td
                                 class="whitespace-nowrap px-3 py-3 text-sm text-slate-600">
@@ -699,7 +699,7 @@ function renderSalaryHistory(
                     return `
 
                         <tr
-    class="border-t border-slate-200 align-middle transition-colors hover:bg-slate-200">
+    class="border-slate-200 align-middle transition-colors hover:bg-slate-200">
 
                             <td
                                 class="px-4 py-3 text-sm text-slate-700">

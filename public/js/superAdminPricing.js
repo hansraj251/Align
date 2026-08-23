@@ -57,7 +57,7 @@ function renderPricing() {
 
             html += `
 
-<tr class="border-t">
+<tr>
 
 <td class="p-4">
 

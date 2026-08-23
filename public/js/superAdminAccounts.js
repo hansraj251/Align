@@ -1,3 +1,69 @@
+async function loadLatestPosVersion() {
+
+    const response =
+        await API.get(
+            "/api/super-admin/app-version"
+        );
+
+    if (!response.success) {
+
+        Notify.error(
+            response.message
+        );
+
+        return;
+
+    }
+
+    document.getElementById(
+        "latestPosVersion"
+    ).value =
+        response.latest_version || "";
+
+}
+async function saveLatestPosVersion() {
+
+    const input =
+        document.getElementById(
+            "latestPosVersion"
+        );
+
+    const version =
+        input.value.trim();
+
+    if (!version) {
+
+        Notify.error(
+            "Version is required."
+        );
+
+        return;
+
+    }
+
+    const response =
+        await API.put(
+            "/api/super-admin/app-version",
+            {
+                version
+            }
+        );
+
+    if (!response.success) {
+
+        Notify.error(
+            response.message
+        );
+
+        return;
+
+    }
+
+    Notify.success(
+        "Latest POS version updated successfully."
+    );
+
+}
 function initializeSuperAdminAccounts() {
 
     bindEvents();
@@ -834,3 +900,4 @@ async function savePassword(
     }
 
 }
+loadLatestPosVersion();
