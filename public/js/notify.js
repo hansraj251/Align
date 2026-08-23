@@ -46,29 +46,26 @@ const Notify = {
 
         switch (type) {
 
-            case "error":
+    case "error":
 
-                toast.classList.add(
-                    "bg-red-600"
-                );
+        toast.style.background =
+            "linear-gradient(90deg, #b83280 0%, #7b3fc6 50%, #4338ca 100%)";
 
-                break;
+        break;
 
-            case "info":
+    case "info":
 
-                toast.classList.add(
-                    "bg-slate-600"
-                );
+        toast.style.background =
+            "linear-gradient(90deg, #7b3fc6 0%, #4f46a5 50%, #2454c7 100%)";
 
-                break;
+        break;
 
-            default:
+    default:
 
-                toast.classList.add(
-                    "bg-green-600"
-                );
+        toast.style.background =
+            "linear-gradient(90deg, #c13bbd 0%, #7b3fc6 50%, #2454c7 100%)";
 
-        }
+}
 
         toast.style.opacity = "1";
         toast.style.transform =
