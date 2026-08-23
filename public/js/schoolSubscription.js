@@ -321,6 +321,17 @@ class="rounded-xl bg-slate-600 px-6 py-3 text-white hover:bg-blue-700">
 ${buttonText}
 
 </button>
+<a
+
+href="/downloads/Align.apk"
+
+download
+
+class="rounded-xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 hover:bg-slate-50">
+
+Download Align School App
+
+</a>
 
 </div>
 
