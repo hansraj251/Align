@@ -2,6 +2,31 @@ Auth.requireSchoolOwner();
 
 async function loadSchool() {
 
+    const sidebarSchoolLogo =
+        document.getElementById(
+            "sidebarSchoolLogo"
+        );
+
+    const savedSchoolLogo =
+        localStorage.getItem(
+            "schoolLogo"
+        );
+
+    if (
+        sidebarSchoolLogo &&
+        savedSchoolLogo
+    ) {
+
+        sidebarSchoolLogo.src =
+            savedSchoolLogo;
+
+        sidebarSchoolLogo.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
     try {
 
         const data =
@@ -19,31 +44,36 @@ async function loadSchool() {
 
         }
 
+
         const school =
             data.school;
+
 
         document.getElementById(
             "schoolName"
         ).textContent =
             school.name;
-        const sidebarSchoolLogo =
-    document.getElementById(
-        "sidebarSchoolLogo"
-    );
 
-if (
-    school.logo
-) {
 
-    sidebarSchoolLogo.src =
-        school.logo;
+        if (
+            sidebarSchoolLogo &&
+            school.logo
+        ) {
 
-    sidebarSchoolLogo.classList.remove(
-        "hidden"
-    );
+            sidebarSchoolLogo.src =
+                school.logo;
 
-}
+            sidebarSchoolLogo.classList.remove(
+                "hidden"
+            );
 
+
+            localStorage.setItem(
+                "schoolLogo",
+                school.logo
+            );
+
+        }
 
     }
     catch (err) {
@@ -174,24 +204,7 @@ const data =
     ?
 
     `
-        <div
-            class="mt-4 rounded-xl border border-indigo-100 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 text-center">
-
-            <p
-                class="text-xs font-medium text-purple-600">
-
-                Today
-
-            </p>
-
-            <p
-                class="mt-1 text-lg font-bold text-indigo-700">
-
-                Holiday
-
-            </p>
-
-        </div>
+        
     `
 
     :
@@ -384,16 +397,27 @@ async function loadTodayAttendance() {
                 "todayAttendance"
             );
 
-        if (
-            attendanceElement
-        ) {
+   if (
+    attendanceElement
+) {
 
-            attendanceElement.textContent =
-    `${Number(
-        data.attendancePercentage || 0
-    ).toFixed(1)}%`;
+    if (
+        data.isHoliday
+    ) {
 
-        }
+        attendanceElement.textContent =
+            "Holiday";
+
+    } else {
+
+        attendanceElement.textContent =
+            `${Number(
+                data.attendancePercentage || 0
+            ).toFixed(1)}%`;
+
+    }
+
+}
 
     }
     catch (err) {
