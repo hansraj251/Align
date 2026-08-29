@@ -1,0 +1,559 @@
+const db = require("../db");
+
+
+/*
+|--------------------------------------------------------------------------
+| Create Listing
+|--------------------------------------------------------------------------
+*/
+
+exports.create = async (
+
+    sellerId,
+
+    title,
+
+    subtitle,
+
+    description,
+
+    price,
+
+    priceType,
+
+    rentAmount,
+
+    tokenRequired,
+
+    tokenAmount,
+
+    status,
+
+    moderationStatus,
+
+    contactPreference
+
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            INSERT INTO property_listings
+            (
+                seller_id,
+                title,
+                subtitle,
+                description,
+                price,
+                price_type,
+                rent_amount,
+                token_required,
+                token_amount,
+                status,
+                moderation_status,
+                contact_preference
+            )
+            VALUES
+            (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            `,
+            [
+
+                sellerId,
+
+                title,
+
+                subtitle,
+
+                description,
+
+                price,
+
+                priceType,
+
+                rentAmount,
+
+                tokenRequired,
+
+                tokenAmount,
+
+                status,
+
+                moderationStatus,
+
+                contactPreference
+
+            ]
+        );
+
+
+    return await exports.getById(
+        result.lastID
+    );
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Listing By ID
+|--------------------------------------------------------------------------
+*/
+
+exports.getById = async (
+
+    listingId
+
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            l.*,
+            u.name AS seller_name
+        FROM property_listings l
+        INNER JOIN property_users u
+            ON u.id = l.seller_id
+        WHERE l.id = ?
+        `,
+        [
+            listingId
+        ]
+    );
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Listing For Seller
+|--------------------------------------------------------------------------
+*/
+
+exports.getByIdForSeller = async (
+
+    listingId,
+
+    sellerId
+
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            *
+        FROM property_listings
+        WHERE id = ?
+        AND seller_id = ?
+        `,
+        [
+            listingId,
+            sellerId
+        ]
+    );
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Seller Listings
+|--------------------------------------------------------------------------
+*/
+
+exports.getSellerListings = async (
+
+    sellerId
+
+) => {
+
+    const listings =
+        await db.allAsync(
+            `
+            SELECT
+                l.*
+            FROM property_listings l
+            WHERE l.seller_id = ?
+            ORDER BY
+                l.created_at DESC
+            `,
+            [
+                sellerId
+            ]
+        );
+
+
+    for (
+        const listing of listings
+    ) {
+
+        listing.images =
+            await db.allAsync(
+                `
+                SELECT
+                    id,
+                    image_url,
+                    sort_order,
+                    is_cover
+                FROM property_listing_images
+                WHERE listing_id = ?
+                ORDER BY
+                    is_cover DESC,
+                    sort_order ASC,
+                    id ASC
+                `,
+                [
+                    listing.id
+                ]
+            );
+
+    }
+
+
+    return listings;
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Published Listings
+|--------------------------------------------------------------------------
+*/
+
+exports.getPublishedListings = async () => {
+
+    const listings =
+        await db.allAsync(
+            `
+            SELECT
+                l.id,
+                l.title,
+                l.subtitle,
+                l.description,
+                l.price,
+                l.price_type,
+                l.rent_amount,
+                l.token_required,
+                l.token_amount,
+                l.contact_preference,
+                l.created_at
+            FROM property_listings l
+            WHERE l.status = 'published'
+            AND l.moderation_status = 'approved'
+            ORDER BY
+                l.created_at DESC
+            `
+        );
+
+
+    for (
+        const listing of listings
+    ) {
+
+        listing.images =
+            await db.allAsync(
+                `
+                SELECT
+                    id,
+                    image_url,
+                    sort_order,
+                    is_cover
+                FROM property_listing_images
+                WHERE listing_id = ?
+                ORDER BY
+                    is_cover DESC,
+                    sort_order ASC,
+                    id ASC
+                `,
+                [
+                    listing.id
+                ]
+            );
+
+    }
+
+
+    return listings;
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Update Listing
+|--------------------------------------------------------------------------
+*/
+
+exports.update = async (
+
+    listingId,
+
+    sellerId,
+
+    title,
+
+    subtitle,
+
+    description,
+
+    price,
+
+    priceType,
+
+    rentAmount,
+
+    tokenRequired,
+
+    tokenAmount,
+
+    contactPreference
+
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE property_listings
+        SET
+
+            title = ?,
+
+            subtitle = ?,
+
+            description = ?,
+
+            price = ?,
+
+            price_type = ?,
+
+            rent_amount = ?,
+
+            token_required = ?,
+
+            token_amount = ?,
+
+            contact_preference = ?,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+
+        AND seller_id = ?
+        `,
+        [
+
+            title,
+
+            subtitle,
+
+            description,
+
+            price,
+
+            priceType,
+
+            rentAmount,
+
+            tokenRequired,
+
+            tokenAmount,
+
+            contactPreference,
+
+            listingId,
+
+            sellerId
+
+        ]
+    );
+
+
+    return await exports.getById(
+        listingId
+    );
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Update Listing Status
+|--------------------------------------------------------------------------
+*/
+
+exports.updateStatus = async (
+
+    listingId,
+
+    sellerId,
+
+    status
+
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE property_listings
+        SET
+
+            status = ?,
+
+            updated_at =
+                CURRENT_TIMESTAMP
+
+        WHERE id = ?
+
+        AND seller_id = ?
+        `,
+        [
+
+            status,
+
+            listingId,
+
+            sellerId
+
+        ]
+    );
+
+
+    return await exports.getById(
+        listingId
+    );
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Delete Listing
+|--------------------------------------------------------------------------
+*/
+
+exports.delete = async (
+
+    listingId,
+
+    sellerId
+
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            DELETE FROM property_listings
+
+            WHERE id = ?
+
+            AND seller_id = ?
+            `,
+            [
+                listingId,
+                sellerId
+            ]
+        );
+
+
+    return result.changes;
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Published Listing By ID
+|--------------------------------------------------------------------------
+*/
+
+exports.getPublishedById = async (
+
+    listingId
+
+) => {
+
+    const listing =
+        await db.getAsync(
+            `
+            SELECT
+                l.id,
+                l.seller_id,
+                l.title,
+                l.subtitle,
+                l.description,
+                l.price,
+                l.price_type,
+                l.rent_amount,
+                l.token_required,
+                l.token_amount,
+                l.contact_preference,
+                l.created_at,
+
+                u.name AS seller_name,
+                u.mobile AS seller_mobile
+
+            FROM property_listings l
+
+            INNER JOIN property_users u
+                ON u.id = l.seller_id
+
+            WHERE l.id = ?
+
+            AND l.status = 'published'
+
+            AND l.moderation_status = 'approved'
+            `,
+            [
+                listingId
+            ]
+        );
+
+
+    if (
+        !listing
+    ) {
+
+        return null;
+
+    }
+
+
+    listing.images =
+        await db.allAsync(
+            `
+            SELECT
+                id,
+                image_url,
+                sort_order,
+                is_cover
+
+            FROM property_listing_images
+
+            WHERE listing_id = ?
+
+            ORDER BY
+                is_cover DESC,
+                sort_order ASC,
+                id ASC
+            `,
+            [
+                listingId
+            ]
+        );
+
+
+    return listing;
+
+};

@@ -49,6 +49,18 @@ const createSuperAdminTable =
 const createAppVersionTable =
 require("./schema/appVersion");
 
+const createPropertyUsersTable =
+    require("./schema/propertyUsers");
+
+const createPropertyListingsTable =
+    require("./schema/propertyListings");
+
+const createPropertyListingImagesTable =
+    require("./schema/propertyListingImages");
+
+const createPropertyContactRequestsTable =
+    require("./schema/propertyContactRequests");
+
 const seedPlans =
     require("./seed/planSeed");
 
@@ -101,6 +113,14 @@ async function initializeDatabase() {
     await createSuperAdminTable();
 
     await createAppVersionTable();
+
+    await createPropertyUsersTable();
+
+    await createPropertyListingsTable();
+
+    await createPropertyListingImagesTable();
+
+    await createPropertyContactRequestsTable();
 
     await runMigrations();
 

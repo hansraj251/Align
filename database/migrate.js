@@ -732,9 +732,146 @@ console.log(
 
     }
 
+
+    const contactRequestColumns =
+        await db.allAsync(
+            `
+            PRAGMA table_info(
+                property_contact_requests
+            )
+            `
+        );
+
+    const hasContactShared =
+        contactRequestColumns.some(
+            column =>
+                column.name ===
+                "contact_shared"
+        );
+
+    if (
+        !hasContactShared
+    ) {
+
+        console.log(
+            "⚠️ Adding property_contact_requests.contact_shared..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                property_contact_requests
+            ADD COLUMN
+                contact_shared INTEGER
+                NOT NULL DEFAULT 0
+            `
+        );
+
+        console.log(
+            "✅ contact_shared added successfully."
+        );
+
+    }
+
+    const hasContactSharedAt =
+        contactRequestColumns.some(
+            column =>
+                column.name ===
+                "contact_shared_at"
+        );
+
+    if (
+        !hasContactSharedAt
+    ) {
+
+        console.log(
+            "⚠️ Adding property_contact_requests.contact_shared_at..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                property_contact_requests
+            ADD COLUMN
+                contact_shared_at DATETIME
+            `
+        );
+
+        console.log(
+            "✅ contact_shared_at added successfully."
+        );
+
+    }
+        const contactRequestTokenColumns =
+        await db.allAsync(
+            `
+            PRAGMA table_info(
+                property_contact_requests
+            )
+            `
+        );
+
+    const hasBuyerAccessTokenHash =
+        contactRequestTokenColumns.some(
+            column =>
+                column.name ===
+                "buyer_access_token_hash"
+        );
+
+    if (
+        !hasBuyerAccessTokenHash
+    ) {
+
+        console.log(
+            "⚠️ Adding property_contact_requests.buyer_access_token_hash..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                property_contact_requests
+            ADD COLUMN
+                buyer_access_token_hash TEXT
+            `
+        );
+
+        console.log(
+            "✅ buyer_access_token_hash added successfully."
+        );
+
+    }
+
+    const hasBuyerAccessTokenExpiresAt =
+        contactRequestTokenColumns.some(
+            column =>
+                column.name ===
+                "buyer_access_token_expires_at"
+        );
+
+    if (
+        !hasBuyerAccessTokenExpiresAt
+    ) {
+
+        console.log(
+            "⚠️ Adding property_contact_requests.buyer_access_token_expires_at..."
+        );
+
+        await db.runAsync(
+            `
+            ALTER TABLE
+                property_contact_requests
+            ADD COLUMN
+                buyer_access_token_expires_at DATETIME
+            `
+        );
+
+        console.log(
+            "✅ buyer_access_token_expires_at added successfully."
+        );
+
+    }
+
 }
-
-
 
 module.exports =
     runMigrations;

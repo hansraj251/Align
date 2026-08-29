@@ -69,6 +69,32 @@ app.use(
 );
 
 app.use(
+    "/api/property/auth",
+    require("./routes/propertyAuthRoutes")
+);
+app.use(
+    "/api/property/listings",
+    require("./routes/propertyListingRoutes")
+);
+app.use(
+    "/api/property/listings",
+    require("./routes/propertyListingRoutes")
+);
+
+app.use(
+    "/api/property/listings",
+    require("./routes/propertyListingImageRoutes")
+);
+app.use(
+    "/api/property/contact",
+    require("./routes/propertyContactRequestRoutes")
+);
+app.use(
+    "/api/property/moderation",
+    require("./routes/propertyModerationRoutes")
+);
+
+app.use(
     "/api/restaurants",
     require("./routes/restaurantRoutes")
 );
