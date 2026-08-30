@@ -1,4 +1,44 @@
 Auth.requireAttendanceUser();
+let currentSubscription = null;
+
+async function loadSubscription() {
+    try {
+        const data = await API.get("/api/subscription/school");
+
+        if (!data.success) {
+            Notify.error(data.message || "Unable to load subscription");
+            return;
+        }
+
+        currentSubscription = data.subscription || null;
+    } catch (err) {
+        console.error("Subscription load error:", err);
+    }
+}
+
+function isSubscriptionBlocked() {
+    const status = (
+        currentSubscription?.subscription_status || ""
+    ).toLowerCase();
+
+    return status === "expired" || status === "suspended";
+}
+
+function getSubscriptionBlockMessage() {
+    const status = (
+        currentSubscription?.subscription_status || ""
+    ).toLowerCase();
+
+    if (status === "suspended") {
+        return "Your subscription is suspended. Please contact Align Support.";
+    }
+
+    if (status === "expired") {
+        return "Your subscription has expired. Please renew your subscription.";
+    }
+
+    return "Your subscription does not allow this action.";
+}
 let isAttendanceUser =
     false;
 const token =
@@ -877,6 +917,10 @@ async function saveStudentAttendance(
     studentId,
     status
 ) {
+     if (isSubscriptionBlocked()) {
+        Notify.error(getSubscriptionBlockMessage());
+        return;
+    }
 
     try {
 
@@ -978,6 +1022,10 @@ async function saveStudentAttendance(
 
 
 async function markAllPresent() {
+     if (isSubscriptionBlocked()) {
+        Notify.error(getSubscriptionBlockMessage());
+        return;
+    }
 
     if (
         !students.length
@@ -1141,7 +1189,10 @@ function escapeHtml(
 }
 
 
-loadAttendance();
+(async function initAttendancePage() {
+    await loadSubscription();
+    await loadAttendance();
+})();
 
 setInterval(
     async () => {

@@ -407,7 +407,6 @@ function formatDate(date) {
         );
 
 }
-loadSubscription();
 
 
 let subscriptionRefreshTimer = null;

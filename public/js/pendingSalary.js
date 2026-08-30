@@ -1,5 +1,47 @@
 Auth.requireSchoolOwner();
+let currentSubscription = null;
 
+async function loadSubscription() {
+    const data = await API.get("/api/subscription/school");
+
+    if (!data.success) {
+        Notify.error(data.message || "Unable to load subscription");
+        return;
+    }
+
+    currentSubscription = data.subscription || null;
+}
+
+function getSubscriptionStatus() {
+    return String(
+        currentSubscription?.subscription_status ||
+        currentSubscription?.status ||
+        ""
+    ).trim().toLowerCase();
+}
+
+function isSubscriptionBlocked() {
+    const status = getSubscriptionStatus();
+
+    return (
+        status === "expired" ||
+        status === "suspended"
+    );
+}
+
+function getSubscriptionBlockMessage() {
+    const status = getSubscriptionStatus();
+
+    if (status === "expired") {
+        return "Your subscription has expired. Please renew your subscription.";
+    }
+
+    if (status === "suspended") {
+        return "Your subscription is suspended. Please contact Align Support.";
+    }
+
+    return "Your subscription does not allow this action.";
+}
 const salaryMonth =
     document.getElementById(
         "salaryMonth"
@@ -381,6 +423,10 @@ function renderStaff(
 function openSalaryPayment(
     teacherId
 ) {
+    if (isSubscriptionBlocked()) {
+        Notify.error(getSubscriptionBlockMessage());
+        return;
+    }
 
     const staff =
         pendingSalaryStaff.find(
@@ -644,4 +690,8 @@ salaryPaymentModal.addEventListener(
     }
 );
 
-loadPendingSalary();
+
+(async function initSalaryPage() {
+    await loadSubscription();
+    await loadPendingSalary();
+})();

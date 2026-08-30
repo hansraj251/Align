@@ -1,5 +1,47 @@
 Auth.requireSchoolOwner();
+let currentSubscription = null;
 
+async function loadSubscription() {
+    const data = await API.get("/api/subscription/school");
+
+    if (!data.success) {
+        Notify.error(data.message || "Unable to load subscription");
+        return;
+    }
+
+    currentSubscription = data.subscription || null;
+}
+
+function getSubscriptionStatus() {
+    return String(
+        currentSubscription?.subscription_status ||
+        currentSubscription?.status ||
+        ""
+    ).trim().toLowerCase();
+}
+
+function isSubscriptionBlocked() {
+    const status = getSubscriptionStatus();
+
+    return (
+        status === "expired" ||
+        status === "suspended"
+    );
+}
+
+function getSubscriptionBlockMessage() {
+    const status = getSubscriptionStatus();
+
+    if (status === "expired") {
+        return "Your subscription has expired. Please renew your subscription.";
+    }
+
+    if (status === "suspended") {
+        return "Your subscription is suspended. Please contact Align Support.";
+    }
+
+    return "Your subscription does not allow this action.";
+}
 const salaryStaffTableBody =
     document.getElementById(
         "salaryStaffTableBody"
@@ -88,7 +130,10 @@ const salaryHistoryBody =
         "salaryHistoryBody"
     );
 
-loadStaff();
+(async function initSalaryPage() {
+    await loadSubscription();
+    await loadStaff();
+})();
 closeSalaryFormBtn.addEventListener(
     "click",
     closeSalaryForm
@@ -452,6 +497,10 @@ function formatCurrency(
 async function openSalary(
     teacherId
 ) {
+     if (isSubscriptionBlocked()) {
+        Notify.error(getSubscriptionBlockMessage());
+        return;
+    }
 
     try {
 
@@ -904,7 +953,11 @@ salaryFormElement.addEventListener(
 );
 async function saveSalary(
     event
-) {
+) { 
+    if (isSubscriptionBlocked()) {
+        Notify.error(getSubscriptionBlockMessage());
+        return;
+    }
 
     event.preventDefault();
 
