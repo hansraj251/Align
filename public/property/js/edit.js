@@ -192,6 +192,129 @@ document.addEventListener(
                 "contactRequest"
             );
 
+        const stateInput =
+            document.getElementById(
+                "propertyState"
+            );
+
+        const cityInput =
+            document.getElementById(
+                "propertyCity"
+            );
+
+        const locationData =
+            window.PROPERTY_LOCATIONS || {};
+
+        const populateCities = (
+            selectedState = "",
+            selectedCity = ""
+        ) => {
+
+            if (!stateInput || !cityInput) {
+                return;
+            }
+
+            if (
+                stateInput.options.length <= 1
+            ) {
+
+                Object.keys(locationData)
+                    .sort((a, b) =>
+                        a.localeCompare(
+                            b,
+                            undefined,
+                            {
+                                sensitivity: "base"
+                            }
+                        )
+                    )
+                    .forEach(state => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value = state;
+                        option.textContent = state;
+
+                        stateInput.appendChild(
+                            option
+                        );
+                    });
+            }
+
+            stateInput.value =
+                selectedState || "";
+
+            cityInput.innerHTML = "";
+
+            const cities =
+                locationData[
+                    selectedState
+                ] || [];
+
+            if (!selectedState) {
+
+                cityInput.disabled = true;
+
+                cityInput.innerHTML =
+                    '<option value="">Select State First</option>';
+
+                return;
+            }
+
+            cityInput.disabled = false;
+
+            cityInput.innerHTML =
+                '<option value="">Select City</option>';
+
+            cities
+                .slice()
+                .sort((a, b) =>
+                    a.localeCompare(
+                        b,
+                        undefined,
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+                )
+                .forEach(city => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value = city;
+                    option.textContent = city;
+
+                    cityInput.appendChild(
+                        option
+                    );
+                });
+
+            cityInput.value =
+                selectedCity || "";
+        };
+
+        stateInput?.addEventListener(
+            "change",
+            () => {
+
+                populateCities(
+                    stateInput.value,
+                    ""
+                );
+            }
+        );
+
+        const addressInput =
+            document.getElementById(
+                "propertyAddress"
+            );
+
 
         /*
         |--------------------------------------------------------------------------
@@ -354,6 +477,17 @@ document.addEventListener(
                     descriptionInput.value =
                         listing.description ||
                         "";
+
+                    populateCities(
+                        listing.state || "",
+                        listing.city || ""
+                    );
+
+                    if (addressInput) {
+                        addressInput.value =
+                            listing.address ||
+                            "";
+                    }
 
 
                     if (
@@ -1183,7 +1317,16 @@ const renderNewPhotoPreview = () => {
 
                     priceType,
 
-                    contactPreference
+                    contactPreference,
+
+                    state:
+                        stateInput?.value.trim() || null,
+
+                    city:
+                        cityInput?.value.trim() || null,
+
+                    address:
+                        addressInput?.value.trim() || null
 
                 };
                 const newPhotos =

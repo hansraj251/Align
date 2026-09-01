@@ -42,6 +42,14 @@ async function createPropertyListingsTable() {
 
             rent_amount REAL,    
 
+                        location TEXT,
+            address TEXT,
+            city TEXT,
+            state TEXT,
+            pincode TEXT,
+            latitude REAL,
+            longitude REAL,
+
             FOREIGN KEY (seller_id)
                 REFERENCES property_users(id)
                 ON DELETE CASCADE

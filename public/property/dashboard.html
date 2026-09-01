@@ -502,7 +502,7 @@
             "
         >
         </div>
-<!-- Property Search -->
+<!-- Property Search & City Filter -->
 
 <div
     class="
@@ -516,48 +516,82 @@
     "
 >
 
-    <div class="relative">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
-        <input
-            id="propertySearch"
-            type="search"
-            placeholder="Search"
-            autocomplete="off"
-            class="
-                w-full
-                rounded-xl
-                border
-                border-slate-300
-                bg-white
-                px-4
-                py-3
-                pr-10
-                text-sm
-                text-slate-800
-                outline-none
-                transition
-                focus:border-indigo-500
-                focus:ring-2
-                focus:ring-indigo-100
-            "
-        >
+        <!-- Search -->
 
-        <button
-            id="clearPropertySearch"
-            type="button"
-            class="
-                absolute
-                right-3
-                top-1/2
-                hidden
-                -translate-y-1/2
-                text-slate-400
-                hover:text-slate-700
-            "
-            aria-label="Clear search"
-        >
-            ✕
-        </button>
+        <div class="relative">
+
+            <input
+                id="propertySearch"
+                type="search"
+                placeholder="Search properties"
+                autocomplete="off"
+                class="
+                    w-full
+                    rounded-xl
+                    border
+                    border-slate-300
+                    bg-white
+                    px-4
+                    py-3
+                    pr-10
+                    text-sm
+                    text-slate-800
+                    outline-none
+                    transition
+                    focus:border-indigo-500
+                    focus:ring-2
+                    focus:ring-indigo-100
+                "
+            >
+
+            <button
+                id="clearPropertySearch"
+                type="button"
+                class="
+                    absolute
+                    right-3
+                    top-1/2
+                    hidden
+                    -translate-y-1/2
+                    text-slate-400
+                    hover:text-slate-700
+                "
+                aria-label="Clear search"
+            >
+                ✕
+            </button>
+
+        </div>
+
+        <!-- City Filter -->
+
+        <div>
+
+            <select
+                id="propertyCityFilter"
+                class="
+                    w-full
+                    rounded-xl
+                    border
+                    border-slate-300
+                    bg-white
+                    px-4
+                    py-3
+                    text-sm
+                    text-slate-800
+                    outline-none
+                    transition
+                    focus:border-indigo-500
+                    focus:ring-2
+                    focus:ring-indigo-100
+                "
+            >
+                <option value="">All Cities</option>
+            </select>
+
+        </div>
 
     </div>
 

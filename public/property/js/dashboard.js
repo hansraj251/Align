@@ -7,6 +7,7 @@ let currentProperties = [];
 const API = "/api/property/listings";
 
 
+
 const $ = id =>
     document.getElementById(id);
 
@@ -529,7 +530,9 @@ const loadProperties =
             );
             allProperties = listings;
 
+
 currentPage = 1;
+populateCityFilter();
 
 renderProperties(
     listings,
@@ -966,6 +969,65 @@ const renderPagination = (
         );
 
 };
+const populateCityFilter = () => {
+
+        const cityFilter =
+            document.getElementById(
+                "propertyCityFilter"
+            );
+
+        if (!cityFilter) {
+            return;
+        }
+
+        const cities = [
+            ...new Set(
+                allProperties
+                    .map(
+                        listing =>
+                            String(
+                                listing.city || ""
+                            ).trim()
+                    )
+                    .filter(Boolean)
+            )
+        ].sort(
+            (a, b) =>
+                a.localeCompare(
+                    b,
+                    undefined,
+                    {
+                        sensitivity: "base"
+                    }
+                )
+        );
+
+
+        cityFilter.innerHTML = `
+            <option value="">
+                All Cities
+            </option>
+        `;
+
+
+        cities.forEach(city => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value = city;
+            option.textContent = city;
+
+            cityFilter.appendChild(
+                option
+            );
+
+        });
+
+    };
+
 const setupPropertySearch = () => {
 
     const searchInput =
@@ -978,11 +1040,22 @@ const setupPropertySearch = () => {
             "clearPropertySearch"
         );
 
+    const cityFilter =
+        document.getElementById(
+            "propertyCityFilter"
+        );
+
 
     if (!searchInput) {
         return;
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Populate City Dropdown
+    |--------------------------------------------------------------------------
+    */
 
     const performSearch = () => {
 
@@ -991,28 +1064,33 @@ const setupPropertySearch = () => {
                 .trim()
                 .toLowerCase();
 
+        const selectedCity =
+            cityFilter?.value
+                .trim()
+                .toLowerCase() || "";
 
-        if (!keyword) {
+
+        const hasAnyFilter =
+            Boolean(
+                keyword ||
+                selectedCity
+            );
+
+
+        if (hasAnyFilter) {
+
+            clearButton?.classList.remove(
+                "hidden"
+            );
+
+        }
+        else {
 
             clearButton?.classList.add(
                 "hidden"
             );
 
-            currentPage = 1;
-
-renderProperties(
-    allProperties,
-    1
-);
-
-            return;
-
         }
-
-
-        clearButton?.classList.remove(
-            "hidden"
-        );
 
 
         const filteredProperties =
@@ -1034,11 +1112,89 @@ renderProperties(
                             listing.description || ""
                         ).toLowerCase();
 
+                    const location =
+                        String(
+                            listing.location || ""
+                        ).toLowerCase();
+
+                    const address =
+                        String(
+                            listing.address || ""
+                        ).toLowerCase();
+
+                    const city =
+                        String(
+                            listing.city || ""
+                        ).toLowerCase();
+
+                    const state =
+                        String(
+                            listing.state || ""
+                        ).toLowerCase();
+
+                    const pincode =
+                        String(
+                            listing.pincode || ""
+                        ).toLowerCase();
+
+
+                    /*
+                    |----------------------------------------------------------------------
+                    | Normal search
+                    |----------------------------------------------------------------------
+                    */
+
+                    const searchMatches =
+                        !keyword ||
+
+                        title.includes(
+                            keyword
+                        ) ||
+
+                        subtitle.includes(
+                            keyword
+                        ) ||
+
+                        description.includes(
+                            keyword
+                        ) ||
+
+                        location.includes(
+                            keyword
+                        ) ||
+
+                        address.includes(
+                            keyword
+                        ) ||
+
+                        city.includes(
+                            keyword
+                        ) ||
+
+                        state.includes(
+                            keyword
+                        ) ||
+
+                        pincode.includes(
+                            keyword
+                        );
+
+
+                    /*
+                    |----------------------------------------------------------------------
+                    | Selected city filter
+                    |----------------------------------------------------------------------
+                    */
+
+                    const cityMatches =
+                        !selectedCity ||
+
+                        city === selectedCity;
+
 
                     return (
-                        title.includes(keyword) ||
-                        subtitle.includes(keyword) ||
-                        description.includes(keyword)
+                        searchMatches &&
+                        cityMatches
                     );
 
                 }
@@ -1047,16 +1203,28 @@ renderProperties(
 
         currentPage = 1;
 
-renderProperties(
-    filteredProperties,
-    1
-);
+        renderProperties(
+            filteredProperties,
+            1
+        );
 
     };
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Events
+    |--------------------------------------------------------------------------
+    */
+
     searchInput.addEventListener(
         "input",
+        performSearch
+    );
+
+
+    cityFilter?.addEventListener(
+        "change",
         performSearch
     );
 
@@ -1067,6 +1235,10 @@ renderProperties(
 
             searchInput.value = "";
 
+            if (cityFilter) {
+                cityFilter.value = "";
+            }
+
             searchInput.focus();
 
             performSearch();
@@ -1074,8 +1246,8 @@ renderProperties(
         }
     );
 
-};    
 
+};
 
 /*
 |--------------------------------------------------------------------------

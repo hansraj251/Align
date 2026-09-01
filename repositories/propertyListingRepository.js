@@ -31,7 +31,12 @@ exports.create = async (
 
     moderationStatus,
 
-    contactPreference
+    contactPreference,
+    location,
+address,
+city,
+state,
+pincode
 
 ) => {
 
@@ -51,10 +56,20 @@ exports.create = async (
                 token_amount,
                 status,
                 moderation_status,
-                contact_preference
+                contact_preference,
+                location,
+address,
+city,
+state,
+pincode
             )
             VALUES
             (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
                 ?,
                 ?,
                 ?,
@@ -93,7 +108,12 @@ exports.create = async (
 
                 moderationStatus,
 
-                contactPreference
+                contactPreference,
+                location,
+address,
+city,
+state,
+pincode
 
             ]
         );
@@ -249,7 +269,14 @@ exports.getPublishedListings = async () => {
                 l.token_required,
                 l.token_amount,
                 l.contact_preference,
-                l.created_at
+l.location,
+l.address,
+l.city,
+l.state,
+l.pincode,
+l.latitude,
+l.longitude,
+l.created_at
             FROM property_listings l
             WHERE l.status = 'published'
             AND l.moderation_status = 'approved'
@@ -319,13 +346,26 @@ exports.update = async (
 
     tokenAmount,
 
-    contactPreference
+    contactPreference,
+
+    location,
+
+    address,
+
+    city,
+
+    state,
+
+    pincode
 
 ) => {
 
     await db.runAsync(
+
         `
+
         UPDATE property_listings
+
         SET
 
             title = ?,
@@ -346,13 +386,26 @@ exports.update = async (
 
             contact_preference = ?,
 
+            location = ?,
+
+            address = ?,
+
+            city = ?,
+
+            state = ?,
+
+            pincode = ?,
+
             updated_at =
+
                 CURRENT_TIMESTAMP
 
         WHERE id = ?
 
         AND seller_id = ?
+
         `,
+
         [
 
             title,
@@ -373,20 +426,33 @@ exports.update = async (
 
             contactPreference,
 
+            location,
+
+            address,
+
+            city,
+
+            state,
+
+            pincode,
+
             listingId,
 
             sellerId
 
         ]
+
     );
 
+    return await exports.getByIdForSeller(
 
-    return await exports.getById(
-        listingId
+        listingId,
+
+        sellerId
+
     );
 
 };
-
 
 /*
 |--------------------------------------------------------------------------

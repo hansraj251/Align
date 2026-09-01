@@ -170,6 +170,99 @@ if (
         'input[name="contactPreference"]'
     );    
 
+        const stateInput =
+            document.getElementById(
+                "state"
+            );
+
+        const cityInput =
+            document.getElementById(
+                "city"
+            );
+
+        const locationData =
+            window.PROPERTY_LOCATIONS || {};
+
+        if (stateInput && cityInput) {
+
+            Object.keys(locationData)
+                .sort((a, b) =>
+                    a.localeCompare(
+                        b,
+                        undefined,
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+                )
+                .forEach(state => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value = state;
+                    option.textContent = state;
+
+                    stateInput.appendChild(
+                        option
+                    );
+                });
+
+            stateInput.addEventListener(
+                "change",
+                () => {
+
+                    cityInput.innerHTML = "";
+
+                    const state =
+                        stateInput.value;
+
+                    if (!state) {
+
+                        cityInput.disabled = true;
+
+                        cityInput.innerHTML =
+                            '<option value="">Select State First</option>';
+
+                        return;
+                    }
+
+                    cityInput.disabled = false;
+
+                    cityInput.innerHTML =
+                        '<option value="">Select City</option>';
+
+                    (locationData[state] || [])
+                        .slice()
+                        .sort((a, b) =>
+                            a.localeCompare(
+                                b,
+                                undefined,
+                                {
+                                    sensitivity: "base"
+                                }
+                            )
+                        )
+                        .forEach(city => {
+
+                            const option =
+                                document.createElement(
+                                    "option"
+                                );
+
+                            option.value = city;
+                            option.textContent = city;
+
+                            cityInput.appendChild(
+                                option
+                            );
+                        });
+                }
+            );
+        }
+
         const submitButton =
             document.getElementById(
                 "propertyFormSubmitBtn"
@@ -474,6 +567,20 @@ rentAmount:
         : Number(
             rentValue
         ),
+    location:
+    document.getElementById("location")?.value.trim() || null,
+
+address:
+    document.getElementById("address")?.value.trim() || null,
+
+city:
+    document.getElementById("city")?.value.trim() || null,
+
+state:
+    document.getElementById("state")?.value.trim() || null,
+
+pincode:
+    document.getElementById("pincode")?.value.trim() || null,    
 
     contactPreference:
         document.querySelector(

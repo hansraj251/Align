@@ -408,7 +408,21 @@ if (
 
         tokenAmount,
 
-        contactPreference
+        contactPreference,
+        location:
+    data.location?.trim() || null,
+
+address:
+    data.address?.trim() || null,
+
+city:
+    data.city?.trim() || null,
+
+state:
+    data.state?.trim() || null,
+
+pincode:
+    data.pincode?.trim() || null
 
     };
 
@@ -458,7 +472,12 @@ async (
 
             "approved",
 
-            listing.contactPreference
+            listing.contactPreference,
+            listing.location,
+listing.address,
+listing.city,
+listing.state,
+listing.pincode
 
         );
 
@@ -575,7 +594,12 @@ async (
 
             listing.tokenAmount,
 
-            listing.contactPreference
+            listing.contactPreference,
+            listing.location,
+listing.address,
+listing.city,
+listing.state,
+listing.pincode
 
         );
 
