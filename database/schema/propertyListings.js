@@ -36,6 +36,11 @@ async function createPropertyListingsTable() {
 
             updated_at DATETIME
                 DEFAULT CURRENT_TIMESTAMP,
+            
+            contact_preference TEXT
+                NOT NULL DEFAULT 'show',
+
+            rent_amount REAL,    
 
             FOREIGN KEY (seller_id)
                 REFERENCES property_users(id)

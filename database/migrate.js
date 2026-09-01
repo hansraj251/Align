@@ -870,6 +870,56 @@ console.log(
         );
 
     }
+        /*
+     * Migration 9:
+     * property_listings.rent_amount
+     */
+
+    const propertyListingColumns =
+        await db.allAsync(
+            `
+                PRAGMA table_info(
+                    property_listings
+                )
+            `
+        );
+
+    const hasRentAmount =
+        propertyListingColumns.some(
+            column =>
+                column.name ===
+                "rent_amount"
+        );
+
+    if (
+        hasRentAmount
+    ) {
+
+        console.log(
+            "✅ property_listings.rent_amount schema is up to date."
+        );
+
+    }
+    else {
+
+        console.log(
+            "⚠️ Adding property_listings.rent_amount..."
+        );
+
+        await db.runAsync(
+            `
+                ALTER TABLE
+                    property_listings
+                ADD COLUMN
+                    rent_amount REAL
+            `
+        );
+
+        console.log(
+            "✅ property_listings.rent_amount added successfully."
+        );
+
+    }
 
 }
 
