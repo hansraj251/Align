@@ -872,7 +872,7 @@ console.log(
     }
         /*
      * Migration 9:
-     * property_listings.rent_amount
+     * Add property listing contact/rent fields
      */
 
     const propertyListingColumns =
@@ -884,23 +884,45 @@ console.log(
             `
         );
 
-    const hasRentAmount =
-        propertyListingColumns.some(
-            column =>
-                column.name ===
-                "rent_amount"
+    const propertyListingColumnNames =
+        new Set(
+            propertyListingColumns.map(
+                column => column.name
+            )
         );
 
     if (
-        hasRentAmount
+        !propertyListingColumnNames.has(
+            "contact_preference"
+        )
     ) {
 
         console.log(
-            "✅ property_listings.rent_amount schema is up to date."
+            "⚠️ Adding property_listings.contact_preference..."
+        );
+
+        await db.runAsync(
+            `
+                ALTER TABLE
+                    property_listings
+                ADD COLUMN
+                    contact_preference TEXT
+                    NOT NULL
+                    DEFAULT 'show'
+            `
+        );
+
+        console.log(
+            "✅ contact_preference added."
         );
 
     }
-    else {
+
+    if (
+        !propertyListingColumnNames.has(
+            "rent_amount"
+        )
+    ) {
 
         console.log(
             "⚠️ Adding property_listings.rent_amount..."
@@ -916,7 +938,7 @@ console.log(
         );
 
         console.log(
-            "✅ property_listings.rent_amount added successfully."
+            "✅ rent_amount added."
         );
 
     }
