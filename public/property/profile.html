@@ -325,6 +325,13 @@
             <div class="property-header-actions">
 
                 <a
+            href="/property/saved.html"
+            class="property-header-button"
+            >
+            ♥ View Saved
+        </a>
+
+                <a
                     href="/property/dashboard.html"
                     class="property-header-button"
                 >
@@ -482,11 +489,7 @@
                         "
                         placeholder="Enter your name"
                     >
-
-                </div>
-
-
-                <!-- Email -->
+         <!-- Email -->
 
                 <div>
 
@@ -563,10 +566,8 @@
                         placeholder="Enter your mobile number"
                     >
 
-                </div>
-
-
-                <!-- Save -->
+                </div>   
+                 <!-- Save -->
 
                 <div class="pt-2">
 
@@ -582,6 +583,68 @@
 
                     </button>
 
+                </div>         
+                <!-- My Listings -->
+<section
+    id="myListingsSection"
+    class="mt-8 border-t border-slate-200 pt-8"
+>
+    <div class="mb-5">
+        <h2 class="text-xl font-bold text-slate-800">
+            My Listings
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+            Properties you have listed for sale or rent.
+        </p>
+    </div>
+
+    <!-- Loading -->
+    <div
+        id="listingsLoading"
+        class="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500"
+    >
+        Loading your listings...
+    </div>
+
+    <!-- Error -->
+    <div
+        id="listingsError"
+        class="hidden rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+    ></div>
+
+    <!-- Empty -->
+    <div
+        id="listingsEmpty"
+        class="hidden rounded-xl border border-slate-200 bg-slate-50 p-6 text-center"
+    >
+        <div class="text-3xl">🏠</div>
+
+        <h3 class="mt-3 font-semibold text-slate-700">
+            No listings yet
+        </h3>
+
+        <p class="mt-1 text-sm text-slate-500">
+            Properties you sell or rent will appear here.
+        </p>
+
+        <a
+            href="/property/sell.html"
+            class="mt-4 inline-flex rounded-xl px-5 py-3 text-sm font-semibold text-white"
+            style="background: linear-gradient(90deg, #c13bbd, #7b3fc6, #2454c7);"
+        >
+            List a Property
+        </a>
+    </div>
+
+    <!-- Listings -->
+    <div
+        id="listingsContainer"
+        class="hidden space-y-4"
+    ></div>
+</section>   
+
+
                 </div>
 
 
@@ -590,12 +653,24 @@
         </div>
 
     </main>
+<div id="modalContainer"></div>
+<script src="/js/notify.js"></script>
 
+    <script src="/js/toast.js"></script>
 
+    <script src="/js/components.js"></script>
     <script
         src="/property/js/profile.js"
     ></script>
+<script src="/js/modal.js"></script>
+<script>
 
+loadComponent(
+    "modalContainer",
+    "/components/modal.html"
+);
+
+</script>
 </body>
 
 </html>

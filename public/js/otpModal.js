@@ -76,21 +76,17 @@ async function verifyOtp() {
 
     }
 
-    const data =
-        await API.post(
+    const verifyEndpoint =
+    window.otpVerifyEndpoint ||
+    "/api/auth/verify-otp";
 
-            "/api/auth/verify-otp",
-
-            {
-
-                email:
-                    window.signupEmail,
-
-                otp
-
-            }
-
-        );
+const data = await API.post(
+    verifyEndpoint,
+    {
+        email: window.signupEmail,
+        otp
+    }
+);
 
     if (!data.success) {
 
@@ -121,16 +117,14 @@ async function verifyOtp() {
         "Signup successful. Redirecting...";
 
     setTimeout(
+    () => {
 
-        () => {
+        window.location.href =
+            window.otpSuccessRedirect ||
+            "/login.html";
 
-            window.location.href =
-                "/login.html";
-
-        },
-
-        1500
-
-    );
+    },
+    1500
+);
 
 }

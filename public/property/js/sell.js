@@ -154,10 +154,7 @@ if (
 
 }     
 
-        const tokenAmountInput =
-            document.getElementById(
-                "propertyTokenAmount"
-            );
+        
 
         const photosInput =
             document.getElementById(
@@ -366,9 +363,6 @@ if (
 const rentValue =
     rentInput.value.trim();
 
-const tokenAmountValue =
-    tokenAmountInput.value.trim();
-
 
                 const files =
                     Array.from(
@@ -480,18 +474,6 @@ rentAmount:
         : Number(
             rentValue
         ),
-
-tokenRequired:
-        Boolean(
-            tokenAmountValue
-        ),
-
-    tokenAmount:
-        tokenAmountValue === ""
-            ? null
-            : Number(
-                tokenAmountValue
-            ),
 
     contactPreference:
         document.querySelector(
@@ -752,9 +734,20 @@ tokenRequired:
                         "Published";
 
 
-                    alert(
-                        "Property published successfully."
-                    );
+                    Toast.show(
+    "Property published successfully.",
+    "success"
+);
+
+setTimeout(
+    () => {
+
+        window.location.href =
+            "/property/dashboard.html";
+
+    },
+    800
+);
 
 
                     window.location.href =

@@ -57,7 +57,8 @@ const createPropertyListingsTable =
 
 const createPropertyListingImagesTable =
     require("./schema/propertyListingImages");
-
+const createPropertyListingSavesTable =
+    require("./schema/propertyListingSaves");
 const createPropertyContactRequestsTable =
     require("./schema/propertyContactRequests");
 
@@ -119,6 +120,7 @@ async function initializeDatabase() {
     await createPropertyListingsTable();
 
     await createPropertyListingImagesTable();
+    await createPropertyListingSavesTable();
 
     await createPropertyContactRequestsTable();
 

@@ -6,7 +6,7 @@ const propertyListingImageRepository =
 
 
 const MAX_IMAGES =
-    5;
+    8;
 
 
 exports.addImages =

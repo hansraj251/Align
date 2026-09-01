@@ -207,3 +207,26 @@ exports.updateProfile = async (
     );
 
 };
+exports.updatePassword = async (
+    userId,
+    passwordHash
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            UPDATE property_users
+            SET
+                password = ?,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            `,
+            [
+                passwordHash,
+                userId
+            ]
+        );
+
+    return result.changes;
+
+};

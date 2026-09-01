@@ -760,3 +760,144 @@ async (
     return listing;
 
 };
+
+/*
+|--------------------------------------------------------------------------
+| Save Listing
+|--------------------------------------------------------------------------
+*/
+
+exports.saveListing = async (
+    userId,
+    listingId
+) => {
+
+    const listing =
+        await propertyListingRepository
+            .getById(
+                listingId
+            );
+
+    if (!listing) {
+
+        throw new Error(
+            "Property not found."
+        );
+
+    }
+
+
+    await propertyListingRepository
+        .saveListing(
+            userId,
+            listingId
+        );
+
+
+    return {
+        success: true,
+        saved: true
+    };
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Unsave Listing
+|--------------------------------------------------------------------------
+*/
+
+exports.unsaveListing = async (
+    userId,
+    listingId
+) => {
+
+    const listing =
+        await propertyListingRepository
+            .getById(
+                listingId
+            );
+
+    if (!listing) {
+
+        throw new Error(
+            "Property not found."
+        );
+
+    }
+
+
+    await propertyListingRepository
+        .unsaveListing(
+            userId,
+            listingId
+        );
+
+
+    return {
+        success: true,
+        saved: false
+    };
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Check Saved Listing
+|--------------------------------------------------------------------------
+*/
+
+exports.isListingSaved = async (
+    userId,
+    listingId
+) => {
+
+    const listing =
+        await propertyListingRepository
+            .getById(
+                listingId
+            );
+
+    if (!listing) {
+
+        throw new Error(
+            "Property not found."
+        );
+
+    }
+
+
+    const saved =
+        await propertyListingRepository
+            .isListingSaved(
+                userId,
+                listingId
+            );
+
+
+    return {
+        success: true,
+        saved
+    };
+
+};
+
+
+/*
+|--------------------------------------------------------------------------
+| Get Saved Listings
+|--------------------------------------------------------------------------
+*/
+
+exports.getSavedListings = async (
+    userId
+) => {
+
+    return await propertyListingRepository
+        .getSavedListings(
+            userId
+        );
+
+};

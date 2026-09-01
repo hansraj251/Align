@@ -1,9 +1,4 @@
 let allProperties = [];
-const PAGE_SIZE = 40;
-
-let currentPage = 1;
-
-let currentProperties = [];
 const API = "/api/property/listings";
 
 
@@ -109,28 +104,243 @@ const shuffleProperties = properties => {
 };
 
 
-const getTotalPages = properties => {
-    return Math.max(
-        1,
-        Math.ceil(properties.length / PAGE_SIZE)
-    );
-};
+const getDashboardProperties =
+    properties => {
+
+        if (
+            properties.length <= 1
+        ) {
+
+            return properties;
+
+        }
 
 
-const getPageProperties = (
-    properties,
-    page
-) => {
+        /*
+         * Short feed.
+         *
+         * Maximum 8 properties are shown
+         * on dashboard.
+         */
 
-    const start =
-        (page - 1) * PAGE_SIZE;
+        const feedSize =
+            Math.min(
+                8,
+                properties.length
+            );
 
-    return properties.slice(
-        start,
-        start + PAGE_SIZE
-    );
 
-};
+        /*
+         * Random order on every load.
+         */
+
+        const shuffled =
+            shuffleProperties(
+                properties
+            );
+
+
+        /*
+         * Previous dashboard feed.
+         *
+         * Used only to avoid unnecessary
+         * repetition on refresh.
+         */
+
+        let previousIds = [];
+
+        try {
+
+            previousIds =
+                JSON.parse(
+                    sessionStorage.getItem(
+                        "propertyDashboardFeed"
+                    ) || "[]"
+                );
+
+        }
+        catch {
+
+            previousIds = [];
+
+        }
+
+
+        const previousSet =
+            new Set(
+                previousIds.map(
+                    Number
+                )
+            );
+
+
+        /*
+         * Prefer properties which were
+         * not in the previous feed.
+         */
+
+        const fresh =
+            shuffled.filter(
+                property =>
+                    !previousSet.has(
+                        Number(
+                            property.id
+                        )
+                    )
+            );
+
+
+        const previous =
+            shuffled.filter(
+                property =>
+                    previousSet.has(
+                        Number(
+                            property.id
+                        )
+                    )
+            );
+
+
+        /*
+         * 90-95% fresh properties.
+         * 5-10% previous properties.
+         */
+
+        const repeatCount =
+            Math.min(
+                previous.length,
+                Math.max(
+                    1,
+                    Math.floor(
+                        feedSize * 0.05
+                    )
+                )
+            );
+
+
+        const freshCount =
+            Math.min(
+                fresh.length,
+                feedSize - repeatCount
+            );
+
+
+        const selected = [
+
+            ...fresh.slice(
+                0,
+                freshCount
+            ),
+
+            ...previous.slice(
+                0,
+                repeatCount
+            )
+
+        ];
+
+
+        /*
+         * If there aren't enough fresh
+         * properties, fill remaining slots
+         * from shuffled list.
+         */
+
+        if (
+            selected.length <
+            feedSize
+        ) {
+
+            const selectedIds =
+                new Set(
+                    selected.map(
+                        property =>
+                            Number(
+                                property.id
+                            )
+                    )
+                );
+
+
+            for (
+                const property of shuffled
+            ) {
+
+                if (
+                    selected.length >=
+                    feedSize
+                ) {
+
+                    break;
+
+                }
+
+
+                if (
+                    !selectedIds.has(
+                        Number(
+                            property.id
+                        )
+                    )
+                ) {
+
+                    selected.push(
+                        property
+                    );
+
+                    selectedIds.add(
+                        Number(
+                            property.id
+                        )
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        /*
+         * Shuffle the final feed again
+         * so repeated properties aren't
+         * always placed at the same position.
+         */
+
+        const finalFeed =
+            shuffleProperties(
+                selected
+            );
+
+
+        /*
+         * Remember this feed for the
+         * next dashboard load.
+         */
+
+        try {
+
+            sessionStorage.setItem(
+                "propertyDashboardFeed",
+                JSON.stringify(
+                    finalFeed.map(
+                        property =>
+                            property.id
+                    )
+                )
+            );
+
+        }
+        catch {
+
+            // Ignore storage errors.
+
+        }
+
+
+        return finalFeed;
+
+    };
 
 /*
 |--------------------------------------------------------------------------
@@ -529,11 +739,13 @@ const loadProperties =
             );
             allProperties = listings;
 
-currentPage = 1;
+const dashboardProperties =
+    getDashboardProperties(
+        listings
+    );
 
 renderProperties(
-    listings,
-    1
+    dashboardProperties
 );
 
 
@@ -614,49 +826,10 @@ const renderProperties = listings => {
         );
 
 
-    currentProperties =
-        listings;
-
-
-    const totalPages =
-        Math.max(
-            1,
-            Math.ceil(
-                listings.length /
-                PAGE_SIZE
-            )
-        );
-
-
-    if (
-        currentPage >
-        totalPages
-    ) {
-
-        currentPage =
-            totalPages;
-
-    }
-
-
-    const start =
-        (
-            currentPage - 1
-        ) *
-        PAGE_SIZE;
-
-
-    const pageProperties =
-        listings.slice(
-            start,
-            start + PAGE_SIZE
-        );
-
-
     if (list) {
 
         list.innerHTML =
-            pageProperties
+            listings
                 .map(
                     listing =>
                         renderPropertyCard(
@@ -668,9 +841,7 @@ const renderProperties = listings => {
     }
 
 
-    if (
-        listings.length === 0
-    ) {
+    if (listings.length === 0) {
 
         list.classList.add(
             "hidden"
@@ -709,262 +880,6 @@ const renderProperties = listings => {
 
     }
 
-
-    renderPagination(
-        listings.length,
-        currentPage
-    );
-
-};
-const renderPagination = (
-    totalItems,
-    page
-) => {
-
-    const pagination =
-        document.getElementById(
-            "propertyPagination"
-        );
-
-    if (!pagination) {
-        return;
-    }
-
-    const totalPages =
-        Math.ceil(
-            totalItems /
-            PAGE_SIZE
-        );
-
-    if (totalPages <= 1) {
-
-        pagination.innerHTML = "";
-
-        return;
-
-    }
-
-    const createButton = (
-        label,
-        targetPage,
-        disabled = false,
-        active = false
-    ) => {
-
-        return `
-            <button
-                type="button"
-                data-page="${targetPage}"
-                ${disabled ? "disabled" : ""}
-                class="
-                    min-w-[42px]
-                    h-10
-                    px-3
-                    rounded-xl
-                    border
-                    text-sm
-                    font-semibold
-                    transition
-                    ${
-                        active
-                            ? "border-indigo-500 bg-indigo-500 text-white shadow-md"
-                            : "border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50"
-                    }
-                    ${
-                        disabled
-                            ? "cursor-not-allowed opacity-40"
-                            : "cursor-pointer"
-                    }
-                "
-            >
-                ${label}
-            </button>
-        `;
-
-    };
-
-
-    let html = `
-
-        <div
-            class="
-                flex
-                w-full
-                flex-col
-                items-center
-                justify-between
-                gap-4
-                rounded-2xl
-                border
-                border-slate-200
-                bg-white
-                px-4
-                py-4
-                shadow-sm
-                sm:flex-row
-            "
-        >
-
-            <div
-                class="
-                    text-sm
-                    font-medium
-                    text-slate-600
-                "
-            >
-                Page
-                <span
-                    class="font-bold text-slate-900"
-                >
-                    ${page}
-                </span>
-
-                of
-
-                <span
-                    class="font-bold text-slate-900"
-                >
-                    ${totalPages}
-                </span>
-            </div>
-
-            <div
-                class="
-                    flex
-                    flex-wrap
-                    items-center
-                    justify-center
-                    gap-2
-                "
-            >
-
-    `;
-
-
-    html += createButton(
-        "‹",
-        page - 1,
-        page === 1
-    );
-
-
-    /*
-     * Page numbers
-     */
-
-    for (
-        let i = 1;
-        i <= totalPages;
-        i++
-    ) {
-
-        /*
-         * Don't show every number when
-         * there are many pages.
-         */
-
-        if (
-            totalPages > 7 &&
-            i !== 1 &&
-            i !== totalPages &&
-            Math.abs(i - page) > 2
-        ) {
-
-            if (
-                i === 2 ||
-                i === totalPages - 1
-            ) {
-
-                html += `
-                    <span
-                        class="
-                            px-1
-                            text-slate-400
-                        "
-                    >
-                        …
-                    </span>
-                `;
-
-            }
-
-            continue;
-
-        }
-
-
-        html += createButton(
-            i,
-            i,
-            false,
-            i === page
-        );
-
-    }
-
-
-    html += createButton(
-        "›",
-        page + 1,
-        page === totalPages
-    );
-
-
-    html += `
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    pagination.innerHTML =
-        html;
-
-
-    pagination
-        .querySelectorAll(
-            "button[data-page]"
-        )
-        .forEach(
-            button => {
-
-                button.addEventListener(
-                    "click",
-                    () => {
-
-                        const targetPage =
-                            Number(
-                                button.dataset.page
-                            );
-
-                        if (
-                            targetPage < 1 ||
-                            targetPage > totalPages ||
-                            targetPage === page
-                        ) {
-                            return;
-                        }
-
-                        currentPage =
-                            targetPage;
-
-                        renderProperties(
-                            currentProperties
-                        );
-
-                        window.scrollTo({
-                            top: 0,
-                            behavior: "smooth"
-                        });
-
-                    }
-                );
-
-            }
-        );
-
 };
 const setupPropertySearch = () => {
 
@@ -998,12 +913,9 @@ const setupPropertySearch = () => {
                 "hidden"
             );
 
-            currentPage = 1;
-
-renderProperties(
-    allProperties,
-    1
-);
+            renderProperties(
+                allProperties
+            );
 
             return;
 
@@ -1045,12 +957,9 @@ renderProperties(
             );
 
 
-        currentPage = 1;
-
-renderProperties(
-    filteredProperties,
-    1
-);
+        renderProperties(
+            filteredProperties
+        );
 
     };
 

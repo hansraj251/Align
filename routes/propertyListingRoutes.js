@@ -33,7 +33,26 @@ router.get(
     propertyAuthMiddleware,
     propertyListingController.getMine
 );
+router.get(
 
+    "/saved",
+
+    propertyAuthMiddleware,
+
+    propertyListingController.getSavedListings
+
+);
+router.post(
+    "/:id/save",
+    propertyAuthMiddleware,
+    propertyListingController.saveListing
+);
+
+router.delete(
+    "/:id/save",
+    propertyAuthMiddleware,
+    propertyListingController.unsaveListing
+);
 router.get(
     "/mine/:id",
     propertyAuthMiddleware,

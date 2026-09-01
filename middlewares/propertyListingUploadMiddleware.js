@@ -122,7 +122,7 @@ const uploadPropertyImages =
             fileSize:
                 5 * 1024 * 1024,
 
-            files: 5
+            files: 8
 
         }
 
@@ -130,7 +130,7 @@ const uploadPropertyImages =
 
         "photos",
 
-        5
+        8
 
     );
 

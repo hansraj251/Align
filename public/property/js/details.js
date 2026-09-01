@@ -31,6 +31,20 @@ document.addEventListener(
             document.getElementById(
                 "propertySubtitle"
             );
+        const savePropertyBtn =
+    document.getElementById(
+        "savePropertyBtn"
+    );
+
+const savePropertyIcon =
+    document.getElementById(
+        "savePropertyIcon"
+    );
+
+const savePropertyText =
+    document.getElementById(
+        "savePropertyText"
+    );    
 
         
         const salePriceElement =
@@ -159,6 +173,333 @@ const rentElement =
                 );
 
             };
+        /*
+|--------------------------------------------------------------------------
+| Saved Property
+|--------------------------------------------------------------------------
+*/
+
+const propertyToken =
+    () =>
+        localStorage.getItem(
+            "propertyToken"
+        );
+
+
+const updateSaveButton =
+    saved => {
+
+        if (!savePropertyBtn) {
+
+            return;
+
+        }
+
+        if (saved) {
+
+            savePropertyIcon.textContent =
+                "♥";
+
+            savePropertyText.textContent =
+                "Saved";
+
+            savePropertyBtn.classList.remove(
+                "text-slate-700"
+            );
+
+            savePropertyBtn.classList.add(
+                "text-pink-600"
+            );
+
+        }
+        else {
+
+            savePropertyIcon.textContent =
+                "♡";
+
+            savePropertyText.textContent =
+                "Save";
+
+            savePropertyBtn.classList.remove(
+                "text-pink-600"
+            );
+
+            savePropertyBtn.classList.add(
+                "text-slate-700"
+            );
+
+        }
+
+    };
+
+
+const checkSavedStatus =
+    async () => {
+
+        const token =
+            propertyToken();
+
+        if (!token) {
+
+            updateSaveButton(
+                false
+            );
+
+            return;
+
+        }
+        if (savePropertyBtn) {
+
+    savePropertyBtn.addEventListener(
+        "click",
+        toggleSavedProperty
+     );
+
+        }
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/property/listings/saved",
+                    {
+                        method: "GET",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${token}`,
+
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                updateSaveButton(
+                    false
+                );
+
+                return;
+
+            }
+
+
+            if (!response.ok) {
+
+                return;
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !data.success ||
+                !Array.isArray(
+                    data.listings
+                )
+            ) {
+
+                return;
+
+            }
+
+
+            const saved =
+                data.listings.some(
+                    listing =>
+                        Number(
+                            listing.id
+                        ) ===
+                        Number(
+                            listingId
+                        )
+                );
+
+
+            updateSaveButton(
+                saved
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Check saved property error:",
+                error
+            );
+
+        }
+
+    };
+
+
+const toggleSavedProperty =
+    async () => {
+
+        const token =
+            propertyToken();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Login required
+        |--------------------------------------------------------------------------
+        */
+
+        if (!token) {
+
+            window.location.href =
+                `/property/login.html?redirect=${encodeURIComponent(
+                    `details.html?id=${listingId}`
+                )}`;
+
+            return;
+
+        }
+
+
+        const currentlySaved =
+            savePropertyText.textContent ===
+            "Saved";
+
+
+        savePropertyBtn.disabled =
+            true;
+
+        savePropertyText.textContent =
+            currentlySaved
+                ? "Removing..."
+                : "Saving...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `/api/property/listings/${encodeURIComponent(
+                        listingId
+                    )}/save`,
+                    {
+                        method:
+                            currentlySaved
+                                ? "DELETE"
+                                : "POST",
+
+                        headers: {
+                            "Authorization":
+                                `Bearer ${token}`,
+
+                            "Accept":
+                                "application/json"
+                        }
+                    }
+                );
+
+
+            let data = {};
+
+            try {
+
+                data =
+                    await response.json();
+
+            }
+            catch {
+
+                throw new Error(
+                    "Invalid server response."
+                );
+
+            }
+
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "propertyToken"
+                );
+
+                localStorage.removeItem(
+                    "propertyUser"
+                );
+
+
+                window.location.href =
+                    `/property/login.html?redirect=${encodeURIComponent(
+                        `details.html?id=${listingId}`
+                    )}`;
+
+                return;
+
+            }
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to update saved property."
+                );
+
+            }
+
+
+            updateSaveButton(
+                Boolean(
+                    data.saved
+                )
+            );
+
+
+            Toast.show(
+                data.saved
+                    ? "Property saved successfully."
+                    : "Property removed from saved.",
+                "success"
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "Save property error:",
+                error
+            );
+
+            Toast.show(
+                error.message ||
+                "Unable to update saved property.",
+                "error"
+            );
+
+            updateSaveButton(
+                currentlySaved
+            );
+
+        }
+        finally {
+
+            savePropertyBtn.disabled =
+                false;
+
+        }
+
+    };    
 
 
         try {
@@ -196,6 +537,7 @@ const rentElement =
 
             const listing =
                 data.listing;
+            await checkSavedStatus();    
             console.log(
     "PROPERTY DEBUG:",
     listing,

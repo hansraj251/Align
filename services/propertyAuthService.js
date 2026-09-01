@@ -154,6 +154,21 @@ async (
 
 };
 
+exports.getByEmailOrMobile = async (
+
+    email,
+
+    mobile
+
+) => {
+
+    return await propertyAuthRepository
+        .getByEmailOrMobile(
+            email,
+            mobile
+        );
+
+};
 
 exports.createUser =
 async (
@@ -385,6 +400,125 @@ exports.updateProfile = async (
             name,
             email || null,
             mobile || null
+        );
+
+};
+exports.createUserFromOtp = async (
+
+    name,
+    email,
+    mobile,
+    passwordHash
+
+) => {
+
+    const cleanName =
+        String(name || "").trim();
+
+    const cleanEmail =
+        String(email || "")
+            .trim()
+            .toLowerCase();
+
+    const cleanMobile =
+        String(mobile || "").trim();
+
+    if (!cleanName) {
+
+        throw new Error(
+            "Name is required"
+        );
+
+    }
+
+    if (!cleanEmail) {
+
+        throw new Error(
+            "Email is required"
+        );
+
+    }
+
+    if (!passwordHash) {
+
+        throw new Error(
+            "Password is required"
+        );
+
+    }
+
+    const existing =
+        await propertyAuthRepository
+            .getByEmailOrMobile(
+                cleanEmail,
+                cleanMobile || null
+            );
+
+    if (existing) {
+
+        throw new Error(
+            "An account with this email or mobile already exists"
+        );
+
+    }
+
+    return await propertyAuthRepository.create(
+
+        cleanName,
+
+        cleanEmail,
+
+        cleanMobile || null,
+
+        passwordHash
+
+    );
+
+};
+exports.getByEmail = async (
+    email
+) => {
+
+    return await propertyAuthRepository
+        .getByEmail(
+            String(email || "")
+                .trim()
+                .toLowerCase()
+        );
+
+};
+
+
+exports.updatePassword = async (
+    userId,
+    password
+) => {
+
+    const cleanPassword =
+        String(
+            password || ""
+        );
+
+    if (
+        cleanPassword.length < 8
+    ) {
+
+        throw new Error(
+            "Password must be at least 8 characters"
+        );
+
+    }
+
+    const passwordHash =
+        await bcrypt.hash(
+            cleanPassword,
+            10
+        );
+
+    return await propertyAuthRepository
+        .updatePassword(
+            userId,
+            passwordHash
         );
 
 };
