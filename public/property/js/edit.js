@@ -314,6 +314,15 @@ document.addEventListener(
             document.getElementById(
                 "propertyAddress"
             );
+        const locationInput =
+    document.getElementById(
+        "propertyLocation"
+    );
+
+const pincodeInput =
+    document.getElementById(
+        "propertyPincode"
+    );    
 
 
         /*
@@ -482,6 +491,15 @@ document.addEventListener(
                         listing.state || "",
                         listing.city || ""
                     );
+                    if (locationInput) {
+    locationInput.value =
+        listing.location || "";
+}
+
+if (pincodeInput) {
+    pincodeInput.value =
+        listing.pincode || "";
+}
 
                     if (addressInput) {
                         addressInput.value =
@@ -1318,6 +1336,12 @@ const renderNewPhotoPreview = () => {
                     priceType,
 
                     contactPreference,
+
+                    location:
+    locationInput?.value.trim() || null,
+
+pincode:
+    pincodeInput?.value.trim() || null,
 
                     state:
                         stateInput?.value.trim() || null,
