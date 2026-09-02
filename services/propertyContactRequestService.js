@@ -272,6 +272,29 @@ async (
             request.seller_id
     };
 };
+exports.deleteRequest =
+async (
+    requestId,
+    sellerId
+) => {
+
+    const deleted =
+        await propertyContactRequestRepository
+            .deleteRequest(
+                requestId,
+                sellerId
+            );
+
+    if (!deleted) {
+
+        throw new Error(
+            "Only your closed contact requests can be deleted"
+        );
+
+    }
+
+    return true;
+};
 exports.getSharedContact =
 async (
     requestId,

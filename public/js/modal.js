@@ -54,6 +54,7 @@ const Modal = {
             try {
 
                 await onSave();
+                Modal.close();
 
             }
 

@@ -157,7 +157,32 @@ async (
     );
 
 };
+exports.deleteRequest =
+async (
+    requestId,
+    sellerId
+) => {
 
+    const result =
+        await db.runAsync(
+            `
+            DELETE FROM property_contact_requests
+            WHERE id = ?
+            AND status = 'closed'
+            AND listing_id IN (
+                SELECT id
+                FROM property_listings
+                WHERE seller_id = ?
+            )
+            `,
+            [
+                requestId,
+                sellerId
+            ]
+        );
+
+    return result.changes > 0;
+};
 exports.updateContactShared =
 async (
     requestId,

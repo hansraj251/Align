@@ -104,6 +104,26 @@ const listingsContainer =
     document.getElementById(
         "listingsContainer"
     );    
+const contactRequestsLoading =
+    document.getElementById(
+        "contactRequestsLoading"
+    );
+
+const contactRequestsError =
+    document.getElementById(
+        "contactRequestsError"
+    );
+
+const contactRequestsEmpty =
+    document.getElementById(
+        "contactRequestsEmpty"
+    );
+
+const contactRequestsContainer =
+    document.getElementById(
+        "contactRequestsContainer"
+    );    
+    
 
 
         /*
@@ -124,24 +144,6 @@ const listingsContainer =
                 );
 
                 successBox.classList.add(
-                    "hidden"
-                );
-
-            };
-
-
-        const showSuccess =
-            message => {
-
-                successBox.textContent =
-                    message ||
-                    "Profile updated successfully.";
-
-                successBox.classList.remove(
-                    "hidden"
-                );
-
-                errorBox.classList.add(
                     "hidden"
                 );
 
@@ -340,6 +342,677 @@ const listingsContainer =
                 }
 
             };
+
+
+/*
+|--------------------------------------------------------------------------
+| Load Contact Requests
+|--------------------------------------------------------------------------
+*/
+
+const loadContactRequests =
+    async () => {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/property/contact-requests/mine",
+                    {
+                        method: "GET",
+                        headers: {
+                            "Accept":
+                                "application/json",
+                            "Authorization":
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+            let data = {};
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch {
+
+                throw new Error(
+                    "Invalid server response."
+                );
+
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Authentication expired
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+
+                localStorage.removeItem(
+                    "propertyToken"
+                );
+
+                localStorage.removeItem(
+                    "propertyUser"
+                );
+
+                window.location.href =
+                    "/property/login.html?redirect=profile";
+
+                return;
+
+            }
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to load contact requests."
+                );
+
+            }
+
+            const requests =
+                Array.isArray(
+                    data.requests
+                )
+                    ? data.requests
+                    : [];
+
+            contactRequestsLoading.classList.add(
+                "hidden"
+            );
+
+            /*
+            |--------------------------------------------------------------------------
+            | Empty
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                requests.length === 0
+            ) {
+
+                contactRequestsContainer.innerHTML =
+                    "";
+
+                contactRequestsContainer.classList.add(
+                    "hidden"
+                );
+
+                contactRequestsEmpty.classList.remove(
+                    "hidden"
+                );
+
+                return;
+
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Render
+            |--------------------------------------------------------------------------
+            */
+
+            contactRequestsContainer.innerHTML =
+                requests
+                    .map(
+                        request =>
+                            renderContactRequest(
+                                request
+                            )
+                    )
+                    .join("");
+
+            contactRequestsContainer.classList.remove(
+                "hidden"
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Contact requests load error:",
+                error
+            );
+
+            contactRequestsLoading.classList.add(
+                "hidden"
+            );
+
+            contactRequestsError.textContent =
+                error.message ||
+                "Unable to load contact requests.";
+
+            contactRequestsError.classList.remove(
+                "hidden"
+            );
+
+        }
+
+    };
+/*
+|--------------------------------------------------------------------------
+| Render Contact Request
+|--------------------------------------------------------------------------
+*/
+
+const renderContactRequest =
+    request => {
+
+        const status =
+            String(
+                request.status || "new"
+            ).toLowerCase();
+
+        const statusClass =
+            status === "contacted"
+                ? "bg-blue-100 text-blue-700"
+                : status === "closed"
+                    ? "bg-slate-100 text-slate-700"
+                    : "bg-amber-100 text-amber-700";
+
+        const createdDate =
+            request.created_at
+                ? new Date(
+                    request.created_at
+                ).toLocaleString(
+                    "en-IN",
+                    {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                )
+                : "";
+
+        const contactShared =
+            Number(
+                request.contact_shared
+            ) === 1;
+
+        return `
+            <div
+                class="
+                    rounded-2xl
+                    border
+                    border-slate-200
+                    bg-white
+                    p-5
+                    shadow-sm
+                "
+            >
+
+                <div
+                    class="
+                        flex
+                        flex-col
+                        gap-4
+                        sm:flex-row
+                        sm:items-start
+                        sm:justify-between
+                    "
+                >
+
+                    <div class="min-w-0">
+
+                        <div class="flex flex-wrap items-center gap-2">
+
+                            <span
+                                class="
+                                    rounded-full
+                                    bg-indigo-50
+                                    px-3
+                                    py-1
+                                    text-xs
+                                    font-semibold
+                                    text-indigo-700
+                                "
+                            >
+                                ${escapeHtml(
+                                    request.listing_title ||
+                                    "Property"
+                                )}
+                            </span>
+
+                            <span
+                                class="
+                                    rounded-full
+                                    px-3
+                                    py-1
+                                    text-xs
+                                    font-semibold
+                                    ${statusClass}
+                                "
+                            >
+                                ${escapeHtml(status)}
+                            </span>
+
+                        </div>
+
+                        <h3
+                            class="
+                                mt-3
+                                text-lg
+                                font-bold
+                                text-slate-800
+                            "
+                        >
+                            ${escapeHtml(
+                                request.buyer_name ||
+                                "Buyer"
+                            )}
+                        </h3>
+
+                        <p class="mt-2 text-sm text-slate-600">
+                            <strong>Mobile:</strong>
+                            ${escapeHtml(
+                                request.buyer_mobile ||
+                                ""
+                            )}
+                        </p>
+
+                        ${
+                            request.message
+                                ? `
+                                    <div
+                                        class="
+                                            mt-3
+                                            rounded-xl
+                                            bg-slate-50
+                                            p-4
+                                            text-sm
+                                            text-slate-600
+                                        "
+                                    >
+                                        <strong>Message:</strong>
+                                        <div class="mt-1">
+                                            ${escapeHtml(
+                                                request.message
+                                            )}
+                                        </div>
+                                    </div>
+                                `
+                                : ""
+                        }
+
+                        ${
+                            createdDate
+                                ? `
+                                    <p
+                                        class="
+                                            mt-3
+                                            text-xs
+                                            text-slate-400
+                                        "
+                                    >
+                                        Requested on ${createdDate}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                    <div
+                        class="
+                            flex
+                            shrink-0
+                            flex-wrap
+                            gap-2
+                        "
+                    >
+
+                        ${
+                            status === "new"
+                                ? `
+                                    <button
+                                        type="button"
+                                        class="
+                                            contact-status-btn
+                                            rounded-xl
+                                            bg-blue-50
+                                            px-4
+                                            py-2.5
+                                            text-sm
+                                            font-semibold
+                                            text-blue-700
+                                            hover:bg-blue-100
+                                        "
+                                        data-request-id="${request.id}"
+                                        data-status="contacted"
+                                    >
+                                        Mark Contacted
+                                    </button>
+                                `
+                                : ""
+                        }
+
+                        ${
+                            status !== "closed"
+                                ? `
+                                    <button
+                                        type="button"
+                                        class="
+                                            contact-status-btn
+                                            rounded-xl
+                                            bg-slate-100
+                                            px-4
+                                            py-2.5
+                                            text-sm
+                                            font-semibold
+                                            text-slate-700
+                                            hover:bg-slate-200
+                                        "
+                                        data-request-id="${request.id}"
+                                        data-status="closed"
+                                    >
+                                        Close
+                                    </button>
+                                `
+                                : ""
+                        }
+                        ${
+    status === "closed"
+        ? `
+            <button
+                type="button"
+                class="
+                    delete-contact-request-btn
+                    rounded-xl
+                    bg-red-50
+                    px-4
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-red-700
+                    hover:bg-red-100
+                "
+                data-request-id="${request.id}"
+            >
+                Delete Request
+            </button>
+        `
+        : ""
+}
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+
+    };
+const deleteContactRequest =
+    async requestId => {
+
+        const response =
+            await fetch(
+                `/api/property/contact-requests/${encodeURIComponent(
+                    requestId
+                )}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Accept":
+                            "application/json",
+                        "Authorization":
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+        let data = {};
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "Invalid server response."
+            );
+
+        }
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            localStorage.removeItem(
+                "propertyToken"
+            );
+
+            localStorage.removeItem(
+                "propertyUser"
+            );
+
+            window.location.href =
+                "/property/login.html?redirect=profile";
+
+            return;
+
+        }
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to delete contact request."
+            );
+
+        }
+
+        await loadContactRequests();
+
+    };    
+/*
+|--------------------------------------------------------------------------
+| Update Contact Request Status
+|--------------------------------------------------------------------------
+*/
+
+const updateContactRequestStatus =
+    async (
+        requestId,
+        status
+    ) => {
+
+        const response =
+            await fetch(
+                `/api/property/contact-requests/${encodeURIComponent(
+                    requestId
+                )}/status`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+                        "Accept":
+                            "application/json",
+                        "Authorization":
+                            `Bearer ${token}`
+                    },
+                    body:
+                        JSON.stringify({
+                            status
+                        })
+                }
+            );
+
+        let data = {};
+
+        try {
+
+            data =
+                await response.json();
+
+        } catch {
+
+            throw new Error(
+                "Invalid server response."
+            );
+
+        }
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+
+            localStorage.removeItem(
+                "propertyToken"
+            );
+
+            localStorage.removeItem(
+                "propertyUser"
+            );
+
+            window.location.href =
+                "/property/login.html?redirect=profile";
+
+            return;
+
+        }
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.message ||
+                "Unable to update request."
+            );
+
+        }
+
+        await loadContactRequests();
+
+    };
+/*
+|--------------------------------------------------------------------------
+| Contact Request Actions
+|--------------------------------------------------------------------------
+*/
+
+contactRequestsContainer.addEventListener(
+    "click",
+    async event => {
+
+        const statusButton =
+            event.target.closest(
+                ".contact-status-btn"
+            );
+
+        if (statusButton) {
+
+            const requestId =
+                statusButton.dataset.requestId;
+
+            const status =
+                statusButton.dataset.status;
+
+            statusButton.disabled = true;
+
+            try {
+
+                await updateContactRequestStatus(
+                    requestId,
+                    status
+                );
+
+                Toast.show(
+                    status === "contacted"
+                        ? "Request marked as contacted."
+                        : "Request closed.",
+                    "success"
+                );
+
+            } catch (error) {
+
+                statusButton.disabled = false;
+
+                Toast.show(
+                    error.message ||
+                    "Unable to update request.",
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+        const deleteButton =
+            event.target.closest(
+                ".delete-contact-request-btn"
+            );
+
+        if (deleteButton) {
+
+            const requestId =
+                deleteButton.dataset.requestId;
+
+            Modal.confirm(
+                "Delete Contact Request",
+                `
+                    <p class="text-slate-600">
+                        Are you sure you want to delete
+                        this contact request?
+                    </p>
+
+                    <p class="mt-2 text-sm text-red-600">
+                        This action cannot be undone.
+                    </p>
+                `,
+                async () => {
+
+                    deleteButton.disabled = true;
+
+                    try {
+
+                        await deleteContactRequest(
+                            requestId
+                        );
+
+                        Toast.show(
+                            "Contact request deleted.",
+                            "success"
+                        );
+
+                    } catch (error) {
+
+                        deleteButton.disabled = false;
+
+                        Toast.show(
+                            error.message ||
+                            "Unable to delete contact request.",
+                            "error"
+                        );
+                    }
+                }
+            );
+        }
+    }
+);    
 
         /*
 |--------------------------------------------------------------------------
@@ -1164,10 +1837,11 @@ const renderListing =
                     }
 
 
-                    showSuccess(
-                        data.message ||
-                        "Profile updated successfully."
-                    );
+                    Toast.show(
+    data.message ||
+    "Profile updated successfully.",
+    "success"
+);
 
                 }
 
@@ -1207,7 +1881,8 @@ const renderListing =
         */
 
         loadProfile();
-        loadMyListings();
+loadMyListings();
+loadContactRequests();
 
     }
 );

@@ -163,6 +163,40 @@ async (
     }
 
 };
+exports.deleteRequest =
+async (
+    req,
+    res
+) => {
+
+    try {
+
+        await propertyContactRequestService
+            .deleteRequest(
+                Number(
+                    req.params.id
+                ),
+                req.propertyUserId
+            );
+
+        return res.json({
+            success: true,
+            message:
+                "Contact request deleted successfully."
+        });
+
+    }
+    catch (err) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                err.message ||
+                "Unable to delete contact request"
+        });
+
+    }
+};
 exports.shareContact =
 async (
     req,

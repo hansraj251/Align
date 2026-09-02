@@ -163,25 +163,18 @@
 
 
         .property-profile-card {
-
-            width: 100%;
-            max-width: 720px;
-
-            margin: 0 auto;
-
-            border:
-                1px solid
-                rgba(123, 63, 198, 0.12);
-
-            border-radius: 20px;
-
-            background: #ffffff;
-
-            box-shadow:
-                0 12px 30px
-                rgba(79, 70, 229, 0.08);
-
-        }
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    border:
+        1px solid
+        rgba(123, 63, 198, 0.12);
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow:
+        0 12px 30px
+        rgba(79, 70, 229, 0.08);
+}
 
 
         .property-save-button {
@@ -451,122 +444,64 @@
             >
 
 
-                <!-- Name -->
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 
-                <div>
+    <!-- Name -->
+    <div>
+        <label
+            for="profileName"
+            class="mb-2 block text-sm font-semibold text-slate-700"
+        >
+            Name
+        </label>
 
-                    <label
-                        for="profileName"
-                        class="
-                            mb-2
-                            block
-                            text-sm
-                            font-semibold
-                            text-slate-700
-                        "
-                    >
-                        Name
-                    </label>
+        <input
+            id="profileName"
+            type="text"
+            maxlength="100"
+            autocomplete="name"
+            class="w-full rounded-xl border border-slate-300 bg-white p-4 text-base outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            placeholder="Enter your name"
+        >
+    </div>
 
-                    <input
-                        id="profileName"
-                        type="text"
-                        maxlength="100"
-                        autocomplete="name"
-                        class="
-                            w-full
-                            rounded-xl
-                            border
-                            border-slate-300
-                            bg-white
-                            p-4
-                            text-base
-                            outline-none
-                            transition
-                            focus:border-indigo-500
-                            focus:ring-2
-                            focus:ring-indigo-100
-                        "
-                        placeholder="Enter your name"
-                    >
-         <!-- Email -->
+    <!-- Email -->
+    <div>
+        <label
+            for="profileEmail"
+            class="mb-2 block text-sm font-semibold text-slate-700"
+        >
+            Email
+        </label>
 
-                <div>
+        <input
+            id="profileEmail"
+            type="email"
+            autocomplete="email"
+            readonly
+            class="w-full cursor-not-allowed rounded-xl border border-slate-200 bg-slate-100 p-4 text-base text-slate-500 outline-none"
+        >
+    </div>
 
-                    <label
-                        for="profileEmail"
-                        class="
-                            mb-2
-                            block
-                            text-sm
-                            font-semibold
-                            text-slate-700
-                        "
-                    >
-                        Email
-                    </label>
+    <!-- Mobile -->
+    <div>
+        <label
+            for="profileMobile"
+            class="mb-2 block text-sm font-semibold text-slate-700"
+        >
+            Mobile
+        </label>
 
-                    <input
-    id="profileEmail"
-    type="email"
-    autocomplete="email"
-    readonly
-    class="
-        w-full
-        rounded-xl
-        border
-        border-slate-200
-        bg-slate-100
-        p-4
-        text-base
-        text-slate-500
-        outline-none
-        cursor-not-allowed
-    "
->
+        <input
+            id="profileMobile"
+            type="tel"
+            autocomplete="tel"
+            class="w-full rounded-xl border border-slate-300 bg-white p-4 text-base outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            placeholder="Enter your mobile number"
+        >
+    </div>
 
-                </div>
-
-
-                <!-- Mobile -->
-
-                <div>
-
-                    <label
-                        for="profileMobile"
-                        class="
-                            mb-2
-                            block
-                            text-sm
-                            font-semibold
-                            text-slate-700
-                        "
-                    >
-                        Mobile
-                    </label>
-
-                    <input
-                        id="profileMobile"
-                        type="tel"
-                        autocomplete="tel"
-                        class="
-                            w-full
-                            rounded-xl
-                            border
-                            border-slate-300
-                            bg-white
-                            p-4
-                            text-base
-                            outline-none
-                            transition
-                            focus:border-indigo-500
-                            focus:ring-2
-                            focus:ring-indigo-100
-                        "
-                        placeholder="Enter your mobile number"
-                    >
-
-                </div>   
+</div>
                  <!-- Save -->
 
                 <div class="pt-2">
@@ -583,7 +518,66 @@
 
                     </button>
 
-                </div>         
+                </div>    
+                
+                <!-- Contact Requests -->
+
+<section
+    id="contactRequestsSection"
+    class="mt-8 border-t border-slate-200 pt-8"
+>
+
+    <div class="mb-5">
+        <h2 class="text-xl font-bold text-slate-800">
+            Contact Requests
+        </h2>
+
+        <p class="mt-1 text-sm text-slate-500">
+            Buyers who have requested your contact details.
+        </p>
+    </div>
+
+    <!-- Loading -->
+
+    <div
+        id="contactRequestsLoading"
+        class="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500"
+    >
+        Loading contact requests...
+    </div>
+
+    <!-- Error -->
+
+    <div
+        id="contactRequestsError"
+        class="hidden mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+    ></div>
+
+    <!-- Empty -->
+
+    <div
+        id="contactRequestsEmpty"
+        class="hidden rounded-xl border border-slate-200 bg-slate-50 p-6 text-center"
+    >
+        <div class="text-3xl">📩</div>
+
+        <h3 class="mt-3 font-semibold text-slate-700">
+            No contact requests
+        </h3>
+
+        <p class="mt-1 text-sm text-slate-500">
+            Buyer contact requests for your properties will appear here.
+        </p>
+    </div>
+
+    <!-- Requests -->
+
+    <div
+        id="contactRequestsContainer"
+        class="hidden space-y-4"
+    ></div>
+
+</section>
                 <!-- My Listings -->
 <section
     id="myListingsSection"
@@ -639,9 +633,9 @@
 
     <!-- Listings -->
     <div
-        id="listingsContainer"
-        class="hidden space-y-4"
-    ></div>
+    id="listingsContainer"
+    class="hidden grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+></div>
 </section>   
 
 

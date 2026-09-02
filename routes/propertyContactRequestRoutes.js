@@ -12,18 +12,15 @@ const propertyAuthMiddleware =
 
 
 // Buyer — no login required
+
 router.post(
     "/:id",
     propertyContactRequestController.create
 );
-// Buyer — view shared seller contact details
 
-router.get(
-    "/:id/contact",
-    propertyContactRequestController.getSharedContact
-);
 
 // Seller — view own contact requests
+
 router.get(
     "/mine",
     propertyAuthMiddleware,
@@ -32,18 +29,22 @@ router.get(
 
 
 // Seller — update request status
+
 router.patch(
     "/:id/status",
     propertyAuthMiddleware,
     propertyContactRequestController.updateStatus
 );
-// Seller — share contact details with buyer
 
-router.patch(
-    "/:id/share",
+
+// Seller — delete closed contact request
+
+router.delete(
+    "/:id",
     propertyAuthMiddleware,
-    propertyContactRequestController.shareContact
+    propertyContactRequestController.deleteRequest
 );
+
 
 module.exports =
     router;
