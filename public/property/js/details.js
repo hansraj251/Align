@@ -1195,7 +1195,7 @@ else {
 
                             const response =
                                 await fetch(
-                                    "/api/property/contact-requests",
+                                    `/api/property/contact-requests/${encodeURIComponent(listingId)}`,
                                     {
                                         method: "POST",
 

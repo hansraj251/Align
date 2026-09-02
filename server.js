@@ -86,7 +86,7 @@ app.use(
     require("./routes/propertyListingImageRoutes")
 );
 app.use(
-    "/api/property/contact",
+    "/api/property/contact-requests",
     require("./routes/propertyContactRequestRoutes")
 );
 app.use(
