@@ -532,12 +532,124 @@ const loadProperties =
 
 
 currentPage = 1;
-populateCityFilter();
 
-renderProperties(
-    listings,
-    1
+/*
+|--------------------------------------------------------------------------
+| Populate State Filter
+|--------------------------------------------------------------------------
+*/
+
+populateStateFilter();
+
+const stateFilter =
+    document.getElementById(
+        "propertyStateFilter"
+    );
+
+const cityFilter =
+    document.getElementById(
+        "propertyCityFilter"
+    );
+
+/*
+|--------------------------------------------------------------------------
+| Restore saved State
+|--------------------------------------------------------------------------
+*/
+
+const savedState =
+    localStorage.getItem(
+        "propertyStateFilter"
+    ) || "";
+
+if (stateFilter) {
+
+    const stateExists =
+        [...stateFilter.options]
+            .some(
+                option =>
+                    option.value ===
+                    savedState
+            );
+
+    stateFilter.value =
+        stateExists
+            ? savedState
+            : "";
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Populate City according to State
+|--------------------------------------------------------------------------
+*/
+
+populateCityFilter(
+    stateFilter?.value || ""
 );
+
+/*
+|--------------------------------------------------------------------------
+| Restore saved City
+|--------------------------------------------------------------------------
+*/
+
+const savedCity =
+    localStorage.getItem(
+        "propertyCityFilter"
+    ) || "";
+
+if (cityFilter) {
+
+    const cityExists =
+        [...cityFilter.options]
+            .some(
+                option =>
+                    option.value ===
+                    savedCity
+            );
+
+    cityFilter.value =
+        cityExists
+            ? savedCity
+            : "";
+
+    if (!cityExists) {
+
+        localStorage.removeItem(
+            "propertyCityFilter"
+        );
+
+    }
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Apply restored filters
+|--------------------------------------------------------------------------
+*/
+
+const searchInput =
+    document.getElementById(
+        "propertySearch"
+    );
+
+if (searchInput) {
+
+    searchInput.dispatchEvent(
+        new Event("input")
+    );
+
+} else {
+
+    renderProperties(
+        listings,
+        1
+    );
+
+}
 
 
             /*
@@ -969,64 +1081,146 @@ const renderPagination = (
         );
 
 };
-const populateCityFilter = () => {
+const populateStateFilter = () => {
 
-        const cityFilter =
-            document.getElementById(
-                "propertyCityFilter"
-            );
-
-        if (!cityFilter) {
-            return;
-        }
-
-        const cities = [
-            ...new Set(
-                allProperties
-                    .map(
-                        listing =>
-                            String(
-                                listing.city || ""
-                            ).trim()
-                    )
-                    .filter(Boolean)
-            )
-        ].sort(
-            (a, b) =>
-                a.localeCompare(
-                    b,
-                    undefined,
-                    {
-                        sensitivity: "base"
-                    }
-                )
+    const stateFilter =
+        document.getElementById(
+            "propertyStateFilter"
         );
 
+    if (!stateFilter) {
+        return;
+    }
 
-        cityFilter.innerHTML = `
-            <option value="">
-                All Cities
-            </option>
-        `;
+    const states = [
+        ...new Set(
+            allProperties
+                .map(
+                    listing =>
+                        String(
+                            listing.state || ""
+                        ).trim()
+                )
+                .filter(Boolean)
+        )
+    ].sort(
+        (a, b) =>
+            a.localeCompare(
+                b,
+                undefined,
+                {
+                    sensitivity: "base"
+                }
+            )
+    );
 
+    stateFilter.innerHTML = `
+        <option value="">
+            All States
+        </option>
+    `;
 
-        cities.forEach(city => {
+    states.forEach(state => {
 
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value = city;
-            option.textContent = city;
-
-            cityFilter.appendChild(
-                option
+        const option =
+            document.createElement(
+                "option"
             );
 
-        });
+        option.value = state;
+        option.textContent = state;
 
-    };
+        stateFilter.appendChild(
+            option
+        );
+
+    });
+
+};
+
+
+const populateCityFilter = (
+    selectedState = ""
+) => {
+
+    const cityFilter =
+        document.getElementById(
+            "propertyCityFilter"
+        );
+
+    if (!cityFilter) {
+        return;
+    }
+
+    const normalizedState =
+        String(
+            selectedState || ""
+        )
+            .trim()
+            .toLowerCase();
+
+    const cities = [
+        ...new Set(
+            allProperties
+                .filter(listing => {
+
+                    if (!normalizedState) {
+                        return true;
+                    }
+
+                    return (
+                        String(
+                            listing.state || ""
+                        )
+                            .trim()
+                            .toLowerCase() ===
+                        normalizedState
+                    );
+
+                })
+                .map(
+                    listing =>
+                        String(
+                            listing.city || ""
+                        ).trim()
+                )
+                .filter(Boolean)
+        )
+    ].sort(
+        (a, b) =>
+            a.localeCompare(
+                b,
+                undefined,
+                {
+                    sensitivity: "base"
+                }
+            )
+    );
+
+    cityFilter.innerHTML = `
+        <option value="">
+            All Cities
+        </option>
+    `;
+
+    cities.forEach(city => {
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value = city;
+        option.textContent = city;
+
+        cityFilter.appendChild(
+            option
+        );
+
+    });
+
+};
+
 
 const setupPropertySearch = () => {
 
@@ -1038,6 +1232,11 @@ const setupPropertySearch = () => {
     const clearButton =
         document.getElementById(
             "clearPropertySearch"
+        );
+
+    const stateFilter =
+        document.getElementById(
+            "propertyStateFilter"
         );
 
     const cityFilter =
@@ -1053,7 +1252,7 @@ const setupPropertySearch = () => {
 
     /*
     |--------------------------------------------------------------------------
-    | Populate City Dropdown
+    | Search + State + City
     |--------------------------------------------------------------------------
     */
 
@@ -1064,6 +1263,13 @@ const setupPropertySearch = () => {
                 .trim()
                 .toLowerCase();
 
+
+        const selectedState =
+            stateFilter?.value
+                .trim()
+                .toLowerCase() || "";
+
+
         const selectedCity =
             cityFilter?.value
                 .trim()
@@ -1073,6 +1279,7 @@ const setupPropertySearch = () => {
         const hasAnyFilter =
             Boolean(
                 keyword ||
+                selectedState ||
                 selectedCity
             );
 
@@ -1138,12 +1345,6 @@ const setupPropertySearch = () => {
                         ).toLowerCase();
 
 
-                    /*
-                    |----------------------------------------------------------------------
-                    | Normal search
-                    |----------------------------------------------------------------------
-                    */
-
                     const searchMatches =
                         !keyword ||
 
@@ -1180,20 +1381,19 @@ const setupPropertySearch = () => {
                         );
 
 
-                    /*
-                    |----------------------------------------------------------------------
-                    | Selected city filter
-                    |----------------------------------------------------------------------
-                    */
+                    const stateMatches =
+                        !selectedState ||
+                        state === selectedState;
+
 
                     const cityMatches =
                         !selectedCity ||
-
                         city === selectedCity;
 
 
                     return (
                         searchMatches &&
+                        stateMatches &&
                         cityMatches
                     );
 
@@ -1223,9 +1423,74 @@ const setupPropertySearch = () => {
     );
 
 
+    stateFilter?.addEventListener(
+        "change",
+        () => {
+
+            const selectedState =
+                stateFilter.value
+                    .trim();
+
+
+            localStorage.setItem(
+                "propertyStateFilter",
+                selectedState
+            );
+
+
+            /*
+            |--------------------------------------------------------------
+            | Rebuild City list for selected State
+            |--------------------------------------------------------------
+            */
+
+            populateCityFilter(
+                selectedState
+            );
+
+
+            /*
+            |--------------------------------------------------------------
+            | Reset City whenever State changes
+            |--------------------------------------------------------------
+            */
+
+            if (cityFilter) {
+
+                cityFilter.value = "";
+
+            }
+
+
+            localStorage.removeItem(
+                "propertyCityFilter"
+            );
+
+
+            performSearch();
+
+        }
+    );
+
+
     cityFilter?.addEventListener(
         "change",
-        performSearch
+        () => {
+
+            const selectedCity =
+                cityFilter.value
+                    .trim();
+
+
+            localStorage.setItem(
+                "propertyCityFilter",
+                selectedCity
+            );
+
+
+            performSearch();
+
+        }
     );
 
 
@@ -1235,9 +1500,31 @@ const setupPropertySearch = () => {
 
             searchInput.value = "";
 
-            if (cityFilter) {
-                cityFilter.value = "";
+
+            if (stateFilter) {
+
+                stateFilter.value = "";
+
             }
+
+
+            if (cityFilter) {
+
+                populateCityFilter();
+
+                cityFilter.value = "";
+
+            }
+
+
+            localStorage.removeItem(
+                "propertyStateFilter"
+            );
+
+            localStorage.removeItem(
+                "propertyCityFilter"
+            );
+
 
             searchInput.focus();
 
@@ -1247,7 +1534,16 @@ const setupPropertySearch = () => {
     );
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Initial filtering using restored State + City
+    |--------------------------------------------------------------------------
+    */
+
+    performSearch();
+
 };
+
 
 /*
 |--------------------------------------------------------------------------
