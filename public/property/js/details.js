@@ -248,14 +248,7 @@ const checkSavedStatus =
             return;
 
         }
-        if (savePropertyBtn) {
-
-    savePropertyBtn.addEventListener(
-        "click",
-        toggleSavedProperty
-     );
-
-        }
+        
 
         try {
 
@@ -538,14 +531,6 @@ const toggleSavedProperty =
             const listing =
                 data.listing;
             await checkSavedStatus();    
-            console.log(
-    "PROPERTY DEBUG:",
-    listing,
-    "SALE ELEMENT:",
-    salePriceElement,
-    "RENT ELEMENT:",
-    rentElement
-);    
 
 
             title.textContent =
@@ -567,6 +552,14 @@ const toggleSavedProperty =
                 );
 
             }
+            if (savePropertyBtn) {
+
+    savePropertyBtn.addEventListener(
+        "click",
+        toggleSavedProperty
+    );
+
+}
 
 
          /*

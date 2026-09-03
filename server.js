@@ -80,10 +80,9 @@ app.use(
     "/api/property/listings",
     require("./routes/propertyListingRoutes")
 );
-
 app.use(
-    "/api/property/listings",
-    require("./routes/propertyListingImageRoutes")
+    "/api/music",
+    require("./routes/musicRoutes")
 );
 app.use(
     "/api/property/contact-requests",

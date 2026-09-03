@@ -286,6 +286,17 @@ else if (
                         )}
                     </h2>
 
+                    ${
+    listing.city
+        ? `
+            <div class="mt-2 flex items-center gap-1 text-sm text-slate-500">
+                <span>📍</span>
+                <span>${escapeHtml(listing.city)}</span>
+            </div>
+          `
+        : ""
+}
+
 
                     ${
                         listing.subtitle
