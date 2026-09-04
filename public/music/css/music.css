@@ -2071,3 +2071,12 @@ body {
         pointer-events: auto;
     }
 }
+@media (max-width: 700px) {
+    #musicResultsSection {
+        max-height: 70dvh;
+        overflow-y: auto !important;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+    }
+}
