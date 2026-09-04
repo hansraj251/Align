@@ -9,5 +9,8 @@ router.get(
     "/search",
     musicController.search
 );
-
+router.post(
+    "/save",
+    musicController.save
+);
 module.exports = router;

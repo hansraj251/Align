@@ -942,6 +942,42 @@ console.log(
         );
 
     }
+        /*
+     * Migration 10:
+     * music_songs
+     */
+
+    await db.runAsync(
+        `
+        CREATE TABLE IF NOT EXISTS music_songs (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            youtube_video_id TEXT NOT NULL UNIQUE,
+
+            title TEXT NOT NULL,
+
+            artist TEXT,
+
+            channel_title TEXT,
+
+            thumbnail_url TEXT,
+
+            duration TEXT,
+
+            created_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP,
+
+            updated_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP
+
+        )
+        `
+    );
+
+    console.log(
+        "✅ music_songs table is ready."
+    );
 
 }
 

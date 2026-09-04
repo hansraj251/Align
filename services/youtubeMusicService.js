@@ -13,7 +13,49 @@ const getYouTubeApiKey = () => {
 
     return apiKey;
 };
+const getVideoDuration = async (
+    videoId
+) => {
 
+    if (!videoId) {
+        return null;
+    }
+
+    const params =
+        new URLSearchParams({
+            part: "contentDetails",
+            id: String(videoId),
+            key: getYouTubeApiKey()
+        });
+
+    const response =
+        await fetch(
+            `${YOUTUBE_API_BASE}/videos?${params.toString()}`
+        );
+
+    let data = {};
+
+    try {
+        data = await response.json();
+    }
+    catch {
+        return null;
+    }
+
+    if (!response.ok) {
+        console.error(
+            "YouTube duration API error:",
+            data
+        );
+
+        return null;
+    }
+
+    return (
+        data?.items?.[0]?.contentDetails?.duration ||
+        null
+    );
+};
 const searchMusic = async ({
     query,
     maxResults = 12,
@@ -156,7 +198,9 @@ const filteredItems =
 
             publishedAt:
                 item?.snippet?.publishedAt || null,
-
+            duration:
+                durationMap[item?.id?.videoId] || null,
+    
             thumbnails: {
                 default:
                     item?.snippet?.thumbnails?.default?.url ||
@@ -184,5 +228,6 @@ const filteredItems =
 };
 
 module.exports = {
-    searchMusic
+    searchMusic,
+    getVideoDuration
 };

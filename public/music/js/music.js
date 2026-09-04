@@ -533,46 +533,53 @@
 
 
     function normalizeSong(
-        song
-    ) {
+    song
+) {
 
-        return {
-            videoId:
-                song?.videoId ||
+    return {
+        videoId:
+            song?.videoId ||
+            null,
+
+        title:
+            song?.title ||
+            "Unknown title",
+
+        artist:
+            song?.artist ||
+            null,
+
+        description:
+            song?.description ||
+            "",
+
+        channelTitle:
+            song?.channelTitle ||
+            "YouTube",
+
+        publishedAt:
+            song?.publishedAt ||
+            null,
+
+        duration:
+            song?.duration ||
+            null,
+
+        thumbnails: {
+            default:
+                song?.thumbnails?.default ||
                 null,
 
-            title:
-                song?.title ||
-                "Unknown title",
-
-            description:
-                song?.description ||
-                "",
-
-            channelTitle:
-                song?.channelTitle ||
-                "YouTube",
-
-            publishedAt:
-                song?.publishedAt ||
+            medium:
+                song?.thumbnails?.medium ||
                 null,
 
-            thumbnails: {
-                default:
-                    song?.thumbnails?.default ||
-                    null,
-
-                medium:
-                    song?.thumbnails?.medium ||
-                    null,
-
-                high:
-                    song?.thumbnails?.high ||
-                    null
-            }
-        };
-    }
-
+            high:
+                song?.thumbnails?.high ||
+                null
+        }
+    };
+}
 
     function getSongImage(
         song
@@ -877,6 +884,10 @@ origin: window.location.origin,
                                 song.videoId
                         )
                     : [];
+                    console.log(
+    "RESULTS AFTER NORMALIZE:",
+    results
+);
 
             nextPageToken =
                 data.nextPageToken ||
@@ -1153,11 +1164,18 @@ origin: window.location.origin,
         if (!song?.videoId) {
             return;
         }
-
+console.log(
+    "SONG BEFORE NORMALIZE:",
+    song
+);
         currentSong =
             normalizeSong(
                 song
             );
+            console.log(
+    "PLAY SONG DATA:",
+    currentSong
+);
 
         currentIndex =
             Number.isInteger(index)
@@ -1219,6 +1237,14 @@ origin: window.location.origin,
             player.loadVideoById(
     currentSong.videoId
 );
+console.log(
+    "CURRENT SONG BEFORE SAVE:",
+    currentSong
+);
+
+if (typeof window.AlignMusicExtras?.saveMusicSong === "function") {
+    window.AlignMusicExtras.saveMusicSong(currentSong);
+}
 
 player.playVideo();
 
@@ -2191,11 +2217,19 @@ if (removeButton) {
                     );
 
                 if (song) {
+    const index =
+        favorites.findIndex(
+            favorite =>
+                favorite.videoId ===
+                song.videoId
+        );
 
-                    playSong(
-                        song
-                    );
-                }
+    playSong(
+        song,
+        index,
+        favorites
+    );
+}
             }
         );
     }
@@ -2228,11 +2262,19 @@ if (removeButton) {
                     );
 
                 if (song) {
+    const index =
+        recent.findIndex(
+            recentSong =>
+                recentSong.videoId ===
+                song.videoId
+        );
 
-                    playSong(
-                        song
-                    );
-                }
+    playSong(
+        song,
+        index,
+        recent
+    );
+}
             }
         );
     }
@@ -2374,11 +2416,13 @@ if (removeButton) {
         .replaceAll("'", "&#039;");
 
     const extraSong = song => ({
-        videoId: song?.videoId || null,
-        title: song?.title || "Unknown title",
-        channelTitle: song?.channelTitle || "YouTube",
-        thumbnails: song?.thumbnails || {}
-    });
+    videoId: song?.videoId || null,
+    title: song?.title || "Unknown title",
+    artist: song?.artist || null,
+    channelTitle: song?.channelTitle || "YouTube",
+    duration: song?.duration || null,
+    thumbnails: song?.thumbnails || {}
+});
 
     let extraPlaylists = extraLoad(EXTRA_KEYS.playlists, []);
     let extraShuffle = false;
@@ -2401,6 +2445,7 @@ if (removeButton) {
     );
 },
         get playlists() { return extraPlaylists; },
+        saveMusicSong,
         
         toggleLike(song) {
     if (!song?.videoId) return;
@@ -2425,6 +2470,53 @@ if (removeButton) {
     function current() {
         return window.AlignMusicPlayer?.getCurrentSong?.() || null;
     }
+    async function saveMusicSong(song) {
+    if (!song?.videoId) {
+        return;
+    }
+
+    try {
+        console.log(
+    "SAVING MUSIC:",
+    {
+        videoId: song.videoId,
+        title: song.title,
+        artist: song.artist,
+        channelTitle: song.channelTitle,
+        thumbnailUrl:
+            song.thumbnails?.high ||
+            song.thumbnails?.medium ||
+            song.thumbnails?.default ||
+            null,
+        duration: song.duration
+    }
+);
+        await fetch("/api/music/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                videoId: song.videoId,
+                title: song.title || "Unknown title",
+                artist: song.artist || null,
+                channelTitle: song.channelTitle || null,
+                thumbnailUrl:
+    song.thumbnails?.high ||
+    song.thumbnails?.medium ||
+    song.thumbnails?.default ||
+    null,
+                duration: song.duration || null
+            })
+        });
+    }
+    catch (error) {
+        console.error(
+            "Music save error:",
+            error
+        );
+    }
+}
 
     function playSong(song, index = -1, playbackList = null) {
     if (!song?.videoId) return;
@@ -2617,7 +2709,7 @@ function showPlaylistSongs(playlist) {
 
             <small>
                 ${extraEscapeHtml(
-                    song.artist || "Unknown artist"
+                    song.artist || song.channelTitle || "Unknown artist"
                 )}
             </small>
         </div>
