@@ -764,7 +764,7 @@
 
     function handlePlayerError(
         event
-    ) {
+    ) {console.error("YouTube Player Error:", event?.data);
 
         stopProgressTimer();
 
