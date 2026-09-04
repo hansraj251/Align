@@ -2059,14 +2059,13 @@ body {
     }
 
     .music-index-content {
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 30;
-        margin: 0 !important;
-        pointer-events: none;
-    }
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    margin: 0 !important;
+}
 
     .music-sidebar {
         pointer-events: auto;
