@@ -3308,8 +3308,12 @@ document.getElementById("musicShowFavorites")?.addEventListener("click", () => {
     const isHidden =
         getComputedStyle(favoritesPanel).display === "none";
 
+    if (isHidden) {
+    hideOtherMusicPanels(favoritesPanel);
+}
+
     favoritesPanel.style.display =
-        isHidden ? "block" : "none";
+    isHidden ? "block" : "none";
 
     button.classList.toggle("active", isHidden);
 });
@@ -3325,8 +3329,12 @@ document.getElementById("musicShowPlaylists")?.addEventListener("click", () => {
     const isHidden =
         getComputedStyle(playlistsPanel).display === "none";
 
+    if (isHidden) {
+    hideOtherMusicPanels(playlistsPanel);
+}
+
     playlistsPanel.style.display =
-        isHidden ? "block" : "none";
+    isHidden ? "block" : "none";
 
     button.classList.toggle("active", isHidden);
 });
@@ -3340,8 +3348,12 @@ document.getElementById("musicShowRecent")?.addEventListener("click", () => {
     const isHidden =
         getComputedStyle(recentPanel).display === "none";
 
+    if (isHidden) {
+    hideOtherMusicPanels(recentPanel);
+}
+
     recentPanel.style.display =
-        isHidden ? "block" : "none";
+    isHidden ? "block" : "none";
 
     button.classList.toggle("active", isHidden);
 });
@@ -3366,6 +3378,38 @@ document.getElementById("musicPlayer")?.addEventListener("click", (event) => {
             button.classList.remove("active");
         });
 });
+function hideOtherMusicPanels(activePanel) {
+    const panels =
+        document.querySelectorAll(".music-sidebar .music-panel");
+
+    panels.forEach(panel => {
+        if (panel !== activePanel) {
+            panel.style.display = "none";
+        }
+    });
+
+    document
+        .querySelectorAll(".music-mobile-section-button")
+        .forEach(button => {
+            if (!activePanel) {
+                button.classList.remove("active");
+                return;
+            }
+
+            const panelIndex =
+                Array.from(panels).indexOf(activePanel);
+
+            const buttonIndex = {
+                musicShowFavorites: 0,
+                musicShowRecent: 1,
+                musicShowPlaylists: 2
+            }[button.id];
+
+            if (buttonIndex !== panelIndex) {
+                button.classList.remove("active");
+            }
+        });
+}
 
      addPlayerActionButtons();
      renderPlaylists();
