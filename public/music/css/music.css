@@ -2050,7 +2050,7 @@ body {
     .music-main {
         position: relative;
         height: 100dvh;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .music-player {
