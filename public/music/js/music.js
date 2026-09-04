@@ -673,17 +673,15 @@ origin: window.location.origin,
             );
 
         const initialVolume =
-            Number.isFinite(
+    Number.isFinite(savedVolume) && savedVolume > 0
+        ? Math.max(
+            0,
+            Math.min(
+                100,
                 savedVolume
             )
-                ? Math.max(
-                    0,
-                    Math.min(
-                        100,
-                        savedVolume
-                    )
-                )
-                : 100;
+        )
+        : 100;
 
         if (volume) {
             volume.value =
