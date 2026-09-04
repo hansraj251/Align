@@ -142,11 +142,6 @@
             "musicDuration"
         );
 
-    const muteButton =
-        document.getElementById(
-            "musicMute"
-        );
-
     const volume =
         document.getElementById(
             "musicVolume"
@@ -698,8 +693,6 @@
         event.target.setVolume(
             initialVolume
         );
-
-        updateMuteButton();
 
         restorePlaybackState();
     }
@@ -1660,118 +1653,9 @@ if (likeButton && likeIcon && currentSong) {
             );
         }
 
-        updateMuteButton();
     }
 
-
-    function toggleMute() {
-
-    if (
-        !playerReady ||
-        !player
-    ) {
-        return;
-    }
-
-    const currentlyMuted =
-        player.isMuted();
-
-    if (currentlyMuted) {
-
-        const savedVolume =
-            Number(
-                localStorage.getItem(
-                    STORAGE_KEYS.volume
-                )
-            );
-
-        const restoreVolume =
-            Number.isFinite(savedVolume) &&
-            savedVolume > 0
-                ? savedVolume
-                : 100;
-
-        player.unMute();
-        player.setVolume(
-            restoreVolume
-        );
-
-        if (volume) {
-            volume.value =
-                String(restoreVolume);
-        }
-
-        muteButton.innerHTML = "🔇";
-        muteButton.setAttribute(
-            "aria-label",
-            "Mute"
-        );
-        muteButton.setAttribute(
-            "title",
-            "Mute"
-        );
-
-    } else {
-
-        player.mute();
-
-        muteButton.innerHTML = "🔊";
-        muteButton.setAttribute(
-            "aria-label",
-            "Unmute"
-        );
-        muteButton.setAttribute(
-            "title",
-            "Unmute"
-        );
-    }
-}
-
-
-    function updateMuteButton() {
-
-    if (!muteButton) {
-        return;
-    }
-
-    let muted = false;
-
-    if (
-        playerReady &&
-        player &&
-        typeof player.isMuted === "function"
-    ) {
-        muted = player.isMuted();
-    } else {
-        muted =
-            Number(volume?.value || 100) === 0;
-    }
-
-    muteButton.innerHTML =
-        muted
-            ? "🔊"
-            : "🔇";
-
-    muteButton.setAttribute(
-        "aria-label",
-        muted
-            ? "Unmute"
-            : "Mute"
-    );
-
-    muteButton.setAttribute(
-        "title",
-        muted
-            ? "Unmute"
-            : "Mute"
-    );
-
-    muteButton.classList.toggle(
-        "muted",
-        muted
-    );
-}
-
+    
     /* =========================================================
        FAVORITES
     ========================================================= */
@@ -2411,15 +2295,6 @@ if (removeButton) {
     }
 
 
-    if (muteButton) {
-
-        muteButton.addEventListener(
-            "click",
-            toggleMute
-        );
-    }
-
-
     if (musicPlayerClose) {
         musicPlayerClose.addEventListener(
             "click",
@@ -2443,8 +2318,6 @@ if (removeButton) {
     renderFavorites();
 
     renderRecent();
-
-    updateMuteButton();
 
     /*
      * If the YouTube API has already loaded
@@ -2517,7 +2390,6 @@ if (removeButton) {
     const extraPlay = document.getElementById("musicPlayPause");
     const extraPrev = document.getElementById("musicPrevious");
     const extraNext = document.getElementById("musicNext");
-    const extraMute = document.getElementById("musicMute");
     const extraVolume = document.getElementById("musicVolume");
     const extraToast = document.getElementById("musicToast");
 
