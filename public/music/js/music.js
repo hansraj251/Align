@@ -631,7 +631,7 @@
                     height: "2",
 
                     playerVars: {
-    autoplay: 1,
+    autoplay: 0,
     controls: 0,
     disablekb: 1,
     fs: 0,
@@ -1222,9 +1222,9 @@ origin: window.location.origin,
     currentSong.videoId
 );
 
-            updatePlayButton(
-                true
-            );
+player.playVideo();
+
+updatePlayButton(true);
 
         }
         catch (error) {
