@@ -1217,12 +1217,8 @@
         try {
 
             player.loadVideoById(
-                currentSong.videoId
-            );
-
-            setTimeout(() => {
-    player.playVideo();
-}, 300);
+    currentSong.videoId
+);
 
             updatePlayButton(
                 true
