@@ -250,23 +250,22 @@
 
         @media (max-width: 700px) {
             .music-player {
-                min-height: 0;
-                padding: 24px 16px 28px;
-                border-radius: 0 0 26px 26px;
-            }
+        
+        box-sizing: border-box;
+}
 
             .music-player-inner {
-                grid-template-columns: 1fr;
-                gap: 18px;
-                text-align: center;
-            }
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: center;
+}
 
             .music-player-artwork {
-                width: min(72vw, 260px);
-                height: min(72vw, 260px);
-                margin: 0 auto;
-                border-radius: 26px;
-            }
+    width: min(58vw, 210px);
+    height: min(58vw, 210px);
+    margin: 0 auto;
+    border-radius: 22px;
+}
 
             .music-player-title {
                 font-size: 1.45rem;
@@ -277,9 +276,9 @@
             }
 
             .music-player-controls {
-                justify-content: center;
-                margin-top: 20px;
-            }
+    justify-content: center;
+    margin-top: 10px;
+}
 
             .music-player .music-progress-area {
                 gap: 8px;
@@ -394,6 +393,48 @@
         display: none;
     }
 }
+@media (max-width: 700px) {
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus,
+    button:active,
+    a:focus,
+    a:active {
+        outline: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .music-sidebar .music-panel {
+        display: none;
+    }
+}
+@media (min-width: 701px) {
+    .music-mobile-section-button {
+        display: none !important;
+    }
+}
+@media (max-width: 700px) {
+    .music-player {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: hidden !important;
+    }
+}
+@media (max-width: 700px) {
+    .music-player {
+        min-height: 0;
+        padding: 20px 12px 320px;
+        border-radius: 0 0 0px 0px;
+    }
+}
 
     </style>
 </head>
@@ -467,7 +508,34 @@
                 </div>
             </div>
         </div>
+        <br>
+        <button
+    type="button"
+    id="musicShowFavorites"
+    class="music-player-action music-mobile-section-button"
+    aria-label="Show Favorites"
+    title="Favorites">
+    <span class="music-action-icon">❤️ Favorites </span>
+</button>
+
+<button
+    type="button"
+    id="musicShowPlaylists"
+    class="music-player-action music-mobile-section-button"
+    aria-label="Show Playlists"
+    title="Playlists">
+    <span class="music-action-icon">🎵 Playlists </span>
+</button>
+<button
+    type="button"
+    id="musicShowRecent"
+    class="music-player-action music-mobile-section-button"
+    aria-label="Show Recently Played"
+    title="Recently Played">
+    <span class="music-action-icon">🕘 Recently </span>
+</button>
     </section>
+    
 
     <section class="music-index-content">
         

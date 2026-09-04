@@ -764,7 +764,7 @@ origin: window.location.origin,
 
     function handlePlayerError(
         event
-    ) {console.error("YouTube Player Error:", event?.data);
+    ) {
 
         stopProgressTimer();
 
@@ -3206,6 +3206,7 @@ if (deleteButton) {
 
         </div>
     `;
+    
 
     document.body.appendChild(modal);
 
@@ -3297,6 +3298,74 @@ if (deleteButton) {
         }
     );
 }
+document.getElementById("musicShowFavorites")?.addEventListener("click", () => {
+    const panels = document.querySelectorAll(".music-sidebar .music-panel");
+    const favoritesPanel = panels[0];
+    const button = document.getElementById("musicShowFavorites");
+
+    if (!favoritesPanel || !button) return;
+
+    const isHidden =
+        getComputedStyle(favoritesPanel).display === "none";
+
+    favoritesPanel.style.display =
+        isHidden ? "block" : "none";
+
+    button.classList.toggle("active", isHidden);
+});
+
+
+document.getElementById("musicShowPlaylists")?.addEventListener("click", () => {
+    const panels = document.querySelectorAll(".music-sidebar .music-panel");
+    const playlistsPanel = panels[2];
+    const button = document.getElementById("musicShowPlaylists");
+
+    if (!playlistsPanel || !button) return;
+
+    const isHidden =
+        getComputedStyle(playlistsPanel).display === "none";
+
+    playlistsPanel.style.display =
+        isHidden ? "block" : "none";
+
+    button.classList.toggle("active", isHidden);
+});
+document.getElementById("musicShowRecent")?.addEventListener("click", () => {
+    const panels = document.querySelectorAll(".music-sidebar .music-panel");
+    const recentPanel = panels[1];
+    const button = document.getElementById("musicShowRecent");
+
+    if (!recentPanel || !button) return;
+
+    const isHidden =
+        getComputedStyle(recentPanel).display === "none";
+
+    recentPanel.style.display =
+        isHidden ? "block" : "none";
+
+    button.classList.toggle("active", isHidden);
+});
+document.getElementById("musicPlayer")?.addEventListener("click", (event) => {
+    if (window.innerWidth > 700) return;
+
+    const clickedButton =
+        event.target.closest(".music-mobile-section-button");
+
+    if (clickedButton) return;
+
+    const panels =
+        document.querySelectorAll(".music-sidebar .music-panel");
+
+    panels.forEach(panel => {
+        panel.style.display = "none";
+    });
+
+    document
+        .querySelectorAll(".music-mobile-section-button")
+        .forEach(button => {
+            button.classList.remove("active");
+        });
+});
 
      addPlayerActionButtons();
      renderPlaylists();
