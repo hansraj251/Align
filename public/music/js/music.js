@@ -1220,7 +1220,9 @@
                 currentSong.videoId
             );
 
-            player.playVideo();
+            setTimeout(() => {
+    player.playVideo();
+}, 300);
 
             updatePlayButton(
                 true
