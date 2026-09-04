@@ -627,8 +627,8 @@
             new YT.Player(
                 "youtubePlayer",
                 {
-                    width: "1",
-                    height: "1",
+                    width: "2",
+                    height: "2",
 
                     playerVars: {
                         autoplay: 1,
