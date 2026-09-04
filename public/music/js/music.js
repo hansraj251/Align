@@ -638,7 +638,8 @@
                         iv_load_policy: 3,
                         modestbranding: 1,
                         playsinline: 1,
-                        rel: 0
+                        rel: 0,
+                        origin: window.location.origin
                     },
 
                     events: {
