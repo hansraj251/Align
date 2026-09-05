@@ -6,7 +6,6 @@
     <title>AlignOS Music</title>
     <meta name="description" content="AlignOS Music - Search and listen to music from YouTube.">
     <link rel="stylesheet" href="/music/css/music.css">
-    <link rel="stylesheet" href="/music/css/music-extra.css">
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <style>
@@ -421,12 +420,6 @@
 }
 
 @media (max-width: 700px) {
-    .music-sidebar .music-panel {
-        display: none;
-    }
-}
-
-@media (max-width: 700px) {
     .music-player {
         height: auto !important;
         min-height: 0 !important;
@@ -784,6 +777,160 @@
     width: 180px;
     margin: 0 !important;
 }
+.music-player-controls button {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+/* =====================================================
+   DISCOVER + MUSIC LIBRARY LAYOUT
+===================================================== */
+
+.music-content {
+    width: 100%;
+    display: block !important;
+}
+
+
+/* Search results stay full width */
+#musicResultsSection {
+    width: 100%;
+}
+
+
+/* Main lower layout */
+.music-library-layout {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 400px !important;
+    gap: 24px !important;
+    align-items: start !important;
+    margin-top: 24px !important;
+}
+
+.music-library-layout > .music-discover-section {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+}
+
+.music-library-layout > .music-sidebar {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    width: 100% !important;
+}
+
+
+/* ================================
+   LEFT - DISCOVER
+================================ */
+
+.music-library-layout .music-discover-section {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    display: block;
+}
+
+.music-library-layout .music-discover-section .music-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 0 14px;
+}
+
+.music-library-layout .music-discover-section .music-section-header h2 {
+    margin: 0;
+}
+
+.music-library-layout .music-discover-section .music-section-header p {
+    margin: 4px 0 0;
+    opacity: .7;
+}
+
+
+/* Discover cards */
+#musicDiscover {
+    width: 100%;
+    min-width: 0;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px;
+}
+
+
+/* ================================
+   RIGHT - SIDEBAR
+================================ */
+
+.music-library-layout .music-sidebar {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    display: flex !important;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.music-library-layout .music-sidebar .music-panel {
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1100px) {
+
+    .music-library-layout {
+        grid-template-columns: minmax(0, 1fr) 290px !important;
+        gap: 18px;
+    }
+
+    #musicDiscover {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 700px) {
+
+    .music-library-layout {
+        display: flex !important;
+        flex-direction: column;
+        width: 100%;
+        gap: 18px;
+    }
+
+    .music-library-layout .music-discover-section {
+        order: 1;
+    }
+
+    .music-library-layout .music-sidebar {
+        order: 2;
+        display: flex !important;
+    }
+
+    .music-library-layout .music-sidebar .music-panel {
+        display: block !important;
+    }
+
+    #musicDiscover {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 10px;
+    }
+
+}
     </style>
 </head>
 
@@ -949,62 +1096,103 @@
                 <br>
             </div>
 
-            <aside class="music-sidebar">
-                <section class="music-panel">
-                    <div class="music-panel-header">
-    <div>
-        <h3>❤️ Favorites</h3>
-        <p>Your saved songs</p>
-    </div>
+            <div class="music-library-layout">
 
-    <button
-        type="button"
-        id="musicPlayAllFavorites"
-        class="music-play-all-button"
-        aria-label="Play all favorites">
-        ▶ Play All
-    </button>
-</div>
-                    <div id="musicFavorites" class="music-mini-list">
-                        <div class="music-mini-empty">No favorites yet.</div>
-                    </div>
-                </section>
-                
+    <!-- LEFT: DISCOVER MUSIC -->
+    <section class="music-discover-section">
 
-                <section class="music-panel">
-                    <div class="music-panel-header">
-    <div>
-        <h3>🕘 Recently Played</h3>
-        <p>Your listening history</p>
-    </div>
-
-    <button
-        type="button"
-        id="musicPlayAllRecent"
-        class="music-play-all-button"
-        aria-label="Play all recently played">
-        ▶ Play All
-    </button>
-</div>
-                    <div id="musicRecent" class="music-mini-list">
-                        <div class="music-mini-empty">Nothing played yet.</div>
-                    </div>
-                </section>
-                <section class="music-panel">
-    <div class="music-panel-header">
-        <div>
-            <h3>🎵 Playlists</h3>
-            <p>Your music collections</p>
+        <div
+            id="musicDiscover"
+            class="music-results">
         </div>
-    </div>
 
-    <div id="musicPlaylists" class="music-mini-list">
-        <div class="music-mini-empty">
-            No playlists yet.
-        </div>
-    </div>
-</section>
-            </aside>
+    </section>
+
+
+    <!-- RIGHT: MUSIC LIBRARY -->
+    <aside class="music-sidebar">
+
+        <!-- FAVORITES -->
+        <section class="music-panel">
+
+            <div class="music-panel-header">
+                <div>
+                    <h3>❤️ Favorites</h3>
+                    <p>Your saved songs</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="musicPlayAllFavorites"
+                    class="music-play-all-button"
+                    aria-label="Play all favorites">
+                    ▶ Play All
+                </button>
+            </div>
+
+            <div
+                id="musicFavorites"
+                class="music-mini-list">
+                <div class="music-mini-empty">
+                    No favorites yet.
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- PLAYLISTS -->
+        <section class="music-panel">
+
+            <div class="music-panel-header">
+                <div>
+                    <h3>🎵 Playlists</h3>
+                    <p>Your music collections</p>
+                </div>
+            </div>
+
+            <div
+                id="musicPlaylists"
+                class="music-mini-list">
+                <div class="music-mini-empty">
+                    No playlists yet.
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- RECENTLY PLAYED -->
+        <section class="music-panel">
+
+            <div class="music-panel-header">
+                <div>
+                    <h3>🕘 Recently Played</h3>
+                    <p>Your listening history</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="musicPlayAllRecent"
+                    class="music-play-all-button"
+                    aria-label="Play all recently played">
+                    ▶ Play All
+                </button>
+            </div>
+
+            <div
+                id="musicRecent"
+                class="music-mini-list">
+                <div class="music-mini-empty">
+                    Nothing played yet.
+                </div>
+            </div>
+
+        </section>
+
+    </aside>
+
+</div>
 
         </section>
     </section>

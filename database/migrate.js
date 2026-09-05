@@ -964,6 +964,7 @@ console.log(
             thumbnail_url TEXT,
 
             duration TEXT,
+            language TEXT,
 
             created_at DATETIME
                 DEFAULT CURRENT_TIMESTAMP,

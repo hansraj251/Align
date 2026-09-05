@@ -173,6 +173,7 @@ const clearSearchHistoryButton =
     ========================================================= */
 
     let results = [];
+    let discoverResults = [];
 
     let currentIndex = -1;
 
@@ -196,6 +197,8 @@ const clearSearchHistoryButton =
     let toastTimer = null;
 
     let lastPlaybackSaveAt = 0;
+    let discoverContainer =
+    document.getElementById("musicDiscover");
 
     let favorites =
         loadStorage(
@@ -554,55 +557,172 @@ if (!Array.isArray(searchHistory)) {
     }
 
 
-    function normalizeSong(
-    song
-) {
+       function normalizeSong(
+        song
+    ) {
 
-    return {
-        videoId:
-            song?.videoId ||
-            null,
-
-        title:
-            song?.title ||
-            "Unknown title",
-
-        artist:
-            song?.artist ||
-            null,
-
-        description:
-            song?.description ||
-            "",
-
-        channelTitle:
-            song?.channelTitle ||
-            "YouTube",
-
-        publishedAt:
-            song?.publishedAt ||
-            null,
-
-        duration:
-            song?.duration ||
-            null,
-
-        thumbnails: {
-            default:
-                song?.thumbnails?.default ||
+        return {
+            videoId:
+                song?.videoId ||
                 null,
 
-            medium:
-                song?.thumbnails?.medium ||
+            title:
+                song?.title ||
+                "Unknown title",
+
+            artist:
+                song?.artist ||
                 null,
 
-            high:
-                song?.thumbnails?.high ||
-                null
+            description:
+                song?.description ||
+                "",
+
+            channelTitle:
+                song?.channelTitle ||
+                "YouTube",
+
+            publishedAt:
+                song?.publishedAt ||
+                null,
+
+            duration:
+                song?.duration ||
+                null,
+
+            language:
+                song?.language ||
+                null,
+
+            thumbnails: {
+    default:
+        song?.thumbnails?.default ||
+        song?.thumbnailUrl ||
+        null,
+
+    medium:
+        song?.thumbnails?.medium ||
+        song?.thumbnailUrl ||
+        null,
+
+    high:
+        song?.thumbnails?.high ||
+        song?.thumbnailUrl ||
+        null
+
+            }
+        };
+    }
+
+
+    function getFavoriteLanguages() {
+
+        return [
+            ...new Set(
+                favorites
+                    .map(song =>
+                        String(
+                            song?.language || ""
+                        ).trim().toLowerCase()
+                    )
+                    .filter(Boolean)
+            )
+        ];
+    }
+
+
+    async function loadMusicDiscover() {
+
+        if (!discoverContainer) {
+            return;
         }
-    };
-}
 
+        try {
+
+            const languages =
+                getFavoriteLanguages();
+
+            const params =
+                new URLSearchParams();
+
+            if (languages.length) {
+
+                params.set(
+                    "languages",
+                    languages.join(",")
+                );
+            }
+
+            params.set(
+                "limit",
+                "36"
+            );
+
+            const response =
+                await fetch(
+                    `/api/music/discover?${params.toString()}`
+                );
+
+            const data =
+                await response.json();
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to load music discovery."
+                );
+            }
+
+            const songs =
+    Array.isArray(data.songs)
+        ? data.songs
+        : [];
+discoverResults =
+    songs
+        .map(normalizeSong)
+        .filter(song => song.videoId);        
+
+            if (!songs.length) {
+
+                discoverContainer.innerHTML =
+                    `
+                    <div class="music-mini-empty">
+                        No music available yet.
+                    </div>
+                    `;
+
+                return;
+            }
+
+            discoverContainer.innerHTML =
+    discoverResults
+        .map((song, index) =>
+            renderResultCard(
+                song,
+                index
+            )
+        )
+        .join("");
+
+        } catch (error) {
+
+            console.error(
+                "Music discover error:",
+                error
+            );
+
+            discoverContainer.innerHTML =
+                `
+                <div class="music-mini-empty">
+                    Unable to load music.
+                </div>
+                `;
+        }
+    }
     function getSongImage(
         song
     ) {
@@ -2225,7 +2345,19 @@ if (likeButton && likeIcon && currentSong) {
 
         renderResults();
 
-        renderFavorites();
+renderFavorites();
+
+if (discoverContainer) {
+    discoverContainer.innerHTML =
+        discoverResults
+            .map((song, index) =>
+                renderResultCard(
+                    song,
+                    index
+                )
+            )
+            .join("");
+}
     }
     window.AlignMusicFavoritesToggle =
     toggleFavorite;
@@ -2760,6 +2892,53 @@ renderSearchHistory();
                 return;
             }
 
+        }
+    );
+}
+
+if (discoverContainer) {
+
+    discoverContainer.addEventListener(
+        "click",
+        event => {
+
+            const button =
+                event.target.closest(
+                    "[data-action]"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const index =
+                Number(
+                    button.dataset.index
+                );
+
+            const song =
+                discoverResults[index];
+
+            if (!song) {
+                return;
+            }
+
+            const action =
+                button.dataset.action;
+
+            if (action === "play") {
+
+                playSong(
+                    song,
+                    index,
+                    discoverResults
+                );
+
+                expandMusicPlayer();
+
+                return;
+            }
+
             if (action === "favorite") {
 
                 toggleFavorite(
@@ -2771,7 +2950,6 @@ renderSearchHistory();
         }
     );
 }
-
 
     if (favoritesContainer) {
 
@@ -2985,11 +3163,16 @@ if (removeButton) {
 
 
     /* Public bridge for player extras */
-    window.AlignMusicPlayer = {
+        window.AlignMusicPlayer = {
+
     playSong: (song, index = -1, playbackList = null) =>
         playSong(song, index, playbackList),
+
     getCurrentSong: () => currentSong
+
 };
+
+    loadMusicDiscover();
 
 })();
 
@@ -3099,11 +3282,12 @@ if (removeButton) {
                 artist: song.artist || null,
                 channelTitle: song.channelTitle || null,
                 thumbnailUrl:
-    song.thumbnails?.high ||
-    song.thumbnails?.medium ||
-    song.thumbnails?.default ||
-    null,
-                duration: song.duration || null
+                                song.thumbnails?.high ||
+                                song.thumbnails?.medium ||
+                                song.thumbnails?.default ||
+                                          null,
+                duration: song.duration || null,
+                language: song.language || null
             })
         });
     }
@@ -3128,8 +3312,9 @@ if (removeButton) {
     }
         // Fallback: click matching result card if the main script exposes no API.
         const button = [...document.querySelectorAll('[data-action="play"]')]
-            .find(el => el.dataset.videoId === song.videoId);
-        if (button) button.click();
+    .find(el => el.dataset.index === String(song.index));
+
+if (button) button.click();
     }
 
     function refreshLikeButtons() {

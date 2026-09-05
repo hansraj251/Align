@@ -97,9 +97,10 @@ exports.save =
                     artist,
                     channel_title,
                     thumbnail_url,
-                    duration
+                    duration,
+                    language
                 )
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(youtube_video_id)
                 DO UPDATE SET
                     title = excluded.title,
@@ -107,6 +108,7 @@ exports.save =
                     channel_title = excluded.channel_title,
                     thumbnail_url = excluded.thumbnail_url,
                     duration = excluded.duration,
+                    language = excluded.language,
                     updated_at = CURRENT_TIMESTAMP
                 `,
                 [
@@ -117,7 +119,8 @@ exports.save =
                                             null,
                     req.body.channelTitle || null,
                     req.body.thumbnailUrl || null,
-                    duration || null
+                    duration || null,
+                    req.body.language || null
                 ]
             );
 
@@ -138,3 +141,50 @@ exports.save =
             });
         }
     };
+exports.discover =
+    async (req, res) => {
+
+        try {
+
+            const languages =
+                String(
+                    req.query.languages || ""
+                )
+                    .split(",")
+                    .map(language =>
+                        language.trim()
+                    )
+                    .filter(Boolean);
+
+            const limit =
+                Number(
+                    req.query.limit || 12
+                );
+
+            const songs =
+                await youtubeMusicService.discoverMusic({
+                    languages,
+                    limit
+                });
+
+            return res.json({
+                success: true,
+                songs
+            });
+
+        }
+        catch (error) {
+
+            console.error(
+                "Music discover error:",
+                error
+            );
+
+            return res.status(500).json({
+                success: false,
+                message:
+                    error.message ||
+                    "Unable to load music discovery."
+            });
+        }
+    };    

@@ -1,6 +1,7 @@
 const YOUTUBE_API_BASE =
     "https://www.googleapis.com/youtube/v3";
-
+const db =
+    require("../db");
 const getYouTubeApiKey = () => {
     const apiKey =
         process.env.YOUTUBE_API_KEY;
@@ -23,7 +24,7 @@ const getVideoDuration = async (
 
     const params =
         new URLSearchParams({
-            part: "contentDetails",
+            part: "snippet,contentDetails",
             id: String(videoId),
             key: getYouTubeApiKey()
         });
@@ -136,11 +137,11 @@ const searchMusic = async ({
         .filter(Boolean);
 
 let durationMap = {};
-
+let languageMap = {};
 if (videoIds.length) {
     const durationParams =
         new URLSearchParams({
-            part: "contentDetails",
+            part: "snippet,contentDetails",
             id: videoIds.join(","),
             key: getYouTubeApiKey()
         });
@@ -161,14 +162,22 @@ if (videoIds.length) {
     }
 
     if (durationResponse.ok) {
-        durationMap =
-            Object.fromEntries(
-                (durationData.items || []).map(video => [
-                    video.id,
-                    video?.contentDetails?.duration || null
-                ])
-            );
-    }
+    durationMap =
+        Object.fromEntries(
+            (durationData.items || []).map(video => [
+                video.id,
+                video?.contentDetails?.duration || null
+            ])
+        );
+
+    languageMap =
+        Object.fromEntries(
+            (durationData.items || []).map(video => [
+                video.id,
+                video?.snippet?.defaultAudioLanguage || null
+            ])
+        );
+}
 }
 const filteredItems =
     items.filter(item => {
@@ -200,6 +209,8 @@ const filteredItems =
                 item?.snippet?.publishedAt || null,
             duration:
                 durationMap[item?.id?.videoId] || null,
+            language:
+                languageMap[item?.id?.videoId] || null,    
     
             thumbnails: {
                 default:
@@ -226,8 +237,93 @@ const filteredItems =
             data?.pageInfo?.totalResults || 0
     };
 };
+const discoverMusic = async ({
+    languages = [],
+    limit = 12
+}) => {
 
+    const cleanLanguages =
+        Array.isArray(languages)
+            ? languages
+                .map(language =>
+                    String(language || "")
+                        .trim()
+                        .toLowerCase()
+                )
+                .filter(Boolean)
+            : [];
+
+    const safeLimit =
+        Math.min(
+            Math.max(
+                Number(limit) || 12,
+                1
+            ),
+            50
+        );
+
+    let songs;
+
+    if (cleanLanguages.length) {
+
+        const placeholders =
+            cleanLanguages
+                .map(() => "?")
+                .join(", ");
+
+        songs =
+            await db.allAsync(
+                `
+                SELECT
+                    youtube_video_id AS videoId,
+                    title,
+                    artist,
+                    channel_title AS channelTitle,
+                    thumbnail_url AS thumbnailUrl,
+                    duration,
+                    language
+                FROM music_songs
+                WHERE LOWER(language) IN (${placeholders})
+                ORDER BY updated_at DESC
+                LIMIT ?
+                `,
+                [
+                    ...cleanLanguages,
+                    safeLimit
+                ]
+            );
+
+    } else {
+
+        songs =
+            await db.allAsync(
+                `
+                SELECT
+                    youtube_video_id AS videoId,
+                    title,
+                    artist,
+                    channel_title AS channelTitle,
+                    thumbnail_url AS thumbnailUrl,
+                    duration,
+                    language
+                FROM music_songs
+                ORDER BY RANDOM()
+                LIMIT ?
+                `,
+                [
+                    safeLimit
+                ]
+            );
+    }
+
+    return songs || [];
+};
 module.exports = {
+
     searchMusic,
-    getVideoDuration
+
+    getVideoDuration,
+
+    discoverMusic
+
 };
