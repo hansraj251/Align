@@ -313,13 +313,24 @@ if (!Array.isArray(searchHistory)) {
             localStorage.setItem(
                 STORAGE_KEYS.playback,
                 JSON.stringify({
-                    song: currentSong,
-                    currentTime,
-                    isPlaying:
-                        playerState ===
-                        YT.PlayerState.PLAYING,
-                    savedAt: now
-                })
+    song: currentSong,
+    currentTime,
+    isPlaying:
+        playerState ===
+        YT.PlayerState.PLAYING,
+
+    playbackList:
+        Array.isArray(activePlaybackList)
+            ? activePlaybackList
+            : [],
+
+    playbackIndex:
+        Number.isInteger(activePlaybackIndex)
+            ? activePlaybackIndex
+            : -1,
+
+    savedAt: now
+})
             );
 
             lastPlaybackSaveAt = now;
@@ -416,12 +427,25 @@ if (!Array.isArray(searchHistory)) {
             return;
         }
 
-        currentSong =
-            normalizeSong(
-                saved.song
-            );
+       currentSong =
+    normalizeSong(
+        saved.song
+    );
 
-        currentIndex = -1;
+activePlaybackList =
+    Array.isArray(saved.playbackList)
+        ? saved.playbackList
+            .map(normalizeSong)
+            .filter(song => song.videoId)
+        : [];
+
+activePlaybackIndex =
+    Number.isInteger(saved.playbackIndex)
+        ? saved.playbackIndex
+        : -1;
+
+currentIndex =
+    activePlaybackIndex;
 
         updatePlayerUI();
         renderRecent();
@@ -655,7 +679,7 @@ if (!Array.isArray(searchHistory)) {
 
             params.set(
                 "limit",
-                "36"
+                "60"
             );
 
             const response =
