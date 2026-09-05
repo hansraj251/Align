@@ -8,11 +8,13 @@
     const API_BASE = "/api/music/search";
 
     const STORAGE_KEYS = {
-        favorites: "alignMusicFavorites",
-        recent: "alignMusicRecent",
-        volume: "alignMusicVolume",
-        playback: "alignMusicPlayback"
-    };
+    favorites: "alignMusicFavorites",
+    recent: "alignMusicRecent",
+    playback: "alignMusicPlayback",
+    searchHistory: "alignMusicSearchHistory"
+};
+
+const MAX_SEARCH_HISTORY = 30;
 
     const MAX_RECENT = 20;
 
@@ -152,7 +154,18 @@
             "musicToast"
         );
     const resultsSection =
-    document.getElementById("musicResultsSection");    
+    document.getElementById("musicResultsSection");   
+    const searchHistoryButton =
+    document.getElementById("musicSearchHistoryButton");
+
+const searchHistoryPanel =
+    document.getElementById("musicSearchHistoryPanel");
+
+const searchHistoryList =
+    document.getElementById("musicSearchHistoryList");
+
+const clearSearchHistoryButton =
+    document.getElementById("musicClearSearchHistory"); 
 
 
     /* =========================================================
@@ -195,6 +208,15 @@
             STORAGE_KEYS.recent,
             []
         );
+    let searchHistory =
+    loadStorage(
+        STORAGE_KEYS.searchHistory,
+        []
+    );
+
+if (!Array.isArray(searchHistory)) {
+    searchHistory = [];
+}    
 
 
     /* =========================================================
@@ -604,7 +626,484 @@
         );
     }
 
+/* =========================================================
+   SEARCH HISTORY
+========================================================= */
 
+function normalizeSearchHistoryEntry(entry) {
+
+    if (!entry || !entry.query) {
+        return null;
+    }
+
+    return {
+        id:
+            entry.id ||
+            `${Date.now()}-${Math.random()
+                .toString(36)
+                .slice(2, 9)}`,
+
+        query:
+            String(entry.query).trim(),
+
+        results:
+            Array.isArray(entry.results)
+                ? entry.results
+                    .map(normalizeSong)
+                    .filter(song => song.videoId)
+                : [],
+
+        nextPageToken:
+            entry.nextPageToken || null,
+
+        previousPageToken:
+            entry.previousPageToken || null,
+
+        savedAt:
+            Number(entry.savedAt) || Date.now()
+    };
+}
+
+
+function saveSearchHistory() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEYS.searchHistory,
+            JSON.stringify(searchHistory)
+        );
+
+    }
+    catch (error) {
+
+        console.warn(
+            "Unable to save search history",
+            error
+        );
+
+    }
+}
+
+
+function saveCurrentSearchToHistory(query) {
+
+    const cleanQuery =
+        String(query || "").trim();
+
+    if (!cleanQuery) {
+        return;
+    }
+
+    const existingIndex =
+        searchHistory.findIndex(
+            item =>
+                String(item?.query || "")
+                    .toLowerCase() ===
+                cleanQuery.toLowerCase()
+        );
+
+    /*
+       Same search dobara ki gayi hai.
+       Purani entry remove karke latest ko top par rakhenge.
+    */
+    if (existingIndex !== -1) {
+
+        searchHistory.splice(
+            existingIndex,
+            1
+        );
+
+    }
+
+    const historyEntry = {
+
+        id:
+            `${Date.now()}-${Math.random()
+                .toString(36)
+                .slice(2, 9)}`,
+
+        query:
+            cleanQuery,
+
+        /*
+           IMPORTANT:
+           Search ke actual results save honge.
+           Isliye baad mein API call ke bina
+           search result screen restore ho sakti hai.
+        */
+        results:
+            Array.isArray(results)
+                ? results.map(normalizeSong)
+                : [],
+
+        nextPageToken:
+            nextPageToken || null,
+
+        previousPageToken:
+            previousPageToken || null,
+
+        savedAt:
+            Date.now()
+    };
+
+    searchHistory.unshift(
+        historyEntry
+    );
+
+    searchHistory =
+        searchHistory
+            .map(normalizeSearchHistoryEntry)
+            .filter(Boolean)
+            .slice(
+                0,
+                MAX_SEARCH_HISTORY
+            );
+
+    saveSearchHistory();
+
+    renderSearchHistory();
+}
+
+
+function updateCurrentSearchHistory() {
+
+    if (!lastSearchQuery) {
+        return;
+    }
+
+    const index =
+        searchHistory.findIndex(
+            item =>
+                String(item?.query || "")
+                    .toLowerCase() ===
+                lastSearchQuery.toLowerCase()
+        );
+
+    if (index === -1) {
+
+        saveCurrentSearchToHistory(
+            lastSearchQuery
+        );
+
+        return;
+    }
+
+    searchHistory[index] = {
+
+        ...searchHistory[index],
+
+        results:
+            Array.isArray(results)
+                ? results.map(normalizeSong)
+                : [],
+
+        nextPageToken:
+            nextPageToken || null,
+
+        previousPageToken:
+            previousPageToken || null,
+
+        savedAt:
+            Date.now()
+    };
+
+    saveSearchHistory();
+
+    renderSearchHistory();
+}
+
+
+function formatSearchHistoryTime(timestamp) {
+
+    const date =
+        new Date(timestamp);
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleString(
+        undefined,
+        {
+            day: "2-digit",
+            month: "short",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
+
+
+function renderSearchHistory() {
+
+    if (!searchHistoryList) {
+        return;
+    }
+
+    if (!searchHistory.length) {
+
+        searchHistoryList.innerHTML = `
+            <div class="music-search-history-empty">
+                No search history yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    searchHistoryList.innerHTML =
+        searchHistory
+            .map(entry => {
+
+                const safeQuery =
+                    escapeHtml(
+                        entry.query
+                    );
+
+                const resultCount =
+                    Array.isArray(entry.results)
+                        ? entry.results.length
+                        : 0;
+
+                return `
+                    <div
+                        class="music-search-history-item">
+
+                        <button
+                            type="button"
+                            class="music-search-history-open"
+                            data-search-history-id="${escapeHtml(entry.id)}">
+
+                            <span
+                                class="music-search-history-query">
+                                ${safeQuery}
+                            </span>
+
+                            <span
+                                class="music-search-history-meta">
+                                ${resultCount} results
+                                ·
+                                ${escapeHtml(
+                                    formatSearchHistoryTime(
+                                        entry.savedAt
+                                    )
+                                )}
+                            </span>
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="music-search-history-delete"
+                            data-delete-search-history-id="${escapeHtml(entry.id)}"
+                            aria-label="Delete ${safeQuery}"
+                            title="Delete">
+
+                            ×
+
+                        </button>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+}
+
+
+function openSavedSearchHistory(id) {
+
+    const entry =
+        searchHistory.find(
+            item =>
+                String(item.id) ===
+                String(id)
+        );
+
+    if (!entry) {
+        return;
+    }
+
+    /*
+       Restore the complete saved search.
+    */
+
+    lastSearchQuery =
+        entry.query;
+
+    results =
+        Array.isArray(entry.results)
+            ? entry.results.map(normalizeSong)
+            : [];
+
+    nextPageToken =
+        entry.nextPageToken || null;
+
+    previousPageToken =
+        entry.previousPageToken || null;
+
+
+    /*
+       Search input mein query wapas.
+    */
+
+    if (searchInput) {
+
+        searchInput.value =
+            entry.query;
+
+    }
+
+
+    /*
+       Hidden results section ko open karo.
+    */
+
+    if (resultsSection) {
+
+        resultsSection.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    /*
+       Saved results render karo.
+       API call nahi hogi.
+    */
+
+    renderResults();
+
+    updatePagination();
+    
+
+
+    if (results.length) {
+
+        resultsInfo.textContent =
+            `${results.length} saved results for "${entry.query}"`;
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+    }
+    else {
+
+        resultsInfo.textContent =
+            `No saved results for "${entry.query}"`;
+
+        emptyState.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    /*
+       Existing clear button show karo.
+    */
+
+    clearButton.classList.remove(
+        "hidden"
+    );
+
+
+    closeSearchHistoryPanel();
+
+
+    /*
+       Result section tak scroll.
+    */
+
+    if (resultsSection) {
+
+        window.scrollTo({
+
+            top:
+                resultsSection
+                    .getBoundingClientRect()
+                    .top +
+                window.scrollY -
+                20,
+
+            behavior: "smooth"
+
+        });
+
+    }
+}
+
+
+function deleteSearchHistory(id) {
+
+    searchHistory =
+        searchHistory.filter(
+            item =>
+                String(item.id) !==
+                String(id)
+        );
+
+    saveSearchHistory();
+
+    renderSearchHistory();
+}
+
+
+function clearAllSearchHistory() {
+
+    searchHistory = [];
+
+    saveSearchHistory();
+
+    renderSearchHistory();
+}
+
+
+function openSearchHistoryPanel() {
+
+    if (!searchHistoryPanel) {
+        return;
+    }
+
+    searchHistoryPanel.classList.remove(
+        "hidden"
+    );
+
+    if (searchHistoryButton) {
+
+        searchHistoryButton.setAttribute(
+            "aria-expanded",
+            "true"
+        );
+
+    }
+
+    renderSearchHistory();
+}
+
+
+function closeSearchHistoryPanel() {
+
+    if (!searchHistoryPanel) {
+        return;
+    }
+
+    searchHistoryPanel.classList.add(
+        "hidden"
+    );
+
+    if (searchHistoryButton) {
+
+        searchHistoryButton.setAttribute(
+            "aria-expanded",
+            "false"
+        );
+
+    }
+}
     /* =========================================================
        YOUTUBE PLAYER
     ========================================================= */
@@ -896,6 +1395,9 @@ origin: window.location.origin,
 
             lastSearchQuery =
                 cleanQuery;
+            saveCurrentSearchToHistory(
+    cleanQuery
+);    
             if (resultsSection) {
     resultsSection.classList.remove("hidden");
 }    
@@ -903,6 +1405,8 @@ origin: window.location.origin,
             renderResults();
 
             updatePagination();
+            updateCurrentSearchHistory();
+
 
             if (results.length) {
 
@@ -1931,7 +2435,7 @@ if (playAllRecentButton) {
         ? `
             <button
                 type="button"
-                class="music-favorite-remove"
+                class="music-playlist-delete"
                 data-remove-favorite="${escapeHtml(song.videoId)}"
                 aria-label="Remove from favorites">
                 ×
@@ -2049,6 +2553,125 @@ if (playAllRecentButton) {
             clearSearch
         );
     }
+    if (searchHistoryButton) {
+
+    searchHistoryButton.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            if (
+                searchHistoryPanel &&
+                searchHistoryPanel.classList.contains(
+                    "hidden"
+                )
+            ) {
+
+                openSearchHistoryPanel();
+
+            }
+            else {
+
+                closeSearchHistoryPanel();
+
+            }
+
+        }
+    );
+
+}
+if (searchHistoryList) {
+
+    searchHistoryList.addEventListener(
+        "click",
+        event => {
+
+            const openButton =
+                event.target.closest(
+                    "[data-search-history-id]"
+                );
+
+            if (openButton) {
+
+                openSavedSearchHistory(
+                    openButton.dataset
+                        .searchHistoryId
+                );
+
+                return;
+            }
+
+
+            const deleteButton =
+                event.target.closest(
+                    "[data-delete-search-history-id]"
+                );
+
+            if (deleteButton) {
+
+                event.stopPropagation();
+
+                deleteSearchHistory(
+                    deleteButton.dataset
+                        .deleteSearchHistoryId
+                );
+
+            }
+
+        }
+    );
+
+}
+if (clearSearchHistoryButton) {
+
+    clearSearchHistoryButton.addEventListener(
+        "click",
+        event => {
+
+            event.stopPropagation();
+
+            clearAllSearchHistory();
+
+        }
+    );
+
+}
+document.addEventListener(
+    "click",
+    event => {
+
+        if (
+            !searchHistoryPanel ||
+            searchHistoryPanel.classList.contains(
+                "hidden"
+            )
+        ) {
+            return;
+        }
+
+        if (
+            !event.target.closest(
+                ".music-search-history-wrap"
+            )
+        ) {
+
+            closeSearchHistoryPanel();
+
+        }
+
+    }
+);
+searchHistory =
+    searchHistory
+        .map(normalizeSearchHistoryEntry)
+        .filter(Boolean)
+        .slice(
+            0,
+            MAX_SEARCH_HISTORY
+        );
+
+renderSearchHistory();
 
 
     if (previousButton) {
@@ -3364,130 +3987,8 @@ if (deleteButton) {
         }
     );
 }
-document.getElementById("musicShowFavorites")?.addEventListener("click", () => {
-    const panels = document.querySelectorAll(".music-sidebar .music-panel");
-    const favoritesPanel = panels[0];
-    const button = document.getElementById("musicShowFavorites");
-
-    if (!favoritesPanel || !button) return;
-
-    const isHidden =
-        getComputedStyle(favoritesPanel).display === "none";
-
-    if (isHidden) {
-    hideOtherMusicPanels(favoritesPanel);
-}
-
-    favoritesPanel.style.display =
-    isHidden ? "block" : "none";
-
-    button.classList.toggle("active", isHidden);
-});
-
-
-document.getElementById("musicShowPlaylists")?.addEventListener("click", () => {
-    const panels = document.querySelectorAll(".music-sidebar .music-panel");
-    const playlistsPanel = panels[2];
-    const button = document.getElementById("musicShowPlaylists");
-
-    if (!playlistsPanel || !button) return;
-
-    const isHidden =
-        getComputedStyle(playlistsPanel).display === "none";
-
-    if (isHidden) {
-    hideOtherMusicPanels(playlistsPanel);
-}
-
-    playlistsPanel.style.display =
-    isHidden ? "block" : "none";
-
-    button.classList.toggle("active", isHidden);
-});
-document.getElementById("musicShowRecent")?.addEventListener("click", () => {
-    const panels = document.querySelectorAll(".music-sidebar .music-panel");
-    const recentPanel = panels[1];
-    const button = document.getElementById("musicShowRecent");
-
-    if (!recentPanel || !button) return;
-
-    const isHidden =
-        getComputedStyle(recentPanel).display === "none";
-
-    if (isHidden) {
-    hideOtherMusicPanels(recentPanel);
-}
-
-    recentPanel.style.display =
-    isHidden ? "block" : "none";
-
-    button.classList.toggle("active", isHidden);
-});
-document.getElementById("musicPlayer")?.addEventListener("click", (event) => {
-    if (window.innerWidth > 700) return;
-
-    const clickedButton =
-        event.target.closest(".music-mobile-section-button");
-
-    if (clickedButton) return;
-
-    const panels =
-        document.querySelectorAll(".music-sidebar .music-panel");
-
-    panels.forEach(panel => {
-        panel.style.display = "none";
-    });
-
-    document
-        .querySelectorAll(".music-mobile-section-button")
-        .forEach(button => {
-            button.classList.remove("active");
-        });
-});
-function hideOtherMusicPanels(activePanel) {
-    const panels =
-        document.querySelectorAll(".music-sidebar .music-panel");
-
-    panels.forEach(panel => {
-        if (panel !== activePanel) {
-            panel.style.display = "none";
-        }
-    });
-
-    document
-        .querySelectorAll(".music-mobile-section-button")
-        .forEach(button => {
-            if (!activePanel) {
-                button.classList.remove("active");
-                return;
-            }
-
-            const panelIndex =
-                Array.from(panels).indexOf(activePanel);
-
-            const buttonIndex = {
-                musicShowFavorites: 0,
-                musicShowRecent: 1,
-                musicShowPlaylists: 2
-            }[button.id];
-
-            if (buttonIndex !== panelIndex) {
-                button.classList.remove("active");
-            }
-        });
-}
-
 
      addPlayerActionButtons();
      renderPlaylists();
     
 })();
-document.addEventListener("click", function (event) {
-    const button = event.target.closest("button");
-
-    if (button) {
-        setTimeout(() => {
-            button.blur();
-        }, 0);
-    }
-});
