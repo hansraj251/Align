@@ -884,10 +884,7 @@ origin: window.location.origin,
                                 song.videoId
                         )
                     : [];
-                    console.log(
-    "RESULTS AFTER NORMALIZE:",
-    results
-);
+                    
 
             nextPageToken =
                 data.nextPageToken ||
@@ -1164,18 +1161,12 @@ origin: window.location.origin,
         if (!song?.videoId) {
             return;
         }
-console.log(
-    "SONG BEFORE NORMALIZE:",
-    song
-);
+
         currentSong =
             normalizeSong(
                 song
             );
-            console.log(
-    "PLAY SONG DATA:",
-    currentSong
-);
+          
 
         currentIndex =
             Number.isInteger(index)
@@ -1237,10 +1228,7 @@ console.log(
             player.loadVideoById(
     currentSong.videoId
 );
-console.log(
-    "CURRENT SONG BEFORE SAVE:",
-    currentSong
-);
+
 
 if (typeof window.AlignMusicExtras?.saveMusicSong === "function") {
     window.AlignMusicExtras.saveMusicSong(currentSong);
@@ -2476,21 +2464,7 @@ if (removeButton) {
     }
 
     try {
-        console.log(
-    "SAVING MUSIC:",
-    {
-        videoId: song.videoId,
-        title: song.title,
-        artist: song.artist,
-        channelTitle: song.channelTitle,
-        thumbnailUrl:
-            song.thumbnails?.high ||
-            song.thumbnails?.medium ||
-            song.thumbnails?.default ||
-            null,
-        duration: song.duration
-    }
-);
+       
         await fetch("/api/music/save", {
             method: "POST",
             headers: {
@@ -3503,8 +3477,17 @@ function hideOtherMusicPanels(activePanel) {
         });
 }
 
+
      addPlayerActionButtons();
      renderPlaylists();
     
 })();
+document.addEventListener("click", function (event) {
+    const button = event.target.closest("button");
 
+    if (button) {
+        setTimeout(() => {
+            button.blur();
+        }, 0);
+    }
+});
