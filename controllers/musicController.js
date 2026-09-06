@@ -233,18 +233,8 @@ exports.discover =
     };
 const addYouTubeSong = async (req, res) => {
     try {
-        const { videoId } = req.body;
+        const cleanVideoId = String(req.body?.videoId || "").trim();
 
-        const cleanVideoId = String(videoId || "").trim();
-
-        if (!cleanVideoId) {
-            return res.status(400).json({
-                success: false,
-                message: "YouTube video ID is required."
-            });
-        }
-
-        // Basic YouTube video ID validation
         if (!/^[A-Za-z0-9_-]{11}$/.test(cleanVideoId)) {
             return res.status(400).json({
                 success: false,
@@ -252,98 +242,21 @@ const addYouTubeSong = async (req, res) => {
             });
         }
 
-        const existing = await db.getAsync(
-            `
-            SELECT
-                id,
-                youtube_video_id AS videoId,
-                title,
-                artist,
-                channel_title AS channelTitle,
-                channel_id AS channelId,
-                thumbnail_url AS thumbnailUrl,
-                duration,
-                language
-            FROM music_songs
-            WHERE youtube_video_id = ?
-            LIMIT 1
-            `,
-            [cleanVideoId]
-        );
-
-        if (existing) {
-            return res.json({
-                success: true,
-                song: existing,
-                alreadyExists: true
-            });
-        }
-
-        /*
-         * Metadata is optional here.
-         * The video can be played directly from its ID.
-         *
-         * We save a basic record first so that the pasted
-         * video becomes searchable in Align Music.
-         */
-        await db.runAsync(
-            `
-            INSERT INTO music_songs (
-                youtube_video_id,
-                title,
-                artist,
-                channel_title,
-                channel_id,
-                thumbnail_url,
-                duration,
-                language,
-                updated_at
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-            `,
-            [
-                cleanVideoId,
-                `YouTube Video ${cleanVideoId}`,
-                "",
-                "",
-                null,
-                `https://i.ytimg.com/vi/${cleanVideoId}/hqdefault.jpg`,
-                null,
-                null
-            ]
-        );
-
-        const savedSong = await db.getAsync(
-            `
-            SELECT
-                id,
-                youtube_video_id AS videoId,
-                title,
-                artist,
-                channel_title AS channelTitle,
-                channel_id AS channelId,
-                thumbnail_url AS thumbnailUrl,
-                duration,
-                language
-            FROM music_songs
-            WHERE youtube_video_id = ?
-            LIMIT 1
-            `,
-            [cleanVideoId]
+        const song = await youtubeMusicService.addYouTubeVideo(
+            `https://www.youtube.com/watch?v=${cleanVideoId}`
         );
 
         return res.json({
             success: true,
-            song: savedSong,
-            alreadyExists: false
+            song,
+            alreadyExists: !!song?.alreadyExists
         });
-
     } catch (error) {
         console.error("Add YouTube song error:", error);
 
         return res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message || "Unable to add YouTube video."
         });
     }
 };
