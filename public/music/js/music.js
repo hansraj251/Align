@@ -2148,7 +2148,7 @@ if (likeButton && likeIcon && currentSong) {
                 updateProgress();
                 savePlaybackState();
 
-            }, 500);
+            }, 100);
     }
 
 
@@ -2209,18 +2209,27 @@ if (likeButton && likeIcon && currentSong) {
             }
 
             if (progress) {
+    const percent =
+        Math.min(
+            100,
+            Math.max(
+                0,
+                (current / total) * 100
+            )
+        );
 
-                progress.value =
-                    String(
-                        Math.min(
-                            100,
-                            (
-                                current /
-                                total
-                            ) * 100
-                        )
-                    );
-            }
+    progress.value =
+        String(percent);
+
+    progress.style.background =
+        `linear-gradient(
+            to right,
+            #8b5cf6 0%,
+            #8b5cf6 ${percent}%,
+            #e2e8f0 ${percent}%,
+            #e2e8f0 100%
+        )`;
+}
 
         }
         catch {
@@ -3426,14 +3435,27 @@ if (button) button.click();
                 </div>
             </button>
 
-            <button
-                type="button"
-                class="music-playlist-delete"
-                data-playlist-delete-id="${playlist.id}"
-                aria-label="Delete playlist"
-                title="Delete playlist">
-                ×
-            </button>
+            <div class="music-playlist-actions">
+
+    <button
+        type="button"
+        class="music-playlist-delete"
+        data-playlist-rename-id="${playlist.id}"
+        aria-label="Rename playlist"
+        title="Rename playlist">
+        ✎
+    </button>
+
+    <button
+        type="button"
+        class="music-playlist-delete"
+        data-playlist-delete-id="${playlist.id}"
+        aria-label="Delete playlist"
+        title="Delete playlist">
+        ×
+    </button>
+
+</div>
         </div>
     `).join("");
 }
@@ -4016,7 +4038,179 @@ if (playlistsContainer) {
     playlistsContainer.addEventListener(
         "click",
         event => {
-            const deleteButton =
+const renameButton =
+    event.target.closest("[data-playlist-rename-id]");
+
+if (renameButton) {
+    event.stopPropagation();
+
+    const playlistId =
+        renameButton.dataset.playlistRenameId;
+
+    const playlist =
+        extraPlaylists.find(
+            item => item.id === playlistId
+        );
+
+    if (!playlist) {
+        return;
+    }
+
+    const existingModal =
+        document.getElementById(
+            "musicRenamePlaylistModal"
+        );
+
+    if (existingModal) {
+        existingModal.remove();
+    }
+
+    const modal =
+        document.createElement("div");
+
+    modal.id =
+        "musicRenamePlaylistModal";
+
+    modal.className =
+        "music-playlist-songs-overlay";
+
+    modal.innerHTML = `
+        <div class="music-standalone-modal-box">
+
+            <div class="music-standalone-modal-header">
+                <div>
+                    <h3>Rename Playlist</h3>
+
+                    <p>
+                        Enter a new name for
+                        <strong>
+                            ${extraEscapeHtml(playlist.name)}
+                        </strong>.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="music-standalone-modal-close"
+                    id="musicRenamePlaylistClose">
+                    ×
+                </button>
+            </div>
+
+            <div style="margin-top:20px;">
+
+                <input
+                    type="text"
+                    id="musicRenamePlaylistInput"
+                    value="${extraEscapeHtml(playlist.name)}"
+                    maxlength="100"
+                    style="
+                        width:100%;
+                        box-sizing:border-box;
+                    "
+                >
+
+            </div>
+
+            <div style="
+                display:flex;
+                justify-content:flex-end;
+                gap:10px;
+                margin-top:20px;
+            ">
+
+                <button
+                    type="button"
+                    id="musicRenamePlaylistCancel"
+                    class="music-secondary-button">
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    id="musicRenamePlaylistConfirm"
+                    class="music-primary-button">
+                    Rename
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const input =
+        document.getElementById(
+            "musicRenamePlaylistInput"
+        );
+
+    const closeModal = () => {
+        modal.remove();
+    };
+
+    document
+        .getElementById(
+            "musicRenamePlaylistClose"
+        )
+        ?.addEventListener(
+            "click",
+            closeModal
+        );
+
+    document
+        .getElementById(
+            "musicRenamePlaylistCancel"
+        )
+        ?.addEventListener(
+            "click",
+            closeModal
+        );
+
+    document
+        .getElementById(
+            "musicRenamePlaylistConfirm"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+
+                const newName =
+                    input.value.trim();
+
+                if (!newName) {
+                    notify(
+                        "Playlist name cannot be empty."
+                    );
+                    input.focus();
+                    return;
+                }
+
+                playlist.name =
+                    newName;
+
+                extraSave(
+                    EXTRA_KEYS.playlists,
+                    extraPlaylists
+                );
+
+                renderPlaylists();
+
+                closeModal();
+
+                notify(
+                    `Renamed playlist to ${newName}.`
+                );
+            }
+        );
+
+    input?.focus();
+    input?.select();
+
+    return;
+}
+
+    const deleteButton =
     event.target.closest("[data-playlist-delete-id]");
 
 if (deleteButton) {
