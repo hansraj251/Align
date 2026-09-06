@@ -21,7 +21,10 @@ router.post(
     musicController.save
 
 );
-
+router.post(
+    "/add-youtube",
+    musicController.addYouTubeSong
+);
 router.get(
 
     "/discover",

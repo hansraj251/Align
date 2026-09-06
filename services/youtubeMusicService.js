@@ -357,6 +357,185 @@ if (existingArtists?.length) {
         return null;
     }
 };
+const addYouTubeVideo = async (youtubeUrl) => {
+    const url = String(youtubeUrl || "").trim();
+
+    if (!url) {
+        throw new Error("YouTube URL is required.");
+    }
+
+    let videoId = null;
+
+    try {
+        const parsed = new URL(url);
+
+        if (
+            parsed.hostname === "youtube.com" ||
+            parsed.hostname === "www.youtube.com" ||
+            parsed.hostname === "m.youtube.com"
+        ) {
+            videoId = parsed.searchParams.get("v");
+        }
+
+        if (
+            parsed.hostname === "youtu.be" ||
+            parsed.hostname === "www.youtu.be"
+        ) {
+            videoId = parsed.pathname.split("/")[1];
+        }
+    } catch {
+        throw new Error("Invalid YouTube URL.");
+    }
+
+    videoId = String(videoId || "").trim();
+
+    if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
+        throw new Error("Invalid YouTube video URL.");
+    }
+
+    const existing = await db.getAsync(
+        `
+        SELECT
+            youtube_video_id AS videoId,
+            title,
+            artist,
+            channel_title AS channelTitle,
+            channel_id AS channelId,
+            thumbnail_url AS thumbnailUrl,
+            duration,
+            language
+        FROM music_songs
+        WHERE youtube_video_id = ?
+        LIMIT 1
+        `,
+        [videoId]
+    );
+
+    if (existing) {
+        return {
+            ...existing,
+            alreadyExists: true
+        };
+    }
+
+    const params = new URLSearchParams({
+        part: "snippet,contentDetails",
+        id: videoId,
+        key: getYouTubeApiKey()
+    });
+
+    const response = await fetch(
+        `${YOUTUBE_API_BASE}/videos?${params.toString()}`
+    );
+
+    let data = {};
+
+    try {
+        data = await response.json();
+    } catch {
+        data = {};
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data?.error?.message ||
+            "Unable to fetch YouTube video."
+        );
+    }
+
+    const video = data?.items?.[0];
+
+    if (!video) {
+        throw new Error("YouTube video not found.");
+    }
+
+    const song = {
+        videoId: video.id,
+        title: video?.snippet?.title || "",
+        description: video?.snippet?.description || "",
+        channelTitle:
+            video?.snippet?.channelTitle || "",
+        channelId:
+            video?.snippet?.channelId || null,
+        publishedAt:
+            video?.snippet?.publishedAt || null,
+        duration:
+            video?.contentDetails?.duration || null,
+        language:
+            video?.snippet?.defaultAudioLanguage || null,
+        thumbnails: {
+            default:
+                video?.snippet?.thumbnails?.default?.url || null,
+            medium:
+                video?.snippet?.thumbnails?.medium?.url || null,
+            high:
+                video?.snippet?.thumbnails?.high?.url || null
+        }
+    };
+
+    await saveSongsToMusicDB([song]);
+
+    return {
+        ...song,
+        alreadyExists: false
+    };
+};
+const extractYouTubeVideoIdsFromHtml = (html) => {
+    console.log(
+    "DDG HTML SAMPLE:",
+    String(html || "").slice(0, 5000)
+);
+    const ids = new Set();
+
+    const source = String(html || "");
+
+    const addVideoId = (value) => {
+        const id = String(value || "").trim();
+
+        if (/^[A-Za-z0-9_-]{11}$/.test(id)) {
+            ids.add(id);
+        }
+    };
+
+    // 1. DuckDuckGo redirect URLs
+    for (const match of source.matchAll(/uddg=([^"&]+)/g)) {
+        try {
+            const url = decodeURIComponent(match[1]);
+
+            const videoMatch = url.match(
+                /youtube\.com\/watch\?(?:[^#]*&)?v=([A-Za-z0-9_-]{11})/
+            );
+
+            if (videoMatch) {
+                addVideoId(videoMatch[1]);
+            }
+        } catch {
+            // Ignore malformed result
+        }
+    }
+
+    // 2. Direct YouTube watch URLs present in HTML
+    for (const match of source.matchAll(
+        /https?:\/\/(?:www\.)?youtube\.com\/watch\?[^"'<>\\\s]*v=([A-Za-z0-9_-]{11})/g
+    )) {
+        addVideoId(match[1]);
+    }
+
+    // 3. HTML-encoded URLs
+    const decodedHtml = source
+        .replace(/&amp;/g, "&")
+        .replace(/&quot;/g, '"')
+        .replace(/&#x2F;/g, "/")
+        .replace(/\\u002F/g, "/");
+
+    for (const match of decodedHtml.matchAll(
+        /youtube\.com\/watch\?[^"'<>\\\s]*v=([A-Za-z0-9_-]{11})/g
+    )) {
+        addVideoId(match[1]);
+    }
+
+    return [...ids];
+};
 const searchMusic = async ({
     query,
     maxResults = 20,
@@ -401,6 +580,94 @@ const searchMusic = async ({
             String(pageToken)
         );
     }
+    const webSearchQuery =
+    `site:youtube.com/watch ${cleanQuery}`;
+
+let webSearchHtml = "";
+
+try {
+    const webResponse = await fetch(
+        `https://html.duckduckgo.com/html/?q=${encodeURIComponent(webSearchQuery)}`,
+        {
+            headers: {
+                "User-Agent":
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120 Safari/537.36"
+            }
+        }
+    );
+
+    if (webResponse.ok) {
+        webSearchHtml = await webResponse.text();
+    }
+} catch (error) {
+    console.warn(
+        "DuckDuckGo web search failed:",
+        error.message
+    );
+}
+
+const webVideoIds =
+    extractYouTubeVideoIdsFromHtml(webSearchHtml);
+
+console.log(
+    "DuckDuckGo YouTube IDs:",
+    webVideoIds
+);
+if (webVideoIds.length) {
+    console.log(
+        "Using DuckDuckGo YouTube results:",
+        webVideoIds
+    );
+
+    const videoParams = new URLSearchParams({
+        part: "snippet,contentDetails",
+        id: webVideoIds.slice(0, 10).join(","),
+        key: getYouTubeApiKey()
+    });
+
+    const videoResponse = await fetch(
+        `${YOUTUBE_API_BASE}/videos?${videoParams.toString()}`
+    );
+
+    let videoData = {};
+
+    try {
+        videoData = await videoResponse.json();
+    } catch {
+        videoData = {};
+    }
+
+    if (videoResponse.ok) {
+        const normalizedSongs = (videoData.items || []).map(video => ({
+            videoId: video.id,
+            title: video?.snippet?.title || "",
+            description: video?.snippet?.description || "",
+            channelTitle: video?.snippet?.channelTitle || "",
+            channelId: video?.snippet?.channelId || null,
+            publishedAt: video?.snippet?.publishedAt || null,
+            duration: video?.contentDetails?.duration || null,
+            language:
+                video?.snippet?.defaultAudioLanguage || null,
+            thumbnails: {
+                default:
+                    video?.snippet?.thumbnails?.default?.url || null,
+                medium:
+                    video?.snippet?.thumbnails?.medium?.url || null,
+                high:
+                    video?.snippet?.thumbnails?.high?.url || null
+            }
+        }));
+
+        await saveSongsToMusicDB(normalizedSongs);
+
+        return {
+            items: normalizedSongs,
+            nextPageToken: null,
+            prevPageToken: null,
+            totalResults: normalizedSongs.length
+        };
+    }
+}
 
     const response =
         await fetch(
@@ -2172,13 +2439,9 @@ return {
 
 };
 module.exports = {
-
     searchMusic,
-
     getVideoDuration,
-
     discoverMusic,
-
-    discoverAndSaveArtist
-
+    discoverAndSaveArtist,
+    addYouTubeVideo
 };
