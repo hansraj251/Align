@@ -33,6 +33,11 @@ const MAX_SEARCH_HISTORY = 30;
         document.getElementById(
             "musicSearchInput"
         );
+    const musicYouTubeInput =
+    document.getElementById("musicYouTubeInput");
+
+    const musicYouTubeAddButton =
+    document.getElementById("musicYouTubeAddButton");    
 
     const searchButton =
         document.getElementById(
@@ -4945,6 +4950,180 @@ if (deleteButton) {
             }
 
             showPlaylistSongs(playlist);
+        }
+    );
+}
+function extractYouTubeVideoId(value) {
+    const input = String(value || "").trim();
+
+    if (!input) {
+        return null;
+    }
+
+    try {
+        const url = new URL(input);
+
+        const hostname =
+            url.hostname.toLowerCase();
+
+        if (
+            hostname === "youtube.com" ||
+            hostname === "www.youtube.com" ||
+            hostname === "m.youtube.com"
+        ) {
+            const videoId =
+                url.searchParams.get("v");
+
+            return /^[A-Za-z0-9_-]{11}$/.test(videoId || "")
+                ? videoId
+                : null;
+        }
+
+        if (
+            hostname === "youtu.be" ||
+            hostname === "www.youtu.be"
+        ) {
+            const videoId =
+                url.pathname.split("/").filter(Boolean)[0];
+
+            return /^[A-Za-z0-9_-]{11}$/.test(videoId || "")
+                ? videoId
+                : null;
+        }
+    } catch {
+        return null;
+    }
+
+    return null;
+}
+
+if (
+    musicYouTubeInput &&
+    musicYouTubeAddButton
+) {
+    musicYouTubeAddButton.addEventListener(
+        "click",
+        async () => {
+            const url =
+                musicYouTubeInput.value.trim();
+
+            const videoId =
+                extractYouTubeVideoId(url);
+
+            if (!videoId) {
+                if (typeof showToast === "function") {
+                    showToast(
+                        "Please paste a valid YouTube link."
+                    );
+                }
+                return;
+            }
+
+            musicYouTubeAddButton.disabled = true;
+            musicYouTubeAddButton.textContent =
+                "Adding...";
+
+            try {
+                const response = await fetch(
+                    "/api/music/add-youtube",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+                        body: JSON.stringify({
+                            videoId
+                        })
+                    }
+                );
+
+                const data =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !data.success ||
+                    !data.song
+                ) {
+                    throw new Error(
+                        data.message ||
+                        "Unable to add YouTube video."
+                    );
+                }
+
+                const song = {
+                    ...data.song,
+                    videoId:
+                        data.song.videoId ||
+                        videoId
+                };
+
+                musicYouTubeInput.value = "";
+
+                /*
+                 * Use the existing Align Music player.
+                 */
+                playSong(
+                    song,
+                    -1,
+                    [song]
+                );
+
+                /*
+                 * Open the existing video player.
+                 */
+                setTimeout(() => {
+                    openMusicVideo(
+                        song,
+                        0,
+                        true
+                    );
+                }, 300);
+
+                if (
+                    typeof showToast === "function"
+                ) {
+                    showToast(
+                        data.alreadyExists
+                            ? "Video already in Align Music."
+                            : "YouTube video added to Align Music."
+                    );
+                }
+
+            } catch (error) {
+                console.error(
+                    "Add YouTube video error:",
+                    error
+                );
+
+                if (
+                    typeof showToast === "function"
+                ) {
+                    showToast(
+                        error.message ||
+                        "Unable to add YouTube video."
+                    );
+                }
+
+            } finally {
+                musicYouTubeAddButton.disabled =
+                    false;
+
+                musicYouTubeAddButton.textContent =
+                    "▶ Add & Play";
+            }
+        }
+    );
+
+    musicYouTubeInput.addEventListener(
+        "keydown",
+        event => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+
+                musicYouTubeAddButton.click();
+            }
         }
     );
 }
