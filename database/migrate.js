@@ -979,6 +979,190 @@ console.log(
     console.log(
         "✅ music_songs table is ready."
     );
+        /*
+     * Migration 11:
+     * music_artists
+     */
+
+    await db.runAsync(
+        `
+        CREATE TABLE IF NOT EXISTS music_artists (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            artist TEXT NOT NULL,
+
+            channel TEXT,
+
+            channel_id TEXT,
+
+            language TEXT,
+
+            status TEXT NOT NULL
+                DEFAULT 'active',
+
+            last_fetched_at DATETIME,
+
+            created_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP,
+
+            updated_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP
+
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE INDEX IF NOT EXISTS
+            idx_music_artists_artist
+        ON music_artists (
+            artist
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE INDEX IF NOT EXISTS
+            idx_music_artists_channel_id
+        ON music_artists (
+            channel_id
+        )
+        `
+    );
+
+    console.log(
+        "✅ music_artists table is ready."
+    );
+    /*
+ * Migration 12:
+ * Seed music_artists master catalogue
+ */
+
+const musicArtistsSeed = [
+  // Hindi / Bollywood
+  ["Arijit Singh", "Arijit Singh - Topic", null, "Hindi"],
+  ["Shreya Ghoshal", "Shreya Ghoshal - Topic", null, "Hindi"],
+  ["Sonu Nigam", "Sonu Nigam - Topic", null, "Hindi"],
+  ["KK", "K.K. - Topic", null, "Hindi"],
+  ["Atif Aslam", "Atif Aslam - Topic", null, "Hindi"],
+  ["Jubin Nautiyal", "Jubin Nautiyal - Topic", null, "Hindi"],
+  ["Armaan Malik", "Armaan Malik - Topic", null, "Hindi"],
+  ["Darshan Raval", "Darshan Raval - Topic", null, "Hindi"],
+  ["Vishal Mishra", "Vishal Mishra - Topic", null, "Hindi"],
+  ["Amit Trivedi", "Amit Trivedi - Topic", null, "Hindi"],
+  ["Mohit Chauhan", "Mohit Chauhan - Topic", null, "Hindi"],
+  ["Shaan", "Shaan - Topic", null, "Hindi"],
+  ["Sunidhi Chauhan", "Sunidhi Chauhan - Topic", null, "Hindi"],
+  ["Neha Kakkar", "Neha Kakkar - Topic", null, "Hindi"],
+  ["Palak Muchhal", "Palak Muchhal - Topic", null, "Hindi"],
+  ["Tulsi Kumar", "Tulsi Kumar - Topic", null, "Hindi"],
+  ["B Praak", "B Praak - Topic", null, "Hindi"],
+  ["Badshah", "Badshah - Topic", null, "Hindi"],
+  ["Yo Yo Honey Singh", "Yo Yo Honey Singh", null, "Hindi"],
+  ["Raftaar", "Raftaar - Topic", null, "Hindi"],
+  ["Divine", "DIVINE - Topic", null, "Hindi"],
+  ["King", "King - Topic", null, "Hindi"],
+  ["Karan Aujla", "Karan Aujla - Topic", null, "Punjabi"],
+  ["Diljit Dosanjh", "Diljit Dosanjh - Topic", null, "Punjabi"],
+  ["Sidhu Moose Wala", "Sidhu Moose Wala - Topic", null, "Punjabi"],
+  ["AP Dhillon", "AP Dhillon - Topic", null, "Punjabi"],
+  ["Shubh", "Shubh - Topic", null, "Punjabi"],
+  ["Kaka", "Kaka - Topic", null, "Punjabi"],
+  ["Gurnam Bhullar", "Gurnam Bhullar - Topic", null, "Punjabi"],
+  ["Ammy Virk", "Ammy Virk - Topic", null, "Punjabi"],
+  ["Nimrat Khaira", "Nimrat Khaira - Topic", null, "Punjabi"],
+
+  // Major labels / catalogue channels
+  ["T-Series", "T-Series", null, "Hindi"],
+  ["Sony Music India", "Sony Music India", null, "Hindi"],
+  ["Zee Music Company", "Zee Music Company", null, "Hindi"],
+  ["Tips Official", "Tips Official", null, "Hindi"],
+  ["Saregama Music", "Saregama Music", null, "Hindi"],
+  ["Speed Records", "Speed Records", null, "Punjabi"],
+  ["White Hill Music", "White Hill Music", null, "Punjabi"],
+  ["Desi Music Factory", "Desi Music Factory", null, "Hindi"],
+  ["Desi Melodies", "Desi Melodies", null, "Punjabi"],
+  ["DM - Desi Melodies", "DM - Desi Melodies", null, "Punjabi"],
+
+  // English / International
+  ["Taylor Swift", "Taylor Swift", null, "English"],
+  ["Ed Sheeran", "Ed Sheeran", null, "English"],
+  ["The Weeknd", "The Weeknd", null, "English"],
+  ["Justin Bieber", "Justin Bieber", null, "English"],
+  ["Billie Eilish", "Billie Eilish", null, "English"],
+  ["Ariana Grande", "Ariana Grande", null, "English"],
+  ["Bruno Mars", "Bruno Mars", null, "English"],
+  ["Dua Lipa", "Dua Lipa", null, "English"],
+  ["Selena Gomez", "Selena Gomez", null, "English"],
+  ["OneRepublic", "OneRepublic", null, "English"],
+  ["Maroon 5", "Maroon 5", null, "English"],
+  ["Imagine Dragons", "ImagineDragons", null, "English"],
+  ["Coldplay", "Coldplay", null, "English"],
+  ["Eminem", "EminemMusic", null, "English"],
+  ["Drake", "Drake", null, "English"],
+  ["Post Malone", "Post Malone", null, "English"],
+  ["Sia", "Sia", null, "English"],
+  ["Adele", "Adele", null, "English"],
+
+  // Punjabi / regional
+  ["Guru Randhawa", "Guru Randhawa", null, "Punjabi"],
+  ["Jass Manak", "Jass Manak", null, "Punjabi"],
+  ["Parmish Verma", "Parmish Verma", null, "Punjabi"],
+  ["Mankirt Aulakh", "Mankirt Aulakh", null, "Punjabi"],
+  ["Jordan Sandhu", "Jordan Sandhu", null, "Punjabi"],
+  ["Prem Dhillon", "Prem Dhillon", null, "Punjabi"],
+  ["Ranjit Bawa", "Ranjit Bawa", null, "Punjabi"],
+  ["Gippy Grewal", "Gippy Grewal", null, "Punjabi"],
+  ["Babbu Maan", "Babbu Maan", null, "Punjabi"],
+  ["Amrit Maan", "Amrit Maan", null, "Punjabi"]
+];
+
+for (const [artist, channel, channelId, language] of musicArtistsSeed) {
+  try {
+    const existing = await db.getAsync(
+      `
+      SELECT id
+      FROM music_artists
+      WHERE LOWER(TRIM(artist)) = LOWER(TRIM(?))
+      LIMIT 1
+      `,
+      [artist]
+    );
+
+    if (existing?.id) {
+      await db.runAsync(
+        `
+        UPDATE music_artists
+        SET
+          channel = ?,
+          channel_id = COALESCE(channel_id, ?),
+          language = ?,
+          status = 'active',
+          updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        `,
+        [channel, channelId, language, existing.id]
+      );
+    } else {
+      await db.runAsync(
+        `
+        INSERT INTO music_artists
+          (artist, channel, channel_id, language, status)
+        VALUES (?, ?, ?, ?, 'active')
+        `,
+        [artist, channel, channelId, language]
+      );
+    }
+  } catch (error) {
+    console.error("Failed to seed artist:", artist, error);
+  }
+}
+
+console.log("✅ Music artist catalogue seeded.");
+
 
 }
 

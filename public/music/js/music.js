@@ -914,6 +914,9 @@ currentIndex =
             channelTitle:
                 song?.channelTitle ||
                 "YouTube",
+            channelId:
+                song?.channelId ||
+                null,    
 
             publishedAt:
                 song?.publishedAt ||
@@ -962,100 +965,189 @@ currentIndex =
             )
         ];
     }
+    function getFavoriteArtists() {
+    return [
+        ...new Set(
+            favorites
+                .map(song =>
+                    String(song?.artist || "").trim()
+                )
+                .filter(Boolean)
+        )
+    ];
+}
 
 
-    async function loadMusicDiscover() {
+function getFavoriteChannels() {
+    return [
+        ...new Set(
+            favorites
+                .map(song =>
+                    String(song?.channelTitle || "").trim()
+                )
+                .filter(Boolean)
+        )
+    ];
+}
+function getFavoriteChannelIds() {
+    return [
+        ...new Set(
+            favorites
+                .map(song =>
+                    String(song?.channelId || "").trim()
+                )
+                .filter(Boolean)
+        )
+    ];
+}
 
-        if (!discoverContainer) {
+function getFavoriteVideoIds() {
+    return [
+        ...new Set(
+            favorites
+                .map(song =>
+                    String(song?.videoId || "").trim()
+                )
+                .filter(Boolean)
+        )
+    ];
+}
+
+
+  async function loadMusicDiscover() {
+    if (!discoverContainer) return;
+
+    discoverContainer.innerHTML = `
+        
+    `;
+
+    try {
+        const languages = getFavoriteLanguages();
+        const artists = getFavoriteArtists();
+        const channels = getFavoriteChannels();
+        const favoriteVideoIds = getFavoriteVideoIds();
+
+        const params = new URLSearchParams();
+
+        if (languages.length) {
+            params.set("languages", languages.join(","));
+        }
+
+        if (artists.length) {
+            params.set("artists", artists.join(","));
+        }
+
+        if (channels.length) {
+            params.set("channels", channels.join(","));
+        }
+
+        if (favoriteVideoIds.length) {
+            params.set(
+                "favoriteVideoIds",
+                favoriteVideoIds.join(",")
+            );
+        }
+
+        params.set("limit", "60");
+
+        const response = await fetch(
+            `/api/music/discover?${params.toString()}`
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `Discover API failed: ${response.status}`
+            );
+        }
+
+        const data = await response.json();
+
+        const relatedSongs =
+            Array.isArray(data?.songs?.related)
+                ? data.songs.related
+                    .map(normalizeSong)
+                    .filter(song => song.videoId)
+                : [];
+
+        const latestSongs =
+            Array.isArray(data?.songs?.latest)
+                ? data.songs.latest
+                    .map(normalizeSong)
+                    .filter(song => song.videoId)
+                : [];
+
+        /*
+         * IMPORTANT:
+         * Ye hi actual Discover playback/click list hogi.
+         */
+        discoverResults = [
+            ...relatedSongs,
+            ...latestSongs
+        ];
+
+        if (!discoverResults.length) {
+            discoverContainer.innerHTML = `
+                
+            `;
             return;
         }
 
-        try {
+        let html = "";
 
-            const languages =
-                getFavoriteLanguages();
+        if (relatedSongs.length) {
+            html += `
+                <div class="music-discover-group">
 
-            const params =
-                new URLSearchParams();
-
-            if (languages.length) {
-
-                params.set(
-                    "languages",
-                    languages.join(",")
-                );
-            }
-
-            params.set(
-                "limit",
-                "60"
-            );
-
-            const response =
-                await fetch(
-                    `/api/music/discover?${params.toString()}`
-                );
-
-            const data =
-                await response.json();
-
-            if (
-                !response.ok ||
-                !data.success
-            ) {
-
-                throw new Error(
-                    data.message ||
-                    "Unable to load music discovery."
-                );
-            }
-
-            const songs =
-    Array.isArray(data.songs)
-        ? data.songs
-        : [];
-discoverResults =
-    songs
-        .map(normalizeSong)
-        .filter(song => song.videoId);        
-
-            if (!songs.length) {
-
-                discoverContainer.innerHTML =
-                    `
-                    <div class="music-mini-empty">
-                        No music available yet.
+                    <div class="music-discover-grid">
+                        ${relatedSongs
+                            .map((song, index) =>
+                                renderResultCard(
+                                    song,
+                                    index
+                                )
+                            )
+                            .join("")}
                     </div>
-                    `;
-
-                return;
-            }
-
-            discoverContainer.innerHTML =
-    discoverResults
-        .map((song, index) =>
-            renderResultCard(
-                song,
-                index
-            )
-        )
-        .join("");
-
-        } catch (error) {
-
-            console.error(
-                "Music discover error:",
-                error
-            );
-
-            discoverContainer.innerHTML =
-                `
-                <div class="music-mini-empty">
-                    Unable to load music.
                 </div>
-                `;
+            `;
         }
+
+        if (latestSongs.length) {
+            html += `
+                <div class="music-discover-group">
+
+                    <div class="music-discover-grid">
+                        ${latestSongs
+                            .map((song, index) =>
+                                renderResultCard(
+                                    song,
+                                    relatedSongs.length + index
+                                )
+                            )
+                            .join("")}
+                    </div>
+                </div>
+            `;
+        }
+
+        discoverContainer.innerHTML = html;
+
+    } catch (error) {
+        console.error(
+            "Discover music error:",
+            error
+        );
+
+        discoverResults = [];
+
+        discoverContainer.innerHTML = `
+            <div class="music-empty">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>Unable to load discover music.</span>
+            </div>
+        `;
     }
+}
     function getSongImage(
         song
     ) {
@@ -2146,13 +2238,24 @@ origin: window.location.origin,
 
         try {
             localStorage.setItem(
-                STORAGE_KEYS.playback,
-                JSON.stringify({
-                    song: currentSong,
-                    currentTime: 0,
-                    isPlaying: true,
-                    savedAt: Date.now()
-                })
+    STORAGE_KEYS.playback,
+    JSON.stringify({
+        song: currentSong,
+        currentTime: 0,
+        isPlaying: true,
+
+        playbackList:
+            Array.isArray(activePlaybackList)
+                ? activePlaybackList
+                : [],
+
+        playbackIndex:
+            Number.isInteger(activePlaybackIndex)
+                ? activePlaybackIndex
+                : -1,
+
+        savedAt: Date.now()
+    })
             );
             lastPlaybackSaveAt = Date.now();
         }
@@ -2770,15 +2873,56 @@ if (likeButton && likeIcon && currentSong) {
 renderFavorites();
 
 if (discoverContainer) {
-    discoverContainer.innerHTML =
-        discoverResults
-            .map((song, index) =>
-                renderResultCard(
-                    song,
-                    index
-                )
-            )
-            .join("");
+    const relatedCount =
+        discoverResults.filter(
+            song => song?.discoverType === "related"
+        ).length;
+
+    let html = "";
+
+    const relatedSongs =
+        discoverResults.slice(0, relatedCount);
+
+    const latestSongs =
+        discoverResults.slice(relatedCount);
+
+    if (relatedSongs.length) {
+        html += `
+            <div class="music-discover-group">
+
+                <div class="music-discover-grid">
+                    ${relatedSongs
+                        .map((song, index) =>
+                            renderResultCard(
+                                song,
+                                index
+                            )
+                        )
+                        .join("")}
+                </div>
+            </div>
+        `;
+    }
+
+    if (latestSongs.length) {
+        html += `
+            <div class="music-discover-group">
+
+                <div class="music-discover-grid">
+                    ${latestSongs
+                        .map((song, index) =>
+                            renderResultCard(
+                                song,
+                                relatedSongs.length + index
+                            )
+                        )
+                        .join("")}
+                </div>
+            </div>
+        `;
+    }
+
+    discoverContainer.innerHTML = html;
 }
     }
     window.AlignMusicFavoritesToggle =
@@ -3313,6 +3457,10 @@ renderSearchHistory();
 
                 return;
             }
+            if (action === "favorite") {
+    toggleFavorite(song);
+    return;
+}
 
         }
     );
@@ -3880,15 +4028,6 @@ function showPlaylistSongs(playlist) {
     if (existing) {
         existing.remove();
     }
-    const wasPlaying =
-    player &&
-    typeof player.getPlayerState === "function" &&
-    typeof YT !== "undefined" &&
-    player.getPlayerState() === YT.PlayerState.PLAYING;
-
-    if (wasPlaying) {
-    player.pauseVideo();
-}
 
     const overlay = document.createElement("div");
 

@@ -156,16 +156,59 @@ exports.discover =
                     )
                     .filter(Boolean);
 
+            const artists =
+                String(
+                    req.query.artists || ""
+                )
+                    .split(",")
+                    .map(artist =>
+                        artist.trim()
+                    )
+                    .filter(Boolean);
+
+            const channels =
+                String(
+                    req.query.channels || ""
+                )
+                    .split(",")
+                    .map(channel =>
+                        channel.trim()
+                    )
+                    .filter(Boolean);
+            const channelIds =
+    String(
+        req.query.channelIds || ""
+    )
+        .split(",")
+        .map(channelId =>
+            channelId.trim()
+        )
+        .filter(Boolean);        
+
+            const favoriteVideoIds =
+                String(
+                    req.query.favoriteVideoIds || ""
+                )
+                    .split(",")
+                    .map(videoId =>
+                        videoId.trim()
+                    )
+                    .filter(Boolean);
+
             const limit =
                 Number(
-                    req.query.limit || 12
+                    req.query.limit || 60
                 );
 
             const songs =
-                await youtubeMusicService.discoverMusic({
-                    languages,
-                    limit
-                });
+    await youtubeMusicService.discoverMusic({
+        languages,
+        artists,
+        channels,
+        channelIds,
+        favoriteVideoIds,
+        limit
+    });
 
             return res.json({
                 success: true,
@@ -187,4 +230,4 @@ exports.discover =
                     "Unable to load music discovery."
             });
         }
-    };    
+    };
