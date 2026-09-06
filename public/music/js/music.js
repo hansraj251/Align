@@ -118,6 +118,10 @@ const MAX_SEARCH_HISTORY = 30;
         document.getElementById(
             "musicNext"
         );
+    const playerVideoButton =
+        document.getElementById(
+         "musicVideo"
+        );    
 
     const musicPlayer =
         document.getElementById(
@@ -191,6 +195,7 @@ const clearSearchHistoryButton =
     let playerReady = false;
 
     let playerState = -1;
+    let musicVideoPlayer = null;
 
     let progressTimer = null;
 
@@ -2034,6 +2039,85 @@ activePlaybackIndex = nextIndex;
     activePlaybackList
 );
     }
+    function playNextMusicVideo() {
+
+    if (
+        !Array.isArray(activePlaybackList) ||
+        !activePlaybackList.length
+    ) {
+        return;
+    }
+
+    let nextIndex;
+
+    if (window.AlignMusicExtras?.shuffle) {
+
+        do {
+            nextIndex =
+                Math.floor(
+                    Math.random() *
+                    activePlaybackList.length
+                );
+
+        } while (
+            activePlaybackList.length > 1 &&
+            nextIndex === activePlaybackIndex
+        );
+
+    } else {
+
+        nextIndex =
+            activePlaybackIndex + 1;
+    }
+
+    if (
+        nextIndex >=
+        activePlaybackList.length
+    ) {
+        return;
+    }
+
+    const nextSong =
+        activePlaybackList[nextIndex];
+
+    if (
+        !nextSong ||
+        !nextSong.videoId
+    ) {
+        return;
+    }
+
+    activePlaybackIndex =
+        nextIndex;
+
+    currentIndex =
+        nextIndex;
+
+    currentSong =
+        normalizeSong(nextSong);
+
+    updatePlayerUI();
+
+    const overlay =
+        document.querySelector(
+            ".music-video-overlay"
+        );
+
+    if (!overlay) {
+        return;
+    }
+
+    if (
+    !musicVideoPlayer ||
+    typeof musicVideoPlayer.loadVideoById !== "function"
+) {
+    return;
+}
+
+musicVideoPlayer.loadVideoById(
+    currentSong.videoId
+);
+}
 
 
     /* =========================================================
@@ -3127,6 +3211,120 @@ if (removeButton) {
             playNext
         );
     }
+    if (playerVideoButton) {
+    playerVideoButton.addEventListener(
+        "click",
+        () => {
+            if (
+                player &&
+                typeof player.pauseVideo === "function"
+            ) {
+                player.pauseVideo();
+            }
+            if (
+                !currentSong ||
+                !currentSong.videoId
+            ) {
+                notify("No song is currently playing.");
+                return;
+            }
+
+            const overlay =
+                document.createElement("div");
+
+            overlay.className =
+                "music-video-overlay";
+
+            overlay.innerHTML = `
+                <div class="music-video-modal">
+
+                    <button
+                        type="button"
+                        class="music-video-close"
+                        aria-label="Close video"
+                        title="Close video">
+                        ×
+                    </button>
+
+                    <iframe
+                        src="https://www.youtube.com/embed/${encodeURIComponent(
+    currentSong.videoId
+)}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(
+    window.location.origin
+)}"
+                        title="${currentSong.title || "Music video"}"
+                        )}"
+                        allow="
+                            autoplay;
+                            encrypted-media;
+                            picture-in-picture;
+                            fullscreen
+                        "
+                        allowfullscreen>
+                    </iframe>
+
+                </div>
+            `;
+
+            document.body.appendChild(
+                overlay
+            );
+            const videoFrame =
+    overlay.querySelector("iframe");
+    musicVideoPlayer =
+    new YT.Player(
+        videoFrame,
+        {
+            events: {
+                onStateChange: event => {
+                    if (
+                        event.data ===
+                        YT.PlayerState.ENDED
+                    ) {
+                        
+
+                        playNextMusicVideo();
+                    }
+                }
+            }
+        }
+    );
+    if (videoFrame) {
+    videoFrame.addEventListener(
+        "load",
+        () => {
+            
+        }
+    );
+}
+
+            const closeButton =
+                overlay.querySelector(
+                    ".music-video-close"
+                );
+
+            const closeVideo = () => {
+            overlay.remove();
+        };
+
+            closeButton?.addEventListener(
+                "click",
+                closeVideo
+            );
+
+            overlay.addEventListener(
+                "click",
+                event => {
+                    if (
+                        event.target === overlay
+                    ) {
+                        closeVideo();
+                    }
+                }
+            );
+        }
+    );
+}
 
 
     if (progress) {
@@ -3470,6 +3668,15 @@ function showPlaylistSongs(playlist) {
     if (existing) {
         existing.remove();
     }
+    const wasPlaying =
+    player &&
+    typeof player.getPlayerState === "function" &&
+    typeof YT !== "undefined" &&
+    player.getPlayerState() === YT.PlayerState.PLAYING;
+
+    if (wasPlaying) {
+    player.pauseVideo();
+}
 
     const overlay = document.createElement("div");
 
@@ -4390,6 +4597,7 @@ if (deleteButton) {
         }
     );
 }
+
 
      addPlayerActionButtons();
      renderPlaylists();
