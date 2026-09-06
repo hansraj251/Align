@@ -979,6 +979,36 @@ console.log(
     console.log(
         "✅ music_songs table is ready."
     );
+    /*
+ * Migration 10.1:
+ * music_songs.channel_id
+ */
+
+const musicSongColumns = await db.allAsync(
+    `
+    PRAGMA table_info(music_songs)
+    `
+);
+
+const hasMusicSongChannelId =
+    musicSongColumns.some(
+        column =>
+            column.name === "channel_id"
+    );
+
+if (!hasMusicSongChannelId) {
+
+    await db.runAsync(
+        `
+        ALTER TABLE music_songs
+        ADD COLUMN channel_id TEXT
+        `
+    );
+
+    console.log(
+        "✅ music_songs.channel_id added."
+    );
+}
         /*
      * Migration 11:
      * music_artists
