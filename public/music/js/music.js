@@ -3304,8 +3304,17 @@ if (removeButton) {
                 );
 
             const closeVideo = () => {
-            overlay.remove();
-        };
+
+    if (
+        musicVideoPlayer &&
+        typeof musicVideoPlayer.destroy === "function"
+    ) {
+        musicVideoPlayer.destroy();
+        musicVideoPlayer = null;
+    }
+
+    overlay.remove();
+};
 
             closeButton?.addEventListener(
                 "click",
