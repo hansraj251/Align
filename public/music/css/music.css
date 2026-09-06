@@ -3593,24 +3593,28 @@ a:focus-visible {
 
 .music-video-close {
     position: absolute;
-    top: -44px;
-    right: 0;
+    top: 0px;
+    right: 0px;
+    z-index: 10000;
 
-    width: 36px;
-    height: 36px;
+    width: 42px;
+    height: 42px;
 
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    border-radius: 10px;
+    border: none;
+    border-radius: 20%;
 
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.8);
     color: #fff;
 
-    font-size: 24px;
-    line-height: 1;
+    font-size: 28px;
+    line-height: 42px;
+    text-align: center;
 
     cursor: pointer;
+}
 
-    z-index: 2;
+.music-video-close:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .music-video-close:hover {
@@ -3634,5 +3638,107 @@ a:focus-visible {
     .music-video-close {
         top: -44px;
         right: 0;
+    }
+}
+.music-video-container {
+    position: relative;
+}
+/* =========================================================
+   MUSIC VIDEO — TOUCH / TABLET FIX
+   ========================================================= */
+
+.music-video-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    z-index: 999999 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    pointer-events: auto !important;
+    touch-action: none !important;
+}
+
+.music-video-container {
+    position: relative !important;
+
+    width: min(1100px, 92vw) !important;
+    max-width: 1100px !important;
+
+    pointer-events: auto !important;
+    touch-action: none !important;
+}
+
+.music-video-frame-wrap {
+    position: relative !important;
+
+    width: 100% !important;
+    aspect-ratio: 16 / 9 !important;
+
+    pointer-events: auto !important;
+    touch-action: auto !important;
+
+    overflow: hidden !important;
+}
+
+.music-video-frame {
+    position: absolute !important;
+    inset: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    pointer-events: auto !important;
+    touch-action: auto !important;
+}
+
+.music-video-frame iframe {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    border: 0 !important;
+
+    pointer-events: auto !important;
+    touch-action: auto !important;
+}
+
+.music-video-close {
+    position: absolute !important;
+    top: -48px !important;
+    right: 0 !important;
+
+    z-index: 1000000 !important;
+
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+}
+
+
+/* iPad / tablet */
+@media (min-width: 701px) and (max-width: 1100px) {
+
+    .music-video-overlay {
+        z-index: 999999 !important;
+    }
+
+    .music-video-container {
+        width: 94vw !important;
+        max-width: 94vw !important;
+    }
+
+    .music-video-frame-wrap {
+        pointer-events: auto !important;
+        touch-action: auto !important;
+    }
+
+    .music-video-frame,
+    .music-video-frame iframe {
+        pointer-events: auto !important;
+        touch-action: auto !important;
     }
 }

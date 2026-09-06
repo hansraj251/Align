@@ -11,7 +11,8 @@
     favorites: "alignMusicFavorites",
     recent: "alignMusicRecent",
     playback: "alignMusicPlayback",
-    searchHistory: "alignMusicSearchHistory"
+    searchHistory: "alignMusicSearchHistory",
+    video: "alignMusicVideo"
 };
 
 const MAX_SEARCH_HISTORY = 30;
@@ -373,6 +374,292 @@ if (!Array.isArray(searchHistory)) {
             return null;
         }
     }
+    function saveMusicVideoState() {
+    try {
+        if (!musicVideoPlayer || !currentSong?.videoId) {
+            return;
+        }
+
+        let currentTime = 0;
+        let videoState = YT?.PlayerState?.PAUSED;
+
+        if (
+            typeof musicVideoPlayer.getCurrentTime === "function"
+        ) {
+            currentTime =
+                Number(
+                    musicVideoPlayer.getCurrentTime()
+                ) || 0;
+        }
+
+        if (
+            typeof musicVideoPlayer.getPlayerState === "function"
+        ) {
+            videoState =
+                musicVideoPlayer.getPlayerState();
+        }
+
+        localStorage.setItem(
+            STORAGE_KEYS.video,
+            JSON.stringify({
+                isOpen: true,
+                song: currentSong,
+                currentTime,
+                isPlaying:
+                    videoState ===
+                    YT.PlayerState.PLAYING,
+                savedAt: Date.now()
+            })
+        );
+
+    }
+    catch (error) {
+        console.warn(
+            "Unable to save music video state:",
+            error
+        );
+    }
+}
+
+
+function loadMusicVideoState() {
+    try {
+        const raw =
+            localStorage.getItem(
+                STORAGE_KEYS.video
+            );
+
+        if (!raw) {
+            return null;
+        }
+
+        const saved =
+            JSON.parse(raw);
+
+        if (
+            !saved?.isOpen ||
+            !saved?.song?.videoId
+        ) {
+            return null;
+        }
+
+        return saved;
+
+    }
+    catch {
+        return null;
+    }
+}
+function restoreMusicVideoState() {
+    try {
+        const saved = loadMusicVideoState();
+
+        if (
+            !saved?.isOpen ||
+            !saved?.song?.videoId
+        ) {
+            return;
+        }
+
+        if (
+            typeof openMusicVideo !== "function"
+        ) {
+            console.warn(
+                "openMusicVideo() is not available yet."
+            );
+            return;
+        }
+
+        openMusicVideo(
+            saved.song,
+            Number(saved.currentTime) || 0,
+            saved.isPlaying === true
+        );
+
+    } catch (error) {
+        console.warn(
+            "Unable to restore music video state:",
+            error
+        );
+    }
+}
+function openMusicVideo(song, startSeconds = 0, shouldPlay = true) {
+    if (!song?.videoId) {
+        return;
+    }
+
+    try {
+        // Close any existing video overlay
+        const existingOverlay =
+            document.querySelector(".music-video-overlay");
+
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+
+        if (musicVideoPlayer) {
+            try {
+                musicVideoPlayer.destroy();
+            } catch {}
+            musicVideoPlayer = null;
+        }
+
+        // Keep main music paused while video is open
+        if (player && typeof player.pauseVideo === "function") {
+            player.pauseVideo();
+        }
+
+        const overlay =
+            document.createElement("div");
+
+        overlay.className =
+            "music-video-overlay";
+
+        overlay.innerHTML = `
+            <div class="music-video-container">
+                <button
+                    type="button"
+                    class="music-video-close"
+                    aria-label="Close video"
+                >
+                    ×
+                </button>
+
+                <div class="music-video-frame-wrap">
+                    <div class="music-video-frame"></div>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const closeButton =
+            overlay.querySelector(
+                ".music-video-close"
+            );
+        const closeVideo = () => {
+
+    if (
+        musicVideoPlayer &&
+        typeof musicVideoPlayer.destroy === "function"
+    ) {
+        musicVideoPlayer.destroy();
+        musicVideoPlayer = null;
+    }
+
+    overlay.remove();
+
+    localStorage.removeItem(
+        STORAGE_KEYS.video
+    );
+};    
+
+        closeButton.addEventListener(
+            "click",
+            closeVideo
+        );
+
+        const frame =
+            overlay.querySelector(
+                ".music-video-frame"
+            );
+
+        if (
+            typeof YT === "undefined" ||
+            typeof YT.Player !== "function"
+        ) {
+            console.warn(
+                "YouTube API is not ready."
+            );
+            return;
+        }
+
+        musicVideoPlayer =
+            new YT.Player(frame, {
+                videoId: song.videoId,
+
+                playerVars: {
+    autoplay: shouldPlay ? 1 : 0,
+    controls: 1,
+    fs: 1,
+    playsinline: 1,
+    rel: 0,
+    modestbranding: 1
+},
+
+                events: {
+                    onReady: function (event) {
+
+    const iframe =
+        event.target.getIframe();
+
+    if (iframe) {
+
+        iframe.setAttribute(
+            "allowfullscreen",
+            ""
+        );
+
+        iframe.setAttribute(
+            "webkitallowfullscreen",
+            ""
+        );
+
+        iframe.setAttribute(
+            "mozallowfullscreen",
+            ""
+        );
+
+        iframe.setAttribute(
+            "allow",
+            "autoplay; encrypted-media; picture-in-picture; fullscreen"
+        );
+
+        iframe.style.pointerEvents = "auto";
+        
+    }
+
+    const seconds =
+        Number(startSeconds) || 0;
+
+    if (seconds > 0) {
+        event.target.seekTo(
+            seconds,
+            true
+        );
+    }
+
+    if (shouldPlay) {
+        event.target.playVideo();
+    } else {
+        event.target.pauseVideo();
+    }
+
+    saveMusicVideoState();
+},
+
+                    onStateChange: function (event) {
+
+                        if (
+                            event.data ===
+                            YT.PlayerState.ENDED
+                        ) {
+                            playNextMusicVideo();
+                            return;
+                        }
+
+                        saveMusicVideoState();
+                    }
+                }
+            });
+
+    } catch (error) {
+        console.warn(
+            "Unable to open music video:",
+            error
+        );
+    }
+}
 
 
     function expandMusicPlayer() {
@@ -462,10 +749,23 @@ currentIndex =
             );
 
         try {
-            player.loadVideoById({
-                videoId: currentSong.videoId,
-                startSeconds
-            });
+            if (saved.isPlaying) {
+
+    player.loadVideoById({
+        videoId: currentSong.videoId,
+        startSeconds
+    });
+
+} else {
+
+    player.cueVideoById({
+        videoId: currentSong.videoId,
+        startSeconds
+    });
+
+    player.pauseVideo();
+
+}
 
             if (location.hash === "#player") {
                 expandMusicPlayer();
@@ -482,18 +782,22 @@ currentIndex =
 
 
     window.addEventListener(
-        "beforeunload",
-        () => savePlaybackState(true)
-    );
+    "beforeunload",
+    () => {
+        savePlaybackState(true);
+        saveMusicVideoState();
+    }
+);
 
     document.addEventListener(
-        "visibilitychange",
-        () => {
-            if (document.visibilityState === "hidden") {
-                savePlaybackState(true);
-            }
+    "visibilitychange",
+    () => {
+        if (document.visibilityState === "hidden") {
+            savePlaybackState(true);
+            saveMusicVideoState();
         }
-    );
+    }
+);
 
 
         /* =========================================================
@@ -1319,6 +1623,7 @@ origin: window.location.origin,
     ) {
 
         playerReady = true;
+        restoreMusicVideoState();
 
         const savedVolume =
             Number(
@@ -3215,12 +3520,7 @@ if (removeButton) {
     playerVideoButton.addEventListener(
         "click",
         () => {
-            if (
-                player &&
-                typeof player.pauseVideo === "function"
-            ) {
-                player.pauseVideo();
-            }
+
             if (
                 !currentSong ||
                 !currentSong.videoId
@@ -3229,107 +3529,10 @@ if (removeButton) {
                 return;
             }
 
-            const overlay =
-                document.createElement("div");
-
-            overlay.className =
-                "music-video-overlay";
-
-            overlay.innerHTML = `
-                <div class="music-video-modal">
-
-                    <button
-                        type="button"
-                        class="music-video-close"
-                        aria-label="Close video"
-                        title="Close video">
-                        ×
-                    </button>
-
-                    <iframe
-                        src="https://www.youtube.com/embed/${encodeURIComponent(
-    currentSong.videoId
-)}?autoplay=1&rel=0&playsinline=1&enablejsapi=1&origin=${encodeURIComponent(
-    window.location.origin
-)}"
-                        title="${currentSong.title || "Music video"}"
-                        )}"
-                        allow="
-                            autoplay;
-                            encrypted-media;
-                            picture-in-picture;
-                            fullscreen
-                        "
-                        allowfullscreen>
-                    </iframe>
-
-                </div>
-            `;
-
-            document.body.appendChild(
-                overlay
-            );
-            const videoFrame =
-    overlay.querySelector("iframe");
-    musicVideoPlayer =
-    new YT.Player(
-        videoFrame,
-        {
-            events: {
-                onStateChange: event => {
-                    if (
-                        event.data ===
-                        YT.PlayerState.ENDED
-                    ) {
-                        
-
-                        playNextMusicVideo();
-                    }
-                }
-            }
-        }
-    );
-    if (videoFrame) {
-    videoFrame.addEventListener(
-        "load",
-        () => {
-            
-        }
-    );
-}
-
-            const closeButton =
-                overlay.querySelector(
-                    ".music-video-close"
-                );
-
-            const closeVideo = () => {
-
-    if (
-        musicVideoPlayer &&
-        typeof musicVideoPlayer.destroy === "function"
-    ) {
-        musicVideoPlayer.destroy();
-        musicVideoPlayer = null;
-    }
-
-    overlay.remove();
-};
-
-            closeButton?.addEventListener(
-                "click",
-                closeVideo
-            );
-
-            overlay.addEventListener(
-                "click",
-                event => {
-                    if (
-                        event.target === overlay
-                    ) {
-                        closeVideo();
-                    }
-                }
+            openMusicVideo(
+                currentSong,
+                0,
+                true
             );
         }
     );
