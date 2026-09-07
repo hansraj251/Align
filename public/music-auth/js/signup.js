@@ -172,8 +172,7 @@ signupForm.addEventListener(
 window.otpVerifyEndpoint =
     "/api/property/auth/verify-otp";
 
-window.otpSuccessRedirect =
-    "/property/login.html";
+window.otpSuccessRedirect = "/music-auth/login.html";
                 
 
 

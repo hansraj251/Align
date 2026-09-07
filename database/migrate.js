@@ -1193,7 +1193,120 @@ for (const [artist, channel, channelId, language] of musicArtistsSeed) {
 
 console.log("✅ Music artist catalogue seeded.");
 
+    /*
+     * Migration 13:
+     * Music user favorites and playlists
+     */
 
+    await db.runAsync(
+        `
+        CREATE TABLE IF NOT EXISTS music_favorites (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            user_id INTEGER NOT NULL,
+
+            youtube_video_id TEXT NOT NULL,
+
+            created_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP,
+
+            UNIQUE (
+                user_id,
+                youtube_video_id
+            ),
+
+            FOREIGN KEY (user_id)
+                REFERENCES users(id)
+                ON DELETE CASCADE
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE INDEX IF NOT EXISTS
+            idx_music_favorites_user
+        ON music_favorites (
+            user_id
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE TABLE IF NOT EXISTS music_playlists (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            user_id INTEGER NOT NULL,
+
+            name TEXT NOT NULL,
+
+            created_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP,
+
+            updated_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (user_id)
+                REFERENCES users(id)
+                ON DELETE CASCADE
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE INDEX IF NOT EXISTS
+            idx_music_playlists_user
+        ON music_playlists (
+            user_id
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE TABLE IF NOT EXISTS music_playlist_songs (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            playlist_id INTEGER NOT NULL,
+
+            youtube_video_id TEXT NOT NULL,
+
+            position INTEGER NOT NULL
+                DEFAULT 0,
+
+            added_at DATETIME
+                DEFAULT CURRENT_TIMESTAMP,
+
+            UNIQUE (
+                playlist_id,
+                youtube_video_id
+            ),
+
+            FOREIGN KEY (playlist_id)
+                REFERENCES music_playlists(id)
+                ON DELETE CASCADE
+        )
+        `
+    );
+
+    await db.runAsync(
+        `
+        CREATE INDEX IF NOT EXISTS
+            idx_music_playlist_songs_playlist
+        ON music_playlist_songs (
+            playlist_id
+        )
+        `
+    );
+
+    console.log(
+        "✅ Music user favorites and playlists tables are ready."
+    );
 }
 
 module.exports =

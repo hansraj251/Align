@@ -1,4 +1,4 @@
-(() => {
+(async () => {
     "use strict";
 
     /* =========================================================
@@ -13,6 +13,74 @@
     playback: "alignMusicPlayback",
     searchHistory: "alignMusicSearchHistory",
     video: "alignMusicVideo"
+};
+window.MUSIC_AUTH = {
+    getToken() {
+        return localStorage.getItem("propertyToken") || "";
+    },
+
+    getUser() {
+        try {
+            return JSON.parse(
+                localStorage.getItem("propertyUser") || "null"
+            );
+        } catch {
+            return null;
+        }
+    },
+
+    isLoggedIn() {
+        return !!this.getToken();
+    },
+
+    headers() {
+        const token = this.getToken();
+
+        return token
+            ? {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+            : {
+                "Content-Type": "application/json"
+            };
+    },
+
+    async request(url, options = {}) {
+        const token = this.getToken();
+
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                ...(options.headers || {}),
+                ...(token
+                    ? {
+                        Authorization: `Bearer ${token}`
+                    }
+                    : {})
+            }
+        });
+
+        let data = {};
+
+        try {
+            data = await response.json();
+        } catch {
+            data = {};
+        }
+
+        if (response.status === 401) {
+            throw new Error("LOGIN_REQUIRED");
+        }
+
+        if (!response.ok || data.success === false) {
+            throw new Error(
+                data.message || "Music account request failed."
+            );
+        }
+
+        return data;
+    }
 };
 
 const MAX_SEARCH_HISTORY = 30;
@@ -2820,52 +2888,137 @@ if (likeButton && likeIcon && currentSong) {
         }
 
     }
+    
+async function loadAccountFavorites() {
+    if (!window.MUSIC_AUTH.isLoggedIn()) {
+        return;
+    }
 
+    try {
+        const localFavorites = Array.isArray(favorites)
+            ? favorites
+            : [];
+
+        const data = await window.MUSIC_AUTH.request(
+            "/api/music/favorites"
+        );
+
+        const accountFavorites =
+            Array.isArray(data?.favorites)
+                ? data.favorites
+                : [];
+
+        const accountSongs = accountFavorites
+            .filter(song => song?.videoId)
+            .map(song =>
+                normalizeSong({
+                    videoId: song.videoId,
+                    title: song.title || "",
+                    artist: song.artist || "",
+                    channelTitle:
+                        song.channelTitle || "",
+                    channelId:
+                        song.channelId || null,
+                    thumbnailUrl:
+                        song.thumbnailUrl || null,
+                    duration:
+                        song.duration || null,
+                    language:
+                        song.language || null
+                })
+            );
+
+        const merged = [
+            ...accountSongs,
+            ...localFavorites.filter(localSong =>
+                localSong?.videoId &&
+                !accountSongs.some(
+                    accountSong =>
+                        accountSong.videoId ===
+                        localSong.videoId
+                )
+            )
+        ];
+
+        favorites = merged;
+
+        saveStorage(
+            STORAGE_KEYS.favorites,
+            favorites
+        );
+
+        renderResults();
+        renderFavorites();
+
+        if (
+            typeof refreshLikeButtons ===
+            "function"
+        ) {
+            refreshLikeButtons();
+        }
+
+    } catch (error) {
+        console.error(
+            "Music account favorites load error:",
+            error
+        );
+    }
+}
     
     /* =========================================================
        FAVORITES
     ========================================================= */
 
-    function toggleFavorite(
-        song
-    ) {
+   async function toggleFavorite(song) {
+    if (!window.MUSIC_AUTH.isLoggedIn()) {
+        window.location.href = "/music-auth/login.html";
+        return;
+    }
 
-        if (!song?.videoId) {
-            return;
-        }
+    if (!song?.videoId) {
+        return;
+    }
 
-        const existingIndex =
-            favorites.findIndex(
-                item =>
-                    item.videoId ===
-                    song.videoId
+    const existingIndex =
+        favorites.findIndex(
+            item =>
+                item.videoId ===
+                song.videoId
+        );
+
+    try {
+        if (existingIndex >= 0) {
+            await window.MUSIC_AUTH.request(
+                "/api/music/favorites/remove",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        videoId: song.videoId
+                    })
+                }
             );
 
-        if (
-            existingIndex >= 0
-        ) {
-
-            favorites.splice(
-                existingIndex,
-                1
+            favorites.splice(existingIndex, 1);
+            showToast("Removed from favorites.");
+        } else {
+            await window.MUSIC_AUTH.request(
+                "/api/music/favorites/add",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        videoId: song.videoId
+                    })
+                }
             );
 
-            showToast(
-                "Removed from favorites."
-            );
-
-        }
-        else {
-
-            favorites.unshift(
-                normalizeSong(
-                    song
-                )
-            );
-
-            showToast(
-                "Added to favorites."
-            );
+            favorites.unshift(normalizeSong(song));
+            showToast("Added to favorites.");
         }
 
         saveStorage(
@@ -2874,65 +3027,71 @@ if (likeButton && likeIcon && currentSong) {
         );
 
         renderResults();
+        renderFavorites();
 
-renderFavorites();
+        if (typeof refreshLikeButtons === "function") {
+            refreshLikeButtons();
+        }
 
-if (discoverContainer) {
-    const relatedCount =
-        discoverResults.filter(
-            song => song?.discoverType === "related"
-        ).length;
+        if (discoverContainer) {
+            const relatedCount =
+                discoverResults.filter(
+                    song => song?.discoverType === "related"
+                ).length;
 
-    let html = "";
+            let html = "";
 
-    const relatedSongs =
-        discoverResults.slice(0, relatedCount);
+            const relatedSongs =
+                discoverResults.slice(0, relatedCount);
 
-    const latestSongs =
-        discoverResults.slice(relatedCount);
+            const latestSongs =
+                discoverResults.slice(relatedCount);
 
-    if (relatedSongs.length) {
-        html += `
-            <div class="music-discover-group">
-
-                <div class="music-discover-grid">
-                    ${relatedSongs
-                        .map((song, index) =>
-                            renderResultCard(
-                                song,
-                                index
+            if (relatedSongs.length) {
+                html += `<div class="music-discover-group">
+                    <h3>Related Music</h3>
+                    <div class="music-discover-grid">
+                        ${relatedSongs
+                            .map((song, index) =>
+                                renderResultCard(song, index)
                             )
-                        )
-                        .join("")}
-                </div>
-            </div>
-        `;
-    }
+                            .join("")}
+                    </div>
+                </div>`;
+            }
 
-    if (latestSongs.length) {
-        html += `
-            <div class="music-discover-group">
-
-                <div class="music-discover-grid">
-                    ${latestSongs
-                        .map((song, index) =>
-                            renderResultCard(
-                                song,
-                                relatedSongs.length + index
+            if (latestSongs.length) {
+                html += `<div class="music-discover-group">
+                    <h3>Latest Music</h3>
+                    <div class="music-discover-grid">
+                        ${latestSongs
+                            .map((song, index) =>
+                                renderResultCard(
+                                    song,
+                                    relatedSongs.length + index
+                                )
                             )
-                        )
-                        .join("")}
-                </div>
-            </div>
-        `;
-    }
+                            .join("")}
+                    </div>
+                </div>`;
+            }
 
-    discoverContainer.innerHTML = html;
+            discoverContainer.innerHTML = html;
+        }
+
+    } catch (error) {
+        console.error(
+            "Favorite update error:",
+            error
+        );
+
+        showToast(
+            error.message === "LOGIN_REQUIRED"
+                ? "Please login to use favorites."
+                : "Unable to update favorite."
+        );
+    }
 }
-    }
-    window.AlignMusicFavoritesToggle =
-    toggleFavorite;
-
 
     function renderFavorites() {
 
@@ -3679,6 +3838,7 @@ if (removeButton) {
         STORAGE_KEYS.favorites,
         favorites
     );
+    
 
     renderFavorites();
     renderResults();
@@ -3896,14 +4056,19 @@ if (removeButton) {
     getCurrentSong: () => currentSong
 
 };
+window.AlignMusicFavoritesToggle = song =>
+    toggleFavorite(song);
+window.AlignMusicIsFavorite = videoId =>
+    favorites.some(song => song.videoId === videoId);
 
-    loadMusicDiscover();
+await loadAccountFavorites();
+await loadMusicDiscover();
 
 })();
 
 
 
-(() => {
+(async () => {
     "use strict";
 
    const EXTRA_KEYS = {
@@ -3943,7 +4108,36 @@ if (removeButton) {
     thumbnails: song?.thumbnails || {}
 });
 
-    let extraPlaylists = extraLoad(EXTRA_KEYS.playlists, []);
+    let extraPlaylists = [];
+    async function loadAccountPlaylists() {
+    if (!window.MUSIC_AUTH.isLoggedIn()) {
+        return;
+    }
+
+    try {
+        const data = await window.MUSIC_AUTH.request(
+            "/api/music/playlists"
+        );
+
+        extraPlaylists = Array.isArray(data?.playlists)
+            ? data.playlists.map(playlist => ({
+                id: String(playlist.id),
+                name: playlist.name || "Untitled Playlist",
+                songs: Array.isArray(playlist.songs)
+                    ? playlist.songs.map(extraSong)
+                    : []
+            }))
+            : [];
+
+        renderPlaylists();
+
+    } catch (error) {
+        console.error(
+            "Music account playlists load error:",
+            error
+        );
+    }
+}
     let extraShuffle = false;
     let extraRepeat = false;
 
@@ -4292,8 +4486,13 @@ if (playAllButton) {
 overlay
     .querySelectorAll("[data-playlist-delete-index]")
     .forEach(button => {
-        button.addEventListener("click", event => {
+        button.addEventListener("click", async event => {
             event.stopPropagation();
+
+            if (!window.MUSIC_AUTH.isLoggedIn()) {
+                window.location.href = "/music-auth/login.html";
+                return;
+            }
 
             const index = Number(
                 button.dataset.playlistDeleteIndex
@@ -4306,20 +4505,45 @@ overlay
                 return;
             }
 
-            playlist.songs.splice(index, 1);
+            const song = playlist.songs[index];
 
-            extraSave(
-                EXTRA_KEYS.playlists,
-                extraPlaylists
-            );
+            try {
+                await window.MUSIC_AUTH.request(
+                    "/api/music/playlists/songs/remove",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            playlistId: playlist.id,
+                            videoId: song.videoId
+                        })
+                    }
+                );
 
-            renderPlaylists();
+                playlist.songs.splice(index, 1);
 
-            notify("Song removed from playlist.");
+                renderPlaylists();
 
-            overlay.remove();
+                notify("Song removed from playlist.");
 
-            showPlaylistSongs(playlist);
+                overlay.remove();
+                showPlaylistSongs(playlist);
+
+            } catch (error) {
+                console.error(
+                    "Remove song from playlist error:",
+                    error
+                );
+
+                notify(
+                    error.message === "LOGIN_REQUIRED"
+                        ? "Please login to use playlists."
+                        : error.message ||
+                          "Unable to remove song from playlist."
+                );
+            }
         });
     });
 
@@ -4429,11 +4653,16 @@ if (closeButton) {
     });
 }
 overlay.querySelectorAll("[data-standalone-playlist-id]").forEach(button => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
+        if (!window.MUSIC_AUTH.isLoggedIn()) {
+            window.location.href = "/music-auth/login.html";
+            return;
+        }
+
         const playlist = extraPlaylists.find(
             item =>
-                item.id ===
-                button.dataset.standalonePlaylistId
+                String(item.id) ===
+                String(button.dataset.standalonePlaylistId)
         );
 
         if (!playlist) {
@@ -4449,18 +4678,42 @@ overlay.querySelectorAll("[data-standalone-playlist-id]").forEach(button => {
             return;
         }
 
-        playlist.songs.push(extraSong(song));
+        try {
+            await window.MUSIC_AUTH.request(
+                "/api/music/playlists/songs/add",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        playlistId: playlist.id,
+                        videoId: song.videoId
+                    })
+                }
+            );
 
-        extraSave(
-            EXTRA_KEYS.playlists,
-            extraPlaylists
-        );
+            playlist.songs.push(extraSong(song));
 
-        renderPlaylists();
+            renderPlaylists();
 
-        notify(`Added to ${playlist.name}.`);
+            notify(`Added to ${playlist.name}.`);
 
-        overlay.remove();
+            overlay.remove();
+
+        } catch (error) {
+            console.error(
+                "Add song to playlist error:",
+                error
+            );
+
+            notify(
+                error.message === "LOGIN_REQUIRED"
+                    ? "Please login to use playlists."
+                    : error.message ||
+                      "Unable to add song to playlist."
+            );
+        }
     });
 });
 const newPlaylistButton =
@@ -4584,7 +4837,12 @@ if (cancelButton) {
     });
 }
 if (confirmButton) {
-    confirmButton.addEventListener("click", () => {
+    confirmButton.addEventListener("click", async () => {
+        if (!window.MUSIC_AUTH.isLoggedIn()) {
+            window.location.href = "/music-auth/login.html";
+            return;
+        }
+
         const name = input?.value.trim();
 
         if (!name) {
@@ -4603,26 +4861,77 @@ if (confirmButton) {
             return;
         }
 
-        const playlist = {
-            id: `playlist-${Date.now()}`,
-            name,
-            songs: [
-                extraSong(song)
-            ]
-        };
+        try {
+            const data = await window.MUSIC_AUTH.request(
+                "/api/music/playlists/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name
+                    })
+                }
+            );
 
-        extraPlaylists.push(playlist);
+            const createdPlaylist = data?.playlist;
 
-        extraSave(
-            EXTRA_KEYS.playlists,
-            extraPlaylists
-        );
+            if (!createdPlaylist?.id) {
+                throw new Error(
+                    "Playlist was not created."
+                );
+            }
 
-        renderPlaylists();
+            const playlist = {
+                id: String(createdPlaylist.id),
+                name:
+                    createdPlaylist.name ||
+                    name,
+                songs: []
+            };
 
-        notify(`Created ${playlist.name}.`);
+            extraPlaylists.push(playlist);
 
-        overlay.remove();
+            if (song?.videoId) {
+                await window.MUSIC_AUTH.request(
+                    "/api/music/playlists/songs/add",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            playlistId: playlist.id,
+                            videoId: song.videoId
+                        })
+                    }
+                );
+
+                playlist.songs.push(
+                    extraSong(song)
+                );
+            }
+
+            renderPlaylists();
+
+            notify(`Created ${playlist.name}.`);
+
+            overlay.remove();
+
+        } catch (error) {
+            console.error(
+                "Playlist creation error:",
+                error
+            );
+
+            notify(
+                error.message === "LOGIN_REQUIRED"
+                    ? "Please login to use playlists."
+                    : error.message ||
+                      "Unable to create playlist."
+            );
+        }
     });
 }
 }
@@ -4690,21 +4999,26 @@ if (confirmButton) {
             notify(extraRepeat ? "Repeat on." : "Repeat off.");
         });
         
-        actions.querySelector("#musicLike").addEventListener("click", () => {
+       actions.querySelector("#musicLike").addEventListener("click", async () => {
+if (!window.MUSIC_AUTH.isLoggedIn()) {
+    window.location.href = "/music-auth/login.html";
+    return;
+}
     const song = current();
 
     if (!song) {
         return;
     }
 
-    window.AlignMusicFavoritesToggle(song);
+    await window.AlignMusicFavoritesToggle(song);
 
     const likeButton = actions.querySelector("#musicLike");
     const icon = likeButton.querySelector(".music-action-icon");
 
     if (icon) {
-        const likes = window.AlignMusicExtras?.likes || [];
-        const liked = likes.some(item => item.videoId === song.videoId);
+        const liked = window.AlignMusicIsFavorite
+            ? window.AlignMusicIsFavorite(song.videoId)
+            : false;
 
         icon.textContent = liked ? "♥" : "♡";
         likeButton.classList.toggle("active", liked);
@@ -4712,7 +5026,11 @@ if (confirmButton) {
 });
 
        actions.querySelector("#musicPlaylist").addEventListener("click", () => {
-    const song = current();
+    if (!window.MUSIC_AUTH.isLoggedIn()) {
+        window.location.href = "/music-auth/login.html";
+        return;
+    }
+        const song = current();
 
     if (!song) {
         notify("Choose a song first.");
@@ -4864,37 +5182,77 @@ if (renameButton) {
             "musicRenamePlaylistConfirm"
         )
         ?.addEventListener(
-            "click",
-            () => {
+    "click",
+    async () => {
+        if (!window.MUSIC_AUTH.isLoggedIn()) {
+            window.location.href = "/music-auth/login.html";
+            return;
+        }
 
-                const newName =
-                    input.value.trim();
+        const newName =
+            input.value.trim();
 
-                if (!newName) {
-                    notify(
-                        "Playlist name cannot be empty."
-                    );
-                    input.focus();
-                    return;
+        if (!newName) {
+            notify(
+                "Playlist name cannot be empty."
+            );
+            input.focus();
+            return;
+        }
+
+        if (
+            newName.toLowerCase() !==
+            playlist.name.toLowerCase() &&
+            extraPlaylists.some(
+                item =>
+                    item.id !== playlist.id &&
+                    item.name.toLowerCase() ===
+                        newName.toLowerCase()
+            )
+        ) {
+            notify("Playlist already exists.");
+            return;
+        }
+
+        try {
+            await window.MUSIC_AUTH.request(
+                "/api/music/playlists/rename",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        playlistId: playlist.id,
+                        name: newName
+                    })
                 }
+            );
 
-                playlist.name =
-                    newName;
+            playlist.name = newName;
 
-                extraSave(
-                    EXTRA_KEYS.playlists,
-                    extraPlaylists
-                );
+            renderPlaylists();
+            closeModal();
 
-                renderPlaylists();
+            notify(
+                `Renamed playlist to ${newName}.`
+            );
 
-                closeModal();
+        } catch (error) {
+            console.error(
+                "Playlist rename error:",
+                error
+            );
 
-                notify(
-                    `Renamed playlist to ${newName}.`
-                );
-            }
-        );
+            notify(
+                error.message === "LOGIN_REQUIRED"
+                    ? "Please login to use playlists."
+                    : error.message ||
+                      "Unable to rename playlist."
+            );
+        }
+    }
+);
 
     input?.focus();
     input?.select();
@@ -5021,40 +5379,60 @@ if (deleteButton) {
             "musicDeletePlaylistConfirm"
         )
         ?.addEventListener(
-            "click",
-            () => {
+    "click",
+    async () => {
+        if (!window.MUSIC_AUTH.isLoggedIn()) {
+            window.location.href = "/music-auth/login.html";
+            return;
+        }
 
-                const index =
-                    extraPlaylists.findIndex(
-                        item =>
-                            item.id ===
-                            playlistId
-                    );
-
-                if (index === -1) {
-                    closeModal();
-                    return;
+        try {
+            await window.MUSIC_AUTH.request(
+                "/api/music/playlists/delete",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        playlistId: playlistId
+                    })
                 }
+            );
 
-                extraPlaylists.splice(
-                    index,
-                    1
+            const index =
+                extraPlaylists.findIndex(
+                    item =>
+                        String(item.id) ===
+                        String(playlistId)
                 );
 
-                extraSave(
-                    EXTRA_KEYS.playlists,
-                    extraPlaylists
-                );
-
-                renderPlaylists();
-
-                closeModal();
-
-                notify(
-                    `Deleted ${playlist.name}.`
-                );
+            if (index !== -1) {
+                extraPlaylists.splice(index, 1);
             }
-        );
+
+            renderPlaylists();
+            closeModal();
+
+            notify(
+                `Deleted ${playlist.name}.`
+            );
+
+        } catch (error) {
+            console.error(
+                "Playlist delete error:",
+                error
+            );
+
+            notify(
+                error.message === "LOGIN_REQUIRED"
+                    ? "Please login to use playlists."
+                    : error.message ||
+                      "Unable to delete playlist."
+            );
+        }
+    }
+);
 
     return;
 }
@@ -5084,8 +5462,8 @@ if (deleteButton) {
 }
 
 
+loadAccountPlaylists();
+addPlayerActionButtons();
 
-     addPlayerActionButtons();
-     renderPlaylists();
-    
 })();
+
