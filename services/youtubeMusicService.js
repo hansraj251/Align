@@ -551,6 +551,79 @@ const searchMusic = async ({
             "Search query is required."
         );
     }
+    const searchTerm = cleanQuery.toLowerCase().trim();
+const likeTerm = `%${searchTerm}%`;
+
+const dbSongs = await db.allAsync(
+    `
+    SELECT
+        youtube_video_id AS videoId,
+        title,
+        artist,
+        channel_title AS channelTitle,
+        channel_id AS channelId,
+        thumbnail_url AS thumbnailUrl,
+        duration,
+        language,
+        updated_at
+    FROM music_songs
+    WHERE
+        LOWER(title) LIKE ?
+        OR LOWER(artist) LIKE ?
+        OR LOWER(channel_title) LIKE ?
+    ORDER BY updated_at DESC
+    LIMIT ?
+    `,
+    [
+        likeTerm,
+        likeTerm,
+        likeTerm,
+        Math.min(
+            Math.max(
+                Number(maxResults) || 12,
+                1
+            ),
+            50
+        )
+    ]
+);
+
+if (dbSongs?.length) {
+    console.log(
+        "Music DB search HIT:",
+        cleanQuery,
+        dbSongs.length
+    );
+
+    return {
+        items: dbSongs.map(song => ({
+            videoId: song.videoId || null,
+            title: song.title || "",
+            description: "",
+            channelTitle:
+                song.channelTitle || "",
+            channelId:
+                song.channelId || null,
+            publishedAt:
+                song.updated_at || null,
+            duration:
+                song.duration || null,
+            language:
+                song.language || null,
+            thumbnails: {
+                default:
+                    song.thumbnailUrl || null,
+                medium:
+                    song.thumbnailUrl || null,
+                high:
+                    song.thumbnailUrl || null
+            }
+        })),
+        nextPageToken: null,
+        prevPageToken: null,
+        totalResults: dbSongs.length
+    };
+}
 
     const params =
         new URLSearchParams({
@@ -580,92 +653,207 @@ const searchMusic = async ({
             String(pageToken)
         );
     }
-    const webSearchQuery =
-    `site:youtube.com/watch ${cleanQuery}`;
 
-let webSearchHtml = "";
-
-try {
-    const webResponse = await fetch(
-        `https://html.duckduckgo.com/html/?q=${encodeURIComponent(webSearchQuery)}`,
-        {
-            headers: {
-                "User-Agent":
-                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/120 Safari/537.36"
-            }
-        }
-    );
-
-    if (webResponse.ok) {
-        webSearchHtml = await webResponse.text();
-    }
-} catch (error) {
-    console.warn(
-        "DuckDuckGo web search failed:",
-        error.message
-    );
-}
-
-const webVideoIds =
-    extractYouTubeVideoIdsFromHtml(webSearchHtml);
+   const braveApiKey =
+    process.env.BRAVE_SEARCH_API_KEY;
 
 console.log(
-    "DuckDuckGo YouTube IDs:",
-    webVideoIds
-);
-if (webVideoIds.length) {
-    console.log(
-        "Using DuckDuckGo YouTube results:",
-        webVideoIds
-    );
-
-    const videoParams = new URLSearchParams({
-        part: "snippet,contentDetails",
-        id: webVideoIds.slice(0, 10).join(","),
-        key: getYouTubeApiKey()
-    });
-
-    const videoResponse = await fetch(
-        `${YOUTUBE_API_BASE}/videos?${videoParams.toString()}`
-    );
-
-    let videoData = {};
-
-    try {
-        videoData = await videoResponse.json();
-    } catch {
-        videoData = {};
+    "BRAVE SEARCH CONFIG:",
+    {
+        hasKey: !!braveApiKey,
+        query: cleanQuery
     }
+);
 
-    if (videoResponse.ok) {
-        const normalizedSongs = (videoData.items || []).map(video => ({
-            videoId: video.id,
-            title: video?.snippet?.title || "",
-            description: video?.snippet?.description || "",
-            channelTitle: video?.snippet?.channelTitle || "",
-            channelId: video?.snippet?.channelId || null,
-            publishedAt: video?.snippet?.publishedAt || null,
-            duration: video?.contentDetails?.duration || null,
-            language:
-                video?.snippet?.defaultAudioLanguage || null,
-            thumbnails: {
-                default:
-                    video?.snippet?.thumbnails?.default?.url || null,
-                medium:
-                    video?.snippet?.thumbnails?.medium?.url || null,
-                high:
-                    video?.snippet?.thumbnails?.high?.url || null
+if (braveApiKey) {
+    try {
+        const braveParams =
+            new URLSearchParams({
+                q: `site:youtube.com/watch ${cleanQuery}`,
+                count: String(
+                    Math.min(
+                        Math.max(
+                            Number(maxResults) || 10,
+                            1
+                        ),
+                        10
+                    )
+                )
+            });
+
+        const braveResponse =
+            await fetch(
+                `https://api.search.brave.com/res/v1/web/search?${braveParams.toString()}`,
+                {
+                    headers: {
+                        Accept: "application/json",
+                        "X-Subscription-Token":
+                            braveApiKey
+                    }
+                }
+            );
+
+        let braveData = {};
+
+        try {
+            braveData =
+                await braveResponse.json();
+        } catch {
+            braveData = {};
+        }
+
+        if (braveResponse.ok) {
+            const braveItems =
+                Array.isArray(
+                    braveData?.web?.results
+                )
+                    ? braveData.web.results
+                    : [];
+
+            const braveVideoIds = [];
+
+            for (const item of braveItems) {
+                const link =
+                    String(
+                        item?.url || ""
+                    ).trim();
+
+                const match =
+                    link.match(
+                        /(?:youtube\.com\/watch\?[^#]*v=|youtu\.be\/)([A-Za-z0-9_-]{11})/
+                    );
+
+                if (
+                    match?.[1] &&
+                    !braveVideoIds.includes(
+                        match[1]
+                    )
+                ) {
+                    braveVideoIds.push(
+                        match[1]
+                    );
+                }
             }
-        }));
 
-        await saveSongsToMusicDB(normalizedSongs);
+            console.log(
+                "Brave YouTube IDs:",
+                braveVideoIds
+            );
 
-        return {
-            items: normalizedSongs,
-            nextPageToken: null,
-            prevPageToken: null,
-            totalResults: normalizedSongs.length
-        };
+            if (braveVideoIds.length) {
+                const videoParams =
+                    new URLSearchParams({
+                        part:
+                            "snippet,contentDetails",
+                        id:
+                            braveVideoIds
+                                .slice(0, 10)
+                                .join(","),
+                        key:
+                            getYouTubeApiKey()
+                    });
+
+                const videoResponse =
+                    await fetch(
+                        `${YOUTUBE_API_BASE}/videos?${videoParams.toString()}`
+                    );
+
+                let videoData = {};
+
+                try {
+                    videoData =
+                        await videoResponse.json();
+                } catch {
+                    videoData = {};
+                }
+
+                if (videoResponse.ok) {
+                    const normalizedSongs =
+                        (
+                            videoData.items ||
+                            []
+                        ).map(video => ({
+                            videoId:
+                                video.id,
+
+                            title:
+                                video?.snippet?.title ||
+                                "",
+
+                            description:
+                                video?.snippet?.description ||
+                                "",
+
+                            channelTitle:
+                                video?.snippet?.channelTitle ||
+                                "",
+
+                            channelId:
+                                video?.snippet?.channelId ||
+                                null,
+
+                            publishedAt:
+                                video?.snippet?.publishedAt ||
+                                null,
+
+                            duration:
+                                video?.contentDetails?.duration ||
+                                null,
+
+                            language:
+                                video?.snippet?.defaultAudioLanguage ||
+                                null,
+
+                            thumbnails: {
+                                default:
+                                    video?.snippet?.thumbnails?.default?.url ||
+                                    null,
+
+                                medium:
+                                    video?.snippet?.thumbnails?.medium?.url ||
+                                    null,
+
+                                high:
+                                    video?.snippet?.thumbnails?.high?.url ||
+                                    null
+                            }
+                        }));
+
+                    await saveSongsToMusicDB(
+                        normalizedSongs
+                    );
+
+                    if (
+                        normalizedSongs.length
+                    ) {
+                        return {
+                            items:
+                                normalizedSongs,
+
+                            nextPageToken:
+                                null,
+
+                            prevPageToken:
+                                null,
+
+                            totalResults:
+                                normalizedSongs.length
+                        };
+                    }
+                }
+            }
+        } else {
+            console.error(
+                "BRAVE SEARCH FAILED:",
+                braveResponse.status,
+                braveData
+            );
+        }
+    } catch (error) {
+        console.warn(
+            "Brave YouTube search failed:",
+            error.message
+        );
     }
 }
 
