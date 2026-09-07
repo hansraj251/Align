@@ -803,7 +803,7 @@
 
                 /*
                 |--------------------------------------------------------------------------
-                | Seller session
+                | User session
                 |--------------------------------------------------------------------------
                 */
 
@@ -839,39 +839,15 @@
                     );
 
 
-                if (
-                    redirect ===
-                    "add-property"
-                ) {
-
-                    window.location.href =
-                        "/property/add-property.html";
-
-                }
-
-                else if (
-                    redirect ===
-                    "manage-properties"
-                ) {
-
-                    window.location.href =
-                        "/property/manage-properties.html";
-
-                }
-
-                else {
-
-                    window.location.href =
-                        "/music-index.html";
-
-                }
+                window.location.href =
+                "/music-index.html";
 
             }
 
             catch (error) {
 
                 console.error(
-                    "Property login error:",
+                    "Music login error:",
                     error
                 );
 

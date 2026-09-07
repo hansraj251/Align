@@ -213,7 +213,7 @@ window.otpSuccessRedirect = "/music-auth/login.html";
         catch (err) {
 
             console.error(
-                "Property signup error:",
+                "Music signup error:",
                 err
             );
 
