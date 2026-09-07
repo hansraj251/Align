@@ -3544,30 +3544,20 @@ if (playAllRecentButton) {
             clearSearch
         );
     }
-    if (searchHistoryButton) {
+    if (searchInput && searchHistoryPanel) {
 
-    searchHistoryButton.addEventListener(
+    searchInput.addEventListener(
+        "focus",
+        () => {
+            openSearchHistoryPanel();
+        }
+    );
+
+    searchInput.addEventListener(
         "click",
         event => {
-
             event.stopPropagation();
-
-            if (
-                searchHistoryPanel &&
-                searchHistoryPanel.classList.contains(
-                    "hidden"
-                )
-            ) {
-
-                openSearchHistoryPanel();
-
-            }
-            else {
-
-                closeSearchHistoryPanel();
-
-            }
-
+            openSearchHistoryPanel();
         }
     );
 
@@ -3818,7 +3808,7 @@ if (discoverContainer) {
 
         favoritesContainer.addEventListener(
             "click",
-            event => {
+           async event => {
                 const removeButton =
     event.target.closest(
         "[data-remove-favorite]"
@@ -3828,26 +3818,55 @@ if (removeButton) {
     const videoId =
         removeButton.dataset.removeFavorite;
 
-    favorites =
-        favorites.filter(
-            song =>
-                song.videoId !== videoId
+    if (!window.MUSIC_AUTH.isLoggedIn()) {
+        window.location.href = "/music-auth/login.html";
+        return;
+    }
+
+    try {
+        await window.MUSIC_AUTH.request(
+            "/api/music/favorites/remove",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    videoId
+                })
+            }
         );
 
-    saveStorage(
-        STORAGE_KEYS.favorites,
-        favorites
-    );
-    
+        favorites =
+            favorites.filter(
+                song =>
+                    song.videoId !== videoId
+            );
 
-    renderFavorites();
-    renderResults();
+        saveStorage(
+            STORAGE_KEYS.favorites,
+            favorites
+        );
 
-    showToast(
-        "Removed from favorites."
-    );
+        renderFavorites();
+        renderResults();
+
+        showToast(
+            "Removed from favorites."
+        );
+    } catch (error) {
+        console.error(
+            "Remove favorite error:",
+            error
+        );
+
+        showToast(
+            "Failed to remove from favorites."
+        );
+    }
 
     return;
+
 }
 
                 const item =

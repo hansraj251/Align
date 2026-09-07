@@ -32,43 +32,32 @@
                         </div>
                     </form>
                     
-<div class="music-search-history-wrap">
+<div
+    id="musicSearchHistoryPanel"
+    class="music-search-history-panel hidden">
+
+    <div class="music-search-history-header">
+        <strong>Search History</strong>
 
         <button
-            id="musicSearchHistoryButton"
+            id="musicClearSearchHistory"
             type="button"
-            class="music-player-action"
-            aria-expanded="false"
-            aria-controls="musicSearchHistoryPanel">
-            🕘 Search History
+            class="music-search-history-clear-all">
+            Clear All
         </button>
+    </div>
 
-        <div
-            id="musicSearchHistoryPanel"
-            class="music-search-history-panel hidden">
+    <div
+        id="musicSearchHistoryList"
+        class="music-search-history-list">
 
-            <div class="music-search-history-header">
-                <strong>Search History</strong>
-
-                <button
-                    id="musicClearSearchHistory"
-                    type="button"
-                    class="music-search-history-clear-all">
-                    Clear All
-                </button>
-            </div>
-
-            <div
-                id="musicSearchHistoryList"
-                class="music-search-history-list">
-
-                <div class="music-search-history-empty">
-                    No search history yet.
-                </div>
-
-            </div>
-
+        <div class="music-search-history-empty">
+            No search history yet.
         </div>
+
+    </div>
+
+</div>
 
     </div>
 
@@ -118,11 +107,33 @@
                 </div>
 
                 <div class="music-progress-area">
-                    <span id="musicCurrentTime" class="music-time">0:00</span>
-                    <input id="musicProgress" type="range" min="0" max="100" value="0" step="0.1"
-                           aria-label="Music progress">
-                    <span id="musicDuration" class="music-time">0:00</span>
-                </div>
+    <span id="musicCurrentTime" class="music-time">0:00</span>
+
+    <input
+        id="musicProgress"
+        type="range"
+        min="0"
+        max="100"
+        value="0"
+        step="0.1"
+        aria-label="Music progress">
+
+    <span id="musicDuration" class="music-time">0:00</span>
+</div>
+<br>
+
+<div class="music-volume-area">
+    <span class="music-volume-icon" aria-hidden="true">🔊</span>
+
+    <input
+        id="musicVolume"
+        type="range"
+        min="0"
+        max="100"
+        value="100"
+        step="1"
+        aria-label="Volume">
+</div>
 
               
                    </div>

@@ -654,18 +654,20 @@ if (dbSongs?.length) {
         );
     }
 
-   const braveApiKey =
-    process.env.BRAVE_SEARCH_API_KEY;
+   const braveApiKeys = [
+    process.env.BRAVE_SEARCH_API_KEY,
+    process.env.BRAVE_SEARCH_API_KEY_2
+].filter(Boolean);
 
 console.log(
     "BRAVE SEARCH CONFIG:",
     {
-        hasKey: !!braveApiKey,
+        keyCount: braveApiKeys.length,
         query: cleanQuery
     }
 );
 
-if (braveApiKey) {
+if (braveApiKeys.length) {
     try {
         const braveParams =
             new URLSearchParams({
@@ -681,17 +683,50 @@ if (braveApiKey) {
                 )
             });
 
-        const braveResponse =
+        let braveResponse = null;
+
+for (let i = 0; i < braveApiKeys.length; i++) {
+    const currentBraveApiKey =
+        braveApiKeys[i];
+
+    try {
+        console.log(
+            `Brave Search: trying key ${i + 1}`
+        );
+
+        const response =
             await fetch(
                 `https://api.search.brave.com/res/v1/web/search?${braveParams.toString()}`,
                 {
                     headers: {
                         Accept: "application/json",
                         "X-Subscription-Token":
-                            braveApiKey
+                            currentBraveApiKey
                     }
                 }
             );
+
+        if (response.ok) {
+            braveResponse = response;
+
+            console.log(
+                `Brave Search: key ${i + 1} succeeded`
+            );
+
+            break;
+        }
+
+        console.warn(
+            `Brave Search: key ${i + 1} failed with status ${response.status}`
+        );
+
+    } catch (error) {
+        console.warn(
+            `Brave Search: key ${i + 1} request failed:`,
+            error.message
+        );
+    }
+}
 
         let braveData = {};
 
@@ -702,7 +737,7 @@ if (braveApiKey) {
             braveData = {};
         }
 
-        if (braveResponse.ok) {
+        if (braveResponse?.ok) {
             const braveItems =
                 Array.isArray(
                     braveData?.web?.results
@@ -843,11 +878,11 @@ if (braveApiKey) {
                 }
             }
         } else {
-            console.error(
-                "BRAVE SEARCH FAILED:",
-                braveResponse.status,
-                braveData
-            );
+    console.error(
+        "BRAVE SEARCH FAILED:",
+        braveResponse?.status || "NO_RESPONSE",
+        braveData
+    );
         }
     } catch (error) {
         console.warn(
