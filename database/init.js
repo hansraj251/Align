@@ -49,6 +49,31 @@ const createSuperAdminTable =
 const createAppVersionTable =
 require("./schema/appVersion");
 
+const createAlignAccountsTable =
+    require("./schema/alignAccounts");
+
+const createAlignAccountLinksTable =
+    require("./schema/alignAccountLinks");
+
+const createLedgerBusinessesTable =
+    require("./schema/ledgerBusinesses");
+
+const createLedgerPartiesTable =
+    require("./schema/ledgerParties");
+
+const createLedgerTransactionsTable =
+    require("./schema/ledgerTransactions");
+
+const createLedgerTransactionsIndexes =
+
+    createLedgerTransactionsTable.createIndexes;
+
+const createLedgerBusinessesIndexes =
+    createLedgerBusinessesTable.createIndexes;
+
+const createLedgerPartiesIndexes =
+    createLedgerPartiesTable.createIndexes;
+
 const createPropertyUsersTable =
     require("./schema/propertyUsers");
 
@@ -114,6 +139,23 @@ async function initializeDatabase() {
     await createSuperAdminTable();
 
     await createAppVersionTable();
+
+    await createAlignAccountsTable();
+
+    await createAlignAccountLinksTable();
+
+    await createLedgerBusinessesTable();
+
+    await createLedgerBusinessesIndexes();
+
+    await createLedgerPartiesTable();
+
+    await createLedgerPartiesIndexes();
+
+    await createLedgerTransactionsTable();
+
+    await createLedgerTransactionsIndexes();
+
 
     await createPropertyUsersTable();
 

@@ -84,6 +84,31 @@ app.use(
     "/api/music",
     require("./routes/musicRoutes")
 );
+
+app.use(
+
+    "/api/ledger/business",
+
+    require("./routes/ledgerBusinessRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/parties",
+
+    require("./routes/ledgerPartyRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/transactions",
+
+    require("./routes/ledgerTransactionRoutes")
+
+);
+
 app.use(
     "/api/property/contact-requests",
     require("./routes/propertyContactRequestRoutes")

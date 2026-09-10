@@ -4,7 +4,11 @@ const authService =
     require("../services/authService");
 
 const authSignupService =
-    require("../services/authSignupService");      
+    require("../services/authSignupService");
+
+const alignAccountService =
+
+    require("../services/alignAccountService");
 const otpService =
     require("../services/otpService");  
 const passwordResetService =
@@ -353,6 +357,17 @@ else {
         });
 
 }
+
+await alignAccountService.ensureModuleAccount(
+        otpData.business_type === "school"
+            ? "school"
+            : "food",
+        result.userId,
+        otpData.owner_name,
+        otpData.email,
+        otpData.mobile,
+        otpData.password_hash
+    );
 
 try {
 
