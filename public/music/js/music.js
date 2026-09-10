@@ -269,6 +269,9 @@ const clearSearchHistoryButton =
     let playerReady = false;
 
     let playerState = -1;
+    let playbackLoading = false;
+    let playbackLoadingTimer = null;
+    const PLAYBACK_LOADING_TIMEOUT = 10000;
     let musicVideoPlayer = null;
 
     let progressTimer = null;
@@ -1826,9 +1829,22 @@ origin: window.location.origin,
     function handlePlayerStateChange(
         event
     ) {
-
         playerState =
             event.data;
+
+        if (
+            event.data ===
+            YT.PlayerState.BUFFERING
+        ) {
+            lockPlaybackControls();
+        }
+
+        if (
+            event.data ===
+            YT.PlayerState.PLAYING
+        ) {
+            unlockPlaybackControls();
+        }
 
         savePlaybackState(true);
 
@@ -2269,6 +2285,42 @@ origin: window.location.origin,
             </article>
         `;
     }
+    function lockPlaybackControls() {
+            playbackLoading = true;
+
+        if (playbackLoadingTimer) {
+            clearTimeout(playbackLoadingTimer);
+        }
+
+        if (playPauseButton) {
+            playPauseButton.disabled = true;
+            playPauseButton.setAttribute(
+                "aria-busy",
+                "true"
+            );
+        }
+
+        playbackLoadingTimer = setTimeout(() => {
+            unlockPlaybackControls();
+        }, PLAYBACK_LOADING_TIMEOUT);
+    }
+
+    function unlockPlaybackControls() {
+        playbackLoading = false;
+
+        if (playbackLoadingTimer) {
+            clearTimeout(playbackLoadingTimer);
+            playbackLoadingTimer = null;
+        }
+
+        if (playPauseButton) {
+            playPauseButton.disabled = false;
+            playPauseButton.removeAttribute(
+                "aria-busy"
+            );
+        }
+    }
+
 
 
     /* =========================================================
@@ -2280,10 +2332,13 @@ origin: window.location.origin,
     index = -1,
     playbackList = null
 ) {
+    if (!song?.videoId) {
+        return;
+    }
 
-        if (!song?.videoId) {
-            return;
-        }
+    if (playbackLoading) {
+        return;
+    }
 
         currentSong =
             normalizeSong(
@@ -2358,6 +2413,7 @@ origin: window.location.origin,
         }
 
         try {
+            lockPlaybackControls();
 
             player.loadVideoById(
     currentSong.videoId
@@ -2374,6 +2430,7 @@ updatePlayButton(true);
 
         }
         catch (error) {
+            unlockPlaybackControls();
 
             console.error(
                 "Playback error:",
