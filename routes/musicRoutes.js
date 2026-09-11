@@ -8,8 +8,8 @@ const musicController =
 const musicUserController =
     require("../controllers/musicUserController");
 
-const propertyAuthMiddleware =
-    require("../middlewares/propertyAuthMiddleware");
+const musicAuthMiddleware =
+    require("../middlewares/musicAuthMiddleware");
 
 
 router.get(
@@ -39,19 +39,19 @@ router.get(
 
 router.get(
     "/favorites",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.getFavorites
 );
 
 router.post(
     "/favorites/add",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.addFavorite
 );
 
 router.post(
     "/favorites/remove",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.removeFavorite
 );
 
@@ -62,37 +62,37 @@ router.post(
 
 router.get(
     "/playlists",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.getPlaylists
 );
 
 router.post(
     "/playlists/create",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.createPlaylist
 );
 
 router.post(
     "/playlists/rename",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.renamePlaylist
 );
 
 router.post(
     "/playlists/delete",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.deletePlaylist
 );
 
 router.post(
     "/playlists/songs/add",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.addSongToPlaylist
 );
 
 router.post(
     "/playlists/songs/remove",
-    propertyAuthMiddleware,
+    musicAuthMiddleware,
     musicUserController.removeSongFromPlaylist
 );
 

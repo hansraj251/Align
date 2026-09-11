@@ -1,5 +1,3 @@
-Auth.redirectIfLoggedIn();
-
 const signupReturnTo = (() => {
     const value = new URLSearchParams(window.location.search).get("returnTo");
 
@@ -30,37 +28,10 @@ document
         await signup();
 
     });
-const businessTypeInput =
-    document.getElementById(
-        "businessType"
-    );
-
-const restaurantNameInput =
-    document.getElementById(
-        "restaurantName"
-    );
-
-businessTypeInput.addEventListener(
-    "change",
-    () => {
-
-        restaurantNameInput.placeholder =
-            businessTypeInput.value === "school"
-                ? "School Name"
-                : "Business Name";
-
-    }
-);
 async function signup() {
 
-    const businessType =
-    document.getElementById("businessType").value;
-
-    const restaurantName =
-        document.getElementById("restaurantName").value.trim();
-
-    const ownerName =
-        document.getElementById("ownerName").value.trim();
+    const name =
+        document.getElementById("name").value.trim();
 
     const email =
         document.getElementById("email").value.trim();
@@ -79,9 +50,7 @@ async function signup() {
     const data = await API.post(
         "/api/auth/signup",
         {
-            businessType,
-            restaurantName,
-            ownerName,
+            name,
             email,
             mobile,
             password
@@ -89,23 +58,24 @@ async function signup() {
     );
 
     if (!data.success) {
-
         result.textContent =
             data.message;
-
         return;
-
     }
 
     result.classList.remove("text-red-600");
 
-result.classList.add("text-green-600");
+    result.classList.add("text-green-600");
 
-result.textContent =
-    "OTP sent successfully. Please verify your email.";
+    result.textContent =
+        "OTP sent successfully. Please verify your email.";
+
     window.signupEmail =
-    email;
+        email;
 
-openOtpModal();
+    window.otpSuccessRedirect =
+        signupReturnTo ||
+        "/login.html";
 
+    openOtpModal();
 }

@@ -16,13 +16,13 @@
 };
 window.MUSIC_AUTH = {
     getToken() {
-        return localStorage.getItem("propertyToken") || "";
+        return localStorage.getItem("musicToken") || "";
     },
 
     getUser() {
         try {
             return JSON.parse(
-                localStorage.getItem("propertyUser") || "null"
+                localStorage.getItem("musicUser") || "null"
             );
         } catch {
             return null;

@@ -11,6 +11,16 @@ const authMiddleware =
     require("../middlewares/authMiddleware");
 const uploadSchoolLogo =
     require("../middlewares/uploadMiddleware");
+router.post(
+
+    "/workspace",
+
+    authMiddleware,
+
+    schoolController.createWorkspace
+
+);
+
 router.get(
     "/me",
     authMiddleware,

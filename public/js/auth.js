@@ -1,6 +1,6 @@
 const Auth = {
 
-    requireLogin() {
+    requireLogin(returnTo = "") {
 
         const token =
             localStorage.getItem(
@@ -17,8 +17,14 @@ const Auth = {
             !superAdminToken
         ) {
 
+            const loginUrl =
+                returnTo
+                    ? "/login.html?returnTo=" +
+                      encodeURIComponent(returnTo)
+                    : "/login.html";
+
             window.location.href =
-                "/login.html";
+                loginUrl;
 
             return false;
 
@@ -174,7 +180,7 @@ requireSchoolOwner() {
 
 },
 
-    logout() {
+    logout(returnTo = "") {
 
         localStorage.removeItem(
             "token"

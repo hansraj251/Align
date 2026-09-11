@@ -94,7 +94,8 @@ async function login() {
                 "/api/auth/login",
                 {
                     identifier: loginId,
-                    password
+                    password,
+                    module: "food"
                 }
             );
 

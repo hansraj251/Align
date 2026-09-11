@@ -119,3 +119,28 @@ async (
     );
 
 };
+
+exports.getById =
+async (
+    id
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            *,
+            CASE
+                WHEN school_id IS NOT NULL
+                    THEN 'school'
+                WHEN restaurant_id IS NOT NULL
+                    THEN 'food'
+                ELSE NULL
+            END AS business_type
+        FROM users
+        WHERE id = ?
+        `,
+        [
+            id
+        ]
+    );
+};

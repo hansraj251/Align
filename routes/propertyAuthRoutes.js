@@ -12,28 +12,8 @@ const propertyAuthMiddleware =
 
 
 router.post(
-    "/signup",
-    propertyAuthController.signup
-);
-
-router.post(
-    "/verify-otp",
-    propertyAuthController.verifyOtp
-);
-
-router.post(
     "/login",
     propertyAuthController.login
-);
-
-router.post(
-    "/forgot-password",
-    propertyAuthController.forgotPassword
-);
-
-router.post(
-    "/reset-password",
-    propertyAuthController.resetPassword
 );
 
 

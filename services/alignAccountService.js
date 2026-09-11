@@ -24,7 +24,16 @@ async (
         );
     }
 
-    return account;
+    const moduleLinks =
+        await alignAccountRepository
+            .getModuleLinks(
+                account.id
+            );
+
+    return {
+        account,
+        moduleLinks
+    };
 };
 
 exports.getByEmail =
@@ -360,6 +369,43 @@ async (
         });
 };
 
+exports.ensureMusicUser = async (
+    accountId,
+    name,
+    email,
+    mobile,
+    passwordHash
+) => {
+    if (!accountId) {
+        throw new Error("Align account ID is required");
+    }
+
+    const central = await exports.getAccount(accountId);
+    const existingLink = central.moduleLinks.find(
+        link => link.module === "music"
+    );
+
+    if (existingLink) {
+        return existingLink.module_user_id;
+    }
+
+    const musicUser =
+        await alignAccountRepository.createMusicUser(
+            name,
+            email,
+            mobile,
+            passwordHash
+        );
+
+    await alignAccountRepository.linkModuleUser(
+        accountId,
+        "music",
+        musicUser.id
+    );
+
+    return musicUser.id;
+};
+
 exports.resolveModuleAccount =
 async (
     module,
@@ -392,4 +438,230 @@ async (
     }
 
     return account;
+};
+
+
+exports.resolveLinkedPropertyUser =
+async (
+    moduleUserId
+) => {
+    if (!moduleUserId) {
+        throw new Error(
+            "Property user ID is required"
+        );
+    }
+
+    const propertyAuthRepository =
+        require("../repositories/propertyAuthRepository");
+
+    const user =
+        await propertyAuthRepository
+            .getProfile(
+                moduleUserId
+            );
+
+    if (!user) {
+        throw new Error(
+            "Linked Property user not found"
+        );
+    }
+
+    if (user.status !== "active") {
+        throw new Error(
+            "Linked Property user is not active"
+        );
+    }
+
+    return user;
+};
+
+
+exports.resolveLinkedModuleUser =
+async (
+    module,
+    moduleUserId
+) => {
+
+    if (
+        !module ||
+        !moduleUserId
+    ) {
+        throw new Error(
+            "Module and module user ID are required"
+        );
+    }
+
+    const moduleLink =
+        await alignAccountRepository
+            .getModuleLink(
+                module,
+                moduleUserId
+            );
+
+    if (!moduleLink) {
+        throw new Error(
+            "Align account link not found"
+        );
+    }
+
+    const authRepository =
+        require("../repositories/authRepository");
+
+    const user =
+        await authRepository.getById(
+            moduleUserId
+        );
+
+    if (!user) {
+        throw new Error(
+            "Linked module user not found"
+        );
+    }
+
+    if (user.status !== "active") {
+        throw new Error(
+            "Linked module user is not active"
+        );
+    }
+
+    return {
+        moduleLink,
+        user
+    };
+};
+
+
+exports.loginAccount =
+async (
+    identifier,
+    password
+) => {
+
+    const cleanIdentifier =
+        String(
+            identifier || ""
+        ).trim();
+
+    const cleanPassword =
+        String(
+            password || ""
+        ).trim();
+
+    if (
+        !cleanIdentifier ||
+        !cleanPassword
+    ) {
+        throw new Error(
+            "Email/mobile and password are required"
+        );
+    }
+
+    const cleanEmail =
+        cleanIdentifier
+            .toLowerCase();
+
+    let account =
+        await alignAccountRepository
+            .getByEmail(
+                cleanEmail
+            );
+
+    if (!account) {
+        account =
+            await alignAccountRepository
+                .getByMobile(
+                    cleanIdentifier
+                );
+    }
+
+    if (!account) {
+        throw new Error(
+            "Invalid email/mobile or password"
+        );
+    }
+
+    if (
+        account.status !==
+        "active"
+    ) {
+        throw new Error(
+            "Your account is not active"
+        );
+    }
+
+    const bcrypt =
+        require("bcrypt");
+
+    const matched =
+        await bcrypt.compare(
+            cleanPassword,
+            account.password
+        );
+
+    if (!matched) {
+        throw new Error(
+            "Invalid email/mobile or password"
+        );
+    }
+
+    const moduleLinks =
+        await alignAccountRepository
+            .getModuleLinks(
+                account.id
+            );
+
+    return {
+        account,
+        moduleLinks
+    };
+};
+
+exports.resetPassword = async (
+    accountId,
+    password
+) => {
+    const bcrypt = require("bcrypt");
+
+    const cleanPassword =
+        String(password || "").trim();
+
+    if (!accountId) {
+        throw new Error(
+            "Account ID is required"
+        );
+    }
+
+    if (!cleanPassword) {
+        throw new Error(
+            "Password is required"
+        );
+    }
+
+    const passwordHash =
+        await bcrypt.hash(
+            cleanPassword,
+            10
+        );
+
+    const account =
+        await alignAccountRepository
+            .getById(accountId);
+
+    if (!account) {
+        throw new Error(
+            "Align account not found"
+        );
+    }
+
+    if (account.status !== "active") {
+        throw new Error(
+            "Align account is not active"
+        );
+    }
+
+    return await alignAccountRepository
+        .updatePassword(
+            accountId,
+            passwordHash
+        );
 };

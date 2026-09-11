@@ -5,7 +5,7 @@ exports.getFavorites = async (req, res) => {
     try {
         const favorites =
             await musicUserService.getFavorites(
-                req.propertyUserId
+                req.musicUserId
             );
 
         return res.json({
@@ -31,7 +31,7 @@ exports.getFavorites = async (req, res) => {
 exports.addFavorite = async (req, res) => {
     try {
         await musicUserService.addFavorite(
-            req.propertyUserId,
+            req.musicUserId,
             req.body?.videoId
         );
 
@@ -57,7 +57,7 @@ exports.addFavorite = async (req, res) => {
 exports.removeFavorite = async (req, res) => {
     try {
         await musicUserService.removeFavorite(
-            req.propertyUserId,
+            req.musicUserId,
             req.body?.videoId
         );
 
@@ -84,7 +84,7 @@ exports.getPlaylists = async (req, res) => {
     try {
         const playlists =
             await musicUserService.getPlaylists(
-                req.propertyUserId
+                req.musicUserId
             );
 
         return res.json({
@@ -111,7 +111,7 @@ exports.createPlaylist = async (req, res) => {
     try {
         const playlist =
             await musicUserService.createPlaylist(
-                req.propertyUserId,
+                req.musicUserId,
                 req.body?.name
             );
 
@@ -138,7 +138,7 @@ exports.createPlaylist = async (req, res) => {
 exports.renamePlaylist = async (req, res) => {
     try {
         await musicUserService.renamePlaylist(
-            req.propertyUserId,
+            req.musicUserId,
             req.body?.playlistId,
             req.body?.name
         );
@@ -165,7 +165,7 @@ exports.renamePlaylist = async (req, res) => {
 exports.deletePlaylist = async (req, res) => {
     try {
         await musicUserService.deletePlaylist(
-            req.propertyUserId,
+            req.musicUserId,
             req.body?.playlistId
         );
 
@@ -191,7 +191,7 @@ exports.deletePlaylist = async (req, res) => {
 exports.addSongToPlaylist = async (req, res) => {
     try {
         await musicUserService.addSongToPlaylist(
-            req.propertyUserId,
+            req.musicUserId,
             req.body?.playlistId,
             req.body?.videoId
         );
@@ -221,7 +221,7 @@ exports.removeSongFromPlaylist = async (
 ) => {
     try {
         await musicUserService.removeSongFromPlaylist(
-            req.propertyUserId,
+            req.musicUserId,
             req.body?.playlistId,
             req.body?.videoId
         );

@@ -2,7 +2,7 @@
   "use strict";
 
   if (window.Auth && typeof Auth.requireLogin === "function") {
-    Auth.requireLogin();
+    Auth.requireLogin("/ledger/login.html");
   }
 
   const token = () => localStorage.getItem("token");
@@ -80,9 +80,9 @@
 
     if (!currentToken) {
       if (window.Auth && typeof Auth.logout === "function") {
-        Auth.logout();
+        Auth.logout("/ledger/login.html");
       } else {
-        window.location.href = "/login.html";
+        window.location.href = "/login.html?returnTo=%2Fledger%2Flogin.html";
       }
       throw new Error("Not logged in");
     }
@@ -98,10 +98,10 @@
 
     if (response.status === 401) {
       if (window.Auth && typeof Auth.logout === "function") {
-        Auth.logout();
+        Auth.logout("/ledger/login.html");
       } else {
         localStorage.removeItem("token");
-        window.location.href = "/login.html";
+        window.location.href = "/login.html?returnTo=%2Fledger%2Flogin.html";
       }
       throw new Error("Session expired");
     }

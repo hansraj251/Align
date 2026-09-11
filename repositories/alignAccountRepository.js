@@ -238,3 +238,115 @@ async (
         ]
     );
 };
+
+
+exports.getModuleLinks =
+async (
+    accountId
+) => {
+
+    return await db.allAsync(
+        `
+        SELECT
+            id,
+            account_id,
+            module,
+            module_user_id,
+            created_at
+        FROM align_account_links
+        WHERE account_id = ?
+        ORDER BY module
+        `,
+        [
+            accountId
+        ]
+    );
+};
+
+exports.createMusicUser = async (
+    name,
+    email,
+    mobile,
+    passwordHash
+) => {
+    const result = await db.runAsync(
+        `
+        INSERT INTO users
+        (
+            restaurant_id,
+            school_id,
+            name,
+            email,
+            mobile,
+            password,
+            role,
+            status
+        )
+        VALUES
+        (
+            NULL,
+            NULL,
+            ?, NULL, NULL, ?, 'music', 'active'
+        )
+        `,
+        [
+            name,
+            passwordHash
+        ]
+    );
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            name,
+            email,
+            mobile,
+            password,
+            role,
+            status
+        FROM users
+        WHERE id = ?
+        `,
+        [
+            result.lastID
+        ]
+    );
+};
+
+exports.updatePassword = async (
+    accountId,
+    passwordHash
+) => {
+    await db.runAsync(
+        `
+        UPDATE align_accounts
+        SET
+            password = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        `,
+        [
+            passwordHash,
+            accountId
+        ]
+    );
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            name,
+            email,
+            mobile,
+            status,
+            created_at,
+            updated_at
+        FROM align_accounts
+        WHERE id = ?
+        `,
+        [
+            accountId
+        ]
+    );
+};

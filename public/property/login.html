@@ -549,7 +549,7 @@
             >
 
                 <a
-                    href="/property/forgot-password.html"
+                    href="/admin/forgotPassword.html?returnTo=%2Fproperty%2Flogin.html"
                     class="
                         text-sm
                         font-medium
@@ -614,7 +614,7 @@
                 </span>
 
                 <a
-                    href="/property/signup.html"
+                    href="/admin/signup.html?returnTo=%2Fproperty%2Flogin.html"
                     class="
                         ml-1
                         font-semibold
@@ -798,7 +798,7 @@
 
                 const response =
                     await fetch(
-                        "/api/property/auth/login",
+                        "/api/auth/login",
                         {
                             method: "POST",
 
@@ -810,7 +810,8 @@
                             body:
                                 JSON.stringify({
                                     identifier,
-                                    password
+                                    password,
+                                    module: "property"
                                 })
                         }
                     );

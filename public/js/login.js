@@ -1,4 +1,11 @@
-Auth.redirectIfLoggedIn();
+const loginPageReturnTo =
+    new URLSearchParams(
+        window.location.search
+    ).get("returnTo");
+
+if (!loginPageReturnTo) {
+    Auth.redirectIfLoggedIn();
+}
 
 document
     .getElementById("loginBtn")
@@ -97,14 +104,39 @@ async function login() {
 
         }
 
-        const data =
+        const loginReturnTo =
+        new URLSearchParams(
+            window.location.search
+        ).get("returnTo");
+
+    let loginModule = "";
+
+    if (loginReturnTo === "/school/login.html") {
+        loginModule = "school";
+    } else if (loginReturnTo === "/food/login.html") {
+        loginModule = "food";
+    } else if (loginReturnTo === "/property/login.html") {
+        loginModule = "property";
+    } else if (loginReturnTo === "/music-auth/login.html") {
+        loginModule = "music";
+    } else if (loginReturnTo === "/ledger/login.html") {
+        loginModule = "ledger";
+    }
+
+    const loginPayload = {
+        identifier:
+            loginId,
+        password
+    };
+
+    if (loginModule) {
+        loginPayload.module = loginModule;
+    }
+
+    const data =
     await API.post(
         "/api/auth/login",
-        {
-            identifier:
-                loginId,
-            password
-        }
+        loginPayload
     );
 
         if (
@@ -157,13 +189,58 @@ async function login() {
 
 }
 
-localStorage.setItem(
-    "restaurant_id",
-    payload.restaurantId
-);
+        if (
+            loginReturnTo === "/property/login.html"
+        ) {
 
-window.location.href =
-    "/admin/subscription.html";
+            localStorage.setItem(
+                "propertyToken",
+                data.token
+            );
+
+            window.location.href =
+                "/property/dashboard.html";
+
+            return;
+        }
+
+        if (
+            loginReturnTo === "/music-auth/login.html"
+        ) {
+
+            localStorage.setItem(
+                "musicToken",
+                data.token
+            );
+
+            localStorage.setItem(
+                "musicUser",
+                JSON.stringify(data.user)
+            );
+
+            window.location.href =
+                "/music-index.html";
+
+            return;
+        }
+
+        if (
+            loginReturnTo === "/ledger/login.html"
+        ) {
+
+            window.location.href =
+                "/ledger/index.html";
+
+            return;
+        }
+
+        localStorage.setItem(
+            "restaurant_id",
+            payload.restaurantId
+        );
+
+        window.location.href =
+            "/admin/subscription.html";
 
     }
     catch (err) {
