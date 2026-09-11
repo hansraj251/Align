@@ -1,3 +1,22 @@
+const forgotReturnTo = (() => {
+    const value = new URLSearchParams(window.location.search).get("returnTo");
+
+    if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("://")) {
+        return "";
+    }
+
+    const allowed = [
+        "/food/login.html",
+        "/school/login.html",
+        "/property/login.html",
+        "/music-auth/login.html",
+        "/ledger/login.html",
+        "/login.html"
+    ];
+
+    return allowed.includes(value) ? value : "";
+})();
+
 const email =
     document.getElementById(
         "email"
@@ -59,12 +78,20 @@ sendOtpBtn.addEventListener(
 
             );
 
+            sessionStorage.setItem(
+                "resetReturnTo",
+                forgotReturnTo || "/login.html"
+            );
+
             setTimeout(
 
                 () => {
 
                     window.location.href =
-                        "/admin/resetPassword.html";
+                        "/admin/resetPassword.html?returnTo=" +
+                        encodeURIComponent(
+                            forgotReturnTo || "/login.html"
+                        );
 
                 },
 

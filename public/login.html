@@ -193,15 +193,6 @@
 
         </h1>
 
-        <p
-            class="mt-4 text-xl font-medium"
-            style="color: #4f46a5;">
-
-            Food Business <br>
-            School Management
-
-        </p>
-
     </div>
 
 </div>
@@ -324,7 +315,7 @@
                 <div class="mb-6 flex justify-end">
 
     <a
-        href="/admin/forgotPassword.html"
+        id="forgotPasswordLink" href="/admin/forgotPassword.html"
         class="text-sm font-medium text-blue-600 hover:underline">
 
         Forgot Password?
@@ -360,7 +351,7 @@ style="
                 </span>
 
                 <a
-                    href="/admin/signup.html"
+                    id="signupLink" href="/admin/signup.html"
                     class="ml-1 font-semibold text-blue-600 hover:underline">
 
                     Create Account
@@ -395,6 +386,39 @@ style="
 
 <script src="/js/api.js"></script>
 <script src="/js/auth.js"></script>
+<script>
+    // Preserve the product login page when using common auth pages.
+    const loginReturnTo = new URLSearchParams(window.location.search).get("returnTo");
+
+    function safeAuthReturnTo(value) {
+        if (!value) return "";
+        if (!value.startsWith("/")) return "";
+        if (value.startsWith("//")) return "";
+        if (value.includes("://")) return "";
+
+        const allowed = [
+            "/food/login.html",
+            "/school/login.html",
+            "/property/login.html",
+            "/music-auth/login.html",
+            "/ledger/login.html",
+            "/login.html"
+        ];
+
+        return allowed.includes(value) ? value : "";
+    }
+
+    const safeReturnTo = safeAuthReturnTo(loginReturnTo);
+
+    if (safeReturnTo) {
+        document.getElementById("forgotPasswordLink").href =
+            "/admin/forgotPassword.html?returnTo=" + encodeURIComponent(safeReturnTo);
+
+        document.getElementById("signupLink").href =
+            "/admin/signup.html?returnTo=" + encodeURIComponent(safeReturnTo);
+    }
+</script>
+
 <script src="/js/login.js"></script>
 
 </body>

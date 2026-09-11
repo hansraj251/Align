@@ -1,3 +1,28 @@
+const resetReturnTo = (() => {
+    const fromUrl =
+        new URLSearchParams(window.location.search).get("returnTo");
+
+    const fromStorage =
+        sessionStorage.getItem("resetReturnTo");
+
+    const value = fromUrl || fromStorage || "";
+
+    if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("://")) {
+        return "/login.html";
+    }
+
+    const allowed = [
+        "/food/login.html",
+        "/school/login.html",
+        "/property/login.html",
+        "/music-auth/login.html",
+        "/ledger/login.html",
+        "/login.html"
+    ];
+
+    return allowed.includes(value) ? value : "/login.html";
+})();
+
 const otp =
     document.getElementById(
         "otp"
@@ -105,12 +130,16 @@ resetPasswordBtn.addEventListener(
                 "resetEmail"
             );
 
+            sessionStorage.removeItem(
+                "resetReturnTo"
+            );
+
             setTimeout(
 
                 () => {
 
                     window.location.href =
-                        "/login.html";
+                        resetReturnTo;
 
                 },
 

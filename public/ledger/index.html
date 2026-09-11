@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Ledger</title>
+  <link rel="stylesheet" href="/ledger/css/ledger.css">
+</head>
+<body>
+  <div class="app-shell">
+
+    <header class="topbar">
+      <div>
+
+        <div class="business-name" id="businessName">Ledger</div>
+      </div>
+
+      <div class="ledger-book-wrap">
+        <button class="ledger-book-button" id="ledgerBookButton" type="button">
+          <span>
+            <small>Ledger Books</small>
+            <strong id="selectedBookName">Ledger Book</strong>
+          </span>
+          <span class="chevron">⌄</span>
+        </button>
+
+        <div class="book-menu" id="bookMenu" hidden>
+          <div class="book-menu-title">Ledger Books</div>
+          <button class="book-option active" type="button">
+            <span>Ledger Book</span>
+            <span>✓</span>
+          </button>
+          <div class="book-divider"></div>
+          <button class="create-book" id="createBookButton" type="button">
+            <span>＋</span>
+            <span>Create new Ledger</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <section class="summary-grid">
+        <article class="summary-card get-card">
+          <span class="summary-label">YOU WILL GET</span>
+          <strong id="receivableAmount">₹0.00</strong>
+        </article>
+
+        <article class="summary-card give-card">
+          <span class="summary-label">YOU WILL GIVE</span>
+          <strong id="payableAmount">₹0.00</strong>
+        </article>
+      </section>
+
+      <button class="reports-button" id="reportsButton" type="button">
+        <span>View Reports</span>
+        <span>›</span>
+      </button>
+
+      <section class="search-section">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input
+            id="partySearch"
+            type="search"
+            placeholder="Search party"
+            autocomplete="off"
+          >
+          <button id="clearSearch" class="clear-search" type="button" hidden>×</button>
+        </div>
+      </section>
+
+      <section class="parties-section">
+        <div class="section-heading">
+          <div>
+            <h1>All Parties</h1>
+            <p id="partyCountText">Your ledger accounts</p>
+          </div>
+
+          <button class="refresh-button" id="refreshButton" type="button" aria-label="Refresh">
+            ↻
+          </button>
+        </div>
+
+        <div id="partiesList" class="parties-list"></div>
+
+        <div id="emptyState" class="empty-state" hidden>
+          <div class="empty-icon">＋</div>
+          <h2>No parties yet</h2>
+          <p>Add a customer, supplier or other party to start your ledger.</p>
+          <button id="emptyAddPartyButton" type="button">Add Party</button>
+        </div>
+
+        <div id="noSearchResults" class="empty-state compact" hidden>
+          <h2>No party found</h2>
+          <p>Try a different name or mobile number.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <button class="floating-add" id="addPartyButton" type="button">
+      <span>＋</span>
+      <span>Add Party</span>
+    </button>
+
+    <nav class="bottom-nav">
+      <button class="nav-item selected" type="button" data-nav="parties">
+        <span class="nav-icon">♙</span>
+        <span>Parties</span>
+      </button>
+
+      <button class="nav-item" type="button" data-nav="sharing">
+        <span class="nav-icon">↗</span>
+        <span>Sharing</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <div class="modal-backdrop" id="partyModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="partyModalTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="partyModalTitle">Add Party</h2>
+          <p>Add a customer, supplier or other party.</p>
+        </div>
+        <button id="closePartyModal" class="modal-close" type="button">×</button>
+      </div>
+
+      <form id="partyForm">
+        <label>
+          Name
+          <input id="partyName" type="text" required maxlength="100" autocomplete="name">
+        </label>
+
+        <label>
+          Mobile
+          <input id="partyMobile" type="tel" maxlength="20" autocomplete="tel">
+        </label>
+
+        <label>
+          Address
+          <textarea id="partyAddress" rows="3" maxlength="250"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button id="cancelPartyButton" type="button" class="secondary-button">Cancel</button>
+          <button type="submit" class="primary-button">Save Party</button>
+        </div>
+
+        <p id="partyFormError" class="form-error" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/ledger/js/ledger.js"></script>
+</body>
+</html>

@@ -1,4 +1,23 @@
 Auth.redirectIfLoggedIn();
+
+const signupReturnTo = (() => {
+    const value = new URLSearchParams(window.location.search).get("returnTo");
+
+    if (!value || !value.startsWith("/") || value.startsWith("//") || value.includes("://")) {
+        return "";
+    }
+
+    const allowed = [
+        "/food/login.html",
+        "/school/login.html",
+        "/property/login.html",
+        "/music-auth/login.html",
+        "/ledger/login.html",
+        "/login.html"
+    ];
+
+    return allowed.includes(value) ? value : "";
+})();
 loadOtpModal();
 document
 
