@@ -177,13 +177,17 @@ async function login() {
     ) {
 
         window.location.href =
-    "/school/all-classes.html";
+            loginReturnTo === "/school/login.html"
+                ? loginReturnTo
+                : "/school/all-classes.html";
         return;
 
     }
 
     window.location.href =
-        "/school/dashboard.html";
+        loginReturnTo === "/school/login.html"
+            ? loginReturnTo
+            : "/school/dashboard.html";
 
     return;
 
@@ -199,7 +203,7 @@ async function login() {
             );
 
             window.location.href =
-                "/property/dashboard.html";
+                loginReturnTo;
 
             return;
         }
@@ -219,7 +223,7 @@ async function login() {
             );
 
             window.location.href =
-                "/music-index.html";
+                loginReturnTo;
 
             return;
         }
@@ -229,7 +233,7 @@ async function login() {
         ) {
 
             window.location.href =
-                "/ledger/index.html";
+                loginReturnTo;
 
             return;
         }
