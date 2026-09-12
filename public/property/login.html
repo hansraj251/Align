@@ -269,22 +269,8 @@
                         transparent;
                 "
             >
-                Align Properties
+                ALIGN
             </h1>
-
-
-            <p
-                class="
-                    mt-4
-                    text-xl
-                    font-medium
-                "
-                style="
-                    color: #4f46a5;
-                "
-            >
-                Sell anyting here
-            </p>
 
         </div>
 
@@ -375,21 +361,8 @@
                             transparent;
                     "
                 >
-                    Align Properties
+                    ALIGN
                 </h1>
-
-
-                <p
-                    class="
-                        mt-2
-                        font-medium
-                    "
-                    style="
-                        color: #4f46a5;
-                    "
-                >
-                    Sell anyting here
-                </p>
 
             </div>
 
@@ -424,7 +397,7 @@
                         transparent;
                 "
             >
-                Welcome Back
+                Welcome
             </h2>
 
 
@@ -434,7 +407,7 @@
                     text-slate-500
                 "
             >
-                Sign in to manage your properties
+                Sign in to continue
             </p>
 
 
@@ -928,6 +901,68 @@
 
         }
     );
+
+    const existingPropertyToken =
+        localStorage.getItem("propertyToken") ||
+        localStorage.getItem("token");
+
+    if (existingPropertyToken) {
+        try {
+            const payloadPart =
+                existingPropertyToken.split(".")[1];
+
+            if (!payloadPart) {
+                throw new Error("Invalid token");
+            }
+
+            const normalizedPayload =
+                payloadPart
+                    .replace(/-/g, "+")
+                    .replace(/_/g, "/");
+
+            const paddedPayload =
+                normalizedPayload +
+                "=".repeat(
+                    (4 - normalizedPayload.length % 4) % 4
+                );
+
+            const existingPayload =
+                JSON.parse(
+                    atob(paddedPayload)
+                );
+
+            if (
+                existingPayload &&
+                existingPayload.module === "property"
+            ) {
+                const params =
+                    new URLSearchParams(
+                        window.location.search
+                    );
+
+                const redirect =
+                    params.get("redirect");
+
+                if (redirect === "add-property") {
+                    window.location.href =
+                        "/property/add-property.html";
+                } else if (
+                    redirect === "manage-properties"
+                ) {
+                    window.location.href =
+                        "/property/manage-properties.html";
+                } else {
+                    window.location.href =
+                        "/property/dashboard.html";
+                }
+            }
+        } catch (error) {
+            console.error(
+                "Property session check failed:",
+                error
+            );
+        }
+    }
 
 </script>
 

@@ -41,6 +41,27 @@ function decodeToken(token) {
     }
 }
 
+const existingSchoolToken =
+    localStorage.getItem("token");
+
+if (existingSchoolToken) {
+    const existingPayload =
+        decodeToken(existingSchoolToken);
+
+    if (
+        existingPayload &&
+        existingPayload.businessType === "school" &&
+        existingPayload.schoolId
+    ) {
+        localStorage.setItem(
+            "school_id",
+            existingPayload.schoolId
+        );
+
+        redirectSchoolUser(existingPayload);
+    }
+}
+
 function redirectSchoolUser(payload) {
     if (payload.role === "attendance") {
         window.location.href =

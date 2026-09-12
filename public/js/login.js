@@ -202,6 +202,15 @@ async function login() {
                 data.token
             );
 
+            localStorage.setItem(
+                "propertyUser",
+                JSON.stringify(data.user)
+            );
+
+            localStorage.removeItem(
+                "token"
+            );
+
             window.location.href =
                 loginReturnTo;
 

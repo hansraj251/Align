@@ -19,6 +19,10 @@ const API = {
         ||
 
         localStorage.getItem(
+            "propertyToken"
+        )
+        ||
+        localStorage.getItem(
             "staffToken"
         )
 
