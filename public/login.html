@@ -362,6 +362,7 @@ style="
             <div class="mt-6 border-t pt-4 text-center">
 
     <a
+        id="supportLink"
         href="/admin/support.html"
         class="text-sm font-medium text-blue-600 hover:underline">
 
@@ -416,6 +417,14 @@ style="
 
         document.getElementById("signupLink").href =
             "/admin/signup.html?returnTo=" + encodeURIComponent(safeReturnTo);
+
+        const supportPath =
+            safeReturnTo === "/school/login.html"
+                ? "/school/support.html"
+                : "/admin/support.html";
+
+        document.getElementById("supportLink").href =
+            supportPath;
     }
 </script>
 
