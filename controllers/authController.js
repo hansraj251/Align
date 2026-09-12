@@ -659,51 +659,120 @@ if (
             });
         }
 
-        const result =
-    await authService.login(
+        const centralResult =
+            await alignAccountService.loginAccount(
+                loginIdentifier,
+                password
+            );
 
-        loginIdentifier,
+        const foodLink =
+            centralResult.moduleLinks.find(
+                (link) =>
+                    link.module === "food"
+            );
 
-        password
+        let user = null;
 
-    );
+        if (foodLink) {
+            const linkedResult =
+                await alignAccountService.resolveLinkedModuleUser(
+                    "food",
+                    foodLink.module_user_id
+                );
+
+            user =
+                linkedResult.user;
+        }
+
+        const token =
+            jwt.sign(
+                {
+                    userId:
+                        user
+                            ? user.id
+                            : null,
+
+                    alignAccountId:
+                        centralResult.account.id,
+
+                    restaurantId:
+                        user
+                            ? user.restaurant_id
+                            : null,
+
+                    schoolId:
+                        user
+                            ? user.school_id
+                            : null,
+
+                    businessType:
+                        user
+                            ? user.business_type
+                            : null,
+
+                    role:
+                        user
+                            ? user.role
+                            : null
+                },
+
+                process.env.JWT_SECRET,
+
+                {
+                    expiresIn:
+                        "7d"
+                }
+            );
 
         return res.json({
 
-    success: true,
+            success: true,
 
-    message:
-        "Login Successful",
+            message:
+                "Login Successful",
 
-    token:
-        result.token,
+            token,
 
-    businessType:
-        result.user.business_type,
+            businessType:
+                user
+                    ? user.business_type
+                    : null,
 
-    restaurantId:
-        result.user.restaurant_id || null,
+            restaurantId:
+                user
+                    ? user.restaurant_id || null
+                    : null,
 
-    schoolId:
-        result.user.school_id || null,
+            schoolId:
+                user
+                    ? user.school_id || null
+                    : null,
 
-    user: {
+            user: {
 
-        id:
-            result.user.id,
+                id:
+                    user
+                        ? user.id
+                        : centralResult.account.id,
 
-        name:
-            result.user.name,
+                name:
+                    user
+                        ? user.name
+                        : centralResult.account.name,
 
-        email:
-            result.user.email,
+                email:
+                    user
+                        ? user.email
+                        : centralResult.account.email,
 
-        role:
-            result.user.role
+                role:
+                    user
+                        ? user.role
+                        : null
 
-    }
+            }
 
-});
+        });
 
     }
     catch (err) {
