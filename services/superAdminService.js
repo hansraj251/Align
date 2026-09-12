@@ -363,3 +363,154 @@ async (
         );
 
 };
+exports.restoreDatabaseBackup = async (uploadedFile) => {
+    if (!uploadedFile || !uploadedFile.buffer) {
+        throw new Error("Backup ZIP file is required.");
+    }
+
+    const AdmZip = require("adm-zip");
+
+    const timestamp = new Date()
+        .toISOString()
+        .replace(/[:.]/g, "-");
+
+    const dbPath =
+        process.env.RENDER
+            ? "/var/data/align.db"
+            : path.join(__dirname, "..", "database", "align.db");
+
+    const backupsDir =
+        path.join(__dirname, "..", "backups");
+
+    const tempDir =
+        path.join(backupsDir, `.restore-${timestamp}`);
+
+    const tempDbPath =
+        path.join(tempDir, "align.db");
+
+    const safetyBackupPath =
+        path.join(
+            backupsDir,
+            `align-before-restore-${timestamp}.db`
+        );
+
+    try {
+        fs.mkdirSync(tempDir, {
+            recursive: true
+        });
+
+        const zip = new AdmZip(uploadedFile.buffer);
+        const entries = zip.getEntries();
+
+        if (!entries.length) {
+            throw new Error("The uploaded ZIP file is empty.");
+        }
+
+        const invalidEntries = entries.filter(entry => {
+            const name = entry.entryName;
+
+            return (
+                entry.isDirectory ||
+                name !== "align.db"
+            );
+        });
+
+        if (invalidEntries.length > 0) {
+            throw new Error(
+                "Invalid backup ZIP. The archive must contain only align.db."
+            );
+        }
+
+        const dbEntry = entries.find(
+            entry => entry.entryName === "align.db"
+        );
+
+        if (!dbEntry) {
+            throw new Error(
+                "Invalid backup ZIP. align.db was not found."
+            );
+        }
+
+        fs.writeFileSync(
+            tempDbPath,
+            dbEntry.getData()
+        );
+
+        const sqlite3 =
+            require("sqlite3").verbose();
+
+        await new Promise((resolve, reject) => {
+            const testDb =
+                new sqlite3.Database(
+                    tempDbPath,
+                    sqlite3.OPEN_READONLY,
+                    err => {
+                        if (err) {
+                            return reject(
+                                new Error(
+                                    `Restored database could not be opened: ${err.message}`
+                                )
+                            );
+                        }
+
+                        testDb.get(
+                            "PRAGMA integrity_check;",
+                            (checkErr, row) => {
+                                testDb.close(() => {});
+
+                                if (checkErr) {
+                                    return reject(
+                                        new Error(
+                                            `Database integrity check failed: ${checkErr.message}`
+                                        )
+                                    );
+                                }
+
+                                if (
+                                    !row ||
+                                    row.integrity_check !== "ok"
+                                ) {
+                                    return reject(
+                                        new Error(
+                                            "Database integrity check failed."
+                                        )
+                                    );
+                                }
+
+                                resolve();
+                            }
+                        );
+                    }
+                );
+        });
+
+        const db = require("../db");
+
+        await db.closeAsync();
+
+        if (fs.existsSync(dbPath)) {
+            fs.copyFileSync(
+                dbPath,
+                safetyBackupPath
+            );
+        }
+
+        fs.renameSync(
+            tempDbPath,
+            dbPath
+        );
+
+        return {
+            safetyBackupPath
+        };
+
+    } finally {
+        fs.rmSync(
+            tempDir,
+            {
+                recursive: true,
+                force: true
+            }
+        );
+    }
+};

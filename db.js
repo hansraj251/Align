@@ -91,6 +91,17 @@ db.execAsync = (sql) => {
     });
 
 };
+db.closeAsync = () => {
+    return new Promise((resolve, reject) => {
+        db.close(err => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        });
+    });
+};
+
 db.transaction = async (callback) => {
 
     try {

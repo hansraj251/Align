@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs =
     require("fs");
+const path =
+    require("path");
 const db = require("../db");
 
 const superAdminService =
@@ -558,4 +560,41 @@ exports.updateSchoolSubscription = async (
 
     }
 
+};
+exports.restoreBackup = async (req, res) => {
+    try {
+        const result =
+            await superAdminService.restoreDatabaseBackup(
+                req.file
+            );
+
+        res.json({
+            success: true,
+            message:
+                "Database restored successfully. The server will restart now.",
+            safetyBackup:
+                path.basename(result.safetyBackupPath)
+        });
+
+        setTimeout(() => {
+            if (process.env.npm_lifecycle_event === "dev") {
+                process.kill(process.pid, "SIGUSR2");
+            } else {
+                process.kill(process.pid, "SIGTERM");
+            }
+        }, 500);
+
+    } catch (err) {
+        console.error(
+            "❌ Database restore failed:",
+            err
+        );
+
+        res.status(400).json({
+            success: false,
+            message:
+                err.message ||
+                "Database restore failed."
+        });
+    }
 };

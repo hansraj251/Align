@@ -317,6 +317,55 @@ document.getElementById("pageContent").innerHTML = `
 
             </button>
 
+            <input
+                type="file"
+                id="restoreBackupInput"
+                accept=".zip"
+                class="hidden"
+            />
+
+            <button
+                id="restoreBackupBtn"
+                type="button"
+                class="
+                    inline-flex
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-xl
+                    border
+                    border-red-200
+                    bg-red-50
+                    px-5
+                    py-2.5
+                    text-sm
+                    font-semibold
+                    text-red-700
+                    hover:bg-red-100
+                ">
+
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 4v6h6M20 20v-6h-6M5.5 15a7 7 0 0011.9 2M18.5 9A7 7 0 006.6 7"
+                    />
+
+                </svg>
+
+                <span>
+                    Restore Backup
+                </span>
+
+            </button>
+
         </div>
 
     </div>
@@ -404,6 +453,114 @@ document
 
         }
 
+    );
+
+
+document
+    .getElementById(
+        "restoreBackupBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+            document
+                .getElementById(
+                    "restoreBackupInput"
+                )
+                .click();
+        }
+    );
+
+document
+    .getElementById(
+        "restoreBackupInput"
+    )
+    .addEventListener(
+        "change",
+        async event => {
+            const file =
+                event.target.files[0];
+
+            if (!file) {
+                return;
+            }
+
+            if (
+                !file.name
+                    .toLowerCase()
+                    .endsWith(".zip")
+            ) {
+                Notify.error(
+                    "Please select a ZIP backup file."
+                );
+
+                event.target.value = "";
+                return;
+            }
+
+            const confirmed =
+                window.confirm(
+                    "WARNING: Restoring this backup will replace the current database.\n\nA safety copy of the current database will be created automatically.\n\nDo you want to continue?"
+                );
+
+            if (!confirmed) {
+                event.target.value = "";
+                return;
+            }
+
+            try {
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "backup",
+                    file
+                );
+
+                Notify.info(
+                    "Restoring database backup..."
+                );
+
+                const response =
+                    await fetch(
+                        "/api/super-admin/restore",
+                        {
+                            method: "POST",
+                            headers: {
+                                Authorization:
+                                    `Bearer ${SuperAdminAuth.token()}`
+                            },
+                            body: formData
+                        }
+                    );
+
+                const result =
+                    await response.json();
+
+                if (!response.ok) {
+                    throw new Error(
+                        result.message ||
+                        "Database restore failed."
+                    );
+                }
+
+                Notify.success(
+                    "Database restored successfully. Restarting..."
+                );
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+
+            } catch (err) {
+                Notify.error(
+                    err.message ||
+                    "Database restore failed."
+                );
+            } finally {
+                event.target.value = "";
+            }
+        }
     );
 
 loadDashboard();

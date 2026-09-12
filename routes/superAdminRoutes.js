@@ -13,7 +13,10 @@ require("../middlewares/authMiddleware");
 const superAdminMiddleware =
 require("../middlewares/superAdminMiddleware");  
 const appVersionController =
-    require("../controllers/appVersionController");  
+    require("../controllers/appVersionController");
+
+const restoreUploadMiddleware =
+    require("../middlewares/restoreUploadMiddleware");
 
 router.post(
     "/login",
@@ -174,6 +177,15 @@ router.get(
     superAdminMiddleware,
     superAdminController.downloadBackup
 );
+
+router.post(
+    "/restore",
+    authMiddleware,
+    superAdminMiddleware,
+    restoreUploadMiddleware.single("backup"),
+    superAdminController.restoreBackup
+);
+
 router.get(
     "/app-version",
     authMiddleware,
