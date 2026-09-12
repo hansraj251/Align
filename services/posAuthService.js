@@ -4,199 +4,235 @@ const jwt =
 const posAuthRepository =
     require("../repositories/posAuthRepository");
 
+const alignAccountService =
+
+    require("./alignAccountService");
+
 exports.login = async (
+
     email,
     password,
     deviceId
+
 ) => {
 
-    const data =
-        await posAuthRepository.getUserWithRestaurantByEmail(
-            email
+    const centralResult =
+        await alignAccountService.loginAccount(
+            email,
+            password
         );
-        console.log("Login Email:", email);
-console.log("User Found:", !!data);
+
+    const foodLink =
+        centralResult.moduleLinks.find(
+            (link) =>
+                link.module === "food"
+        );
+
+    if (!foodLink) {
+
+        throw new Error(
+            "This Align account is not connected to Food."
+        );
+
+    }
+
+    const foodUserResult =
+        await alignAccountService.resolveLinkedModuleUser(
+            "food",
+            foodLink.module_user_id
+        );
+
+    const data =
+        await posAuthRepository.getUserWithRestaurantById(
+            foodUserResult.user.id
+        );
 
     if (!data) {
-         console.log("DB Email:", data.email);
-
-    console.log("Hash Exists:", !!data.password);
 
         throw new Error(
-            "Invalid email or password"
+            "Food account data not found."
         );
 
     }
 
-    console.log("Input Password:", password);
-console.log("Stored Hash:", data.password);
+    if (!data.active_device_id) {
 
-    const passwordMatched =
-        await bcrypt.compare(
-            password.trim(),
-            data.password.trim()
-        );
-        console.log("Password Matched:", passwordMatched);
-
-    if (!passwordMatched) {
-
-        throw new Error(
-            "Invalid email or password"
-        );
-
-    }
-    if (
-    !data.active_device_id
-) {
-
-    await posAuthRepository
-    .updateActiveDeviceId(
-        data.restaurant_id,
-        deviceId
-    );
-
-data.active_device_id =
-    deviceId; 
-
-}
-else if (
-    data.active_device_id !==
-    deviceId
-) {
-
-    const err =
-    new Error(
-        "This account is already active on another computer."
-    );
-
-err.code =
-    "DEVICE_CONFLICT";
-
-throw err;
-
-}
-    const token =
-    jwt.sign(
-
-        {
-
-            restaurantId:
+        await posAuthRepository
+            .updateActiveDeviceId(
                 data.restaurant_id,
+                deviceId
+            );
 
-            userId:
-                data.id,
+        data.active_device_id =
+            deviceId;
 
-            role:
-                data.role
+    } else if (
+        data.active_device_id !==
+        deviceId
+    ) {
 
-        },
+        const err =
+            new Error(
+                "This account is already active on another computer."
+            );
 
-        process.env.JWT_SECRET,
+        err.code =
+            "DEVICE_CONFLICT";
 
-        {
+        throw err;
 
-            expiresIn:
-                "5y"
+    }
 
-        }
+    const token =
+        jwt.sign(
 
-    );
+            {
+                restaurantId:
+                    data.restaurant_id,
+
+                userId:
+                    data.id,
+
+                role:
+                    data.role
+            },
+
+            process.env.JWT_SECRET,
+
+            {
+                expiresIn:
+                    "5y"
+            }
+        );
 
     return {
-         token,
 
-    restaurant: {
+        token,
 
-        id: data.restaurant_id,
+        restaurant: {
 
-        name: data.restaurant_name,
+            id:
+                data.restaurant_id,
 
-        owner_name: data.owner_name,
+            name:
+                data.restaurant_name,
 
-        mobile: data.restaurant_mobile,
+            owner_name:
+                data.owner_name,
 
-        email: data.restaurant_email,
+            mobile:
+                data.restaurant_mobile,
 
-        gst_number: data.gst_number,
+            email:
+                data.restaurant_email,
 
-        fssai_number: data.fssai_number,
+            gst_number:
+                data.gst_number,
 
-        address: data.address,
+            fssai_number:
+                data.fssai_number,
 
-        city: data.city,
+            address:
+                data.address,
 
-        state: data.state,
+            city:
+                data.city,
 
-        pincode: data.pincode,
+            state:
+                data.state,
 
-        logo: data.logo,
+            pincode:
+                data.pincode,
 
-        restaurant_code: data.restaurant_code,
+            logo:
+                data.logo,
 
-        plan_id: data.plan_id,
+            restaurant_code:
+                data.restaurant_code,
 
-        subscription_status: data.subscription_status,
+            plan_id:
+                data.plan_id,
 
-        plan_start: data.plan_start,
+            subscription_status:
+                data.subscription_status,
 
-        plan_end: data.plan_end,
+            plan_start:
+                data.plan_start,
 
-        trial_used: data.trial_used,
+            plan_end:
+                data.plan_end,
 
-        status: data.restaurant_status
+            trial_used:
+                data.trial_used,
 
-    },
+            status:
+                data.restaurant_status
+        },
 
-    user: {
+        user: {
 
-        id: data.id,
+            id:
+                data.id,
 
-        restaurant_id: data.restaurant_id,
+            restaurant_id:
+                data.restaurant_id,
 
-        name: data.name,
+            name:
+                data.name,
 
-        email: data.email,
+            email:
+                data.email,
 
-        mobile: data.mobile,
+            mobile:
+                data.mobile,
 
-        password_hash: data.password,
+            password_hash:
+                centralResult.account.password,
 
-        role: data.role,
+            role:
+                data.role,
 
-        status: data.status
+            status:
+                data.status
+        },
 
-    },
+        plan: {
 
-    plan: {
+            id:
+                data.plan_id,
 
-        id: data.plan_id,
+            slug:
+                data.plan_slug,
 
-        slug: data.plan_slug,
+            display_name:
+                data.display_name,
 
-        display_name: data.display_name,
+            description:
+                data.plan_description,
 
-        description: data.plan_description,
+            sort_order:
+                data.sort_order,
 
-        sort_order: data.sort_order,
+            status:
+                data.plan_status
+        },
 
-        status: data.plan_status
+        planLimit: {
 
-    },
+            plan_id:
+                data.plan_id,
 
-    planLimit: {
+            limit_key:
+                "waiter_devices",
 
-        plan_id: data.plan_id,
-
-        limit_key: "waiter_devices",
-
-        limit_value: data.allowed_devices
-
-    }
-        
+            limit_value:
+                data.allowed_devices
+        }
 
     };
 
 };
+
 exports.replaceDevice = async (
     email,
     password,
