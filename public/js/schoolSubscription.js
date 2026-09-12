@@ -323,7 +323,7 @@ ${buttonText}
 </button>
 <a
 
-href="/downloads/Align.apk"
+href="/downloads/School.apk"
 
 download
 
