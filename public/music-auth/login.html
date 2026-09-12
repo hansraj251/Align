@@ -658,6 +658,49 @@
 
 <script>
 
+    const existingMusicToken =
+        localStorage.getItem("musicToken");
+
+    if (existingMusicToken) {
+        try {
+            const payloadPart =
+                existingMusicToken.split(".")[1];
+
+            if (!payloadPart) {
+                throw new Error("Invalid token");
+            }
+
+            const normalizedPayload =
+                payloadPart
+                    .replace(/-/g, "+")
+                    .replace(/_/g, "/");
+
+            const paddedPayload =
+                normalizedPayload +
+                "=".repeat(
+                    (4 - normalizedPayload.length % 4) % 4
+                );
+
+            const existingPayload =
+                JSON.parse(
+                    atob(paddedPayload)
+                );
+
+            if (
+                existingPayload &&
+                existingPayload.module === "music"
+            ) {
+                window.location.href =
+                    "/music-index.html";
+            }
+        } catch (error) {
+            console.error(
+                "Music session check failed:",
+                error
+            );
+        }
+    }
+
     const loginBtn =
         document.getElementById(
             "loginBtn"
