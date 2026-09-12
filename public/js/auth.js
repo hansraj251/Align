@@ -196,8 +196,14 @@ requireSchoolOwner() {
 
         sessionStorage.clear();
 
+        const loginUrl =
+            returnTo
+                ? "/login.html?returnTo=" +
+                  encodeURIComponent(returnTo)
+                : "/login.html";
+
         window.location.replace(
-            "/login.html"
+            loginUrl
         );
 
     },

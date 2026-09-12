@@ -652,7 +652,7 @@ document.getElementById(
     "click",
     () => {
 
-        Auth.logout();
+        Auth.logout("/school/login.html");
 
     }
 );

@@ -27,8 +27,12 @@ const foodReturnTo = (() => {
 })();
 
 function redirectFoodUser() {
+    const subscriptionUrl =
+        "/admin/subscription.html?returnTo=" +
+        encodeURIComponent("/food/login.html");
+
     window.location.href =
-        foodReturnTo || "/admin/subscription.html";
+        foodReturnTo || subscriptionUrl;
 }
 
 function decodeToken(token) {

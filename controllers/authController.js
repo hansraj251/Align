@@ -284,18 +284,30 @@ if (
                     password
                 );
 
-            const moduleLink =
+            let moduleLink =
                 centralResult.moduleLinks.find(
                     (link) =>
                         link.module === "property"
                 );
 
             if (!moduleLink) {
-                return res.status(403).json({
-                    success: false,
-                    message:
-                        "This Align account is not connected to the requested product."
-                });
+
+                const propertyUserId =
+                    await alignAccountService
+                        .ensurePropertyUser(
+                            centralResult.account.id,
+                            centralResult.account.name,
+                            centralResult.account.email,
+                            centralResult.account.mobile,
+                            centralResult.account.password
+                        );
+
+                moduleLink = {
+                    module:
+                        "property",
+                    module_user_id:
+                        propertyUserId
+                };
             }
 
             const propertyUser =
@@ -362,6 +374,78 @@ if (
                 );
 
             if (!moduleLink) {
+
+                if (requestedModule === "food") {
+
+                    const foodUserId =
+                        await alignAccountService
+                            .ensureFoodUser(
+                                centralResult.account.id,
+                                centralResult.account.name,
+                                centralResult.account.email,
+                                centralResult.account.mobile,
+                                centralResult.account.password
+                            );
+
+                    const linkedResult =
+                        await alignAccountService
+                            .resolveLinkedModuleUser(
+                                "food",
+                                foodUserId
+                            );
+
+                    const linkedUser =
+                        linkedResult.user;
+
+                    const token =
+                        jwt.sign(
+                            {
+                                userId:
+                                    linkedUser.id,
+                                alignAccountId:
+                                    centralResult.account.id,
+                                restaurantId:
+                                    linkedUser.restaurant_id,
+                                businessType:
+                                    linkedUser.business_type,
+                                role:
+                                    linkedUser.role,
+                                module:
+                                    "food"
+                            },
+                            process.env.JWT_SECRET,
+                            {
+                                expiresIn:
+                                    "7d"
+                            }
+                        );
+
+                    return res.json({
+                        success: true,
+                        message:
+                            "Login Successful",
+                        token,
+                        businessType:
+                            linkedUser.business_type,
+                        restaurantId:
+                            linkedUser.restaurant_id ||
+                            null,
+                        user: {
+                            id:
+                                linkedUser.id,
+                            name:
+                                linkedUser.name,
+                            email:
+                                centralResult.account.email,
+                            mobile:
+                                centralResult.account.mobile,
+                            role:
+                                linkedUser.role,
+                            status:
+                                linkedUser.status
+                        }
+                    });
+                }
 
                 if (requestedModule === "school") {
 

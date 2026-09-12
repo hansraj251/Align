@@ -505,8 +505,19 @@ function logout() {
 
     localStorage.clear();
 
+    const returnTo =
+        new URLSearchParams(
+            window.location.search
+        ).get("returnTo");
+
+    const loginUrl =
+        returnTo === "/food/login.html"
+            ? "/login.html?returnTo=" +
+              encodeURIComponent(returnTo)
+            : "/login.html";
+
     window.location.href =
-        "/login.html";
+        loginUrl;
 
 }
 

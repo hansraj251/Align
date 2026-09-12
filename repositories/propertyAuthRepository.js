@@ -97,6 +97,55 @@ exports.getProfile = async (
 };
 
 
+exports.create = async (
+    name,
+    email,
+    mobile,
+    password
+) => {
+
+    const result =
+        await db.runAsync(
+            `
+            INSERT INTO property_users
+            (
+                name,
+                email,
+                mobile,
+                password,
+                status
+            )
+            VALUES
+            (?, ?, ?, ?, ?)
+            `,
+            [
+                name,
+                email,
+                mobile,
+                password,
+                "active"
+            ]
+        );
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            name,
+            email,
+            mobile,
+            status,
+            created_at,
+            updated_at
+        FROM property_users
+        WHERE id = ?
+        `,
+        [
+            result.lastID
+        ]
+    );
+};
+
 exports.updateProfile = async (
     userId,
     name,

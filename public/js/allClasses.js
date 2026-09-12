@@ -33,7 +33,7 @@ function setupHeader(
             "click",
             () => {
 
-                Auth.logout();
+                Auth.logout("/school/login.html");
 
             }
         );

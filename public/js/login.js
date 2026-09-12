@@ -239,8 +239,14 @@ async function login() {
             payload.restaurantId
         );
 
+        const subscriptionUrl =
+            loginReturnTo === "/food/login.html"
+                ? "/admin/subscription.html?returnTo=" +
+                  encodeURIComponent(loginReturnTo)
+                : "/admin/subscription.html";
+
         window.location.href =
-            "/admin/subscription.html";
+            subscriptionUrl;
 
     }
     catch (err) {

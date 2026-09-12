@@ -1,6 +1,10 @@
 const alignAccountRepository =
     require("../repositories/alignAccountRepository");
 
+
+const propertyAuthRepository =
+    require("../repositories/propertyAuthRepository");
+
 exports.getAccount =
 async (
     accountId
@@ -369,6 +373,69 @@ async (
         });
 };
 
+exports.ensureFoodUser = async (
+    accountId,
+    name,
+    email,
+    mobile,
+    passwordHash
+) => {
+    if (!accountId) {
+        throw new Error("Align account ID is required");
+    }
+
+    const central =
+        await exports.getAccount(
+            accountId
+        );
+
+    const existingLink =
+        central.moduleLinks.find(
+            link => link.module === "food"
+        );
+
+    if (existingLink) {
+        return existingLink.module_user_id;
+    }
+
+    if (!central.account.email) {
+        throw new Error(
+            "Email is missing from the Align account"
+        );
+    }
+
+    if (!central.account.mobile) {
+        throw new Error(
+            "Mobile number is missing from the Align account. Please update your Align account first."
+        );
+    }
+
+    const authSignupService =
+        require("./authSignupService");
+
+    const restaurantResult =
+        await authSignupService
+            .createRestaurantWorkspace({
+                restaurantName:
+                    central.account.name,
+                ownerName:
+                    central.account.name,
+                email:
+                    central.account.email,
+                mobile:
+                    central.account.mobile,
+                passwordHash
+            });
+
+    await alignAccountRepository.linkModuleUser(
+        accountId,
+        "food",
+        restaurantResult.userId
+    );
+
+    return restaurantResult.userId;
+};
+
 exports.ensureMusicUser = async (
     accountId,
     name,
@@ -404,6 +471,65 @@ exports.ensureMusicUser = async (
     );
 
     return musicUser.id;
+};
+
+exports.ensurePropertyUser = async (
+    accountId,
+    name,
+    email,
+    mobile,
+    passwordHash
+) => {
+
+    if (!accountId) {
+        throw new Error(
+            "Align account ID is required"
+        );
+    }
+
+    const central =
+        await exports.getAccount(
+            accountId
+        );
+
+    const existingLink =
+        central.moduleLinks.find(
+            link =>
+                link.module === "property"
+        );
+
+    if (existingLink) {
+        return existingLink.module_user_id;
+    }
+
+    if (!central.account.email) {
+        throw new Error(
+            "Email is missing from the Align account"
+        );
+    }
+
+    if (!central.account.mobile) {
+        throw new Error(
+            "Mobile number is missing from the Align account. Please update your Align account first."
+        );
+    }
+
+    const propertyUser =
+        await propertyAuthRepository.create(
+            name ||
+                central.account.name,
+            central.account.email,
+            central.account.mobile,
+            passwordHash
+        );
+
+    await alignAccountRepository.linkModuleUser(
+        accountId,
+        "property",
+        propertyUser.id
+    );
+
+    return propertyUser.id;
 };
 
 exports.resolveModuleAccount =
@@ -450,9 +576,6 @@ async (
             "Property user ID is required"
         );
     }
-
-    const propertyAuthRepository =
-        require("../repositories/propertyAuthRepository");
 
     const user =
         await propertyAuthRepository
