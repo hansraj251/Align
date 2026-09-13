@@ -291,3 +291,36 @@ exports.removeSongFromPlaylist = async (
 
     return true;
 };
+exports.getDiscoverSongs = async userId => {
+    return await db.allAsync(
+        `
+        SELECT
+            s.youtube_video_id AS videoId,
+            s.title,
+            s.artist,
+            s.channel_title AS channelTitle,
+            s.channel_id AS channelId,
+            s.thumbnail_url AS thumbnailUrl,
+            s.duration,
+            s.language,
+            s.updated_at AS updatedAt
+        FROM music_songs s
+        WHERE s.youtube_video_id IN (
+            SELECT f.youtube_video_id
+            FROM music_favorites f
+            WHERE f.user_id = ?
+
+            UNION
+
+            SELECT ps.youtube_video_id
+            FROM music_playlist_songs ps
+            INNER JOIN music_playlists p
+                ON p.id = ps.playlist_id
+            WHERE p.user_id = ?
+        )
+        ORDER BY s.updated_at DESC
+        LIMIT 60
+        `,
+        [userId, userId]
+    );
+};

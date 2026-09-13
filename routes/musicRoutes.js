@@ -29,6 +29,7 @@ router.post(
 
 router.get(
     "/discover",
+    musicAuthMiddleware,
     musicController.discover
 );
 

@@ -1126,9 +1126,31 @@ function getFavoriteVideoIds() {
 
         params.set("limit", "60");
 
-        const response = await fetch(
-            `/api/music/discover?${params.toString()}`
-        );
+        const token =
+    localStorage.getItem("musicToken");
+
+if (!token) {
+    discoverResults = [];
+
+    discoverContainer.innerHTML = `
+        <div class="music-empty">
+            <i class="fas fa-lock"></i>
+            <span>Please login to discover your music.</span>
+        </div>
+    `;
+
+    return;
+}
+
+const response = await fetch(
+    `/api/music/discover?${params.toString()}`,
+    {
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/json"
+        }
+    }
+);
 
         if (!response.ok) {
             throw new Error(

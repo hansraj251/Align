@@ -1,5 +1,7 @@
 const youtubeMusicService =
     require("../services/youtubeMusicService");
+const musicUserService =
+    require("../services/musicUserService");
 const db =
     require("../db");
 exports.search =
@@ -145,78 +147,26 @@ exports.discover =
     async (req, res) => {
 
         try {
-
-            const languages =
-                String(
-                    req.query.languages || ""
-                )
-                    .split(",")
-                    .map(language =>
-                        language.trim()
-                    )
-                    .filter(Boolean);
-
-            const artists =
-                String(
-                    req.query.artists || ""
-                )
-                    .split(",")
-                    .map(artist =>
-                        artist.trim()
-                    )
-                    .filter(Boolean);
-
-            const channels =
-                String(
-                    req.query.channels || ""
-                )
-                    .split(",")
-                    .map(channel =>
-                        channel.trim()
-                    )
-                    .filter(Boolean);
-            const channelIds =
-    String(
-        req.query.channelIds || ""
-    )
-        .split(",")
-        .map(channelId =>
-            channelId.trim()
-        )
-        .filter(Boolean);        
-
-            const favoriteVideoIds =
-                String(
-                    req.query.favoriteVideoIds || ""
-                )
-                    .split(",")
-                    .map(videoId =>
-                        videoId.trim()
-                    )
-                    .filter(Boolean);
-
-            const limit =
-                Number(
-                    req.query.limit || 60
+            const songs =
+                await musicUserService.getDiscoverSongs(
+                    req.musicUserId
                 );
 
-            const songs =
-    await youtubeMusicService.discoverMusic({
-        languages,
-        artists,
-        channels,
-        channelIds,
-        favoriteVideoIds,
-        limit
-    });
+            const safeSongs =
+                Array.isArray(songs)
+                    ? songs
+                    : [];
 
             return res.json({
                 success: true,
-                songs
+                songs: {
+                    related: safeSongs,
+                    latest: [],
+                    songs: safeSongs
+                }
             });
 
-        }
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Music discover error:",
@@ -231,6 +181,7 @@ exports.discover =
             });
         }
     };
+
 const addYouTubeSong = async (req, res) => {
     try {
         const cleanVideoId = String(req.body?.videoId || "").trim();
