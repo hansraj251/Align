@@ -161,6 +161,11 @@ async function login() {
         );
 
         localStorage.setItem(
+            "lastLoginModule",
+            "school"
+        );
+
+        localStorage.setItem(
             "school_id",
             payload.schoolId
         );

@@ -131,6 +131,11 @@ async function login() {
 
     if (loginModule) {
         loginPayload.module = loginModule;
+
+        localStorage.setItem(
+            "lastLoginModule",
+            loginModule
+        );
     }
 
     const data =

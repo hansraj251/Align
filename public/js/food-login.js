@@ -138,6 +138,11 @@ async function login() {
         );
 
         localStorage.setItem(
+            "lastLoginModule",
+            "food"
+        );
+
+        localStorage.setItem(
             "restaurant_id",
             payload.restaurantId
         );

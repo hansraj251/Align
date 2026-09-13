@@ -54,6 +54,11 @@ async function login() {
             data.token
         );
 
+        localStorage.setItem(
+            "lastLoginModule",
+            "ledger"
+        );
+
         localStorage.removeItem(
             "restaurant_id"
         );

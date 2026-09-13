@@ -65,6 +65,55 @@
         rel="icon"
         href="/favicon.ico">
 
+    <script>
+        (function () {
+
+            const module =
+                localStorage.getItem(
+                    "lastLoginModule"
+                );
+
+            const redirects = {
+                food:
+                    "/admin/subscription.html",
+
+                school:
+                    "/school/dashboard.html",
+
+                property:
+                    "/property/dashboard.html",
+
+                music:
+                    "/music-index.html",
+
+                ledger:
+                    "/ledger/index.html"
+            };
+
+            if (!module) {
+                return;
+            }
+
+            const hasSession =
+                module === "property"
+                    ? !!localStorage.getItem("propertyToken")
+                    : module === "music"
+                        ? !!localStorage.getItem("musicToken")
+                        : !!localStorage.getItem("token");
+
+            if (
+                hasSession &&
+                redirects[module]
+            ) {
+                window.location.replace(
+                    redirects[module]
+                );
+            }
+
+        })();
+    </script>
+
+
 
     <style>
 

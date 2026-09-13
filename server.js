@@ -78,7 +78,7 @@ app.use(
 );
 app.use(
     "/api/property/listings",
-    require("./routes/propertyListingRoutes")
+    require("./routes/propertyListingImageRoutes")
 );
 app.use(
     "/api/music",
