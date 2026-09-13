@@ -10,15 +10,14 @@
   <div class="app-shell">
 
     <header class="topbar">
-      <div>
-
-        <div class="business-name" id="businessName">Ledger</div>
-      </div>
+      <button class="logout-button" id="logoutButton" type="button">
+        Logout
+      </button>
 
       <div class="ledger-book-wrap">
         <button class="ledger-book-button" id="ledgerBookButton" type="button">
           <span>
-            <small>Ledger Books</small>
+            
             <strong id="selectedBookName">Ledger Book</strong>
           </span>
           <span class="chevron">⌄</span>
@@ -37,50 +36,83 @@
           </button>
         </div>
       </div>
+
     </header>
 
     <main class="content">
 
       <section class="summary-grid">
         <article class="summary-card get-card">
-          <span class="summary-label">YOU WILL GET</span>
+          <span class="summary-label">YOU WILL GIVE</span>
           <strong id="receivableAmount">₹0.00</strong>
         </article>
 
         <article class="summary-card give-card">
-          <span class="summary-label">YOU WILL GIVE</span>
+          <span class="summary-label">YOU WILL GET</span>
           <strong id="payableAmount">₹0.00</strong>
         </article>
       </section>
 
-      <button class="reports-button" id="reportsButton" type="button">
-        <span>View Reports</span>
-        <span>›</span>
-      </button>
+      <div class="search-reports-row">
 
-      <section class="search-section">
-        <div class="search-box">
-          <span class="search-icon">⌕</span>
-          <input
-            id="partySearch"
-            type="search"
-            placeholder="Search party"
-            autocomplete="off"
-          >
-          <button id="clearSearch" class="clear-search" type="button" hidden>×</button>
-        </div>
-      </section>
+
+        <section class="search-section">
+
+
+          <div class="search-box">
+
+
+            <span class="search-icon">⌕</span>
+
+
+            <input
+
+
+              id="partySearch"
+
+
+              type="search"
+
+
+              placeholder="Search party"
+
+
+              autocomplete="off"
+
+
+            >
+
+
+            <button id="clearSearch" class="clear-search" type="button" hidden>×</button>
+
+
+          </div>
+
+
+        </section>
+
+
+
+        <button class="reports-button" id="reportsButton" type="button">
+
+
+          <span>Reports</span>
+
+
+          <span>›</span>
+
+
+        </button>
+
+
+      </div>
 
       <section class="parties-section">
         <div class="section-heading">
           <div>
-            <h1>All Parties</h1>
-            <p id="partyCountText">Your ledger accounts</p>
+            
+            <p id="partyCountText" hidden>Your ledger accounts</p>
           </div>
-
-          <button class="refresh-button" id="refreshButton" type="button" aria-label="Refresh">
-            ↻
-          </button>
         </div>
 
         <div id="partiesList" class="parties-list"></div>
@@ -88,8 +120,8 @@
         <div id="emptyState" class="empty-state" hidden>
           <div class="empty-icon">＋</div>
           <h2>No parties yet</h2>
-          <p>Add a customer, supplier or other party to start your ledger.</p>
-          <button id="emptyAddPartyButton" type="button">Add Party</button>
+          <p>Add a customer, supplier or other.</p>
+          <button id="emptyAddPartyButton" type="button">Add</button>
         </div>
 
         <div id="noSearchResults" class="empty-state compact" hidden>
@@ -102,7 +134,7 @@
 
     <button class="floating-add" id="addPartyButton" type="button">
       <span>＋</span>
-      <span>Add Party</span>
+      
     </button>
 
     <nav class="bottom-nav">
@@ -123,8 +155,8 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="partyModalTitle">
       <div class="modal-header">
         <div>
-          <h2 id="partyModalTitle">Add Party</h2>
-          <p>Add a customer, supplier or other party.</p>
+          <h2 id="partyModalTitle">Add</h2>
+          <p>Add a customer, supplier or other.</p>
         </div>
         <button id="closePartyModal" class="modal-close" type="button">×</button>
       </div>

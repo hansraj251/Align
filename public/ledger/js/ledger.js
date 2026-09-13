@@ -33,7 +33,6 @@
     partiesList: $("partiesList"),
     emptyState: $("emptyState"),
     noSearchResults: $("noSearchResults"),
-    refreshButton: $("refreshButton"),
 
     addPartyButton: $("addPartyButton"),
     emptyAddPartyButton: $("emptyAddPartyButton"),
@@ -58,6 +57,16 @@
     }).format(amount);
   }
 
+  function moneyWhole(value) {
+    const amount = Number(value || 0);
+    return new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  }
+
   function getPartyName(party) {
     return party.name || party.party_name || "Unnamed Party";
   }
@@ -68,6 +77,7 @@
 
   function getPartyBalance(party) {
     return Number(
+      party.net_balance ??
       party.balance ??
       party.current_balance ??
       party.outstanding_balance ??
@@ -168,8 +178,8 @@
       }
     }
 
-    els.receivableAmount.textContent = money(receivable);
-    els.payableAmount.textContent = money(payable);
+    els.receivableAmount.textContent = moneyWhole(receivable);
+    els.payableAmount.textContent = moneyWhole(payable);
   }
 
   function filteredParties() {
@@ -229,15 +239,17 @@
         <span class="party-avatar">${escapeHtml(initials(name))}</span>
         <span class="party-info">
           <span class="party-name">${escapeHtml(name)}</span>
-          <span class="party-mobile">${escapeHtml(mobile || "No mobile number")}</span>
+          
         </span>
-        <span class="party-balance">
-          <span class="party-balance-amount">${escapeHtml(money(Math.abs(balance)))}</span>
-          <span class="party-balance-label">${
-            balance > 0 ? "You will get" :
-            balance < 0 ? "You will give" :
-            "No balance"
-          }</span>
+        <span class="party-balance ${
+          balance > 0
+            ? "party-balance-give"
+            : balance < 0
+              ? "party-balance-get"
+              : "party-balance-zero"
+        }">
+          <span class="party-balance-amount">${escapeHtml(moneyWhole(Math.abs(balance)))}</span>
+         
         </span>
       `;
 
@@ -271,8 +283,6 @@
   }
 
   async function refresh() {
-    els.refreshButton.disabled = true;
-
     try {
       await Promise.all([
         loadBusiness(),
@@ -281,8 +291,6 @@
     } catch (error) {
       console.error("Ledger refresh failed:", error);
       alert(error.message || "Unable to load ledger.");
-    } finally {
-      els.refreshButton.disabled = false;
     }
   }
 
@@ -375,8 +383,6 @@
       els.partySearch.focus();
     });
 
-    els.refreshButton.addEventListener("click", refresh);
-
     els.addPartyButton.addEventListener("click", openPartyModal);
     els.emptyAddPartyButton.addEventListener("click", openPartyModal);
 
@@ -401,4 +407,5 @@
 
   setupEvents();
   refresh();
+  setInterval(refresh, 30000);
 })();

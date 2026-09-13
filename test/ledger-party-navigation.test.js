@@ -3,6 +3,25 @@ const assert = require("node:assert/strict");
 const fs = require("fs");
 const vm = require("vm");
 
+test("Ledger index refreshes automatically without a refresh button", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/ledger.js"),
+        "utf8"
+    );
+
+    assert.doesNotMatch(
+        source,
+        /refreshButton/,
+        "Ledger index must not depend on the manual refresh button"
+    );
+
+    assert.match(
+        source,
+        /setInterval\(refresh,\s*30000\)/,
+        "Ledger index must refresh automatically every 30 seconds"
+    );
+});
+
 test("Ledger party row opens that party's Khata detail page", async () => {
     const source = fs.readFileSync(
         require.resolve("../public/ledger/js/ledger.js"),
@@ -119,6 +138,9 @@ test("Ledger party row opens that party's Khata detail page", async () => {
         setTimeout(callback) {
             callback();
         },
+        setInterval() {
+            return 1;
+        },
         Intl,
         console: {
             error(...args) {
@@ -136,6 +158,36 @@ test("Ledger party row opens that party's Khata detail page", async () => {
     const row = elements.partiesList.child;
 
     assert.ok(row, "Party row should be rendered");
+
+    assert.match(
+        row.innerHTML,
+        /₹500/,
+        "Party card must show the calculated net balance"
+    );
+
+    assert.match(
+        row.innerHTML,
+        /You will give/,
+        "Positive balance must show You will give"
+    );
+
+    assert.match(
+        row.innerHTML,
+        /party-balance-give/,
+        "You will give amount must use the give color class"
+    );
+
+    assert.equal(
+        elements.receivableAmount.textContent,
+        "₹500",
+        "Receivable summary must include the party net balance"
+    );
+
+    assert.equal(
+        elements.payableAmount.textContent,
+        "₹0",
+        "Payable summary must remain zero"
+    );
 
     row.dispatchEvent({
         type: "click"

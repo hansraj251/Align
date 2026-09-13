@@ -129,3 +129,81 @@ test("ensureLedgerBusiness returns an existing active business without creating 
             originalCreate;
     }
 });
+
+const ledgerPartyRepository =
+    require("../repositories/ledgerPartyRepository");
+
+const ledgerTransactionRepository =
+    require("../repositories/ledgerTransactionRepository");
+
+const ledgerPartyService =
+    require("../services/ledgerPartyService");
+
+test("getParty includes calculated transaction balance", async () => {
+    const originalGetBusiness =
+        ledgerBusinessService.getBusiness;
+    const originalGetById =
+        ledgerPartyRepository.getById;
+    const originalGetSummaryByPartyId =
+        ledgerTransactionRepository.getSummaryByPartyId;
+
+    ledgerBusinessService.getBusiness =
+        async () => ({
+            id: 9,
+            account_id: 42,
+            business_name: "Test Business",
+            status: "active"
+        });
+
+    ledgerPartyRepository.getById =
+        async () => ({
+            id: 1,
+            business_id: 9,
+            party_name: "Test Party",
+            mobile: "9876543210",
+            opening_balance: 0,
+            opening_balance_type: "credit",
+            status: "active"
+        });
+
+    ledgerTransactionRepository.getSummaryByPartyId =
+        async () => ({
+            total_credit: 6000,
+            total_debit: 7000
+        });
+
+    try {
+        const party =
+            await ledgerPartyService.getParty(
+                42,
+                1
+            );
+
+        assert.equal(
+            party.total_credit,
+            6000
+        );
+
+        assert.equal(
+            party.total_debit,
+            7000
+        );
+
+        assert.equal(
+            party.net_balance,
+            -1000
+        );
+
+        assert.equal(
+            party.balance_type,
+            "payable"
+        );
+    } finally {
+        ledgerBusinessService.getBusiness =
+            originalGetBusiness;
+        ledgerPartyRepository.getById =
+            originalGetById;
+        ledgerTransactionRepository.getSummaryByPartyId =
+            originalGetSummaryByPartyId;
+    }
+});

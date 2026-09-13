@@ -188,9 +188,48 @@ async function getParty(
         );
     }
 
-    return party;
-}
+    const summary =
+        await ledgerTransactionRepository
+            .getSummaryByPartyId(party.id);
 
+    const openingBalance =
+        Number(party.opening_balance || 0);
+
+    const openingCredit =
+        party.opening_balance_type === "credit"
+            ? openingBalance
+            : 0;
+
+    const openingDebit =
+        party.opening_balance_type === "debit"
+            ? openingBalance
+            : 0;
+
+    const totalCredit =
+        openingCredit +
+        Number(summary.total_credit || 0);
+
+    const totalDebit =
+        openingDebit +
+        Number(summary.total_debit || 0);
+
+    const netBalance =
+        totalCredit -
+        totalDebit;
+
+    return {
+        ...party,
+        total_credit: totalCredit,
+        total_debit: totalDebit,
+        net_balance: netBalance,
+        balance_type:
+            netBalance > 0
+                ? "receivable"
+                : netBalance < 0
+                    ? "payable"
+                    : "settled"
+    };
+}
 async function createParty(
     accountId,
     {
