@@ -17,6 +17,9 @@ const closeTransactionModal = document.getElementById("closeTransactionModal");
 const cancelTransactionButton = document.getElementById("cancelTransactionButton");
 const transactionForm = document.getElementById("transactionForm");
 const transactionType = document.getElementById("transactionType");
+const transactionTypeButtons = document.querySelectorAll(
+    "[data-transaction-type]"
+);
 const transactionAmount = document.getElementById("transactionAmount");
 const transactionDate = document.getElementById("transactionDate");
 const transactionDescription = document.getElementById("transactionDescription");
@@ -28,6 +31,38 @@ const transactionSubmitButton =
 let editingTransactionId = null;
 let loadedTransactions = [];
 
+function setTransactionType(type) {
+    const selectedType =
+        type === "credit" ? "credit" : "debit";
+
+    if (transactionType) {
+        transactionType.value = selectedType;
+    }
+
+    transactionTypeButtons.forEach((button) => {
+        const selected =
+            button.dataset.transactionType === selectedType;
+
+        button.classList.toggle(
+            "active",
+            selected
+        );
+
+        button.setAttribute(
+            "aria-pressed",
+            String(selected)
+        );
+    });
+}
+
+transactionTypeButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+        setTransactionType(
+            button.dataset.transactionType
+        );
+    });
+});
+
 function formatAmount(amount) {
     const value = Number(amount || 0);
 
@@ -35,6 +70,17 @@ function formatAmount(amount) {
         style: "currency",
         currency: "INR",
         minimumFractionDigits: 2
+    }).format(Math.abs(value));
+}
+
+function formatTransactionAmount(amount) {
+    const value = Number(amount || 0);
+
+    return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
     }).format(Math.abs(value));
 }
 
@@ -58,9 +104,9 @@ function renderParty(party) {
     partyBalance.textContent = formatAmount(balance);
 
     if (party.balance_type === "receivable") {
-        partyBalanceLabel.textContent = "YOU WILL GET";
-    } else if (party.balance_type === "payable") {
         partyBalanceLabel.textContent = "YOU WILL GIVE";
+    } else if (party.balance_type === "payable") {
+        partyBalanceLabel.textContent = "YOU WILL GET";
     } else {
         partyBalanceLabel.textContent = "SETTLED";
     }
@@ -86,14 +132,14 @@ function renderTransactions(transactions) {
     }
 
     transactionsList.innerHTML = loadedTransactions.map((transaction) => {
-        const amount = formatAmount(transaction.amount);
+        const amount = formatTransactionAmount(transaction.amount);
         const description =
-            transaction.description || "Transaction";
+            transaction.description || "";
 
         const typeLabel =
             transaction.transaction_type === "credit"
-                ? "You will get"
-                : "You will give";
+                ? "You Got"
+                : "You Gave";
 
         return `
             <article class="party-row" data-transaction-id="${transaction.id}">
@@ -101,9 +147,13 @@ function renderTransactions(transactions) {
                     <strong class="party-name">${description}</strong>
                     <span class="party-mobile">${transaction.transaction_date || ""}</span>
                 </div>
-                <div class="party-balance">
-                    <strong class="party-balance-amount">${amount}</strong>
+                <div class="party-balance ${
+                    transaction.transaction_type === "credit"
+                        ? "transaction-got"
+                        : "transaction-gave"
+                }">
                     <span class="party-balance-label">${typeLabel}</span>
+                    <strong class="party-balance-amount">${amount}</strong>
                 </div>
                 <div class="transaction-actions">
                     <button
@@ -144,8 +194,8 @@ function setTransactionFormMode(transaction = null) {
     if (transactionSubmitButton) {
         transactionSubmitButton.textContent =
             editingTransactionId
-                ? "Update Transaction"
-                : "Save Transaction";
+                ? "Update"
+                : "Save";
     }
 }
 
@@ -160,8 +210,9 @@ function openEditTransaction(transactionId) {
 
     setTransactionFormMode(transaction);
 
-    transactionType.value =
-        transaction.transaction_type || "credit";
+    setTransactionType(
+        transaction.transaction_type || "credit"
+    );
 
     transactionAmount.value =
         transaction.amount ?? "";
@@ -340,6 +391,8 @@ function openTransactionModal() {
     if (transactionForm) {
         transactionForm.reset();
     }
+
+    setTransactionType("debit");
 
     transactionModal.hidden = false;
 

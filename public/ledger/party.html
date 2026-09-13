@@ -11,14 +11,15 @@
     <header class="topbar">
       <a href="/ledger/index.html" class="ledger-book-button" style="text-decoration:none;">
         <span>
-          <small>Ledger</small>
-          <strong>Party Khata</strong>
+          <strong>Back</strong>
         </span>
       </a>
-
-      <button class="logout-button" id="logoutButton" type="button">
-        Logout
-      </button>
+      <div class="section-heading">
+          <div>
+            <h1 id="partyName"></h1>
+            <p id="partyMobile"></p>
+          </div>
+        </div>
     </header>
 
     <main class="content">
@@ -32,12 +33,6 @@
       </section>
 
       <section id="partyDetails" hidden>
-        <div class="section-heading">
-          <div>
-            <h1 id="partyName"></h1>
-            <p id="partyMobile"></p>
-          </div>
-        </div>
 
         <article class="summary-card get-card">
           <span class="summary-label" id="partyBalanceLabel">BALANCE</span>
@@ -55,12 +50,6 @@
         </button>
 
         <section class="parties-section" style="margin-top:24px;">
-          <div class="section-heading">
-            <div>
-              <h1>Transactions</h1>
-              <p>Party account history</p>
-            </div>
-          </div>
 
           <div id="transactionsList" class="parties-list"></div>
         </section>
@@ -77,13 +66,24 @@
           </div>
 
           <form id="transactionForm">
-            <label>
-              Transaction Type
-              <select id="transactionType" required>
-                <option value="credit">You Got</option>
-                <option value="debit">You Gave</option>
-              </select>
-            </label>
+            <div class="transaction-type-field">
+              <span class="transaction-type-label"></span>
+              <div class="transaction-type-buttons" role="group" aria-label="Transaction Type">
+                <button
+                  type="button"
+                  class="transaction-type-button"
+                  data-transaction-type="debit"
+                  aria-pressed="false"
+                >YOU GAVE</button>
+                <button
+                  type="button"
+                  class="transaction-type-button"
+                  data-transaction-type="credit"
+                  aria-pressed="false"
+                >YOU GOT</button>
+              </div>
+              <input type="hidden" id="transactionType" value="debit" required>
+            </div>
 
             <label>
               Amount
@@ -97,7 +97,7 @@
 
             <label>
               Note
-              <textarea id="transactionDescription" rows="3" maxlength="250"></textarea>
+              <textarea id="transactionDescription" rows="3" maxlength="40"></textarea>
             </label>
 
             <div class="form-actions">

@@ -24,6 +24,11 @@ test("Ledger Party Detail loads the selected party", async () => {
         "utf8"
     );
 
+    const cssSource = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
     const elements = {
         partyLoading: { hidden: false },
         partyError: {
@@ -73,6 +78,9 @@ test("Ledger Party Detail loads the selected party", async () => {
             },
             getElementById(id) {
                 return elements[id];
+            },
+            querySelectorAll() {
+                return [];
             },
             createElement() {
                 return {
@@ -203,6 +211,9 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
             getElementById(id) {
                 return elements[id];
             },
+            querySelectorAll() {
+                return [];
+            },
             createElement() {
                 return {
                     addEventListener() {},
@@ -287,8 +298,24 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
 
     assert.match(
         elements.transactionsList.innerHTML,
-        /500/,
-        "Transaction amount must be rendered"
+        /<span class="party-balance-label">You Got<\/span>\s*<strong class="party-balance-amount">₹500<\/strong>/,
+        "Credit transaction must show You Got before the amount without .00"
+    );
+    assert.doesNotMatch(
+        elements.transactionsList.innerHTML,
+        />Transaction</,
+        "Empty transaction notes must not show the Transaction fallback"
+    );
+
+    assert.match(
+        elements.transactionsList.innerHTML,
+        /party-name/,
+        "Transaction description must use the party-name element"
+    );
+    assert.match(
+        cssSource,
+        /\.party-name[\\s\\S]*?overflow-wrap:\s*anywhere/,
+        "Long transaction notes must wrap inside the card"
     );
 });
 
@@ -332,6 +359,27 @@ test("Ledger Party Detail provides an Add Transaction form for the selected part
         html,
         /id="transactionDescription"/,
         "Transaction form must provide a transaction description field"
+    );
+});
+
+test("Ledger Party Detail provides You Gave and You Got transaction buttons", () => {
+    const html = fs.readFileSync("public/ledger/party.html", "utf8");
+
+    assert.match(html, /You Gave/);
+    assert.match(html, /You Got/);
+    assert.match(html, /data-transaction-type=["']debit["']/);
+    assert.match(html, /data-transaction-type=["']credit["']/);
+});
+
+test("Ledger Party Detail defaults a new transaction to You Gave", () => {
+    const html = fs.readFileSync(
+        "public/ledger/party.html",
+        "utf8"
+    );
+
+    assert.match(
+        html,
+        /id=["']transactionType["'][^>]*value=["']debit["']/
     );
 });
 
@@ -447,6 +495,9 @@ test("Ledger Party Detail saves a new transaction for the selected party", async
             },
             getElementById(id) {
                 return elements[id];
+            },
+            querySelectorAll() {
+                return [];
             },
             createElement() {
                 return {
@@ -661,6 +712,9 @@ test("Ledger Party Detail refreshes the party balance after saving a transaction
             getElementById(id) {
                 return elements[id];
             },
+            querySelectorAll() {
+                return [];
+            },
             createElement() {
                 return {
                     addEventListener() {},
@@ -861,6 +915,9 @@ test("Ledger Party Detail renders edit and delete controls with the transaction 
             getElementById(id) {
                 return elements[id];
             },
+            querySelectorAll() {
+                return [];
+            },
             createElement() {
                 return {
                     addEventListener() {},
@@ -1053,6 +1110,9 @@ test("Ledger Party Detail edits an existing transaction using its transaction ID
             },
             getElementById(id) {
                 return elements[id];
+            },
+            querySelectorAll() {
+                return [];
             }
         },
         fetch: async (path, options = {}) => {
@@ -1318,6 +1378,9 @@ test("Ledger Party Detail deletes an existing transaction using its transaction 
             },
             getElementById(id) {
                 return elements[id];
+            },
+            querySelectorAll() {
+                return [];
             }
         },
         fetch: async (path, options = {}) => {
