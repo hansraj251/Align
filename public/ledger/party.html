@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Party Khata - Ledger</title>
+  <link rel="stylesheet" href="/ledger/css/ledger.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a href="/ledger/index.html" class="ledger-book-button" style="text-decoration:none;">
+        <span>
+          <small>Ledger</small>
+          <strong>Party Khata</strong>
+        </span>
+      </a>
+
+      <button class="logout-button" id="logoutButton" type="button">
+        Logout
+      </button>
+    </header>
+
+    <main class="content">
+      <section id="partyLoading" class="empty-state">
+        <h2>Loading party...</h2>
+      </section>
+
+      <section id="partyError" class="empty-state" hidden>
+        <h2>Unable to load party</h2>
+        <p></p>
+      </section>
+
+      <section id="partyDetails" hidden>
+        <div class="section-heading">
+          <div>
+            <h1 id="partyName"></h1>
+            <p id="partyMobile"></p>
+          </div>
+        </div>
+
+        <article class="summary-card get-card">
+          <span class="summary-label" id="partyBalanceLabel">BALANCE</span>
+          <strong id="partyBalance">₹0.00</strong>
+        </article>
+
+        <button
+          class="floating-add"
+          id="addTransactionButton"
+          type="button"
+          style="position:static; width:100%; margin-top:16px;"
+        >
+          <span>＋</span>
+          <span>Add Transaction</span>
+        </button>
+
+        <section class="parties-section" style="margin-top:24px;">
+          <div class="section-heading">
+            <div>
+              <h1>Transactions</h1>
+              <p>Party account history</p>
+            </div>
+          </div>
+
+          <div id="transactionsList" class="parties-list"></div>
+        </section>
+      </section>
+
+      <div class="modal-backdrop" id="transactionModal" hidden>
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="transactionModalTitle">
+          <div class="modal-header">
+            <div>
+              <h2 id="transactionModalTitle">Add Transaction</h2>
+              <p>Record money given or received from this party.</p>
+            </div>
+            <button id="closeTransactionModal" class="modal-close" type="button">×</button>
+          </div>
+
+          <form id="transactionForm">
+            <label>
+              Transaction Type
+              <select id="transactionType" required>
+                <option value="credit">You Got</option>
+                <option value="debit">You Gave</option>
+              </select>
+            </label>
+
+            <label>
+              Amount
+              <input id="transactionAmount" type="number" min="0.01" step="0.01" required>
+            </label>
+
+            <label>
+              Date
+              <input id="transactionDate" type="date" required>
+            </label>
+
+            <label>
+              Note
+              <textarea id="transactionDescription" rows="3" maxlength="250"></textarea>
+            </label>
+
+            <div class="form-actions">
+              <button id="cancelTransactionButton" type="button" class="secondary-button">Cancel</button>
+              <button id="transactionSubmitButton" type="submit" class="primary-button">Save Transaction</button>
+            </div>
+
+            <p id="transactionFormError" class="form-error" hidden></p>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/ledger/js/party.js"></script>
+</body>
+</html>

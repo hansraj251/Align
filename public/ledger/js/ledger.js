@@ -241,8 +241,10 @@
         </span>
       `;
 
-      // Party detail is intentionally not implemented in this phase.
-      row.addEventListener("click", () => {});
+      row.addEventListener("click", () => {
+        window.location.href =
+          `/ledger/party.html?id=${encodeURIComponent(party.id)}`;
+      });
 
       els.partiesList.appendChild(row);
     }
