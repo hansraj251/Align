@@ -1,4 +1,45 @@
-Auth.redirectIfLoggedIn();
+const existingLedgerToken =
+    localStorage.getItem("token");
+
+if (existingLedgerToken) {
+    try {
+        const payloadPart =
+            existingLedgerToken.split(".")[1];
+
+        if (!payloadPart) {
+            throw new Error("Invalid token");
+        }
+
+        const normalizedPayload =
+            payloadPart
+                .replace(/-/g, "+")
+                .replace(/_/g, "/");
+
+        const paddedPayload =
+            normalizedPayload +
+            "=".repeat(
+                (4 - normalizedPayload.length % 4) % 4
+            );
+
+        const existingPayload =
+            JSON.parse(
+                atob(paddedPayload)
+            );
+
+        if (
+            existingPayload &&
+            existingPayload.module === "ledger"
+        ) {
+            window.location.href =
+                "/ledger/index.html";
+        }
+    } catch (error) {
+        console.error(
+            "Ledger session check failed:",
+            error
+        );
+    }
+}
 
 document
     .getElementById("loginBtn")

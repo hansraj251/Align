@@ -104,6 +104,12 @@ async function login() {
 
         }
 
+        if (!loginPageReturnTo) {
+            window.location.href =
+                "/index.html";
+            return;
+        }
+
         const loginReturnTo =
         new URLSearchParams(
             window.location.search

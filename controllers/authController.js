@@ -12,6 +12,10 @@ const alignAccountService =
 
     require("../services/alignAccountService");
 
+const ledgerBusinessService =
+
+    require("../services/ledgerBusinessService");
+
 const schoolOnboardingService =
     require("../services/schoolOnboardingService");
 const otpService =
@@ -186,6 +190,10 @@ if (
                     password
                 );
 
+
+            await ledgerBusinessService.ensureLedgerBusiness(
+                centralResult.account
+            );
             const token =
                 jwt.sign(
                     {

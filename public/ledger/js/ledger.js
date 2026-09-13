@@ -16,11 +16,11 @@
   const $ = (id) => document.getElementById(id);
 
   const els = {
-    businessName: $("businessName"),
     selectedBookName: $("selectedBookName"),
     bookMenu: $("bookMenu"),
     ledgerBookButton: $("ledgerBookButton"),
     createBookButton: $("createBookButton"),
+    logoutButton: $("logoutButton"),
 
     receivableAmount: $("receivableAmount"),
     payableAmount: $("payableAmount"),
@@ -131,7 +131,6 @@
       state.business.businessName ||
       "Ledger";
 
-    els.businessName.textContent = name;
     els.selectedBookName.textContent = name;
 
     const activeBook = document.querySelector(".book-option.active span:first-child");
@@ -350,6 +349,11 @@
 
     els.createBookButton.addEventListener("click", () => {
       alert("Create new Ledger will be enabled in a later phase.");
+    });
+
+    els.logoutButton.addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "/ledger/login.html";
     });
 
     els.reportsButton.addEventListener("click", () => {

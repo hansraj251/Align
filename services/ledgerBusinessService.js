@@ -189,3 +189,41 @@ async (
             cleanCurrency
         );
 };
+
+exports.ensureLedgerBusiness = async (account) => {
+    if (!account || !account.id) {
+        throw new Error("Align account is required");
+    }
+
+    const existing =
+        await ledgerBusinessRepository.getByAccountId(
+            account.id
+        );
+
+    if (existing) {
+        if (existing.status !== "active") {
+            throw new Error(
+                "Ledger business is not active"
+            );
+        }
+
+        return existing;
+    }
+
+    const businessName =
+        String(account.name || "").trim();
+
+    if (!businessName) {
+        throw new Error(
+            "Ledger business name is required"
+        );
+    }
+
+    return await ledgerBusinessRepository.create(
+        account.id,
+        businessName,
+        String(account.mobile || "").trim() || null,
+        null,
+        "INR"
+    );
+};
