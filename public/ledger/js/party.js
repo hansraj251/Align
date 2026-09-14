@@ -10,6 +10,7 @@ const partyName = document.getElementById("partyName");
 const partyMobile = document.getElementById("partyMobile");
 const partyBalance = document.getElementById("partyBalance");
 const partyBalanceLabel = document.getElementById("partyBalanceLabel");
+const partyInterest = document.getElementById("partyInterest");
 const transactionsList = document.getElementById("transactionsList");
 const addTransactionButton = document.getElementById("addTransactionButton");
 const transactionModal = document.getElementById("transactionModal");
@@ -85,6 +86,62 @@ function formatTransactionAmount(amount) {
     }).format(Math.abs(value));
 }
 
+function calculateTransactionInterest(transaction, today = new Date()) {
+    const amount = Number(transaction.amount || 0);
+    const annualRate = Number(transaction.interest_rate || 0);
+    const transactionDate = transaction.transaction_date;
+
+    if (
+        !Number.isFinite(amount) ||
+        !Number.isFinite(annualRate) ||
+        !transactionDate ||
+        amount <= 0 ||
+        annualRate < 0
+    ) {
+        return 0;
+    }
+
+    const start = new Date(`${transactionDate}T00:00:00Z`);
+    const end = new Date(
+        Date.UTC(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        )
+    );
+
+    if (Number.isNaN(start.getTime()) || end < start) {
+        return 0;
+    }
+
+    const days = Math.floor(
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    return amount * (annualRate / 100) * (days / 365);
+}
+
+function calculateNetInterest(transactions, today = new Date()) {
+    return transactions.reduce((total, transaction) => {
+        const interest = calculateTransactionInterest(transaction, today);
+
+        return transaction.transaction_type === "debit"
+            ? total + interest
+            : total - interest;
+    }, 0);
+}
+
+function formatSignedAmount(amount) {
+    const value = Number(amount || 0);
+    const formatted = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        minimumFractionDigits: 2
+    }).format(Math.abs(value));
+
+    return value < 0 ? `-${formatted}` : formatted;
+}
+
 function showError(message) {
     partyLoading.hidden = true;
     partyDetails.hidden = true;
@@ -125,6 +182,12 @@ function renderTransactions(transactions) {
     loadedTransactions = Array.isArray(transactions)
         ? transactions
         : [];
+
+    if (partyInterest) {
+        partyInterest.textContent = formatSignedAmount(
+            calculateNetInterest(loadedTransactions)
+        );
+    }
 
     if (loadedTransactions.length === 0) {
         transactionsList.innerHTML =

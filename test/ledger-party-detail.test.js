@@ -2,6 +2,10 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 const fs = require("fs");
 const vm = require("vm");
+const cssSource = fs.readFileSync(
+    require.resolve("../public/ledger/css/ledger.css"),
+    "utf8"
+);
 
 test("Ledger Party Detail loads the selected party", async () => {
     const html = fs.readFileSync(
@@ -21,11 +25,6 @@ test("Ledger Party Detail loads the selected party", async () => {
     const scriptPath = `../public${scriptMatch[1]}`;
     const source = fs.readFileSync(
         require.resolve(scriptPath),
-        "utf8"
-    );
-
-    const cssSource = fs.readFileSync(
-        require.resolve("../public/ledger/css/ledger.css"),
         "utf8"
     );
 
@@ -55,7 +54,8 @@ test("Ledger Party Detail loads the selected party", async () => {
 
     const context = {
         Auth: {
-            requireLogin() {}
+            requireLogin() {},
+            logout() {}
         },
         localStorage: {
             getItem(key) {
@@ -315,7 +315,7 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
     );
     assert.match(
         cssSource,
-        /\.party-name[\\s\\S]*?overflow-wrap:\s*anywhere/,
+        /\.party-name[\s\S]*?overflow-wrap:\s*anywhere/,
         "Long transaction notes must wrap inside the card"
     );
 });
@@ -366,8 +366,8 @@ test("Ledger Party Detail provides an Add Transaction form for the selected part
 test("Ledger Party Detail provides You Gave and You Got transaction buttons", () => {
     const html = fs.readFileSync("public/ledger/party.html", "utf8");
 
-    assert.match(html, /You Gave/);
-    assert.match(html, /You Got/);
+    assert.match(html, /You Gave/i);
+    assert.match(html, /You Got/i);
     assert.match(html, /data-transaction-type=["']debit["']/);
     assert.match(html, /data-transaction-type=["']credit["']/);
 });
@@ -1512,5 +1512,132 @@ test("Ledger Party Detail deletes an existing transaction using its transaction 
     assert.ok(
         transactionLoads >= 2,
         "Transaction history must reload after deleting"
+    );
+});
+
+test("Ledger Party Detail calculates net interest through today for all transactions", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /calculate.*interest|interest.*calculate/i,
+        "Party detail must calculate transaction interest"
+    );
+
+    assert.match(
+        source,
+        /transaction_date/,
+        "Interest calculation must use each transaction date"
+    );
+
+    assert.match(
+        source,
+        /interest_rate/,
+        "Interest calculation must use each transaction interest rate"
+    );
+
+    assert.match(
+        source,
+        /365/,
+        "Annual interest must be prorated using 365 days"
+    );
+});
+
+test("Ledger Party Detail calculates the exact net interest amount", () => {
+    const source = fs.readFileSync(require.resolve("../public/ledger/js/party.js"), "utf8");
+
+    const context = {
+        document: {
+            getElementById: () => ({
+                addEventListener() {},
+                classList: {
+                    add() {},
+                    remove() {}
+                },
+                querySelector() {
+                    return null;
+                },
+                querySelectorAll() {
+                    return [];
+                }
+            }),
+            querySelectorAll() {
+                return [];
+            }
+        },
+        window: {
+            location: {
+                search: "?id=1"
+            }
+        },
+        Auth: {
+            requireLogin() {},
+            logout() {}
+        },
+        localStorage: {
+            getItem() {
+                return null;
+            }
+        },
+        URLSearchParams,
+        Intl,
+        Date,
+        console
+    };
+
+    vm.createContext(context);
+    vm.runInContext(source, context);
+
+    const today = new Date("2026-09-14T00:00:00Z");
+
+    const transactions = [
+        {
+            amount: 1000,
+            transaction_type: "debit",
+            transaction_date: "2026-09-10",
+            interest_rate: 12
+        },
+        {
+            amount: 500,
+            transaction_type: "credit",
+            transaction_date: "2026-09-13",
+            interest_rate: 12.5
+        },
+        {
+            amount: 1000,
+            transaction_type: "debit",
+            transaction_date: "2026-09-20",
+            interest_rate: 12
+        }
+    ];
+
+    const expected =
+        (1000 * 0.12 * (4 / 365)) -
+        (500 * 0.125 * (1 / 365));
+
+    const actual = context.calculateNetInterest(transactions, today);
+
+    assert.ok(Math.abs(actual - expected) < 1e-10);
+});
+
+test("Ledger Party Detail provides an INT summary card", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    assert.match(
+        html,
+        /id="partyInterest"/,
+        "Party detail must provide an INT summary value"
+    );
+
+    assert.match(
+        html,
+        /INT\./,
+        "Party detail must label the interest summary card as INT."
     );
 });

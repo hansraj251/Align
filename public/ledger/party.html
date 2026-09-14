@@ -34,10 +34,17 @@
 
       <section id="partyDetails" hidden>
 
-        <article class="summary-card get-card">
-          <span class="summary-label" id="partyBalanceLabel">BALANCE</span>
-          <strong id="partyBalance">₹0.00</strong>
-        </article>
+        <div class="party-summary-cards">
+          <article class="summary-card get-card">
+            <span class="summary-label" id="partyBalanceLabel">BALANCE</span>
+            <strong id="partyBalance">₹0.00</strong>
+          </article>
+
+          <article class="summary-card interest-card">
+            <span class="summary-label">INT.</span>
+            <strong id="partyInterest">₹0.00</strong>
+          </article>
+        </div>
 
         <button
           class="floating-add"
