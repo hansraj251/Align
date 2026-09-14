@@ -2199,3 +2199,41 @@ test("Ledger Party Detail Edit and Delete buttons reuse the Music playlist actio
         "Party Delete button must reuse music-playlist-delete class"
     );
 });
+
+test("Ledger Party Detail Add Transaction button is a compact plus-only floating action", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    const buttonMatch = html.match(
+        /<button[\s\S]*?id=["']addTransactionButton["'][\s\S]*?<\/button>/
+    );
+
+    assert.ok(buttonMatch, "Add Transaction button must exist");
+
+    assert.match(
+        buttonMatch[0],
+        /class=["'][^"']*\bfloating-add\b[^"']*["']/,
+        "Add Transaction button must use floating-add"
+    );
+
+    assert.doesNotMatch(
+        buttonMatch[0],
+        /style=["'][^"']*(?:position:\s*static|width:\s*100%)[^"']*["']/,
+        "Add Transaction button must not use full-width static inline styling"
+    );
+
+    assert.doesNotMatch(
+        buttonMatch[0],
+        /Add Transaction/,
+        "Add Transaction button must show only the plus symbol"
+    );
+
+    assert.match(
+        buttonMatch[0],
+        />\s*(?:\+|＋)\s*</,
+        "Add Transaction button must contain a plus symbol"
+    );
+});
+
