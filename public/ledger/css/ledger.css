@@ -195,6 +195,14 @@ button {
   letter-spacing: -0.5px;
 }
 
+.get-card strong {
+  color: #16a34a;
+}
+
+.give-card strong {
+  color: #dc2626;
+}
+
 .reports-button {
   width: 100%;
   display: flex;
@@ -349,6 +357,26 @@ button {
   margin-top: 3px;
   color: var(--muted);
   font-size: 10px;
+}
+
+.party-balance-label.party-balance-give {
+  color: #16a34a;
+}
+
+.party-balance-label.party-balance-get {
+  color: #dc2626;
+}
+
+.party-balance-label.party-balance-settled {
+  color: #ca8a04;
+}
+
+.party-interest-positive {
+  color: #16a34a;
+}
+
+.party-interest-negative {
+  color: #dc2626;
 }
 
 .empty-state {
@@ -1019,7 +1047,7 @@ button {
   color: #dc2626;
 }
 
-.party-balance-zero .party-balance-amount {
+.party-balance-settled .party-balance-amount {
   color: #ca8a04;
 }
 
@@ -1046,4 +1074,28 @@ button {
     .party-summary-cards {
         grid-template-columns: 1fr;
     }
+}
+
+.transaction-gave .party-transaction-interest {
+    color: #16a34a;
+}
+
+.transaction-got .party-transaction-interest {
+    color: #dc2626;
+}
+
+#partyBalance.party-balance-give {
+  color: #16a34a;
+}
+
+#partyBalance.party-balance-get {
+  color: #dc2626;
+}
+
+#partyBalance.party-balance-settled {
+  color: #ca8a04;
+}
+
+.party-balance-zero .party-balance-amount {
+  color: #ca8a04;
 }

@@ -75,6 +75,7 @@ test("Ledger logout routes directly to the Ledger login page", () => {
         }),
         Intl,
         Number,
+        setInterval() {},
         alert() {}
     };
 

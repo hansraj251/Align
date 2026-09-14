@@ -167,15 +167,10 @@ test("Ledger party row opens that party's Khata detail page", async () => {
 
     assert.match(
         row.innerHTML,
-        /You will give/,
-        "Positive balance must show You will give"
+        /party-balance-give/,
+        "Positive balance must use the You will give balance class"
     );
 
-    assert.match(
-        row.innerHTML,
-        /party-balance-give/,
-        "You will give amount must use the give color class"
-    );
 
     assert.equal(
         elements.receivableAmount.textContent,
@@ -197,5 +192,56 @@ test("Ledger party row opens that party's Khata detail page", async () => {
         redirectedTo,
         "/ledger/party.html?id=42",
         "Clicking a party must open its Khata detail page"
+    );
+});
+
+test("Ledger index uses green for You will give and red for You will get", () => {
+    const cssSource = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-give\s+\.party-balance-amount\s*\{[\s\S]*?color:\s*#16a34a/,
+        "You will give amount must be green"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-get\s+\.party-balance-amount\s*\{[\s\S]*?color:\s*#dc2626/,
+        "You will get amount must be red"
+    );
+});
+
+test("Ledger zero party balance uses yellow", () => {
+    const cssSource = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-zero\s+\.party-balance-amount\s*\{[\s\S]*?color:\s*#ca8a04/,
+        "Zero party balance amount must be yellow"
+    );
+});
+
+test("Ledger summary cards use green for You will give and red for You will get", () => {
+    const cssSource = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
+    assert.match(
+        cssSource,
+        /\.get-card\s+strong\s*\{[\s\S]*?color:\s*#16a34a/,
+        "You will give summary amount must be green"
+    );
+
+    assert.match(
+        cssSource,
+        /\.give-card\s+strong\s*\{[\s\S]*?color:\s*#dc2626/,
+        "You will get summary amount must be red"
     );
 });

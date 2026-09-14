@@ -161,12 +161,30 @@ function renderParty(party) {
     const balance = Number(party.net_balance || 0);
     partyBalance.textContent = formatAmount(balance);
 
+    partyBalance.classList.remove(
+        "party-balance-give",
+        "party-balance-get",
+        "party-balance-settled"
+    );
+
+    partyBalanceLabel.classList.remove(
+        "party-balance-give",
+        "party-balance-get",
+        "party-balance-settled"
+    );
+
     if (party.balance_type === "receivable") {
         partyBalanceLabel.textContent = "YOU WILL GIVE";
+        partyBalanceLabel.classList.add("party-balance-give");
+        partyBalance.classList.add("party-balance-give");
     } else if (party.balance_type === "payable") {
         partyBalanceLabel.textContent = "YOU WILL GET";
+        partyBalanceLabel.classList.add("party-balance-get");
+        partyBalance.classList.add("party-balance-get");
     } else {
         partyBalanceLabel.textContent = "SETTLED";
+        partyBalanceLabel.classList.add("party-balance-settled");
+        partyBalance.classList.add("party-balance-settled");
     }
 
     partyLoading.hidden = true;
@@ -184,9 +202,25 @@ function renderTransactions(transactions) {
         : [];
 
     if (partyInterest) {
-        partyInterest.textContent = formatSignedAmount(
-            calculateNetInterest(loadedTransactions)
+        const netInterest = calculateNetInterest(loadedTransactions);
+        const interestCard = partyInterest.closest(".summary-card");
+
+        partyInterest.classList.remove(
+            "party-interest-positive",
+            "party-interest-negative"
         );
+
+        if (interestCard) {
+            interestCard.hidden = netInterest === 0;
+        }
+
+        partyInterest.textContent = formatSignedAmount(netInterest);
+
+        if (netInterest > 0) {
+            partyInterest.classList.add("party-interest-positive");
+        } else if (netInterest < 0) {
+            partyInterest.classList.add("party-interest-negative");
+        }
     }
 
     if (loadedTransactions.length === 0) {
@@ -205,6 +239,15 @@ function renderTransactions(transactions) {
                 ? "You Got"
                 : "You Gave";
 
+        const hasInterest =
+            Number(transaction.interest_rate || 0) > 0;
+
+        const interestLabel = hasInterest
+            ? `<span class="party-transaction-interest"> (INT. ${formatAmount(
+                calculateTransactionInterest(transaction)
+            )})</span>`
+            : "";
+
         return `
             <article class="party-row" data-transaction-id="${transaction.id}">
                 <div class="party-info">
@@ -217,7 +260,9 @@ function renderTransactions(transactions) {
                         : "transaction-gave"
                 }">
                     <span class="party-balance-label">${typeLabel}</span>
-                    <strong class="party-balance-amount">${amount}</strong>
+                    <strong class="party-balance-amount">
+                        <span class="party-transaction-amount">${amount}</span>${interestLabel}
+                    </strong>
                 </div>
                 <div class="transaction-actions">
                     <button

@@ -43,7 +43,13 @@ test("Ledger Party Detail loads the selected party", async () => {
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
         transactionsList: { innerHTML: "" },
         logoutButton: {
             addEventListener() {}
@@ -170,7 +176,13 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
         transactionsList: {
             innerHTML: "",
             appendChild(child) {
@@ -299,8 +311,14 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
 
     assert.match(
         elements.transactionsList.innerHTML,
-        /<span class="party-balance-label">You Got<\/span>\s*<strong class="party-balance-amount">₹500<\/strong>/,
-        "Credit transaction must show You Got before the amount without .00"
+        /<span class="party-balance-label">You Got<\/span>[\s\S]*?<span class="party-transaction-amount">₹500<\/span>/,
+        "Credit transaction must show You Got before the principal amount"
+    );
+
+    assert.match(
+        elements.transactionsList.innerHTML,
+        /<span class="party-transaction-interest">\s*\(INT\. ₹0\.17\)<\/span>/,
+        "Credit transaction must show its calculated interest"
     );
     assert.doesNotMatch(
         elements.transactionsList.innerHTML,
@@ -416,7 +434,13 @@ test("Ledger Party Detail saves a new transaction for the selected party", async
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
         transactionsList: {
             innerHTML: "",
             appendChild(child) {
@@ -648,7 +672,23 @@ test("Ledger Party Detail refreshes the party balance after saving a transaction
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
+        partyInterest: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            },
+            closest() {
+                return { hidden: false };
+            }
+        },
         transactionsList: {
             innerHTML: "",
             appendChild(child) {
@@ -861,7 +901,13 @@ test("Ledger Party Detail renders edit and delete controls with the transaction 
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
         transactionsList: {
             innerHTML: "",
             appendChild(child) {
@@ -1042,7 +1088,23 @@ test("Ledger Party Detail edits an existing transaction using its transaction ID
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
+        partyInterest: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            },
+            closest() {
+                return { hidden: false };
+            }
+        },
         transactionsList: {
             innerHTML: "",
             addEventListener(event, handler) {
@@ -1317,7 +1379,23 @@ test("Ledger Party Detail deletes an existing transaction using its transaction 
         partyName: { textContent: "" },
         partyMobile: { textContent: "" },
         partyBalance: { textContent: "" },
-        partyBalanceLabel: { textContent: "" },
+        partyBalanceLabel: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            }
+        },
+        partyInterest: {
+            textContent: "",
+            classList: {
+                add() {},
+                remove() {}
+            },
+            closest() {
+                return { hidden: false };
+            }
+        },
         transactionsList: {
             innerHTML: "",
             addEventListener(event, handler) {
@@ -1639,5 +1717,172 @@ test("Ledger Party Detail provides an INT summary card", () => {
         html,
         /INT\./,
         "Party detail must label the interest summary card as INT."
+    );
+});
+
+test("Ledger Party Detail shows transaction interest only when interest rate is greater than zero", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /interest_rate\s*>\s*0|Number\(transaction\.interest_rate.*>\s*0/,
+        "Transaction card must check that interest rate is greater than zero before showing INT."
+    );
+
+    assert.match(
+        source,
+        /INT\.\s*.*format.*interest|INT\.\s*.*calculateTransactionInterest|calculateTransactionInterest.*INT\./s,
+        "Transaction card must render calculated interest beside the transaction amount"
+    );
+});
+
+
+test("Ledger transaction card uses opposite colors for principal and interest", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+    const cssSource = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /transaction-gave[\s\S]*party-transaction-amount[\s\S]*interestLabel|interestLabel[\s\S]*party-transaction-amount/,
+        "Transaction card must expose principal amount separately from interest"
+    );
+
+    assert.match(
+        source,
+        /party-transaction-interest/,
+        "Transaction card must expose interest separately for coloring"
+    );
+
+    assert.match(
+        cssSource,
+        /transaction-gave[\s\S]*party-transaction-interest[\s\S]*color/,
+        "You Gave interest must use the opposite color"
+    );
+
+    assert.match(
+        cssSource,
+        /transaction-got[\s\S]*party-transaction-interest[\s\S]*color/,
+        "You Got interest must use the opposite color"
+    );
+});
+
+
+test("Party balance status uses green for You Will Give, red for You Will Get, and yellow for Settled", () => {
+    const partyJs = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        partyJs,
+        /partyBalanceLabel\.classList[\s\S]*?party-balance-give/,
+        "You Will Give must apply the green balance status class"
+    );
+
+    assert.match(
+        partyJs,
+        /partyBalanceLabel\.classList[\s\S]*?party-balance-get/,
+        "You Will Get must apply the red balance status class"
+    );
+
+    assert.match(
+        partyJs,
+        /partyBalanceLabel\.classList[\s\S]*?party-balance-settled/,
+        "Settled must apply the yellow balance status class"
+    );
+});
+
+test("Party INT card is hidden at zero and colored by net interest sign", () => {
+    const partyJs = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        partyJs,
+        /partyInterest[\s\S]*?hidden\s*=/,
+        "INT card must be hidden when net interest is zero"
+    );
+
+    assert.match(
+        partyJs,
+        /partyInterest[\s\S]*?party-interest-positive/,
+        "Positive INT must apply the positive interest class"
+    );
+
+    assert.match(
+        partyJs,
+        /partyInterest[\s\S]*?party-interest-negative/,
+        "Negative INT must apply the negative interest class"
+    );
+});
+
+test("Party page defines green, red, and yellow status colors for balance and INT", () => {
+    const cssSource = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-give[\s\S]*?color:\s*#16a34a/,
+        "You Will Give must be green"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-get[\s\S]*?color:\s*#dc2626/,
+        "You Will Get must be red"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-settled\s+\.party-balance-amount\s*\{[\s\S]*?color:\s*#ca8a04/,
+        "Settled top balance amount must be yellow"
+    );
+
+    assert.match(
+        cssSource,
+        /#partyBalance\.party-balance-give\s*\{[\s\S]*?color:\s*#16a34a/,
+        "Top You Will Give amount must be green"
+    );
+
+    assert.match(
+        cssSource,
+        /#partyBalance\.party-balance-get\s*\{[\s\S]*?color:\s*#dc2626/,
+        "Top You Will Get amount must be red"
+    );
+
+    assert.match(
+        cssSource,
+        /#partyBalance\.party-balance-settled\s*\{[\s\S]*?color:\s*#ca8a04/,
+        "Top Settled amount must be yellow"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-balance-settled[\s\S]*?color:\s*#ca8a04/,
+        "Settled must be yellow"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-interest-positive[\s\S]*?color:\s*#16a34a/,
+        "Positive INT must be green"
+    );
+
+    assert.match(
+        cssSource,
+        /\.party-interest-negative[\s\S]*?color:\s*#dc2626/,
+        "Negative INT must be red"
     );
 });
