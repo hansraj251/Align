@@ -162,17 +162,17 @@ button {
 }
 
 .content {
-  padding: 18px 16px 24px;
+  padding: 5px 6px 6px;
 }
 
 .summary-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 5px;
 }
 
 .summary-card {
-  min-height: 105px;
+  min-height: 80px;
   padding: 17px;
   border-radius: var(--radius);
   background: var(--surface-gradient);
@@ -190,8 +190,8 @@ button {
 
 .summary-card strong {
   display: block;
-  margin-top: 14px;
-  font-size: 23px;
+  margin-top: 8px;
+  font-size: 16px;
   letter-spacing: -0.5px;
 }
 
@@ -223,7 +223,7 @@ button {
 }
 
 .search-section {
-  margin-top: 18px;
+  margin-top: 4px;
 }
 
 .search-box {
@@ -262,15 +262,15 @@ button {
 }
 
 .parties-section {
-  margin-top: 22px;
+  margin-top: 4px;
 }
 
 .section-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 2px;
 }
 
 .party-header-details {
@@ -300,7 +300,7 @@ button {
 
 .section-heading h1 {
   margin: 0;
-  font-size: 19px;
+  font-size: 16px;
   letter-spacing: -0.3px;
 }
 
@@ -317,21 +317,21 @@ button {
   border-radius: 12px;
   background: var(--surface);
   color: var(--text);
-  font-size: 21px;
+  font-size: 18px;
 }
 
 .parties-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
 }
 
 .party-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid var(--border);
   border-radius: 15px;
   background: var(--surface-gradient);
@@ -344,11 +344,11 @@ button {
   height: 43px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
+  border-radius: 40%;
   background: linear-gradient(135deg, #f5efff 0%, #eef3ff 100%);
   color: var(--accent);
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .party-info {
@@ -357,8 +357,8 @@ button {
 }
 
 .party-name {
-  font-size: 15px;
-  font-weight: 750;
+  font-size: 16px;
+  font-weight: 600;
   white-space: normal;
   overflow-wrap: anywhere;
 }
@@ -459,21 +459,17 @@ button {
   right: max(16px, calc((100vw - 760px) / 2 + 16px));
   bottom: 78px;
   z-index: 15;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 13px 16px;
-  border: 0;
-  border-radius: 999px;
+  width: 56px;
+  height: 56px;
+  padding: 0;
+  border: 1px solid var(--accent);
+  border-radius: 16px;
   background: var(--accent);
   color: white;
   box-shadow: 0 8px 22px rgba(79, 70, 229, .20);
-  font-size: 14px;
-  font-weight: 750;
-}
-
-.floating-add span:first-child {
-  font-size: 19px;
+  font-size: 28px;
+  font-weight: 500;
+  line-height: 1;
 }
 
 .bottom-nav {
@@ -631,13 +627,13 @@ button {
   }
 
   .summary-card {
-    min-height: 115px;
+    min-height: 100px;
   }
 }
 
 
 .logout-button {
-  min-height: 40px;
+  min-height: 36px;
   padding: 8px 13px;
   border: 1px solid #d8ccf2;
   border-radius: 12px;
@@ -715,16 +711,16 @@ button {
 
   .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
+    gap: 16px;
   }
 
   .summary-card {
-    min-height: 135px;
-    padding: 22px;
+    min-height: 100px;
+    padding: 18px;
   }
 
   .summary-card strong {
-    font-size: 28px;
+    font-size: 20px;
   }
 
   .reports-button {
@@ -733,7 +729,7 @@ button {
   }
 
   .search-section {
-    margin-top: 24px;
+    margin-top: 2px;
   }
 
   .search-box {
@@ -741,7 +737,7 @@ button {
   }
 
   .parties-section {
-    margin-top: 28px;
+    margin-top: 4px;
   }
 
   .section-heading {
@@ -1089,7 +1085,7 @@ button {
 .party-summary-cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 10px;
 }
 
 .party-summary-cards .summary-card {
@@ -1098,7 +1094,8 @@ button {
 
 @media (max-width: 600px) {
     .party-summary-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
     }
 }
 
@@ -1198,3 +1195,195 @@ button {
 #editPartyForm textarea:focus {
   border-color: #aeb3ba;
 }
+.music-playlist-delete {
+    flex: 0 0 34px;
+
+    width: 34px;
+    height: 34px;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 9px;
+
+    color: #64748b;
+
+    background: #f1f5f9;
+
+    font-size: 19px;
+    font-weight: 700;
+
+    line-height: 34px;
+
+    text-align: center;
+}
+
+.music-playlist-delete:hover {
+    color: var(--music-danger);
+
+    background: #fee2e2;
+}
+.party-summary-cards .interest-card[hidden] ~ .summary-card {
+    grid-column: 1 / -1;
+}
+
+.party-summary-cards .summary-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Interest Received */
+.interest-card {
+  cursor: pointer;
+}
+
+.interest-card:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+.interest-received-modal {
+  max-width: 680px;
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+}
+
+.interest-received-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 0;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fafbfc;
+}
+
+.interest-received-total span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.interest-received-total strong {
+  font-size: 22px;
+  color: var(--text);
+}
+
+#interestReceivedForm {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fafbfc;
+}
+
+#interestReceivedForm label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+#interestReceivedForm input,
+#interestReceivedForm textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  padding: 12px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: 0;
+  background: #fff;
+  color: var(--text);
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+#interestReceivedForm textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+#interestReceivedForm input:focus,
+#interestReceivedForm textarea:focus {
+  border-color: #aeb3ba;
+}
+
+.interest-received-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.interest-received-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.interest-received-info {
+  min-width: 0;
+}
+
+.interest-received-date {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.interest-received-note {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+.interest-received-amount {
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.interest-received-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.interest-received-actions button {
+  min-width: 68px;
+}
+
+@media (max-width: 600px) {
+  .interest-received-modal {
+    max-height: calc(100vh - 24px);
+  }
+
+  .interest-received-total {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .interest-received-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .interest-received-actions {
+    width: 100%;
+  }
+
+  .interest-received-actions button {
+    flex: 1;
+  }
+}
+

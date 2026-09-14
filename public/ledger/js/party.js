@@ -51,6 +51,51 @@ const transactionInterestRate = document.getElementById("transactionInterestRate
 const transactionDescription = document.getElementById("transactionDescription");
 const transactionFormError = document.getElementById("transactionFormError");
 const transactionModalTitle = document.getElementById("transactionModalTitle");
+const interestReceivedCard =
+    document.getElementById("interestReceivedCard");
+
+const interestReceivedModal =
+    document.getElementById("interestReceivedModal");
+
+const closeInterestReceivedModal =
+    document.getElementById("closeInterestReceivedModal");
+
+const addInterestReceivedButton =
+    document.getElementById("addInterestReceivedButton");
+
+const interestReceivedForm =
+    document.getElementById("interestReceivedForm");
+
+const interestReceivedId =
+    document.getElementById("interestReceivedId");
+
+const interestReceivedDate =
+    document.getElementById("interestReceivedDate");
+
+const interestReceivedAmount =
+    document.getElementById("interestReceivedAmount");
+
+const interestReceivedNote =
+    document.getElementById("interestReceivedNote");
+
+const cancelInterestReceivedButton =
+    document.getElementById("cancelInterestReceivedButton");
+
+const interestReceivedSubmitButton =
+    document.getElementById("interestReceivedSubmitButton");
+
+const interestReceivedFormError =
+    document.getElementById("interestReceivedFormError");
+
+const interestReceivedTotal =
+    document.getElementById("interestReceivedTotal");
+
+const interestReceivedList =
+    document.getElementById("interestReceivedList");
+
+let loadedInterestReceived = [];
+let editingInterestReceivedId = null;
+
 const transactionSubmitButton =
     document.getElementById("transactionSubmitButton");
 
@@ -361,6 +406,502 @@ function formatSignedAmount(amount) {
     return value < 0 ? `-${formatted}` : formatted;
 }
 
+function formatInterestReceivedDate(date) {
+    if (!date) {
+        return "";
+    }
+
+    const parsed =
+        new Date(`${date}T00:00:00`);
+
+    if (Number.isNaN(parsed.getTime())) {
+        return date;
+    }
+
+    return new Intl.DateTimeFormat(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    ).format(parsed);
+}
+
+function setInterestReceivedFormMode(entry = null) {
+    editingInterestReceivedId =
+        entry && entry.id
+            ? entry.id
+            : null;
+
+    if (interestReceivedId) {
+        interestReceivedId.value =
+            editingInterestReceivedId || "";
+    }
+
+    if (interestReceivedSubmitButton) {
+        interestReceivedSubmitButton.textContent =
+            editingInterestReceivedId
+                ? "Update"
+                : "Save";
+    }
+}
+
+function resetInterestReceivedForm() {
+    if (interestReceivedForm) {
+        interestReceivedForm.reset();
+    }
+
+    setInterestReceivedFormMode(null);
+
+    if (interestReceivedFormError) {
+        interestReceivedFormError.hidden = true;
+        interestReceivedFormError.textContent = "";
+    }
+}
+
+function openInterestReceivedForm(entry = null) {
+    resetInterestReceivedForm();
+
+    setInterestReceivedFormMode(entry);
+
+    if (entry) {
+        interestReceivedDate.value =
+            entry.interest_date || "";
+
+        interestReceivedAmount.value =
+            entry.amount ?? "";
+
+        interestReceivedNote.value =
+            entry.note || "";
+    } else {
+        interestReceivedDate.value =
+            new Date().toISOString().slice(0, 10);
+    }
+
+    if (interestReceivedForm) {
+        interestReceivedForm.hidden = false;
+    }
+
+    if (addInterestReceivedButton) {
+        addInterestReceivedButton.hidden = true;
+    }
+
+    if (interestReceivedAmount) {
+        setTimeout(
+            () => interestReceivedAmount.focus(),
+            50
+        );
+    }
+}
+
+function closeInterestReceivedForm() {
+    if (interestReceivedForm) {
+        interestReceivedForm.hidden = true;
+    }
+
+    if (addInterestReceivedButton) {
+        addInterestReceivedButton.hidden = false;
+    }
+
+    resetInterestReceivedForm();
+}
+
+function renderInterestReceived(entries, total) {
+    loadedInterestReceived =
+        Array.isArray(entries)
+            ? entries
+            : [];
+
+    if (interestReceivedTotal) {
+        interestReceivedTotal.textContent =
+            formatAmount(total);
+    }
+
+    if (!interestReceivedList) {
+        return;
+    }
+
+    if (loadedInterestReceived.length === 0) {
+        interestReceivedList.innerHTML =
+            '<div class="empty-state compact"><h2>No interest received/paid yet</h2><p>Add a received/paid interest entry to start.</p></div>';
+        return;
+    }
+
+    interestReceivedList.innerHTML =
+        loadedInterestReceived.map((entry) => {
+            const amount =
+                formatTransactionAmount(
+                    entry.amount
+                );
+
+            const note =
+                entry.note || "";
+
+            return `
+                <article
+                    class="interest-received-row"
+                    data-interest-id="${entry.id}"
+                >
+                    <div class="interest-received-info">
+                        <strong>
+                            ${formatInterestReceivedDate(entry.interest_date)}
+                        </strong>
+                        ${
+                            note
+                                ? `<span>${note}</span>`
+                                : ""
+                        }
+                    </div>
+
+                    <div class="interest-received-actions">
+                        <strong>${amount}</strong>
+
+                        <div class="transaction-actions">
+                            <button
+                                type="button"
+                                class="secondary-button"
+                                data-interest-action="edit"
+                                data-interest-id="${entry.id}"
+                            >
+                                Edit
+                            </button>
+
+                            <button
+                                type="button"
+                                class="secondary-button"
+                                data-interest-action="delete"
+                                data-interest-id="${entry.id}"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join("");
+}
+
+async function loadInterestReceived() {
+    if (!partyId || !token) {
+        return;
+    }
+
+    const response =
+        await fetch(
+            `/api/ledger/interest-received/party/${encodeURIComponent(partyId)}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+    if (
+        response.status === 401 ||
+        response.status === 403
+    ) {
+        Auth.logout("/ledger/login.html");
+        return;
+    }
+
+    const data =
+        await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.message ||
+            "Unable to load interest received."
+        );
+    }
+
+    renderInterestReceived(
+        data.entries || [],
+        data.totalInterestReceived || 0
+    );
+
+    if (partyInterest) {
+        const totalInterestReceived =
+            Number(data.totalInterestReceived || 0);
+
+        const calculatedNetInterest =
+            calculateNetInterest(loadedTransactions);
+
+        const remainingInterest =
+            calculatedNetInterest - totalInterestReceived;
+
+        partyInterest.textContent =
+            formatSignedAmount(remainingInterest);
+
+        const interestCard =
+            partyInterest.closest(".summary-card");
+
+        const balanceCard =
+            partyBalance?.closest(".summary-card");
+
+        const hasInterest =
+            remainingInterest !== 0;
+
+        if (interestCard) {
+            interestCard.hidden = !hasInterest;
+        }
+
+        balanceCard?.classList.toggle(
+            "full-width",
+            !hasInterest
+        );
+
+        partyInterest.classList.remove(
+            "party-interest-positive",
+            "party-interest-negative"
+        );
+
+        if (remainingInterest > 0) {
+            partyInterest.classList.add(
+                "party-interest-positive"
+            );
+        } else if (remainingInterest < 0) {
+            partyInterest.classList.add(
+                "party-interest-negative"
+            );
+        }
+    }
+}
+
+function openInterestReceivedModalDialog() {
+    if (!interestReceivedModal) {
+        return;
+    }
+
+    closeInterestReceivedForm();
+    interestReceivedModal.hidden = false;
+
+    loadInterestReceived().catch((error) => {
+        console.error(
+            "Ledger interest received load failed:",
+            error
+        );
+    });
+}
+
+function closeInterestReceivedModalDialog() {
+    if (interestReceivedModal) {
+        interestReceivedModal.hidden = true;
+    }
+
+    closeInterestReceivedForm();
+}
+
+async function saveInterestReceived(event) {
+    event.preventDefault();
+
+    if (!partyId || !token) {
+        return;
+    }
+
+    const amount =
+        Number(interestReceivedAmount.value);
+
+    if (
+        !Number.isFinite(amount) ||
+        amount === 0
+    ) {
+        if (interestReceivedFormError) {
+            interestReceivedFormError.textContent =
+                "Enter a valid amount.";
+            interestReceivedFormError.hidden = false;
+        }
+        return;
+    }
+
+    if (!interestReceivedDate.value) {
+        if (interestReceivedFormError) {
+            interestReceivedFormError.textContent =
+                "Select a date.";
+            interestReceivedFormError.hidden = false;
+        }
+        return;
+    }
+
+    const payload = {
+        interestDate:
+            interestReceivedDate.value,
+        amount,
+        note:
+            interestReceivedNote.value.trim()
+    };
+
+    try {
+        const endpoint =
+            editingInterestReceivedId
+                ? `/api/ledger/interest-received/party/${encodeURIComponent(partyId)}/${encodeURIComponent(editingInterestReceivedId)}`
+                : `/api/ledger/interest-received/party/${encodeURIComponent(partyId)}`;
+
+        const response =
+            await fetch(
+                endpoint,
+                {
+                    method:
+                        editingInterestReceivedId
+                            ? "PUT"
+                            : "POST",
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`,
+                        "Content-Type":
+                            "application/json"
+                    },
+                    body:
+                        JSON.stringify(payload)
+                }
+            );
+
+        if (
+            response.status === 401 ||
+            response.status === 403
+        ) {
+            Auth.logout("/ledger/login.html");
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message ||
+                "Unable to save interest entry."
+            );
+        }
+
+        closeInterestReceivedForm();
+
+        await loadInterestReceived();
+    } catch (error) {
+        console.error(
+            "Ledger interest received save failed:",
+            error
+        );
+
+        if (interestReceivedFormError) {
+            interestReceivedFormError.textContent =
+                error.message ||
+                "Unable to save interest entry.";
+            interestReceivedFormError.hidden = false;
+        }
+    }
+}
+
+function editInterestReceived(interestId) {
+    const entry =
+        loadedInterestReceived.find(
+            (item) =>
+                String(item.id) ===
+                String(interestId)
+        );
+
+    if (!entry) {
+        return;
+    }
+
+    openInterestReceivedForm(entry);
+}
+
+async function deleteInterestReceived(interestId) {
+    if (!partyId || !token) {
+        return;
+    }
+
+    const entry =
+        loadedInterestReceived.find(
+            (item) =>
+                String(item.id) ===
+                String(interestId)
+        );
+
+    Modal.confirm(
+        "Delete Interest",
+        `
+            <p class="text-slate-600">
+                Are you sure you want to delete this
+                interest entry?
+            </p>
+            ${
+                entry
+                    ? `<p class="mt-2 text-sm text-slate-500">${formatInterestReceivedDate(entry.interest_date)} · ${formatAmount(entry.amount)}</p>`
+                    : ""
+            }
+            <p class="mt-2 text-sm text-red-600">
+                This action cannot be undone.
+            </p>
+        `,
+        async () => {
+            const response =
+                await fetch(
+                    `/api/ledger/interest-received/party/${encodeURIComponent(partyId)}/${encodeURIComponent(interestId)}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
+                    }
+                );
+
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
+                Auth.logout("/ledger/login.html");
+                return;
+            }
+
+            const data =
+                await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message ||
+                    "Unable to delete interest entry."
+                );
+            }
+
+            await loadInterestReceived();
+        },
+        {
+            buttonText: "Delete",
+            buttonClass: "bg-red-600",
+            loadingText: "Deleting..."
+        }
+    );
+}
+
+function handleInterestReceivedAction(event) {
+    const button =
+        event.target.closest(
+            "[data-interest-action][data-interest-id]"
+        );
+
+    if (!button) {
+        return;
+    }
+
+    const interestId =
+        button.dataset.interestId;
+
+    if (
+        button.dataset.interestAction === "edit"
+    ) {
+        editInterestReceived(interestId);
+    }
+
+    if (
+        button.dataset.interestAction === "delete"
+    ) {
+        deleteInterestReceived(interestId);
+    }
+}
+
 function showError(message) {
     partyLoading.hidden = true;
     partyDetails.hidden = true;
@@ -420,28 +961,6 @@ function renderTransactions(transactions) {
     loadedTransactions = Array.isArray(transactions)
         ? transactions
         : [];
-
-    if (partyInterest) {
-        const netInterest = calculateNetInterest(loadedTransactions);
-        const interestCard = partyInterest.closest(".summary-card");
-
-        partyInterest.classList.remove(
-            "party-interest-positive",
-            "party-interest-negative"
-        );
-
-        if (interestCard) {
-            interestCard.hidden = netInterest === 0;
-        }
-
-        partyInterest.textContent = formatSignedAmount(netInterest);
-
-        if (netInterest > 0) {
-            partyInterest.classList.add("party-interest-positive");
-        } else if (netInterest < 0) {
-            partyInterest.classList.add("party-interest-negative");
-        }
-    }
 
     if (loadedTransactions.length === 0) {
         transactionsList.innerHTML =
@@ -716,6 +1235,7 @@ async function loadParty() {
     try {
         await loadPartyDetails();
         await loadTransactions();
+        await loadInterestReceived();
     } catch (error) {
         console.error("Ledger party load failed:", error);
         showError(
@@ -844,6 +1364,61 @@ async function saveTransaction(event) {
             transactionFormError.hidden = false;
         }
     }
+}
+
+if (interestReceivedCard) {
+    interestReceivedCard.addEventListener(
+        "click",
+        openInterestReceivedModalDialog
+    );
+
+    interestReceivedCard.addEventListener(
+        "keydown",
+        (event) => {
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+                event.preventDefault();
+                openInterestReceivedModalDialog();
+            }
+        }
+    );
+}
+
+if (closeInterestReceivedModal) {
+    closeInterestReceivedModal.addEventListener(
+        "click",
+        closeInterestReceivedModalDialog
+    );
+}
+
+if (addInterestReceivedButton) {
+    addInterestReceivedButton.addEventListener(
+        "click",
+        () => openInterestReceivedForm()
+    );
+}
+
+if (cancelInterestReceivedButton) {
+    cancelInterestReceivedButton.addEventListener(
+        "click",
+        closeInterestReceivedForm
+    );
+}
+
+if (interestReceivedForm) {
+    interestReceivedForm.addEventListener(
+        "submit",
+        saveInterestReceived
+    );
+}
+
+if (interestReceivedList) {
+    interestReceivedList.addEventListener(
+        "click",
+        handleInterestReceivedAction
+    );
 }
 
 if (addTransactionButton) {

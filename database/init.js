@@ -61,6 +61,12 @@ const createLedgerBusinessesTable =
 const createLedgerPartiesTable =
     require("./schema/ledgerParties");
 
+const createLedgerInterestReceivedTable =
+    require("./schema/ledgerInterestReceived");
+
+const createLedgerInterestReceivedIndexes =
+    createLedgerInterestReceivedTable.createIndexes;
+
 const createLedgerTransactionsTable =
     require("./schema/ledgerTransactions");
 
@@ -151,6 +157,9 @@ async function initializeDatabase() {
     await createLedgerPartiesTable();
 
     await createLedgerPartiesIndexes();
+
+    await createLedgerInterestReceivedTable();
+    await createLedgerInterestReceivedIndexes();
 
     await createLedgerTransactionsTable();
 

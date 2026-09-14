@@ -23,19 +23,19 @@
           <div id="partyHeaderActions" class="party-header-actions" hidden>
             <button
               type="button"
-              class="secondary-button music-playlist-delete"
+              class="secondary-button"
               data-action="edit-party"
               id="editPartyButton"
             >
-              Edit
+              ✎
             </button>
             <button
               type="button"
-              class="secondary-button music-playlist-delete"
+              class="secondary-button"
               data-action="delete-party"
               id="deletePartyButton"
             >
-              Delete
+              ×
             </button>
           </div>
         </div>
@@ -59,7 +59,7 @@
             <strong id="partyBalance">₹0.00</strong>
           </article>
 
-          <article class="summary-card interest-card">
+          <article class="summary-card interest-card" id="interestReceivedCard" role="button" tabindex="0" aria-label="Interest Received">
             <span class="summary-label">INT.</span>
             <strong id="partyInterest">₹0.00</strong>
           </article>
@@ -69,10 +69,9 @@
           class="floating-add"
           id="addTransactionButton"
           type="button"
-          style="position:static; width:100%; margin-top:16px;"
+          aria-label="Add Transaction"
         >
-          <span>＋</span>
-          <span>Add Transaction</span>
+          ＋
         </button>
 
         <section class="parties-section" style="margin-top:24px;">
@@ -150,6 +149,55 @@
     </main>
   </div>
 
+  <div class="modal-backdrop" id="interestReceivedModal" hidden>
+    <div class="modal interest-received-modal" role="dialog" aria-modal="true" aria-labelledby="interestReceivedModalTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="interestReceivedModalTitle">Interest</h2>
+          <p>Total received/paid interest.</p>
+        </div>
+        <button id="closeInterestReceivedModal" class="modal-close" type="button">×</button>
+      </div>
+
+      <div class="interest-received-total">
+        <span>Total Interest Received/Paid</span>
+        <strong id="interestReceivedTotal">₹0.00</strong>
+      </div>
+
+      <button id="addInterestReceivedButton" type="button" class="secondary-button">
+        + Add Interest
+      </button>
+
+      <form id="interestReceivedForm" hidden>
+        <input id="interestReceivedId" type="hidden">
+
+        <label>
+          Date
+          <input id="interestReceivedDate" type="date" required>
+        </label>
+
+        <label>
+          Amount (should be negative if you are paying interest instead of receiving)
+          <input id="interestReceivedAmount" type="number" step="0.01" required>
+        </label>
+
+        <label>
+          Note
+          <textarea id="interestReceivedNote" rows="3" maxlength="250"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button id="cancelInterestReceivedButton" type="button" class="secondary-button">Cancel</button>
+          <button id="interestReceivedSubmitButton" type="submit" class="primary-button">Save</button>
+        </div>
+
+        <p id="interestReceivedFormError" class="form-error" hidden></p>
+      </form>
+
+      <div id="interestReceivedList" class="interest-received-list"></div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="editPartyModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editPartyModalTitle">
       <div class="modal-header">
@@ -157,7 +205,7 @@
           <h2 id="editPartyModalTitle">Edit</h2>
           <p>Update details.</p>
         </div>
-        <button id="closeEditPartyModal" class="modal-close" type="button">×</button>
+        <button id="closeEditPartyModal" class="secondary-button" type="button">×</button>
       </div>
 
       <form id="editPartyForm">

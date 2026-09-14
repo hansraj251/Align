@@ -102,6 +102,11 @@ app.use(
 );
 
 app.use(
+    "/api/ledger/interest-received",
+    require("./routes/ledgerInterestReceivedRoutes")
+);
+
+app.use(
 
     "/api/ledger/transactions",
 
