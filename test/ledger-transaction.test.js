@@ -403,3 +403,34 @@ test("createTransaction accepts zero interest rate", async () => {
             originalCreate;
     }
 });
+
+test("party repository only lists active parties", async () => {
+    const db = require("../db");
+
+    const originalAllAsync = db.allAsync;
+    let executedSql = "";
+    let executedParams = null;
+
+    db.allAsync = async (sql, params) => {
+        executedSql = sql;
+        executedParams = params;
+        return [];
+    };
+
+    try {
+        await ledgerPartyRepository.getByBusinessId(9);
+
+        assert.match(
+            executedSql,
+            /WHERE\s+business_id\s*=\s*\?\s+AND\s+status\s*=\s*['"]active['"]/i,
+            "Party list must only query active parties"
+        );
+
+        assert.deepEqual(
+            executedParams,
+            [9]
+        );
+    } finally {
+        db.allAsync = originalAllAsync;
+    }
+});

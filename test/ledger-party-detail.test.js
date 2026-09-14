@@ -2030,3 +2030,172 @@ test("Ledger Party Detail deactivates the party through the existing party API",
         "Party delete must require confirmation"
     );
 });
+
+test("Ledger Party Detail uses the existing Modal.confirm for party deletion", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        html,
+        /<script\s+src=["']\/js\/modal\.js["']><\/script>/,
+        "Party detail must load the existing modal system"
+    );
+
+    assert.match(
+        source,
+        /Modal\.confirm\(/,
+        "Party deletion must use the existing Modal.confirm"
+    );
+
+    assert.doesNotMatch(
+        source,
+        /const confirmed\s*=\s*confirm\(/,
+        "Party deletion must not use the browser confirm popup"
+    );
+});
+
+test("Ledger Party Detail uses the existing Modal.confirm for transaction deletion", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /Modal\.confirm\(/,
+        "Transaction deletion must use the existing Modal.confirm"
+    );
+
+    assert.doesNotMatch(
+        source,
+        /const confirmed\s*=\s*window\.confirm\(/,
+        "Transaction deletion must not use the browser confirm popup"
+    );
+});
+
+test("Ledger Party Detail provides CSS for the shared confirmation modal", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    const css = fs.readFileSync(
+        require.resolve("../public/ledger/css/ledger.css"),
+        "utf8"
+    );
+
+    assert.match(
+        html,
+        /\/ledger\/css\/ledger\.css/,
+        "Party detail must load Ledger CSS"
+    );
+
+    assert.match(
+        css,
+        /#modalOverlay[\s\S]*display:\s*none/,
+        "Ledger CSS must hide the shared modal overlay by default"
+    );
+
+    assert.match(
+        css,
+        /#modalOverlay[\s\S]*position:\s*fixed/,
+        "Ledger CSS must position the shared modal as an overlay"
+    );
+});
+
+
+test("Ledger Party Detail Edit modal is centered instead of a bottom sheet", () => {
+    const backdropMatch = cssSource.match(
+        /\.modal-backdrop\s*\{([\s\S]*?)\}/
+    );
+
+    assert.ok(
+        backdropMatch,
+        "Ledger Edit modal must define a modal backdrop"
+    );
+
+    assert.doesNotMatch(
+        backdropMatch[1],
+        /align-items:\s*end\s*;/,
+        "Ledger Edit modal backdrop must not anchor the modal to the bottom"
+    );
+
+    const modalMatch = cssSource.match(
+        /\.modal\s*\{([\s\S]*?)\}/
+    );
+
+    assert.ok(
+        modalMatch,
+        "Ledger Edit modal must define modal card styles"
+    );
+
+    assert.doesNotMatch(
+        modalMatch[1],
+        /border-radius:\s*22px\s+22px\s+0\s+0\s*;/,
+        "Ledger Edit modal must not use bottom-sheet corner styling"
+    );
+});
+
+
+test("Ledger Party Detail Edit form uses a clean vertical field layout", () => {
+    assert.match(
+        cssSource,
+        /#editPartyForm\s+label\s*\{[\s\S]*?display:\s*block\s*;/,
+        "Edit Party fields must be stacked vertically"
+    );
+
+    assert.match(
+        cssSource,
+        /#editPartyForm\s+input[\s\S]*?width:\s*100%\s*;/,
+        "Edit Party inputs must use the full modal width"
+    );
+
+    assert.match(
+        cssSource,
+        /#editPartyForm\s+textarea[\s\S]*?width:\s*100%\s*;/,
+        "Edit Party address textarea must use the full modal width"
+    );
+
+    assert.match(
+        cssSource,
+        /#editPartyForm\s+textarea[\s\S]*?min-height:\s*\d+px\s*;/,
+        "Edit Party address textarea must have a usable minimum height"
+    );
+});
+
+test("Ledger Party Detail Edit and Delete buttons reuse the Music playlist action class", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    const editButtonMatch = html.match(
+        /<button[\s\S]*?id=["']editPartyButton["'][\s\S]*?>/
+    );
+
+    const deleteButtonMatch = html.match(
+        /<button[\s\S]*?id=["']deletePartyButton["'][\s\S]*?>/
+    );
+
+    assert.ok(editButtonMatch, "Party Edit button must exist");
+    assert.ok(deleteButtonMatch, "Party Delete button must exist");
+
+    assert.match(
+        editButtonMatch[0],
+        /class=["'][^"']*\bmusic-playlist-delete\b[^"']*["']/,
+        "Party Edit button must reuse music-playlist-delete class"
+    );
+
+    assert.match(
+        deleteButtonMatch[0],
+        /class=["'][^"']*\bmusic-playlist-delete\b[^"']*["']/,
+        "Party Delete button must reuse music-playlist-delete class"
+    );
+});

@@ -21,6 +21,7 @@ async function getByBusinessId(
             updated_at
         FROM ledger_parties
         WHERE business_id = ?
+          AND status = 'active'
         ORDER BY name COLLATE NOCASE ASC, id ASC
         `,
         [businessId]

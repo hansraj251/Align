@@ -159,43 +159,50 @@ async function deleteParty() {
         return;
     }
 
-    const confirmed = confirm(
-        `Delete ${loadedParty?.name || "this party"}?`
-    );
+    Modal.confirm(
+        "Delete",
+        `
+            <p class="text-slate-600">
+                Are you sure you want to delete
+                <span class="font-semibold text-slate-800">
+                    "${loadedParty?.name || "this person"}"
+                </span>
+                ?
+            </p>
 
-    if (!confirmed) {
-        return;
-    }
-
-    try {
-        const response = await fetch(
-            `/api/ledger/parties/${encodeURIComponent(partyId)}`,
-            {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`
+        `,
+        async () => {
+            const response = await fetch(
+                `/api/ledger/parties/${encodeURIComponent(partyId)}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            }
-        );
-
-        if (response.status === 401 || response.status === 403) {
-            Auth.logout("/ledger/login.html");
-            return;
-        }
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-            throw new Error(
-                data.message || "Unable to delete party."
             );
-        }
 
-        window.location.href = "/ledger/index.html";
-    } catch (error) {
-        console.error("Delete party failed:", error);
-        alert(error.message || "Unable to delete party.");
-    }
+            if (response.status === 401 || response.status === 403) {
+                Auth.logout("/ledger/login.html");
+                return;
+            }
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.message || "Unable to delete party."
+                );
+            }
+
+            window.location.href = "/ledger/index.html";
+        },
+        {
+            buttonText: "Delete",
+            buttonClass: "bg-red-600",
+            loadingText: "Deleting..."
+        }
+    );
 }
 
 function togglePartyHeaderActions() {
@@ -438,7 +445,7 @@ function renderTransactions(transactions) {
 
     if (loadedTransactions.length === 0) {
         transactionsList.innerHTML =
-            '<div class="empty-state compact"><h2>No transactions yet</h2><p>Add the first transaction to start this khata.</p></div>';
+            '<div class="empty-state compact"><h2>No transactions yet</h2><p>Add the first transaction to start.</p></div>';
         return;
     }
 
@@ -563,54 +570,65 @@ async function deleteTransaction(transactionId) {
         return;
     }
 
-    const confirmed = window.confirm(
-        "Delete this transaction?"
-    );
+    Modal.confirm(
+        "Delete Transaction",
+        `
+            <p class="text-slate-600">
+                Are you sure you want to delete this transaction?
+            </p>
+            <p class="mt-2 text-sm text-red-600">
+                This action cannot be undone.
+            </p>
+        `,
+        async () => {
+            try {
+                const response = await fetch(
+                    `/api/ledger/transactions/party/${encodeURIComponent(partyId)}/${encodeURIComponent(transactionId)}`,
+                    {
+                        method: "DELETE",
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
 
-    if (!confirmed) {
-        return;
-    }
-
-    try {
-        const response = await fetch(
-            `/api/ledger/transactions/party/${encodeURIComponent(partyId)}/${encodeURIComponent(transactionId)}`,
-            {
-                method: "DELETE",
-                headers: {
-                    Authorization: `Bearer ${token}`
+                if (response.status === 401 || response.status === 403) {
+                    Auth.logout("/ledger/login.html");
+                    return;
                 }
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    throw new Error(
+                        data.message || "Unable to delete transaction."
+                    );
+                }
+
+                await loadPartyDetails();
+                await loadTransactions();
+            } catch (error) {
+                console.error(
+                    "Ledger transaction delete failed:",
+                    error
+                );
+
+                if (transactionFormError) {
+                    transactionFormError.textContent =
+                        error.message || "Unable to delete transaction.";
+                    transactionFormError.hidden = false;
+                }
+
+                throw error;
             }
-        );
-
-        if (response.status === 401 || response.status === 403) {
-            Auth.logout("/ledger/login.html");
-            return;
+        },
+        {
+            buttonText: "Delete",
+            buttonClass: "bg-red-600",
+            loadingText: "Deleting..."
         }
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-            throw new Error(
-                data.message || "Unable to delete transaction."
-            );
-        }
-
-        await loadPartyDetails();
-        await loadTransactions();
-    } catch (error) {
-        console.error(
-            "Ledger transaction delete failed:",
-            error
-        );
-
-        if (transactionFormError) {
-            transactionFormError.textContent =
-                error.message || "Unable to delete transaction.";
-            transactionFormError.hidden = false;
-        }
-    }
+    );
 }
-
 function handleTransactionAction(event) {
     const button = event.target.closest(
         "[data-action][data-transaction-id]"
