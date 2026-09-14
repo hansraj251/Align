@@ -70,6 +70,34 @@ function validateAmount(
     return value;
 }
 
+function validateInterestRate(
+    interestRate
+) {
+    if (
+        interestRate === undefined ||
+        interestRate === null ||
+        interestRate === ""
+    ) {
+        throw new Error(
+            "Interest rate is required"
+        );
+    }
+
+    const value =
+        Number(interestRate);
+
+    if (
+        !Number.isFinite(value) ||
+        value < 0
+    ) {
+        throw new Error(
+            "Interest rate must be a valid non-negative rate"
+        );
+    }
+
+    return value;
+}
+
 function validateTransactionDate(
     transactionDate
 ) {
@@ -187,6 +215,7 @@ async function createTransaction(
         transactionType,
         amount,
         transactionDate,
+        interestRate,
         description,
         paymentMode,
         referenceNo
@@ -214,6 +243,11 @@ async function createTransaction(
             transactionDate
         );
 
+    const validatedInterestRate =
+        validateInterestRate(
+            interestRate
+        );
+
     return ledgerTransactionRepository
         .create(
             party.id,
@@ -222,7 +256,8 @@ async function createTransaction(
             validatedDate,
             cleanText(description),
             cleanText(paymentMode),
-            cleanText(referenceNo)
+            cleanText(referenceNo),
+            validatedInterestRate
         );
 }
 
@@ -234,6 +269,7 @@ async function updateTransaction(
         transactionType,
         amount,
         transactionDate,
+        interestRate,
         description,
         paymentMode,
         referenceNo
@@ -274,6 +310,11 @@ async function updateTransaction(
             transactionDate
         );
 
+    const validatedInterestRate =
+        validateInterestRate(
+            interestRate
+        );
+
     return ledgerTransactionRepository
         .update(
             transactionId,
@@ -283,7 +324,8 @@ async function updateTransaction(
             validatedDate,
             cleanText(description),
             cleanText(paymentMode),
-            cleanText(referenceNo)
+            cleanText(referenceNo),
+            validatedInterestRate
         );
 }
 

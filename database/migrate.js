@@ -1307,6 +1307,37 @@ console.log("✅ Music artist catalogue seeded.");
     console.log(
         "✅ Music user favorites and playlists tables are ready."
     );
+
+    /*
+     * Migration 14:
+     * ledger_transactions.interest_rate
+     */
+    const ledgerTransactionColumns = await db.allAsync(`
+        PRAGMA table_info(
+            ledger_transactions
+        )
+    `);
+
+    const hasInterestRate =
+        ledgerTransactionColumns.some(
+            column =>
+                column.name === "interest_rate"
+        );
+
+    if (!hasInterestRate) {
+        await db.runAsync(`
+            ALTER TABLE ledger_transactions
+            ADD COLUMN interest_rate REAL
+        `);
+
+        console.log(
+            "✅ ledger_transactions interest rate column added."
+        );
+    } else {
+        console.log(
+            "✅ ledger_transactions interest rate column is up to date."
+        );
+    }
 }
 
 module.exports =

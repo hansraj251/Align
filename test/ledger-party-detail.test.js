@@ -261,6 +261,7 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
                                     transaction_type: "credit",
                                     amount: 500,
                                     transaction_date: "2026-09-13",
+                                    interest_rate: 12.5,
                                     description: "Advance payment"
                                 }
                             ]
@@ -461,6 +462,9 @@ test("Ledger Party Detail saves a new transaction for the selected party", async
         transactionDescription: {
             value: "Advance payment"
         },
+        transactionInterestRate: {
+            value: "12.5"
+        },
         transactionFormError: {
             hidden: true,
             textContent: ""
@@ -605,7 +609,8 @@ test("Ledger Party Detail saves a new transaction for the selected party", async
             transactionType: "credit",
             amount: 1250,
             transactionDate: "2026-09-13",
-            description: "Advance payment"
+            description: "Advance payment",
+            interestRate: 12.5
         },
         "Transaction payload must contain the entered accounting details"
     );
@@ -676,6 +681,7 @@ test("Ledger Party Detail refreshes the party balance after saving a transaction
         transactionType: { value: "credit" },
         transactionAmount: { value: "1250" },
         transactionDate: { value: "2026-09-13" },
+        transactionInterestRate: { value: "12.5" },
         transactionDescription: { value: "Advance payment" },
         transactionFormError: {
             hidden: true,
@@ -882,6 +888,7 @@ test("Ledger Party Detail renders edit and delete controls with the transaction 
         transactionType: { value: "credit" },
         transactionAmount: { value: "" },
         transactionDate: { value: "" },
+        transactionInterestRate: { value: "12.5" },
         transactionDescription: { value: "" },
         transactionFormError: {
             hidden: true,
@@ -963,6 +970,7 @@ test("Ledger Party Detail renders edit and delete controls with the transaction 
                                     transaction_type: "credit",
                                     amount: 500,
                                     transaction_date: "2026-09-13",
+                                    interest_rate: 12.5,
                                     description: "Advance payment"
                                 }
                             ]
@@ -1068,6 +1076,7 @@ test("Ledger Party Detail edits an existing transaction using its transaction ID
         transactionType: { value: "credit" },
         transactionAmount: { value: "" },
         transactionDate: { value: "" },
+        transactionInterestRate: { value: "12.5" },
         transactionDescription: { value: "" },
         transactionFormError: {
             hidden: true,
@@ -1152,6 +1161,7 @@ test("Ledger Party Detail edits an existing transaction using its transaction ID
                                     transaction_type: "credit",
                                     amount: 500,
                                     transaction_date: "2026-09-13",
+                                    interest_rate: 12.5,
                                     description: "Advance payment"
                                 }
                             ]
@@ -1259,7 +1269,8 @@ test("Ledger Party Detail edits an existing transaction using its transaction ID
             transactionType: "credit",
             amount: 750,
             transactionDate: "2026-09-13",
-            description: "Updated payment"
+            description: "Updated payment",
+            interestRate: 12.5
         }
     );
 

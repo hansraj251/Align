@@ -27,6 +27,7 @@ async (
 
             reference_no,
 
+                        interest_rate,
             created_at,
 
             updated_at
@@ -75,6 +76,7 @@ async (
 
             reference_no,
 
+                        interest_rate,
             created_at,
 
             updated_at
@@ -104,7 +106,8 @@ async (
     transactionDate,
     description,
     paymentMode,
-    referenceNo
+    referenceNo,
+    interestRate
 ) => {
 
     const result =
@@ -119,10 +122,12 @@ async (
                 transaction_date,
                 description,
                 payment_mode,
-                reference_no
+                reference_no,
+                interest_rate
             )
             VALUES
             (
+                ?,
                 ?,
                 ?,
                 ?,
@@ -140,7 +145,8 @@ async (
                 transactionDate,
                 description,
                 paymentMode,
-                referenceNo
+                referenceNo,
+                interestRate
             ]
 
         );
@@ -161,7 +167,8 @@ async (
     transactionDate,
     description,
     paymentMode,
-    referenceNo
+    referenceNo,
+    interestRate
 ) => {
 
     await db.runAsync(
@@ -183,6 +190,8 @@ async (
 
             reference_no = ?,
 
+            interest_rate = ?,
+
             updated_at = CURRENT_TIMESTAMP
 
         WHERE
@@ -200,6 +209,7 @@ async (
             description,
             paymentMode,
             referenceNo,
+            interestRate,
             transactionId,
             partyId
         ]

@@ -22,6 +22,7 @@ const transactionTypeButtons = document.querySelectorAll(
 );
 const transactionAmount = document.getElementById("transactionAmount");
 const transactionDate = document.getElementById("transactionDate");
+const transactionInterestRate = document.getElementById("transactionInterestRate");
 const transactionDescription = document.getElementById("transactionDescription");
 const transactionFormError = document.getElementById("transactionFormError");
 const transactionModalTitle = document.getElementById("transactionModalTitle");
@@ -219,6 +220,9 @@ function openEditTransaction(transactionId) {
 
     transactionDate.value =
         transaction.transaction_date || "";
+
+    transactionInterestRate.value =
+        transaction.interest_rate ?? "";
 
     transactionDescription.value =
         transaction.description || "";
@@ -433,11 +437,23 @@ async function saveTransaction(event) {
         return;
     }
 
+    const interestRate = Number(transactionInterestRate.value);
+
+    if (!Number.isFinite(interestRate) || interestRate < 0) {
+        if (transactionFormError) {
+            transactionFormError.textContent =
+                "Enter a valid interest rate.";
+            transactionFormError.hidden = false;
+        }
+        return;
+    }
+
     const payload = {
         transactionType: transactionType.value,
         amount,
         transactionDate: transactionDate.value,
-        description: transactionDescription.value.trim()
+        description: transactionDescription.value.trim(),
+        interestRate
     };
 
     try {
