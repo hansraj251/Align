@@ -273,6 +273,31 @@ button {
   margin-bottom: 10px;
 }
 
+.party-header-details {
+  cursor: pointer;
+  flex: 1;
+  min-width: 0;
+  padding: 4px 0;
+  border-radius: 8px;
+}
+
+.party-header-details:focus-visible {
+  outline: 2px solid var(--border);
+  outline-offset: 3px;
+}
+
+.party-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.party-header-actions .secondary-button {
+  min-height: 36px;
+  padding: 7px 12px;
+}
+
 .section-heading h1 {
   margin: 0;
   font-size: 19px;

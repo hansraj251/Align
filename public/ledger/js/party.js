@@ -8,6 +8,30 @@ const partyError = document.getElementById("partyError");
 const partyDetails = document.getElementById("partyDetails");
 const partyName = document.getElementById("partyName");
 const partyMobile = document.getElementById("partyMobile");
+const partyHeaderDetails = document.getElementById("partyHeaderDetails");
+
+const partyHeaderActions = document.getElementById("partyHeaderActions");
+
+const editPartyButton = document.getElementById("editPartyButton");
+
+const deletePartyButton = document.getElementById("deletePartyButton");
+
+const editPartyModal = document.getElementById("editPartyModal");
+
+const closeEditPartyModal = document.getElementById("closeEditPartyModal");
+
+const cancelEditPartyButton = document.getElementById("cancelEditPartyButton");
+
+const editPartyForm = document.getElementById("editPartyForm");
+
+const editPartyName = document.getElementById("editPartyName");
+
+const editPartyMobile = document.getElementById("editPartyMobile");
+
+const editPartyAddress = document.getElementById("editPartyAddress");
+
+const editPartyFormError = document.getElementById("editPartyFormError");
+
 const partyBalance = document.getElementById("partyBalance");
 const partyBalanceLabel = document.getElementById("partyBalanceLabel");
 const partyInterest = document.getElementById("partyInterest");
@@ -32,6 +56,194 @@ const transactionSubmitButton =
 
 let editingTransactionId = null;
 let loadedTransactions = [];
+
+let loadedParty = null;
+
+function openEditPartyModal() {
+    if (!loadedParty || !editPartyModal) {
+        return;
+    }
+
+    editPartyName.value = loadedParty.name || "";
+    editPartyMobile.value = loadedParty.mobile || "";
+    editPartyAddress.value = loadedParty.address || "";
+
+    if (editPartyFormError) {
+        editPartyFormError.hidden = true;
+        editPartyFormError.textContent = "";
+    }
+
+    editPartyModal.hidden = false;
+
+    setTimeout(() => {
+        editPartyName.focus();
+    }, 50);
+}
+
+function closeEditPartyModalDialog() {
+    if (editPartyModal) {
+        editPartyModal.hidden = true;
+    }
+}
+
+async function updateParty() {
+    if (!partyId || !editPartyForm) {
+        return;
+    }
+
+    const payload = {
+        name: editPartyName.value.trim(),
+        mobile: editPartyMobile.value.trim(),
+        address: editPartyAddress.value.trim()
+    };
+
+    if (!payload.name) {
+        if (editPartyFormError) {
+            editPartyFormError.textContent = "Party name is required.";
+            editPartyFormError.hidden = false;
+        }
+        return;
+    }
+
+    const submitButton = editPartyForm.querySelector(".primary-button");
+
+    if (submitButton) {
+        submitButton.disabled = true;
+    }
+
+    try {
+        const response = await fetch(
+            `/api/ledger/parties/${encodeURIComponent(partyId)}`,
+            {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        if (response.status === 401 || response.status === 403) {
+            Auth.logout("/ledger/login.html");
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.party) {
+            throw new Error(
+                data.message || "Unable to update party."
+            );
+        }
+
+        closeEditPartyModalDialog();
+        renderParty(data.party);
+    } catch (error) {
+        console.error("Update party failed:", error);
+
+        if (editPartyFormError) {
+            editPartyFormError.textContent =
+                error.message || "Unable to update party.";
+            editPartyFormError.hidden = false;
+        }
+    } finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+        }
+    }
+}
+
+async function deleteParty() {
+    if (!partyId) {
+        return;
+    }
+
+    const confirmed = confirm(
+        `Delete ${loadedParty?.name || "this party"}?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `/api/ledger/parties/${encodeURIComponent(partyId)}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (response.status === 401 || response.status === 403) {
+            Auth.logout("/ledger/login.html");
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.message || "Unable to delete party."
+            );
+        }
+
+        window.location.href = "/ledger/index.html";
+    } catch (error) {
+        console.error("Delete party failed:", error);
+        alert(error.message || "Unable to delete party.");
+    }
+}
+
+function togglePartyHeaderActions() {
+    if (partyHeaderActions) {
+        partyHeaderActions.hidden = !partyHeaderActions.hidden;
+    }
+}
+
+if (partyHeaderDetails) {
+    partyHeaderDetails.addEventListener("click", togglePartyHeaderActions);
+
+    partyHeaderDetails.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            togglePartyHeaderActions();
+        }
+    });
+}
+
+if (editPartyButton) {
+    editPartyButton.addEventListener("click", openEditPartyModal);
+}
+
+if (deletePartyButton) {
+    deletePartyButton.addEventListener("click", deleteParty);
+}
+
+if (closeEditPartyModal) {
+    closeEditPartyModal.addEventListener(
+        "click",
+        closeEditPartyModalDialog
+    );
+}
+
+if (cancelEditPartyButton) {
+    cancelEditPartyButton.addEventListener(
+        "click",
+        closeEditPartyModalDialog
+    );
+}
+
+if (editPartyForm) {
+    editPartyForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        await updateParty();
+    });
+}
+
 
 function setTransactionType(type) {
     const selectedType =
@@ -155,6 +367,7 @@ function showError(message) {
 }
 
 function renderParty(party) {
+    loadedParty = party;
     partyName.textContent = party.name || "Party";
     partyMobile.textContent = party.mobile || "No mobile number";
 

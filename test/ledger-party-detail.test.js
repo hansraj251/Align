@@ -338,6 +338,44 @@ test("Ledger Party Detail loads and renders the party transaction history", asyn
     );
 });
 
+
+test("Ledger Party Detail makes the party header editable", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    assert.match(
+        html,
+        /id=["']partyName["'][^>]*>/,
+        "Party name must remain available in the party header"
+    );
+
+    assert.match(
+        html,
+        /id=["']partyMobile["'][^>]*>/,
+        "Party mobile must remain available in the party header"
+    );
+
+    assert.match(
+        html,
+        /id=["']partyHeaderActions["'][^>]*>/,
+        "Party header must provide an actions container"
+    );
+
+    assert.match(
+        html,
+        /data-action=["']edit-party["']/,
+        "Party header must provide an Edit action"
+    );
+
+    assert.match(
+        html,
+        /data-action=["']delete-party["']/,
+        "Party header must provide a Delete action"
+    );
+});
+
 test("Ledger Party Detail provides an Add Transaction form for the selected party", () => {
     const html = fs.readFileSync(
         require.resolve("../public/ledger/party.html"),
@@ -378,6 +416,12 @@ test("Ledger Party Detail provides an Add Transaction form for the selected part
         html,
         /id="transactionDescription"/,
         "Transaction form must provide a transaction description field"
+    );
+
+    assert.match(
+        html,
+        /id=["']transactionInterestRate["'][^>]*value=["']0["']/,
+        "Interest rate must default to zero"
     );
 });
 
@@ -1884,5 +1928,105 @@ test("Party page defines green, red, and yellow status colors for balance and IN
         cssSource,
         /\.party-interest-negative[\s\S]*?color:\s*#dc2626/,
         "Negative INT must be red"
+    );
+});
+
+test("Ledger Party Detail hides party actions until the header is clicked", () => {
+    const html = fs.readFileSync(
+        require.resolve("../public/ledger/party.html"),
+        "utf8"
+    );
+
+    assert.match(
+        html,
+        /id=["']partyHeaderActions["'][^>]*hidden/,
+        "Party Edit/Delete actions must be hidden initially"
+    );
+});
+
+test("Ledger Party Detail supports keyboard activation of party header actions", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /partyHeaderDetails\.addEventListener\(["']keydown["']/,
+        "Party header must support keyboard activation"
+    );
+
+    assert.match(
+        source,
+        /event\.key\s*===\s*["']Enter["']/,
+        "Party header must respond to Enter"
+    );
+
+    assert.match(
+        source,
+        /event\.key\s*===\s*["'] ["']/,
+        "Party header must respond to Space"
+    );
+});
+
+test("Ledger Party Detail updates the party through the existing party API", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /\/api\/ledger\/parties\/\$\{encodeURIComponent\(partyId\)\}/,
+        "Party edit must target the selected party API"
+    );
+
+    assert.match(
+        source,
+        /method:\s*["']PUT["']/,
+        "Party edit must use PUT"
+    );
+
+    assert.match(
+        source,
+        /name:\s*editPartyName\.value\.trim\(\)/,
+        "Party edit must submit the edited name"
+    );
+
+    assert.match(
+        source,
+        /mobile:\s*editPartyMobile\.value\.trim\(\)/,
+        "Party edit must submit the edited mobile"
+    );
+
+    assert.match(
+        source,
+        /address:\s*editPartyAddress\.value\.trim\(\)/,
+        "Party edit must submit the edited address"
+    );
+});
+
+test("Ledger Party Detail deactivates the party through the existing party API", () => {
+    const source = fs.readFileSync(
+        require.resolve("../public/ledger/js/party.js"),
+        "utf8"
+    );
+
+    assert.match(
+        source,
+        /\/api\/ledger\/parties\/\$\{encodeURIComponent\(partyId\)\}/,
+        "Party delete must target the selected party API"
+    );
+
+    assert.match(
+        source,
+        /method:\s*["']DELETE["']/,
+        "Party delete must use DELETE"
+    );
+
+    assert.match(
+        source,
+        /confirm\(/,
+        "Party delete must require confirmation"
     );
 });

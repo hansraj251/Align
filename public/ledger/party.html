@@ -15,9 +15,27 @@
         </span>
       </a>
       <div class="section-heading">
-          <div>
+          <div id="partyHeaderDetails" class="party-header-details" role="button" tabindex="0" aria-label="Party actions">
             <h1 id="partyName"></h1>
             <p id="partyMobile"></p>
+          </div>
+          <div id="partyHeaderActions" class="party-header-actions" hidden>
+            <button
+              type="button"
+              class="secondary-button"
+              data-action="edit-party"
+              id="editPartyButton"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              class="secondary-button"
+              data-action="delete-party"
+              id="deletePartyButton"
+            >
+              Delete
+            </button>
           </div>
         </div>
     </header>
@@ -109,6 +127,7 @@
                 type="number"
                 min="0"
                 step="0.01"
+                value="0"
                 required
               >
             </label>
@@ -128,6 +147,42 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <div class="modal-backdrop" id="editPartyModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editPartyModalTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="editPartyModalTitle">Edit Party</h2>
+          <p>Update party details.</p>
+        </div>
+        <button id="closeEditPartyModal" class="modal-close" type="button">×</button>
+      </div>
+
+      <form id="editPartyForm">
+        <label>
+          Name
+          <input id="editPartyName" type="text" required maxlength="100" autocomplete="name">
+        </label>
+
+        <label>
+          Mobile
+          <input id="editPartyMobile" type="tel" maxlength="20" autocomplete="tel">
+        </label>
+
+        <label>
+          Address
+          <textarea id="editPartyAddress" rows="3" maxlength="250"></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button id="cancelEditPartyButton" type="button" class="secondary-button">Cancel</button>
+          <button type="submit" class="primary-button">Save Party</button>
+        </div>
+
+        <p id="editPartyFormError" class="form-error" hidden></p>
+      </form>
+    </div>
   </div>
 
   <script src="/js/auth.js"></script>
