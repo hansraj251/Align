@@ -278,6 +278,25 @@ if (deletePartyButton) {
     deletePartyButton.addEventListener("click", deleteParty);
 }
 
+const partyReportButton =
+    document.getElementById(
+        "partyReportButton"
+    );
+
+if (partyReportButton) {
+
+    partyReportButton.addEventListener(
+        "click",
+        () => {
+            window.location.href =
+                `/ledger/party-report.html?id=${encodeURIComponent(
+                    partyId
+                )}`;
+        }
+    );
+
+}
+
 if (closeEditPartyModal) {
     closeEditPartyModal.addEventListener(
         "click",

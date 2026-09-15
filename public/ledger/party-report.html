@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Party Report - Ledger</title>
+
+    <link
+        rel="stylesheet"
+        href="/ledger/css/ledger.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <header class="topbar">
+
+            <a
+                href="/ledger/index.html"
+                class="ledger-book-button"
+                style="text-decoration:none;"
+            >
+
+                <span>
+
+                    <strong>Back</strong>
+
+                </span>
+
+            </a>
+
+            <div class="section-heading">
+
+                <div class="party-header-details">
+
+                    <h1 id="partyName"></h1>
+
+                    <p id="partyMobile"></p>
+
+                    <p id="partyEmail"></p>
+
+                    <p id="partyAddress"></p>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <main class="content">
+
+            <section
+                id="partyLoading"
+                class="empty-state"
+            >
+
+                <h2>Loading party report...</h2>
+
+            </section>
+
+            <section
+                id="partyError"
+                class="empty-state"
+                hidden
+            >
+
+                <h2>Unable to load party report</h2>
+
+                <p></p>
+
+            </section>
+
+            <section
+                id="partyDetails"
+                hidden
+            >
+
+                <div class="party-summary-cards">
+
+                    <article class="summary-card get-card">
+
+                        <span
+                            class="summary-label"
+                            id="partyBalanceLabel"
+                        >
+                            BALANCE
+                        </span>
+
+                        <strong id="partyBalance">
+                            ₹0.00
+                        </strong>
+
+                    </article>
+
+                    <article
+                        class="summary-card interest-card"
+                        id="interestReceivedCard"
+                    >
+
+                        <span class="summary-label">
+                            INT.
+                        </span>
+
+                        <strong id="partyInterest">
+                            ₹0.00
+                        </strong>
+
+                    </article>
+
+                </div>
+
+                <section
+                    class="parties-section"
+                    style="margin-top:24px;"
+                >
+
+                    <div
+                        id="transactionsList"
+                        class="parties-list"
+                    ></div>
+
+                </section>
+
+                <section
+                    class="parties-section"
+                    style="margin-top:24px;"
+                >
+
+                    <div class="section-heading">
+
+                        <div>
+
+                            <h2>Interest Received / Paid</h2>
+
+                            <p>
+                                Interest entries for this party.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="interest-received-total">
+
+                        <span>
+                            Total Interest Received/Paid
+                        </span>
+
+                        <strong id="interestReceivedTotal">
+                            ₹0.00
+                        </strong>
+
+                    </div>
+
+                    <div
+                        id="interestReceivedList"
+                        class="interest-received-list"
+                    ></div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="/js/auth.js"></script>
+
+    <script src="/js/notify.js"></script>
+
+    <script src="/js/toast.js"></script>
+
+    <script src="/js/components.js"></script>
+
+    <script src="/js/modal.js"></script>
+
+    <script src="/ledger/js/party-report.js"></script>
+
+</body>
+
+</html>

@@ -28,6 +28,33 @@ async function getByBusinessId(
     );
 }
 
+async function getByEmail(
+    email
+) {
+    return db.allAsync(
+        `
+        SELECT
+            id,
+            business_id,
+            name,
+            mobile,
+            email,
+            address,
+            opening_balance,
+            opening_balance_type,
+            notes,
+            status,
+            created_at,
+            updated_at
+        FROM ledger_parties
+        WHERE LOWER(TRIM(email)) = LOWER(TRIM(?))
+          AND status = 'active'
+        ORDER BY id ASC
+        `,
+        [email]
+    );
+}
+
 async function getById(
     partyId,
     businessId

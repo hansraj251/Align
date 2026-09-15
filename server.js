@@ -102,6 +102,14 @@ app.use(
 );
 
 app.use(
+
+    "/api/ledger/party-report",
+
+    require("./routes/ledgerPartyReportRoutes")
+
+);
+
+app.use(
     "/api/ledger/interest-received",
     require("./routes/ledgerInterestReceivedRoutes")
 );

@@ -43,6 +43,7 @@
     partyForm: $("partyForm"),
     partyName: $("partyName"),
     partyMobile: $("partyMobile"),
+    partyEmail: $("partyEmail"),
     partyAddress: $("partyAddress"),
     partyFormError: $("partyFormError")
   };
@@ -313,6 +314,7 @@
     const payload = {
       name: els.partyName.value.trim(),
       mobile: els.partyMobile.value.trim(),
+      email: els.partyEmail.value.trim().toLowerCase(),
       address: els.partyAddress.value.trim()
     };
 
