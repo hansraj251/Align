@@ -548,9 +548,9 @@ function renderInterestReceived(
     if (interestReceivedTotal) {
 
         interestReceivedTotal.textContent =
-            formatSignedAmount(
-                total
-            );
+    formatAmount(
+        Math.abs(Number(total || 0))
+    );
 
     }
 
@@ -572,9 +572,11 @@ function renderInterestReceived(
                 (entry) => {
 
                     const amount =
-                        formatSignedAmount(
-                            entry.amount
-                        );
+    formatAmount(
+        Math.abs(
+            Number(entry.amount || 0)
+        )
+    );
 
                     const note =
                         entry.note === "Received"
