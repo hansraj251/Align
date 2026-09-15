@@ -132,16 +132,19 @@
 
     </main>
 
-    <button class="floating-add" id="addPartyButton" type="button">
-      <span>＋</span>
-      
-    </button>
-
     <nav class="bottom-nav">
       <button class="nav-item selected" type="button" data-nav="parties">
         <span class="nav-icon">♙</span>
         <span>Parties</span>
       </button>
+      <button
+    class="nav-item"
+    type="button"
+    id="bottomAddPartyButton"
+    >
+    <span class="nav-icon">＋</span>
+    <span>Add Party</span>
+  </button>
 
       <button class="nav-item" type="button" data-nav="sharing">
         <span class="nav-icon">↗</span>
@@ -173,7 +176,7 @@
         </label>
 
         <label>
-          Mail Address
+          Mail Address (Required for sharing reports)
           <input id="partyEmail" type="email" maxlength="150" autocomplete="email">
         </label>
 

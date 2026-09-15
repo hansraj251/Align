@@ -34,7 +34,8 @@
     emptyState: $("emptyState"),
     noSearchResults: $("noSearchResults"),
 
-    addPartyButton: $("addPartyButton"),
+    
+    bottomAddPartyButton: $("bottomAddPartyButton"),
     emptyAddPartyButton: $("emptyAddPartyButton"),
 
     partyModal: $("partyModal"),
@@ -385,7 +386,11 @@
       els.partySearch.focus();
     });
 
-    els.addPartyButton.addEventListener("click", openPartyModal);
+
+    els.bottomAddPartyButton.addEventListener(
+    "click",
+    openPartyModal
+    );
     els.emptyAddPartyButton.addEventListener("click", openPartyModal);
 
     els.closePartyModal.addEventListener("click", closePartyModal);
