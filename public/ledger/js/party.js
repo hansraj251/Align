@@ -99,6 +99,9 @@ let editingInterestReceivedId = null;
 const transactionSubmitButton =
     document.getElementById("transactionSubmitButton");
 
+const deleteTransactionButton =
+    document.getElementById("deleteTransactionButton");
+
 let editingTransactionId = null;
 let loadedTransactions = [];
 
@@ -544,9 +547,13 @@ function renderInterestReceived(entries, total) {
                     data-interest-id="${entry.id}"
                 >
                     <div class="interest-received-info">
+                    
                         <strong>
                             ${formatInterestReceivedDate(entry.interest_date)}
                         </strong>
+                        <br>
+                        <strong>${amount}</strong>
+                        <br>
                         ${
                             note
                                 ? `<span>${note}</span>`
@@ -555,7 +562,7 @@ function renderInterestReceived(entries, total) {
                     </div>
 
                     <div class="interest-received-actions">
-                        <strong>${amount}</strong>
+                        
 
                         <div class="transaction-actions">
                             <button
@@ -564,7 +571,7 @@ function renderInterestReceived(entries, total) {
                                 data-interest-action="edit"
                                 data-interest-id="${entry.id}"
                             >
-                                Edit
+                                ✎
                             </button>
 
                             <button
@@ -573,7 +580,7 @@ function renderInterestReceived(entries, total) {
                                 data-interest-action="delete"
                                 data-interest-id="${entry.id}"
                             >
-                                Delete
+                                ×
                             </button>
                         </div>
                     </div>
@@ -1003,24 +1010,7 @@ function renderTransactions(transactions) {
                         <span class="party-transaction-amount">${amount}</span>${interestLabel}
                     </strong>
                 </div>
-                <div class="transaction-actions">
-                    <button
-                        type="button"
-                        class="secondary-button transaction-edit-button"
-                        data-action="edit"
-                        data-transaction-id="${transaction.id}"
-                    >
-                        Edit
-                    </button>
-                    <button
-                        type="button"
-                        class="secondary-button transaction-delete-button"
-                        data-action="delete"
-                        data-transaction-id="${transaction.id}"
-                    >
-                        Delete
-                    </button>
-                </div>
+
             </article>
         `;
     }).join("");
@@ -1044,6 +1034,11 @@ function setTransactionFormMode(transaction = null) {
             editingTransactionId
                 ? "Update"
                 : "Save";
+    }
+
+    if (deleteTransactionButton) {
+        deleteTransactionButton.hidden =
+            !editingTransactionId;
     }
 }
 
@@ -1126,6 +1121,12 @@ async function deleteTransaction(transactionId) {
 
                 await loadPartyDetails();
                 await loadTransactions();
+
+                if (transactionModal) {
+                    transactionModal.hidden = true;
+                }
+
+                setTransactionFormMode(null);
             } catch (error) {
                 console.error(
                     "Ledger transaction delete failed:",
@@ -1149,24 +1150,15 @@ async function deleteTransaction(transactionId) {
     );
 }
 function handleTransactionAction(event) {
-    const button = event.target.closest(
-        "[data-action][data-transaction-id]"
+    const row = event.target.closest(
+        ".party-row[data-transaction-id]"
     );
 
-    if (!button) {
+    if (!row || !transactionsList.contains(row)) {
         return;
     }
 
-    const transactionId =
-        button.dataset.transactionId;
-
-    if (button.dataset.action === "edit") {
-        openEditTransaction(transactionId);
-    }
-
-    if (button.dataset.action === "delete") {
-        deleteTransaction(transactionId);
-    }
+    openEditTransaction(row.dataset.transactionId);
 }
 
 async function loadTransactions() {
@@ -1456,6 +1448,17 @@ if (transactionForm) {
     transactionForm.addEventListener(
         "submit",
         saveTransaction
+    );
+}
+
+if (deleteTransactionButton) {
+    deleteTransactionButton.addEventListener(
+        "click",
+        () => {
+            if (editingTransactionId) {
+                deleteTransaction(editingTransactionId);
+            }
+        }
     );
 }
 

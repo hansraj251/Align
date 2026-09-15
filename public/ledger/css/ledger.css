@@ -1387,3 +1387,41 @@ button {
   }
 }
 
+
+.transaction-modal-delete-button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 14px;
+    border: 1px solid #f0d0d0;
+    border-radius: 10px;
+    color: #b42318;
+    background: #fff8f8;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.transaction-modal-delete-button:hover {
+    background: #fff1f1;
+}
+
+
+@media (max-width: 560px) {
+    #transactionModal .modal {
+        max-height: calc(100vh - 24px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #transactionModal .modal-backdrop {
+        overflow-y: auto;
+        align-items: center;
+    }
+}
+
+
+#transactionDescription,
+#interestReceivedNote {
+    min-height: 60px;
+    height: 60px;
+}
+
