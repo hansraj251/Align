@@ -22,6 +22,12 @@ router.use(
 );
 
 router.get(
+    "/",
+    ledgerPartyReportController
+        .getLinkedParties
+);
+
+router.get(
     "/:partyId",
     ledgerPartyReportController
         .getPartyReport

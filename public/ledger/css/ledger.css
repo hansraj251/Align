@@ -384,11 +384,11 @@ button {
   font-size: 10px;
 }
 
-.party-balance-label.party-balance-give {
+.party-balance-label.party-balance-report-give {
   color: #16a34a;
 }
 
-.party-balance-label.party-balance-get {
+.party-balance-label.party-balance-report-get {
   color: #dc2626;
 }
 
@@ -396,13 +396,21 @@ button {
   color: #ca8a04;
 }
 
-.party-interest-positive {
+.party-interest-negative {
   color: #16a34a;
 }
 
-.party-interest-negative {
+.party-interest-positive {
   color: #dc2626;
 }
+.party-interest-report-positive {
+  color: #16a34a;
+}
+
+.party-interest-report-negative {
+  color: #dc2626;
+}
+
 
 .empty-state {
   padding: 34px 18px;
@@ -1106,6 +1114,13 @@ button {
 .transaction-got .party-transaction-interest {
     color: #dc2626;
 }
+.transaction-gave .party-transaction-report-interest {
+    color: #16a34a;
+}
+
+.transaction-got .party-transaction-report-interest {
+    color: #dc2626;
+}
 
 #partyBalance.party-balance-give {
   color: #16a34a;
@@ -1286,6 +1301,7 @@ button {
 }
 
 #interestReceivedForm input,
+#interestReceivedForm select,
 #interestReceivedForm textarea {
   display: block;
   width: 100%;
@@ -1307,6 +1323,7 @@ button {
 }
 
 #interestReceivedForm input:focus,
+#interestReceivedForm select:focus,
 #interestReceivedForm textarea:focus {
   border-color: #aeb3ba;
 }

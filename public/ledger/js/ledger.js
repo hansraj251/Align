@@ -369,7 +369,7 @@
     });
 
     els.reportsButton.addEventListener("click", () => {
-      alert("Reports will be enabled in a later phase.");
+      window.location.href = "/ledger/party-report.html";
     });
 
     els.partySearch.addEventListener("input", () => {

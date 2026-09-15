@@ -41,24 +41,33 @@
             </a>
 
             <div class="section-heading">
-
-                <div class="party-header-details">
-
-                    <h1 id="partyName"></h1>
-
-                    <p id="partyMobile"></p>
-
-                    <p id="partyEmail"></p>
-
-                    <p id="partyAddress"></p>
-
+                <div>
+                    <h1>Reports</h1>
+                    
                 </div>
-
             </div>
 
         </header>
 
         <main class="content">
+            <section
+                id="linkedPartiesSection"
+                class="parties-section"
+            >
+                <div
+                    id="linkedPartiesList"
+                    class="parties-list"
+                ></div>
+
+                <div
+                    id="linkedPartiesEmpty"
+                    class="empty-state"
+                    hidden
+                >
+                    <h2>No linked Reports</h2>
+                </div>
+            </section>
+
 
             <section
                 id="partyLoading"
@@ -85,6 +94,24 @@
                 id="partyDetails"
                 hidden
             >
+
+                <section
+                    class="parties-section"
+                    style="margin-bottom:24px;"
+                >
+                    <div class="party-info">
+                        <strong id="partyName">
+                            Party
+                        </strong>
+                        <span id="partyMobile">
+                            No mobile number
+                        </span>
+                        <span id="partyEmail">
+                            No mail address
+                        </span>
+                        
+                    </div>
+                </section>
 
                 <div class="party-summary-cards">
 
@@ -140,8 +167,6 @@
                     <div class="section-heading">
 
                         <div>
-
-                            <h2>Interest Received / Paid</h2>
 
                             <p>
                                 Interest entries for this party.

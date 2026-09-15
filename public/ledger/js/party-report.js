@@ -11,6 +11,16 @@ const params =
 const partyId =
     params.get("id");
 
+const linkedPartiesList =
+    document.getElementById(
+        "linkedPartiesList"
+    );
+
+const linkedPartiesEmpty =
+    document.getElementById(
+        "linkedPartiesEmpty"
+    );
+
 const partyLoading =
     document.getElementById(
         "partyLoading"
@@ -80,6 +90,60 @@ const transactionsList =
     document.getElementById(
         "transactionsList"
     );
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function renderLinkedParties(
+    parties
+) {
+    linkedPartiesList.innerHTML = "";
+
+    if (!parties.length) {
+        linkedPartiesEmpty.hidden = false;
+        return;
+    }
+
+    linkedPartiesEmpty.hidden = true;
+
+    for (const party of parties) {
+        const row =
+            document.createElement(
+                "article"
+            );
+
+        row.className = "party-row";
+        row.style.cursor = "pointer";
+
+        row.innerHTML = `
+            <div class="party-info">
+                <strong>${escapeHtml(party.name || "Party")}</strong>
+                <span>${escapeHtml(party.email || "No mail address")}</span>
+                <span>${escapeHtml(party.mobile || "No mobile number")}</span>
+            </div>
+        `;
+
+        row.addEventListener(
+            "click",
+            () => {
+                window.location.href =
+                    `/ledger/party-report.html?id=${encodeURIComponent(
+                        party.id
+                    )}`;
+            }
+        );
+
+        linkedPartiesList.appendChild(
+            row
+        );
+    }
+}
 
 function formatAmount(amount) {
 
@@ -295,7 +359,8 @@ function showError(message) {
 }
 
 function renderParty(
-    party
+    party,
+    summary
 ) {
 
     partyName.textContent =
@@ -309,60 +374,58 @@ function renderParty(
         party.email ||
         "No mail address";
 
-    partyAddress.textContent =
-        party.address ||
-        "No address";
+    
 
     const balance =
         Number(
-            party.net_balance || 0
+            summary.net_balance || 0
         );
 
     partyBalance.textContent =
         formatAmount(balance);
 
     partyBalance.classList.remove(
-        "party-balance-give",
-        "party-balance-get",
+        "party-balance-report-give",
+        "party-balance-report-get",
         "party-balance-settled"
     );
 
     partyBalanceLabel.classList.remove(
-        "party-balance-give",
-        "party-balance-get",
+        "party-balance-report-give",
+        "party-balance-report-get",
         "party-balance-settled"
     );
 
     if (
-        party.balance_type ===
+        summary.balance_type ===
         "receivable"
-    ) {
-
-        partyBalanceLabel.textContent =
-            "YOU WILL GIVE";
-
-        partyBalanceLabel.classList.add(
-            "party-balance-give"
-        );
-
-        partyBalance.classList.add(
-            "party-balance-give"
-        );
-
-    } else if (
-        party.balance_type ===
-        "payable"
     ) {
 
         partyBalanceLabel.textContent =
             "YOU WILL GET";
 
         partyBalanceLabel.classList.add(
-            "party-balance-get"
+            "party-balance-report-give"
         );
 
         partyBalance.classList.add(
-            "party-balance-get"
+            "party-balance-report-give"
+        );
+
+    } else if (
+        summary.balance_type ===
+        "payable"
+    ) {
+
+        partyBalanceLabel.textContent =
+            "YOU WILL GIVE";
+
+        partyBalanceLabel.classList.add(
+            "party-balance-report-get"
+        );
+
+        partyBalance.classList.add(
+            "party-balance-report-get"
         );
 
     } else {
@@ -430,8 +493,8 @@ function renderTransactions(
                 const typeLabel =
                     transaction.transaction_type ===
                     "credit"
-                        ? "You Got"
-                        : "You Gave";
+                        ? "You Gave"
+                        : "You Got";
 
                 const hasInterest =
                     Number(
@@ -440,7 +503,7 @@ function renderTransactions(
 
                 const interestLabel =
                     hasInterest
-                        ? `<span class="party-transaction-interest"> (INT. ${formatAmount(
+                        ? `<span class="party-transaction-report-interest"> (INT. ${formatAmount(
                             calculateTransactionInterest(
                                 transaction
                             )
@@ -456,12 +519,12 @@ function renderTransactions(
                         <div class="party-balance ${
                             transaction.transaction_type ===
                             "credit"
-                                ? "transaction-got"
-                                : "transaction-gave"
+                                ? "transaction-gave"
+                                : "transaction-got"
                         }">
                             <span class="party-balance-label">${typeLabel}</span>
                             <strong class="party-balance-amount">
-                                <span class="party-transaction-amount">${amount}</span>${interestLabel}
+                                <span class="party-transaction-report-amount">${amount}</span>${interestLabel}
                             </strong>
                         </div>
                     </article>
@@ -477,7 +540,6 @@ function renderInterestReceived(
     total,
     transactions
 ) {
-
     const items =
         Array.isArray(entries)
             ? entries
@@ -515,7 +577,11 @@ function renderInterestReceived(
                         );
 
                     const note =
-                        entry.note || "";
+                        entry.note === "Received"
+                            ? "Paid"
+                            : entry.note === "Paid"
+                                ? "Received"
+                                : "";
 
                     return `
                         <article class="interest-received-row">
@@ -559,10 +625,15 @@ function renderInterestReceived(
             calculatedNetInterest -
             totalInterestReceived;
 
-        partyInterest.textContent =
-            formatSignedAmount(
-                remainingInterest
-            );
+        if (remainingInterest > 0) {
+            partyInterest.textContent =
+                ` ${formatAmount(remainingInterest)}`;
+        } else if (remainingInterest < 0) {
+            partyInterest.textContent =
+                `${formatAmount(Math.abs(remainingInterest))}`;
+        } else {
+            partyInterest.textContent = "";
+        }
 
         const hasInterest =
             remainingInterest !== 0;
@@ -575,14 +646,14 @@ function renderInterestReceived(
         }
 
         partyInterest.classList.remove(
-            "party-interest-positive",
-            "party-interest-negative"
+            "party-interest-report-positive",
+            "party-interest-report-negative"
         );
 
         if (remainingInterest > 0) {
 
             partyInterest.classList.add(
-                "party-interest-positive"
+                "party-interest-report-positive"
             );
 
         } else if (
@@ -590,13 +661,47 @@ function renderInterestReceived(
         ) {
 
             partyInterest.classList.add(
-                "party-interest-negative"
+                "party-interest-report-negative"
             );
 
         }
 
     }
 
+}
+
+async function loadLinkedParties() {
+    if (!token) {
+        Auth.logout("/ledger/login.html");
+        return;
+    }
+
+    const response =
+        await fetch(
+            "/api/ledger/party-report/",
+            {
+                headers: {
+                    Authorization:
+                        `Bearer ${token}`
+                }
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if (!response.ok || !data.success) {
+        throw new Error(
+            data.message ||
+            "Unable to load linked parties."
+        );
+    }
+
+    renderLinkedParties(
+        data.parties || []
+    );
+
+    partyLoading.hidden = true;
 }
 
 async function loadReport() {
@@ -669,7 +774,8 @@ async function loadReport() {
         data.report;
 
     renderParty(
-        report.party
+        report.party,
+        report.summary
     );
 
     renderTransactions(
@@ -684,18 +790,20 @@ async function loadReport() {
 
 }
 
-loadReport().catch(
-    (error) => {
+const loadPromise =
+    partyId
+        ? loadReport()
+        : loadLinkedParties();
 
+loadPromise.catch(
+    (error) => {
         console.error(
             "Ledger party report load failed:",
             error
         );
-
         showError(
             error.message ||
             "Unable to load party report."
         );
-
     }
 );

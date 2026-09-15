@@ -201,6 +201,7 @@ async function deactivate(
 
 module.exports = {
     getByBusinessId,
+    getByEmail,
     getById,
     create,
     update,

@@ -100,6 +100,28 @@ async function buildPartyReport(party) {
     };
 }
 
+async function getLinkedPartiesByAccountEmail(
+    email
+) {
+    const normalizedEmail =
+        normalizeEmail(email);
+
+    const parties =
+        await ledgerPartyRepository
+            .getByEmail(
+                normalizedEmail
+            );
+
+    return parties.map(
+        (party) => ({
+            id: party.id,
+            name: party.name,
+            mobile: party.mobile,
+            email: party.email
+        })
+    );
+}
+
 async function getReportByAccountEmail(
     email,
     partyId
@@ -132,5 +154,6 @@ async function getReportByAccountEmail(
 }
 
 module.exports = {
+    getLinkedPartiesByAccountEmail,
     getReportByAccountEmail
 };

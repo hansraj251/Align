@@ -27,6 +27,7 @@ const editPartyForm = document.getElementById("editPartyForm");
 const editPartyName = document.getElementById("editPartyName");
 
 const editPartyMobile = document.getElementById("editPartyMobile");
+const editPartyEmail = document.getElementById("editPartyEmail");
 
 const editPartyAddress = document.getElementById("editPartyAddress");
 
@@ -78,6 +79,22 @@ const interestReceivedAmount =
 const interestReceivedNote =
     document.getElementById("interestReceivedNote");
 
+if (interestReceivedAmount) {
+    interestReceivedAmount.addEventListener(
+        "input",
+        () => {
+            if (
+                interestReceivedAmount.value
+                    .startsWith("-")
+            ) {
+                interestReceivedAmount.value =
+                    interestReceivedAmount.value
+                        .replace(/-/g, "");
+            }
+        }
+    );
+}
+
 const cancelInterestReceivedButton =
     document.getElementById("cancelInterestReceivedButton");
 
@@ -114,6 +131,7 @@ function openEditPartyModal() {
 
     editPartyName.value = loadedParty.name || "";
     editPartyMobile.value = loadedParty.mobile || "";
+    editPartyEmail.value = loadedParty.email || "";
     editPartyAddress.value = loadedParty.address || "";
 
     if (editPartyFormError) {
@@ -142,6 +160,7 @@ async function updateParty() {
     const payload = {
         name: editPartyName.value.trim(),
         mobile: editPartyMobile.value.trim(),
+        email: editPartyEmail.value.trim().toLowerCase(),
         address: editPartyAddress.value.trim()
     };
 
@@ -278,24 +297,6 @@ if (deletePartyButton) {
     deletePartyButton.addEventListener("click", deleteParty);
 }
 
-const partyReportButton =
-    document.getElementById(
-        "partyReportButton"
-    );
-
-if (partyReportButton) {
-
-    partyReportButton.addEventListener(
-        "click",
-        () => {
-            window.location.href =
-                `/ledger/party-report.html?id=${encodeURIComponent(
-                    partyId
-                )}`;
-        }
-    );
-
-}
 
 if (closeEditPartyModal) {
     closeEditPartyModal.addEventListener(
@@ -467,6 +468,69 @@ function setInterestReceivedFormMode(entry = null) {
                 ? "Update"
                 : "Save";
     }
+
+    if (interestReceivedNote) {
+        const receivedOption =
+            interestReceivedNote.querySelector(
+                'option[value="Received"]'
+            );
+
+        const paidOption =
+            interestReceivedNote.querySelector(
+                'option[value="Paid"]'
+            );
+
+        if (!entry) {
+    const calculatedNetInterest =
+        calculateNetInterest(
+            loadedTransactions
+        );
+
+    const totalInterestReceived =
+        loadedInterestReceived.reduce(
+            (total, item) =>
+                total +
+                Number(item.amount || 0),
+            0
+        );
+
+    const remainingInterest =
+        calculatedNetInterest -
+        totalInterestReceived;
+
+    if (remainingInterest > 0) {
+        interestReceivedNote.value =
+            "Received";
+
+        receivedOption.disabled = false;
+        paidOption.disabled = true;
+    } else if (remainingInterest < 0) {
+        interestReceivedNote.value =
+            "Paid";
+
+        receivedOption.disabled = true;
+        paidOption.disabled = false;
+    } else {
+        receivedOption.disabled = false;
+        paidOption.disabled = false;
+    }
+
+    return;
+}
+
+        const amount =
+            Number(entry.amount);
+
+        if (receivedOption) {
+            receivedOption.disabled =
+                amount < 0;
+        }
+
+        if (paidOption) {
+            paidOption.disabled =
+                amount > 0;
+        }
+    }
 }
 
 function resetInterestReceivedForm() {
@@ -492,10 +556,14 @@ function openInterestReceivedForm(entry = null) {
             entry.interest_date || "";
 
         interestReceivedAmount.value =
-            entry.amount ?? "";
+            entry.amount == null
+                ? ""
+                : Math.abs(Number(entry.amount));
 
         interestReceivedNote.value =
-            entry.note || "";
+            entry.note === "Paid"
+                ? "Paid"
+                : "Received";
     } else {
         interestReceivedDate.value =
             new Date().toISOString().slice(0, 10);
@@ -656,8 +724,15 @@ async function loadInterestReceived() {
         const remainingInterest =
             calculatedNetInterest - totalInterestReceived;
 
+        if (remainingInterest > 0) {
         partyInterest.textContent =
-            formatSignedAmount(remainingInterest);
+        ` ${formatAmount(remainingInterest)}`;
+        } else if (remainingInterest < 0) {
+        partyInterest.textContent =
+        `${formatAmount(Math.abs(remainingInterest))}`;
+        } else {
+        partyInterest.textContent = "";
+        }
 
         const interestCard =
             partyInterest.closest(".summary-card");
@@ -730,7 +805,7 @@ async function saveInterestReceived(event) {
 
     if (
         !Number.isFinite(amount) ||
-        amount === 0
+        amount <= 0
     ) {
         if (interestReceivedFormError) {
             interestReceivedFormError.textContent =
@@ -749,12 +824,19 @@ async function saveInterestReceived(event) {
         return;
     }
 
+    const note =
+        interestReceivedNote.value;
+
+    const finalAmount =
+        note === "Paid"
+            ? -Math.abs(amount)
+            : Math.abs(amount);
+
     const payload = {
         interestDate:
             interestReceivedDate.value,
-        amount,
-        note:
-            interestReceivedNote.value.trim()
+        amount: finalAmount,
+        note
     };
 
     try {
@@ -1140,6 +1222,7 @@ async function deleteTransaction(transactionId) {
 
                 await loadPartyDetails();
                 await loadTransactions();
+                await loadInterestReceived();
 
                 if (transactionModal) {
                     transactionModal.hidden = true;
@@ -1363,6 +1446,7 @@ async function saveTransaction(event) {
         setTransactionFormMode(null);
         await loadPartyDetails();
         await loadTransactions();
+        await loadInterestReceived();
     } catch (error) {
         console.error(
             "Ledger transaction save failed:",
