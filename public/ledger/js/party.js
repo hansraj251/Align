@@ -207,7 +207,8 @@ async function updateParty() {
         }
 
         closeEditPartyModalDialog();
-        renderParty(data.party);
+
+        await loadPartyDetails();
     } catch (error) {
         console.error("Update party failed:", error);
 

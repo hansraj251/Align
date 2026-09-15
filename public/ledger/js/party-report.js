@@ -103,7 +103,8 @@ function escapeHtml(value) {
 }
 
 function renderLinkedParties(
-    parties
+    parties,
+    account
 ) {
     linkedPartiesList.innerHTML = "";
 
@@ -124,11 +125,14 @@ function renderLinkedParties(
         row.style.cursor = "pointer";
 
         row.innerHTML = `
+
             <div class="party-info">
-                <strong>${escapeHtml(party.name || "Party")}</strong>
-                <span>${escapeHtml(party.email || "No mail address")}</span>
-                <span>${escapeHtml(party.mobile || "No mobile number")}</span>
+
+                 <strong>Shared by: ${escapeHtml(account.name || "Account")}</strong>
+
+                
             </div>
+
         `;
 
         row.addEventListener(
@@ -715,7 +719,8 @@ async function loadLinkedParties() {
     );
 
     renderLinkedParties(
-        data.parties || []
+        data.parties || [],
+        data.account
     );
 
     partyLoading.hidden = true;

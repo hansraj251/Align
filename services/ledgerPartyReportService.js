@@ -7,6 +7,14 @@ const ledgerTransactionRepository =
 const ledgerInterestReceivedRepository =
     require("../repositories/ledgerInterestReceivedRepository");
 
+const ledgerBusinessRepository =
+
+    require("../repositories/ledgerBusinessRepository");
+
+const alignAccountRepository =
+
+    require("../repositories/alignAccountRepository");
+
 function normalizeEmail(email) {
     const cleanedEmail =
         String(email || "")
@@ -100,6 +108,64 @@ async function buildPartyReport(party) {
     };
 }
 
+async function getPartyOwnerAccount(
+
+    party
+
+) {
+
+    const business =
+
+        await ledgerBusinessRepository
+
+            .getAccountIdByBusinessId(
+
+                party.business_id
+
+            );
+
+    if (!business) {
+
+        throw new Error(
+
+            "Party business not found"
+
+        );
+
+    }
+
+    const account =
+
+        await alignAccountRepository
+
+            .getById(
+
+                business.account_id
+
+            );
+
+    if (!account) {
+
+        throw new Error(
+
+            "Party owner account not found"
+
+        );
+
+    }
+
+    return {
+
+        name: account.name,
+
+        mobile: account.mobile,
+
+        email: account.email
+
+    };
+
+}
+
 async function getLinkedPartiesByAccountEmail(
     email
 ) {
@@ -112,13 +178,32 @@ async function getLinkedPartiesByAccountEmail(
                 normalizedEmail
             );
 
-    return parties.map(
-        (party) => ({
-            id: party.id,
-            name: party.name,
-            mobile: party.mobile,
-            email: party.email
-        })
+        return Promise.all(
+
+        parties.map(
+
+            async (party) => ({
+
+                id: party.id,
+
+                name: party.name,
+
+                mobile: party.mobile,
+
+                email: party.email,
+
+                ownerAccount:
+
+                    await getPartyOwnerAccount(
+
+                        party
+
+                    )
+
+            })
+
+        )
+
     );
 }
 
@@ -148,9 +233,30 @@ async function getReportByAccountEmail(
         );
     }
 
-    return buildPartyReport(
-        party
-    );
+    const report =
+
+        await buildPartyReport(
+
+            party
+
+        );
+
+    const ownerAccount =
+
+        await getPartyOwnerAccount(
+
+            party
+
+        );
+
+    return {
+
+        report,
+
+        ownerAccount
+
+    };
+
 }
 
 module.exports = {

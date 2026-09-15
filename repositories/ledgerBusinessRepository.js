@@ -59,6 +59,25 @@ async (
     );
 };
 
+exports.getAccountIdByBusinessId =
+async (
+    businessId
+) => {
+
+    return await db.getAsync(
+        `
+        SELECT
+            account_id
+        FROM ledger_businesses
+        WHERE id = ?
+        LIMIT 1
+        `,
+        [
+            businessId
+        ]
+    );
+};
+
 exports.create =
 async (
     accountId,
