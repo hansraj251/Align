@@ -78,6 +78,8 @@ const interestReceivedAmount =
 
 const interestReceivedNote =
     document.getElementById("interestReceivedNote");
+const partyInterestLabel =
+    document.getElementById("partyInterestLabel");    
 
 if (interestReceivedAmount) {
     interestReceivedAmount.addEventListener(
@@ -725,14 +727,24 @@ async function loadInterestReceived() {
             calculatedNetInterest - totalInterestReceived;
 
         if (remainingInterest > 0) {
-        partyInterest.textContent =
-        ` ${formatAmount(remainingInterest)}`;
-        } else if (remainingInterest < 0) {
-        partyInterest.textContent =
+    partyInterestLabel.textContent =
+        "INT. You will get";
+
+    partyInterest.textContent =
+        `${formatAmount(remainingInterest)}`;
+} else if (remainingInterest < 0) {
+    partyInterestLabel.textContent =
+        "INT. You will give";
+
+    partyInterest.textContent =
         `${formatAmount(Math.abs(remainingInterest))}`;
-        } else {
-        partyInterest.textContent = "";
-        }
+} else {
+    partyInterestLabel.textContent =
+        "INT.";
+
+    partyInterest.textContent =
+        "";
+}
 
         const interestCard =
             partyInterest.closest(".summary-card");

@@ -384,12 +384,12 @@ button {
   font-size: 10px;
 }
 
-.party-balance-label.party-balance-report-give {
-  color: #16a34a;
+#partyBalance.party-balance-report-get {
+    color: #dc2626;
 }
 
-.party-balance-label.party-balance-report-get {
-  color: #dc2626;
+#partyBalance.party-balance-report-give {
+    color: #16a34a;
 }
 
 .party-balance-label.party-balance-settled {

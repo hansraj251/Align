@@ -12,6 +12,11 @@ async (req, res) => {
 
         return res.json({
             success: true,
+            account: {
+                name: req.alignAccount.name,
+                mobile: req.alignAccount.mobile,
+                email: req.alignAccount.email
+            },
             parties
         });
     } catch (err) {
@@ -41,12 +46,14 @@ async (req, res) => {
                 );
 
         return res.json({
-
-            success: true,
-
-            report
-
-        });
+    success: true,
+    account: {
+        name: req.alignAccount.name,
+        mobile: req.alignAccount.mobile,
+        email: req.alignAccount.email
+    },
+    report
+});
 
     } catch (err) {
 

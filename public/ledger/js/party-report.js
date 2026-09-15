@@ -90,6 +90,8 @@ const transactionsList =
     document.getElementById(
         "transactionsList"
     );
+const partyInterestLabel =
+    document.getElementById("partyInterestLabel");    
 
 function escapeHtml(value) {
     return String(value ?? "")
@@ -358,24 +360,24 @@ function showError(message) {
 
 }
 
+function renderAccountHeader(account) {
+    partyName.textContent =
+        account?.name ||
+        "Account";
+
+    partyMobile.textContent =
+        account?.mobile ||
+        "No mobile number";
+
+    partyEmail.textContent =
+        account?.email ||
+        "No mail address";
+}
+
 function renderParty(
     party,
     summary
 ) {
-
-    partyName.textContent =
-        party.name || "Party";
-
-    partyMobile.textContent =
-        party.mobile ||
-        "No mobile number";
-
-    partyEmail.textContent =
-        party.email ||
-        "No mail address";
-
-    
-
     const balance =
         Number(
             summary.net_balance || 0
@@ -397,38 +399,38 @@ function renderParty(
     );
 
     if (
-        summary.balance_type ===
-        "receivable"
-    ) {
+    summary.balance_type ===
+    "receivable"
+) {
 
-        partyBalanceLabel.textContent =
-            "YOU WILL GET";
+    partyBalanceLabel.textContent =
+        "YOU WILL GET";
 
-        partyBalanceLabel.classList.add(
-            "party-balance-report-give"
-        );
+    partyBalanceLabel.classList.add(
+        "party-balance-report-get"
+    );
 
-        partyBalance.classList.add(
-            "party-balance-report-give"
-        );
+    partyBalance.classList.add(
+        "party-balance-report-get"
+    );
 
-    } else if (
-        summary.balance_type ===
-        "payable"
-    ) {
+} else if (
+    summary.balance_type ===
+    "payable"
+) {
 
-        partyBalanceLabel.textContent =
-            "YOU WILL GIVE";
+    partyBalanceLabel.textContent =
+        "YOU WILL GIVE";
 
-        partyBalanceLabel.classList.add(
-            "party-balance-report-get"
-        );
+    partyBalanceLabel.classList.add(
+        "party-balance-report-give"
+    );
 
-        partyBalance.classList.add(
-            "party-balance-report-get"
-        );
+    partyBalance.classList.add(
+        "party-balance-report-give"
+    );
 
-    } else {
+} else {
 
         partyBalanceLabel.textContent =
             "SETTLED";
@@ -563,7 +565,7 @@ function renderInterestReceived(
     if (items.length === 0) {
 
         interestReceivedList.innerHTML =
-            '<div class="empty-state compact"><h2>No interest received/paid yet</h2><p>No interest entries recorded for this party.</p></div>';
+            '<div class="empty-state compact"><h2>No interest received/paid yet</h2><p>No interest entries recorded.</p></div>';
 
     } else {
 
@@ -628,14 +630,24 @@ function renderInterestReceived(
             totalInterestReceived;
 
         if (remainingInterest > 0) {
-            partyInterest.textContent =
-                ` ${formatAmount(remainingInterest)}`;
-        } else if (remainingInterest < 0) {
-            partyInterest.textContent =
-                `${formatAmount(Math.abs(remainingInterest))}`;
-        } else {
-            partyInterest.textContent = "";
-        }
+    partyInterestLabel.textContent =
+        "INT. You will give";
+
+    partyInterest.textContent =
+        `${formatAmount(remainingInterest)}`;
+} else if (remainingInterest < 0) {
+    partyInterestLabel.textContent =
+        "INT. You will get";
+
+    partyInterest.textContent =
+        `${formatAmount(Math.abs(remainingInterest))}`;
+} else {
+    partyInterestLabel.textContent =
+        "INT.";
+
+    partyInterest.textContent =
+        "";
+}
 
         const hasInterest =
             remainingInterest !== 0;
@@ -698,6 +710,9 @@ async function loadLinkedParties() {
             "Unable to load linked parties."
         );
     }
+    renderAccountHeader(
+    data.account
+    );
 
     renderLinkedParties(
         data.parties || []
@@ -774,6 +789,10 @@ async function loadReport() {
 
     const report =
         data.report;
+
+    renderAccountHeader(
+        data.account
+    );
 
     renderParty(
         report.party,
