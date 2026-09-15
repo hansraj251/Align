@@ -103,6 +103,14 @@ app.use(
 
 app.use(
 
+    "/api/ledger/groups",
+
+    require("./routes/ledgerGroupRoutes")
+
+);
+
+app.use(
+
     "/api/ledger/party-report",
 
     require("./routes/ledgerPartyReportRoutes")

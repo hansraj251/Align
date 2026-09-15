@@ -55,6 +55,48 @@ const createAlignAccountsTable =
 const createAlignAccountLinksTable =
     require("./schema/alignAccountLinks");
 
+const createLedgerGroupsTable =
+    require("./schema/ledgerGroups");
+
+const createLedgerGroupsIndexes =
+    createLedgerGroupsTable.createIndexes;
+
+const createLedgerGroupMembersTable =
+    require("./schema/ledgerGroupMembers");
+
+const createLedgerGroupMembersIndexes =
+    createLedgerGroupMembersTable.createIndexes;
+
+const createLedgerGroupInvitationsTable =
+    require("./schema/ledgerGroupInvitations");
+
+const createLedgerGroupInvitationsIndexes =
+    createLedgerGroupInvitationsTable.createIndexes;
+
+const createLedgerGroupExpensesTable =
+    require("./schema/ledgerGroupExpenses");
+
+const createLedgerGroupExpensesIndexes =
+    createLedgerGroupExpensesTable.createIndexes;
+
+const createLedgerGroupExpensePaymentsTable =
+    require("./schema/ledgerGroupExpensePayments");
+
+const createLedgerGroupExpensePaymentsIndexes =
+    createLedgerGroupExpensePaymentsTable.createIndexes;
+
+const createLedgerGroupExpenseSplitsTable =
+    require("./schema/ledgerGroupExpenseSplits");
+
+const createLedgerGroupExpenseSplitsIndexes =
+    createLedgerGroupExpenseSplitsTable.createIndexes;
+
+const createLedgerGroupSettlementsTable =
+    require("./schema/ledgerGroupSettlements");
+
+const createLedgerGroupSettlementsIndexes =
+    createLedgerGroupSettlementsTable.createIndexes;
+
 const createLedgerBusinessesTable =
     require("./schema/ledgerBusinesses");
 
@@ -153,6 +195,36 @@ async function initializeDatabase() {
     await createLedgerBusinessesTable();
 
     await createLedgerBusinessesIndexes();
+
+    await createLedgerGroupsTable();
+
+    await createLedgerGroupsIndexes();
+
+    await createLedgerGroupMembersTable();
+
+    await createLedgerGroupMembersIndexes();
+
+    await createLedgerGroupInvitationsTable();
+
+    await createLedgerGroupInvitationsIndexes();
+
+    await createLedgerGroupExpensesTable();
+
+    await createLedgerGroupExpensesIndexes();
+
+    await createLedgerGroupExpensePaymentsTable();
+
+    await createLedgerGroupExpensePaymentsIndexes();
+
+    await createLedgerGroupExpenseSplitsTable();
+
+    await createLedgerGroupExpenseSplitsIndexes();
+
+    await createLedgerGroupSettlementsTable();
+
+    await createLedgerGroupSettlementsIndexes();
+
+
 
     await createLedgerPartiesTable();
 
