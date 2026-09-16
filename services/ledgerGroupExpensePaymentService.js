@@ -215,6 +215,15 @@ async function setPayments(
         expenseId
     );
 
+    if (
+        Number(expense.added_by_account_id) !==
+        Number(accountId)
+    ) {
+        throw new Error(
+            "Only the member who added this expense can edit it."
+        );
+    }
+
     const validatedPayments =
         validatePayments(
             Number(expense.amount),

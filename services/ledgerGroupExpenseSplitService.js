@@ -466,6 +466,15 @@ async function setSplits(
         expenseId
     );
 
+    if (
+        Number(expense.added_by_account_id) !==
+        Number(accountId)
+    ) {
+        throw new Error(
+            "Only the member who added this expense can edit it."
+        );
+    }
+
     const type =
         cleanText(splitType);
 

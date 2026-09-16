@@ -80,26 +80,52 @@
           </article>
         </section>
 
-        <section class="parties-section" style="margin-top:20px;">
+        <div class="group-content-tabs">
+          <button
+            id="membersTabButton"
+            type="button"
+            class="group-content-tab selected"
+          >
+            Members
+          </button>
+          <button
+            id="expensesTabButton"
+            type="button"
+            class="group-content-tab"
+          >
+            Expenses
+          </button>
+        </div>
+
+        <section
+          id="membersSection"
+          class="parties-section"
+          style="margin-top:20px;"
+        >
           <div class="section-heading">
             <div>
-              <h1>Members</h1>
+
               <p id="memberCount"></p>
             </div>
 
-            
+
           </div>
 
           <div id="membersList" class="parties-list"></div>
         </section>
 
-        <section class="parties-section" style="margin-top:24px;">
+        <section
+          id="expensesSection"
+          class="parties-section"
+          style="margin-top:24px;"
+          hidden
+        >
           <div class="section-heading">
             <div>
-              <h1>Expenses</h1>
+
               <p id="expenseCount"></p>
             </div>
-            
+
           </div>
 
           <div id="expensesList" class="parties-list"></div>
@@ -245,7 +271,7 @@
     >
       <div class="modal-header">
         <div>
-          <h2 id="addExpenseModalTitle">Add Expense</h2>
+          <h2 id="addExpenseModalTitle"></h2>
         </div>
 
         <button
@@ -296,6 +322,7 @@
   </label>
 
   <label class="expense-paidby-control">
+
     <button
       id="toggleExpensePaymentsButton"
       type="button"
@@ -311,13 +338,14 @@
           id="expensePaymentsSection"
           hidden
         >
-          
+
           <div id="expensePaymentsList"></div>
           <div class="expense-total-row">
             <span>Total Paid</span>
             <strong id="expensePaymentsTotal">₹0.00</strong>
           </div>
         </div>
+        <hr>
 
         <label>
           Split Between
@@ -330,7 +358,7 @@
         </label>
 
         <div class="expense-member-section">
-          
+
           <div id="expenseSplitsList"></div>
           <div class="expense-total-row">
             <span>Split Total</span>
@@ -355,6 +383,15 @@
             Add
           </button>
         </div>
+
+        <button
+          id="deleteExpenseButton"
+          type="button"
+          class="transaction-modal-delete-button"
+          hidden
+        >
+          Delete Expense
+        </button>
 
         <p
           id="addExpenseFormError"

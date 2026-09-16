@@ -100,7 +100,13 @@ async function getExpenses(
 
             created_at,
 
-            updated_at
+            updated_at,
+
+            (
+                SELECT name
+                FROM align_accounts
+                WHERE id = added_by_account_id
+            ) AS added_by_name
 
         FROM ledger_group_expenses
 

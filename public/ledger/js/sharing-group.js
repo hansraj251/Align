@@ -15,6 +15,10 @@
 
   let currentSummary = null;
 
+  let editingExpenseId = null;
+
+  let editingExpense = null;
+
   const els = {
     groupLoading: $("groupLoading"),
     groupError: $("groupError"),
@@ -37,12 +41,18 @@
     youWillGet: $("youWillGet"),
     youWillPay: $("youWillPay"),
     memberCount: $("memberCount"),
+    membersTabButton: $("membersTabButton"),
+    expensesTabButton: $("expensesTabButton"),
+    membersSection: $("membersSection"),
+    expensesSection: $("expensesSection"),
     membersList: $("membersList"),
     bottomAddMemberButton: $("bottomAddMemberButton"),
     bottomAddExpenseButton: $("bottomAddExpenseButton"),
     expenseCount: $("expenseCount"),
     expensesList: $("expensesList"),
     expensesEmpty: $("expensesEmpty"),
+    addExpenseModalTitle: $("addExpenseModalTitle"),
+
     addExpenseModal: $("addExpenseModal"),
     closeAddExpenseModal: $("closeAddExpenseModal"),
     cancelAddExpenseButton: $("cancelAddExpenseButton"),
@@ -51,6 +61,7 @@
     addExpenseAmount: $("addExpenseAmount"),
     addExpenseDate: $("addExpenseDate"),
     addExpenseSubmitButton: $("addExpenseSubmitButton"),
+    deleteExpenseButton: $("deleteExpenseButton"),
     addExpenseFormError: $("addExpenseFormError"),
     toggleExpensePaymentsButton: $("toggleExpensePaymentsButton"),
     expensePaymentsSection: $("expensePaymentsSection"),
@@ -347,6 +358,22 @@
     return data;
   }
 
+  function showGroupTab(tab) {
+    const showMembers = tab === "members";
+
+    els.membersSection.hidden = !showMembers;
+    els.expensesSection.hidden = showMembers;
+
+    els.membersTabButton.classList.toggle(
+      "selected",
+      showMembers
+    );
+    els.expensesTabButton.classList.toggle(
+      "selected",
+      !showMembers
+    );
+  }
+
   function renderMembers(members) {
     els.membersList.innerHTML = "";
 
@@ -443,6 +470,72 @@
 
       row.className = "party-row";
 
+      const currentAccountId =
+
+        getAlignAccountId();
+
+      const canEdit =
+
+        Number(expense.added_by_account_id) ===
+
+        Number(currentAccountId);
+
+      if (canEdit) {
+
+        row.classList.add(
+
+          "expense-row-editable"
+
+        );
+
+        row.addEventListener(
+
+          "click",
+
+          () => openEditExpenseModal(expense)
+
+        );
+
+      }
+      else {
+
+        row.addEventListener(
+
+          "click",
+
+          () => {
+
+            const addedByName =
+
+              expense.added_by_name ||
+
+              "another member";
+
+            Modal.confirm(
+
+              "Expense Access",
+
+              `
+                <p class="text-slate-600">
+                  This expense was added by
+                  <strong>${escapeHtml(addedByName)}</strong>.
+                </p>
+                <p class="mt-2 text-sm text-slate-500">
+                  Only ${escapeHtml(addedByName)}
+                  can edit or delete this expense.
+                </p>
+              `,
+
+              () => {}
+
+            );
+
+          }
+
+        );
+
+      }
+
       row.innerHTML = `
         <span class="party-avatar">
           ₹
@@ -493,7 +586,7 @@
 
     els.groupDescription.textContent =
       group.description ||
-      "Shared expenses";
+      "";
 
     els.totalExpenses.textContent =
       money(summary.total_expenses);
@@ -1044,6 +1137,10 @@
       return;
     }
 
+    if (els.deleteExpenseButton) {
+      els.deleteExpenseButton.hidden = true;
+    }
+
     els.addExpenseForm.reset();
 
     els.addExpenseFormError.hidden = true;
@@ -1057,6 +1154,10 @@
 
     if (els.expensePaymentsSection) {
       els.expensePaymentsSection.hidden = true;
+    }
+
+    if (els.toggleExpensePaymentsButton) {
+      els.toggleExpensePaymentsButton.classList.remove("active");
     }
 
     resetExpenseMemberInputs();
@@ -1073,6 +1174,218 @@
     if (els.addExpenseModal) {
       els.addExpenseModal.hidden = true;
     }
+  }
+
+  async function openEditExpenseModal(expense) {
+
+    if (!expense || !expense.id) {
+
+      return;
+
+    }
+
+    if (
+
+      Number(expense.added_by_account_id) !==
+
+      Number(getAlignAccountId())
+
+    ) {
+
+      return;
+
+    }
+
+    editingExpenseId =
+
+      Number(expense.id);
+
+    editingExpense = expense;
+
+    els.addExpenseForm.reset();
+
+    els.addExpenseFormError.hidden = true;
+
+    els.addExpenseFormError.textContent = "";
+
+    els.addExpenseDescription.value =
+
+      expense.description || "";
+
+    els.addExpenseAmount.value =
+
+      formatInputNumber(expense.amount);
+
+    els.addExpenseDate.value =
+
+      expense.expense_date || "";
+
+    els.addExpenseSplitType.value =
+
+      expense.split_type || "equal";
+
+    if (els.expensePaymentsSection) {
+
+      els.expensePaymentsSection.hidden = true;
+
+    }
+
+    if (els.toggleExpensePaymentsButton) {
+
+      els.toggleExpensePaymentsButton.classList.remove(
+
+        "active"
+
+      );
+
+    }
+
+    resetExpenseMemberInputs();
+
+    try {
+
+      const [splitData, paymentData] =
+
+        await Promise.all([
+
+          api(
+
+            `/api/ledger/group-expense-splits/groups/${encodeURIComponent(groupId)}/expenses/${encodeURIComponent(expense.id)}`
+
+          ),
+
+          api(
+
+            `/api/ledger/group-expense-payments/groups/${encodeURIComponent(groupId)}/expenses/${encodeURIComponent(expense.id)}`
+
+          )
+
+        ]);
+
+      const splits =
+
+        Array.isArray(splitData.splits)
+
+          ? splitData.splits
+
+          : [];
+
+      const payments =
+
+        Array.isArray(paymentData.payments)
+
+          ? paymentData.payments
+
+          : [];
+
+      renderExpensePayments();
+
+      for (const payment of payments) {
+
+        const input =
+
+          els.expensePaymentsList.querySelector(
+
+            `.expense-payment-input[data-member-id="${payment.member_id}"]`
+
+          );
+
+        if (input) {
+
+          input.value =
+
+            formatInputNumber(payment.amount);
+
+        }
+
+      }
+
+      updateExpensePaymentsTotal();
+
+      renderExpenseSplits();
+
+      for (const split of splits) {
+
+        const input =
+
+          els.expenseSplitsList.querySelector(
+
+            `.expense-split-input[data-member-id="${split.member_id}"]`
+
+          );
+
+        if (input) {
+
+          input.value =
+
+            formatInputNumber(split.split_value);
+
+        }
+
+      }
+
+      updateExpenseSplitDisplay();
+
+      if (els.addExpenseModalTitle) {
+
+        els.addExpenseModalTitle.textContent =
+
+          "Edit Expense";
+
+      }
+
+      if (els.deleteExpenseButton) {
+
+        els.deleteExpenseButton.hidden = false;
+
+      }
+
+      if (els.addExpenseSubmitButton) {
+
+        els.addExpenseSubmitButton.textContent =
+
+          "Save Changes";
+
+      }
+
+      els.addExpenseModal.hidden = false;
+
+      setTimeout(
+
+        () => els.addExpenseDescription.focus(),
+
+        50
+
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(
+
+        "Load expense for edit failed:",
+
+        error
+
+      );
+
+      editingExpenseId = null;
+
+      editingExpense = null;
+
+      els.addExpenseFormError.textContent =
+
+        error.message ||
+
+        "Unable to load expense.";
+
+      els.addExpenseFormError.hidden = false;
+
+      els.addExpenseModal.hidden = false;
+
+    }
+
   }
 
   function openInviteModal() {
@@ -1313,137 +1626,359 @@
     return null;
   }
 
-  async function saveExpense(event) {
-    event.preventDefault();
-
-    els.addExpenseFormError.hidden =
-      true;
-
-    els.addExpenseFormError.textContent =
-      "";
-
-    const validationError =
-      validateExpenseForm();
-
-    if (validationError) {
-      els.addExpenseFormError.textContent =
-        validationError;
-
-      els.addExpenseFormError.hidden =
-        false;
-
+  async function deleteExpense() {
+    if (!editingExpenseId) {
       return;
     }
 
+    Modal.confirm(
+      "Delete Expense",
+      `
+        <p class="text-slate-600">
+          Are you sure you want to delete this expense?
+        </p>
+        <p class="mt-2 text-sm text-red-600">
+          This action cannot be undone.
+        </p>
+      `,
+      async () => {
+        if (els.deleteExpenseButton) {
+          els.deleteExpenseButton.disabled = true;
+        }
+
+        try {
+      await api(
+        `/api/ledger/group-expenses/groups/${encodeURIComponent(groupId)}/${encodeURIComponent(editingExpenseId)}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      closeAddExpenseModal();
+      await refresh();
+        }
+        catch (error) {
+          console.error(
+            "Delete expense failed:",
+            error
+          );
+
+          els.addExpenseFormError.textContent =
+            error.message ||
+            "Unable to delete expense.";
+
+          els.addExpenseFormError.hidden = false;
+        }
+        finally {
+          if (els.deleteExpenseButton) {
+            els.deleteExpenseButton.disabled = false;
+          }
+        }
+      }
+    );
+  }
+
+
+  async function saveExpense(event) {
+
+    event.preventDefault();
+
+    els.addExpenseFormError.hidden =
+
+      true;
+
+    els.addExpenseFormError.textContent =
+
+      "";
+
+    const validationError =
+
+      validateExpenseForm();
+
+    if (validationError) {
+
+      els.addExpenseFormError.textContent =
+
+        validationError;
+
+      els.addExpenseFormError.hidden =
+
+        false;
+
+      return;
+
+    }
+
     els.addExpenseSubmitButton.disabled =
+
       true;
 
     const amount =
+
       getExpenseAmount();
 
     const splitType =
+
       els.addExpenseSplitType.value;
 
     const payments =
+
       getExpensePaymentValues();
 
     const splits =
+
       getExpenseSplitValues();
+
+    const isEditing =
+
+      Boolean(editingExpenseId);
 
     let createdExpenseId = null;
 
     try {
-      const expenseData =
-        await api(
-          `/api/ledger/group-expenses/groups/${encodeURIComponent(groupId)}`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              description:
-                els.addExpenseDescription.value.trim(),
-              amount,
-              expense_date:
-                els.addExpenseDate.value,
-              split_type:
-                splitType,
-              notes: null
-            })
-          }
-        );
 
-      if (
-        !expenseData.expense ||
-        !expenseData.expense.id
-      ) {
-        throw new Error(
-          "Expense was created but no expense ID was returned."
-        );
+      const expensePayload = {
+
+        description:
+
+          els.addExpenseDescription.value.trim(),
+
+        amount,
+
+        expense_date:
+
+          els.addExpenseDate.value,
+
+        split_type:
+
+          splitType,
+
+        notes:
+
+          isEditing && editingExpense
+
+            ? editingExpense.notes || null
+
+            : null
+
+      };
+
+      let expenseId;
+
+      if (isEditing) {
+
+        const expenseData =
+
+          await api(
+
+            `/api/ledger/group-expenses/groups/${encodeURIComponent(groupId)}/${encodeURIComponent(editingExpenseId)}`,
+
+            {
+
+              method: "PUT",
+
+              body: JSON.stringify(
+
+                expensePayload
+
+              )
+
+            }
+
+          );
+
+        if (
+
+          !expenseData.expense ||
+
+          !expenseData.expense.id
+
+        ) {
+
+          throw new Error(
+
+            "Expense was updated but no expense ID was returned."
+
+          );
+
+        }
+
+        expenseId =
+
+          expenseData.expense.id;
+
       }
 
-      createdExpenseId =
-        expenseData.expense.id;
+      else {
+
+        const expenseData =
+
+          await api(
+
+            `/api/ledger/group-expenses/groups/${encodeURIComponent(groupId)}`,
+
+            {
+
+              method: "POST",
+
+              body: JSON.stringify(
+
+                expensePayload
+
+              )
+
+            }
+
+          );
+
+        if (
+
+          !expenseData.expense ||
+
+          !expenseData.expense.id
+
+        ) {
+
+          throw new Error(
+
+            "Expense was created but no expense ID was returned."
+
+          );
+
+        }
+
+        expenseId =
+
+          expenseData.expense.id;
+
+        createdExpenseId =
+
+          expenseId;
+
+      }
 
       await api(
-        `/api/ledger/group-expense-splits/groups/${encodeURIComponent(groupId)}/expenses/${encodeURIComponent(createdExpenseId)}`,
+
+        `/api/ledger/group-expense-splits/groups/${encodeURIComponent(groupId)}/expenses/${encodeURIComponent(expenseId)}`,
+
         {
+
           method: "PUT",
+
           body: JSON.stringify({
+
             split_type:
+
               splitType,
+
             splits
+
           })
+
         }
+
       );
 
       await api(
-        `/api/ledger/group-expense-payments/groups/${encodeURIComponent(groupId)}/expenses/${encodeURIComponent(createdExpenseId)}`,
+
+        `/api/ledger/group-expense-payments/groups/${encodeURIComponent(groupId)}/expenses/${encodeURIComponent(expenseId)}`,
+
         {
+
           method: "PUT",
+
           body: JSON.stringify({
+
             payments
+
           })
+
         }
+
       );
 
       closeAddExpenseModal();
 
       await refresh();
+
     }
+
     catch (error) {
+
       console.error(
-        "Add expense failed:",
+
+        isEditing
+
+          ? "Edit expense failed:"
+
+          : "Add expense failed:",
+
         error
+
       );
 
       if (createdExpenseId) {
+
         try {
+
           await api(
+
             `/api/ledger/group-expenses/groups/${encodeURIComponent(groupId)}/${encodeURIComponent(createdExpenseId)}`,
+
             {
+
               method: "DELETE"
+
             }
+
           );
+
         }
+
         catch (rollbackError) {
+
           console.error(
+
             "Expense rollback failed:",
+
             rollbackError
+
           );
+
         }
+
       }
 
       els.addExpenseFormError.textContent =
+
         error.message ||
-        "Unable to add expense.";
+
+        (
+
+          isEditing
+
+            ? "Unable to update expense."
+
+            : "Unable to add expense."
+
+        );
 
       els.addExpenseFormError.hidden =
+
         false;
+
     }
+
     finally {
+
       els.addExpenseSubmitButton.disabled =
+
         false;
+
     }
+
   }
+
 
   async function refresh() {
     try {
@@ -1474,6 +2009,20 @@
     els.toggleExpensePaymentsButton.addEventListener(
       "click",
       toggleExpensePayments
+    );
+  }
+
+  if (els.membersTabButton) {
+    els.membersTabButton.addEventListener(
+      "click",
+      () => showGroupTab("members")
+    );
+  }
+
+  if (els.expensesTabButton) {
+    els.expensesTabButton.addEventListener(
+      "click",
+      () => showGroupTab("expenses")
     );
   }
 
@@ -1519,6 +2068,13 @@
     els.cancelAddExpenseButton.addEventListener(
       "click",
       closeAddExpenseModal
+    );
+  }
+
+  if (els.deleteExpenseButton) {
+    els.deleteExpenseButton.addEventListener(
+      "click",
+      deleteExpense
     );
   }
 
