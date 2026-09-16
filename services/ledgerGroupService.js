@@ -10,6 +10,10 @@ const alignAccountRepository =
 const ledgerBusinessService =
     require("./ledgerBusinessService");
 
+const ledgerGroupSummaryService =
+
+    require("./ledgerGroupSummaryService");
+
 function cleanText(
     value
 ) {
@@ -225,6 +229,7 @@ async function updateGroup(
     const validatedName =
         validateGroupName(name);
 
+
     return ledgerGroupRepository
         .update(
             groupId,
@@ -274,6 +279,28 @@ async function deactivateGroup(
     if (!existing) {
         throw new Error(
             "Group not found"
+        );
+    }
+
+    const summary =
+
+        await ledgerGroupSummaryService
+
+            .getSummary(
+                accountId,
+                groupId
+            );
+
+    const hasUnsettledBalance =
+
+        summary.members.some(
+            (member) =>
+                Number(member.net_balance) !== 0
+        );
+
+    if (hasUnsettledBalance) {
+        throw new Error(
+            "Group cannot be deleted until all members are settled."
         );
     }
 

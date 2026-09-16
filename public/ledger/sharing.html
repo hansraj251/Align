@@ -9,19 +9,13 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a href="/ledger/index.html" class="ledger-book-button" style="text-decoration:none;">
-        <span>
-          <strong>Back</strong>
-        </span>
-      </a>
-
       <div class="section-heading">
         <div>
-          <h1>Sharing</h1>
-
+          <h1>My Groups</h1>
+          <p id="groupCountText">0 groups</p>
         </div>
       </div>
-    </header>
+        </header>
 
     <main class="content">
       <section id="sharingLoading" class="empty-state">
@@ -47,7 +41,6 @@
       <section id="groupsSection" hidden>
         <div class="section-heading">
           <div>
-            <h1>My Groups</h1>
             <p id="groupCountText"></p>
           </div>
 
@@ -73,6 +66,7 @@
       <span>Sharing</span>
     </button>
 
+
     <button
       class="nav-item"
       type="button"
@@ -82,7 +76,7 @@
       <span>Add Group</span>
     </button>
 
-    <button class="nav-item" type="button" data-nav="parties">
+    <button class="nav-item" type="button" data-nav="parties" onclick="window.location.href='/ledger/index.html'">
       <span class="nav-icon">♙</span>
       <span> Ledger </span>
     </button>
