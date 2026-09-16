@@ -111,11 +111,59 @@ app.use(
 
 app.use(
 
+    "/api/ledger/invitations",
+
+    require("./routes/ledgerGroupInvitationRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/group-expenses",
+
+    require("./routes/ledgerGroupExpenseRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/group-expense-splits",
+
+    require("./routes/ledgerGroupExpenseSplitRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/group-expense-payments",
+
+    require("./routes/ledgerGroupExpensePaymentRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/group-settlements",
+
+    require("./routes/ledgerGroupSettlementRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/group-summary",
+
+    require("./routes/ledgerGroupSummaryRoutes")
+
+);
+app.use(
+
     "/api/ledger/party-report",
 
     require("./routes/ledgerPartyReportRoutes")
 
 );
+
 
 app.use(
     "/api/ledger/interest-received",

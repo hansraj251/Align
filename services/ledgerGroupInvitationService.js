@@ -60,7 +60,7 @@ function validateEmail(
 
         cleanedEmail.length > 255 ||
 
-        !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
 
             cleanedEmail
 
