@@ -38,11 +38,11 @@
     youWillPay: $("youWillPay"),
     memberCount: $("memberCount"),
     membersList: $("membersList"),
-    inviteMemberButton: $("inviteMemberButton"),
+    bottomAddMemberButton: $("bottomAddMemberButton"),
+    bottomAddExpenseButton: $("bottomAddExpenseButton"),
     expenseCount: $("expenseCount"),
     expensesList: $("expensesList"),
     expensesEmpty: $("expensesEmpty"),
-    addExpenseButton: $("addExpenseButton"),
     addExpenseModal: $("addExpenseModal"),
     closeAddExpenseModal: $("closeAddExpenseModal"),
     cancelAddExpenseButton: $("cancelAddExpenseButton"),
@@ -52,6 +52,8 @@
     addExpenseDate: $("addExpenseDate"),
     addExpenseSubmitButton: $("addExpenseSubmitButton"),
     addExpenseFormError: $("addExpenseFormError"),
+    toggleExpensePaymentsButton: $("toggleExpensePaymentsButton"),
+    expensePaymentsSection: $("expensePaymentsSection"),
     expensePaymentsList: $("expensePaymentsList"),
     expensePaymentsTotal: $("expensePaymentsTotal"),
     addExpenseSplitType: $("addExpenseSplitType"),
@@ -381,11 +383,11 @@
 
       if (balance > 0) {
         balanceText =
-          `Gets ${money(balance)}`;
+          ` ${money(balance)}`;
       }
       else if (balance < 0) {
         balanceText =
-          `Pays ${money(Math.abs(balance))}`;
+          ` ${money(Math.abs(balance))}`;
       }
 
       row.innerHTML = `
@@ -502,6 +504,15 @@
     els.youWillPay.textContent =
       money(summary.you_will_pay);
 
+    els.totalExpenses.closest(".summary-card").hidden =
+      Number(summary.total_expenses) <= 0;
+
+    els.youWillGet.closest(".summary-card").hidden =
+      Number(summary.you_will_get) <= 0;
+
+    els.youWillPay.closest(".summary-card").hidden =
+      Number(summary.you_will_pay) <= 0;
+
     renderMembers(
       Array.isArray(summary.members)
         ? summary.members
@@ -604,6 +615,71 @@
     }
 
     renderSummary(data.summary);
+  }
+
+  function getAlignAccountId() {
+    const currentToken = token();
+
+    if (!currentToken) {
+      return null;
+    }
+
+    try {
+      const payload = JSON.parse(
+        atob(currentToken.split(".")[1])
+      );
+
+      return Number(payload.alignAccountId) || null;
+    }
+    catch (error) {
+      console.error(
+        "Unable to read Align account ID:",
+        error
+      );
+      return null;
+    }
+  }
+
+  function setDefaultExpensePayer() {
+    const accountId = getAlignAccountId();
+    const amount = getExpenseAmount();
+
+    if (!accountId || amount <= 0) {
+      return;
+    }
+
+    const member = getExpenseMembers().find(
+      (item) => Number(item.account_id) === accountId
+    );
+
+    if (!member) {
+      return;
+    }
+
+    const input = els.expensePaymentsList.querySelector(
+      `.expense-payment-input[data-member-id="${member.member_id}"]`
+    );
+
+    if (!input) {
+      return;
+    }
+
+    input.value = formatInputNumber(amount);
+    updateExpensePaymentsTotal();
+  }
+
+  function toggleExpensePayments() {
+    if (!els.expensePaymentsSection) {
+      return;
+    }
+
+    els.expensePaymentsSection.hidden =
+      !els.expensePaymentsSection.hidden;
+
+    els.toggleExpensePaymentsButton.classList.toggle(
+      "active",
+      !els.expensePaymentsSection.hidden
+    );
   }
 
   function getExpenseMembers() {
@@ -978,6 +1054,10 @@
 
     els.addExpenseSplitType.value =
       "equal";
+
+    if (els.expensePaymentsSection) {
+      els.expensePaymentsSection.hidden = true;
+    }
 
     resetExpenseMemberInputs();
 
@@ -1390,8 +1470,22 @@
     }
   }
 
-  if (els.addExpenseButton) {
-    els.addExpenseButton.addEventListener(
+  if (els.toggleExpensePaymentsButton) {
+    els.toggleExpensePaymentsButton.addEventListener(
+      "click",
+      toggleExpensePayments
+    );
+  }
+
+  if (els.bottomAddMemberButton) {
+    els.bottomAddMemberButton.addEventListener(
+      "click",
+      openInviteModal
+    );
+  }
+
+  if (els.bottomAddExpenseButton) {
+    els.bottomAddExpenseButton.addEventListener(
       "click",
       openAddExpenseModal
     );
@@ -1401,7 +1495,7 @@
     els.addExpenseAmount.addEventListener(
       "input",
       () => {
-        updateExpensePaymentsTotal();
+        setDefaultExpensePayer();
         updateExpenseSplitDisplay();
       }
     );
@@ -1427,11 +1521,6 @@
       closeAddExpenseModal
     );
   }
-
-  els.inviteMemberButton.addEventListener(
-    "click",
-    openInviteModal
-  );
 
   els.closeInviteModal.addEventListener(
     "click",

@@ -9,11 +9,6 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <a href="/ledger/sharing.html" class="ledger-book-button" style="text-decoration:none;">
-        <span>
-          <strong>Back</strong>
-        </span>
-      </a>
 
       <div class="section-heading">
         <div
@@ -92,13 +87,7 @@
               <p id="memberCount"></p>
             </div>
 
-            <button
-              id="inviteMemberButton"
-              type="button"
-              class="secondary-button"
-            >
-              + Add
-            </button>
+            
           </div>
 
           <div id="membersList" class="parties-list"></div>
@@ -110,13 +99,7 @@
               <h1>Expenses</h1>
               <p id="expenseCount"></p>
             </div>
-            <button
-              id="addExpenseButton"
-              type="button"
-              class="secondary-button"
-            >
-              + Add
-            </button>
+            
           </div>
 
           <div id="expensesList" class="parties-list"></div>
@@ -263,7 +246,6 @@
       <div class="modal-header">
         <div>
           <h2 id="addExpenseModalTitle">Add Expense</h2>
-          <p>Add a shared expense to this group.</p>
         </div>
 
         <button
@@ -276,45 +258,60 @@
       </div>
 
       <form id="addExpenseForm">
-        <label>
-          Description
-          <input
-            id="addExpenseDescription"
-            type="text"
-            required
-            maxlength="255"
-            autocomplete="off"
-            placeholder="e.g. Dinner"
-          >
-        </label>
+        <div class="expense-basic-row">
+          <label>
+            Description
+            <input
+              id="addExpenseDescription"
+              type="text"
+              required
+              maxlength="255"
+              autocomplete="off"
+              placeholder="e.g. Dinner"
+            >
+          </label>
 
-        <label>
-          Amount
-          <input
-            id="addExpenseAmount"
-            type="number"
-            required
-            min="0.01"
-            step="0.01"
-            inputmode="decimal"
-            placeholder="0.00"
-          >
-        </label>
+          <label>
+            Amount
+            <input
+              id="addExpenseAmount"
+              type="number"
+              required
+              min="0.01"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="0.00"
+            >
+          </label>
+        </div>
 
-        <label>
-          Expense Date
-          <input
-            id="addExpenseDate"
-            type="date"
-            required
-          >
-        </label>
+        <div class="expense-date-paidby-row">
+  <label>
+    Date
+    <input
+      id="addExpenseDate"
+      type="date"
+      required
+    >
+  </label>
 
+  <label class="expense-paidby-control">
+    <button
+      id="toggleExpensePaymentsButton"
+      type="button"
+      class="secondary-button expense-toggle-button"
+    >
+      Paid By
+    </button>
+  </label>
+</div>
 
-        <div class="expense-member-section">
-          <div class="expense-member-section-title">
-            Paid By
-          </div>
+        <div
+          class="expense-member-section"
+          id="expensePaymentsSection"
+          hidden
+        >
+          
           <div id="expensePaymentsList"></div>
           <div class="expense-total-row">
             <span>Total Paid</span>
@@ -323,7 +320,7 @@
         </div>
 
         <label>
-          Split
+          Split Between
           <select id="addExpenseSplitType">
             <option value="equal">Equal</option>
             <option value="percentage">Percentage</option>
@@ -333,9 +330,7 @@
         </label>
 
         <div class="expense-member-section">
-          <div class="expense-member-section-title">
-            Split Between
-          </div>
+          
           <div id="expenseSplitsList"></div>
           <div class="expense-total-row">
             <span>Split Total</span>
@@ -369,6 +364,21 @@
       </form>
     </div>
   </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item" type="button" onclick="window.history.back()">
+      <span class="nav-icon">←</span>
+      <span>Back</span>
+    </button>
+    <button class="nav-item" type="button" id="bottomAddMemberButton">
+      <span class="nav-icon">＋</span>
+      <span>Add Member</span>
+    </button>
+    <button class="nav-item" type="button" id="bottomAddExpenseButton">
+      <span class="nav-icon">＋</span>
+      <span>Add Expense</span>
+    </button>
+  </nav>
 
   <div id="modalContainer"></div>
 

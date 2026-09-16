@@ -1564,6 +1564,22 @@ button {
   border-color: #aeb3ba;
 }
 
+.expense-basic-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.expense-basic-row label {
+  min-width: 0;
+}
+
+.expense-toggle-button {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
 .expense-member-section {
   margin-bottom: 16px;
 }
@@ -1704,3 +1720,34 @@ button {
   align-self: flex-end;
 }
 
+
+.expense-date-paidby-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.expense-date-paidby-row label {
+  min-width: 0;
+}
+
+.expense-paidby-control {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.expense-paidby-control > span {
+  font-weight: 600;
+}
+
+.expense-paidby-control .expense-toggle-button {
+  margin-bottom: 0;
+}
+
+.expense-toggle-button.active {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+}
