@@ -113,6 +113,7 @@ async function getByAccountId(
             m.created_at,
             m.updated_at,
             g.name AS group_name,
+            g.description AS group_description,
             g.business_id
         FROM ledger_group_members m
         INNER JOIN ledger_groups g

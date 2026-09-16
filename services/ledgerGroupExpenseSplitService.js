@@ -42,6 +42,30 @@ function validatePositiveNumber(value,fieldName) {
     return numericValue;
 }
 
+function validateNonNegativeNumber(value,fieldName) {
+
+    if (
+        value === undefined ||
+        value === null ||
+        value === ""
+    ) {
+        throw new Error(`${fieldName} is required`);
+    }
+
+    const numericValue = Number(value);
+
+    if (
+        !Number.isFinite(numericValue) ||
+        numericValue < 0
+    ) {
+        throw new Error(
+            `${fieldName} must be a valid non-negative number`
+        );
+    }
+
+    return numericValue;
+}
+
 async function requireActiveMember(accountId,groupId) {
     const member =
         await ledgerGroupMemberRepository
@@ -182,7 +206,7 @@ function calculatePercentageSplits(
             }
 
             const percentage =
-                validatePositiveNumber(
+                validateNonNegativeNumber(
                     item.value,
                     "Percentage"
                 );
@@ -279,7 +303,7 @@ function calculateRatioSplits(
             }
 
             const ratio =
-                validatePositiveNumber(
+                validateNonNegativeNumber(
                     item.value,
                     "Ratio"
                 );
@@ -372,7 +396,7 @@ function calculateCustomSplits(
 
             const shareAmount =
                 roundAmount(
-                    validatePositiveNumber(
+                    validateNonNegativeNumber(
                         item.value,
                         "Custom amount"
                     )

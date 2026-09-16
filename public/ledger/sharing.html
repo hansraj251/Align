@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sharing - Ledger</title>
+  <link rel="stylesheet" href="/ledger/css/ledger.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a href="/ledger/index.html" class="ledger-book-button" style="text-decoration:none;">
+        <span>
+          <strong>Back</strong>
+        </span>
+      </a>
+
+      <div class="section-heading">
+        <div>
+          <h1>Sharing</h1>
+
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section id="sharingLoading" class="empty-state">
+        <h2>Loading sharing...</h2>
+      </section>
+
+      <section id="sharingError" class="empty-state" hidden>
+        <h2>Unable to load sharing</h2>
+        <p></p>
+      </section>
+
+      <section id="invitationsSection" hidden>
+        <div class="section-heading">
+          <div>
+            <h1>Pending Invitations</h1>
+            <p>Group invitations waiting for your response.</p>
+          </div>
+        </div>
+
+        <div id="invitationsList" class="parties-list"></div>
+      </section>
+
+      <section id="groupsSection" hidden>
+        <div class="section-heading">
+          <div>
+            <h1>My Groups</h1>
+            <p id="groupCountText"></p>
+          </div>
+
+        </div>
+
+        <div id="groupsList" class="parties-list"></div>
+
+        <div id="groupsEmptyState" class="empty-state" hidden>
+          <div class="empty-icon">＋</div>
+          <h2>No sharing groups yet</h2>
+          <p>Create a group to start sharing expenses.</p>
+          <button id="emptyCreateGroupButton" type="button">
+            Create Group
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-item selected" type="button" data-nav="sharing">
+      <span class="nav-icon">↗</span>
+      <span>Sharing</span>
+    </button>
+
+    <button
+      class="nav-item"
+      type="button"
+      id="bottomAddGroupButton"
+    >
+      <span class="nav-icon">＋</span>
+      <span>Add Group</span>
+    </button>
+
+    <button class="nav-item" type="button" data-nav="parties">
+      <span class="nav-icon">♙</span>
+      <span> Ledger </span>
+    </button>
+  </nav>
+
+  <div class="modal-backdrop" id="createGroupModal" hidden>
+    <div
+      class="modal create-group-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="createGroupModalTitle"
+    >
+      <div class="modal-header">
+        <div>
+          <h2 id="createGroupModalTitle">Create Group</h2>
+          <p>Create a group for sharing expenses.</p>
+        </div>
+
+        <button
+          id="closeCreateGroupModal"
+          class="modal-close"
+          type="button"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="createGroupForm">
+        <label>
+          Group Name
+          <input
+            id="groupName"
+            type="text"
+            required
+            maxlength="150"
+            autocomplete="off"
+          >
+        </label>
+
+        <label>
+          Description
+          <textarea
+            id="groupDescription"
+            rows="3"
+            maxlength="500"
+          ></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button
+            id="cancelCreateGroupButton"
+            type="button"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="createGroupSubmitButton"
+            type="submit"
+            class="primary-button"
+          >
+            Create Group
+          </button>
+        </div>
+
+        <p id="createGroupFormError" class="form-error" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/ledger/js/sharing.js"></script>
+</body>
+</html>

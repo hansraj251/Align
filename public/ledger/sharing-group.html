@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Sharing Group - Ledger</title>
+  <link rel="stylesheet" href="/ledger/css/ledger.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a href="/ledger/sharing.html" class="ledger-book-button" style="text-decoration:none;">
+        <span>
+          <strong>Back</strong>
+        </span>
+      </a>
+
+      <div class="section-heading">
+        <div
+          id="groupHeaderDetails"
+          class="party-header-details"
+          role="button"
+          tabindex="0"
+          aria-label="Group actions"
+          style="text-align:right;"
+        >
+          <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+            <div>
+              <h1 id="groupName">Sharing Group</h1>
+              <p id="groupDescription"></p>
+            </div>
+
+            <div
+              id="groupHeaderActions"
+            class="party-header-actions"
+            hidden
+              style="justify-content:flex-end;"
+            >
+              <button
+              id="editGroupButton"
+              type="button"
+              class="secondary-button"
+            >
+              ✎
+            </button>
+
+            <button
+              id="deleteGroupButton"
+              type="button"
+              class="secondary-button"
+            >
+              ×
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <section id="groupLoading" class="empty-state">
+        <h2>Loading group...</h2>
+      </section>
+
+      <section id="groupError" class="empty-state" hidden>
+        <h2>Unable to load group</h2>
+        <p></p>
+      </section>
+
+      <section id="groupDetails" hidden>
+        <section class="summary-grid">
+          <article class="summary-card">
+            <span class="summary-label">TOTAL EXPENSES</span>
+            <strong id="totalExpenses">₹0</strong>
+          </article>
+
+          <article class="summary-card get-card">
+            <span class="summary-label">YOU WILL GET</span>
+            <strong id="youWillGet">₹0</strong>
+          </article>
+
+          <article class="summary-card give-card">
+            <span class="summary-label">YOU WILL PAY</span>
+            <strong id="youWillPay">₹0</strong>
+          </article>
+        </section>
+
+        <section class="parties-section" style="margin-top:20px;">
+          <div class="section-heading">
+            <div>
+              <h1>Members</h1>
+              <p id="memberCount"></p>
+            </div>
+
+            <button
+              id="inviteMemberButton"
+              type="button"
+              class="secondary-button"
+            >
+              + Add
+            </button>
+          </div>
+
+          <div id="membersList" class="parties-list"></div>
+        </section>
+
+        <section class="parties-section" style="margin-top:24px;">
+          <div class="section-heading">
+            <div>
+              <h1>Expenses</h1>
+              <p id="expenseCount"></p>
+            </div>
+            <button
+              id="addExpenseButton"
+              type="button"
+              class="secondary-button"
+            >
+              + Add
+            </button>
+          </div>
+
+          <div id="expensesList" class="parties-list"></div>
+
+          <div id="expensesEmpty" class="empty-state compact" hidden>
+            <h2>No expenses yet</h2>
+            <p>Add an expense to this group.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="editGroupModal" hidden>
+    <div
+      class="modal create-group-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="editGroupModalTitle"
+    >
+      <div class="modal-header">
+        <div>
+          <h2 id="editGroupModalTitle">Edit Group</h2>
+          <p>Update group name and description.</p>
+        </div>
+
+        <button
+          id="closeEditGroupModal"
+          class="modal-close"
+          type="button"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="editGroupForm">
+        <label>
+          Group Name
+          <input
+            id="editGroupName"
+            type="text"
+            required
+            maxlength="150"
+            autocomplete="off"
+          >
+        </label>
+
+        <label>
+          Description
+          <textarea
+            id="editGroupDescription"
+            maxlength="500"
+            rows="3"
+          ></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button
+            id="cancelEditGroupButton"
+            type="button"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="editGroupSubmitButton"
+            type="submit"
+            class="primary-button"
+          >
+            Update
+          </button>
+        </div>
+
+        <p id="editGroupFormError" class="form-error" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="inviteModal" hidden>
+    <div
+      class="modal create-group-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="inviteModalTitle"
+    >
+      <div class="modal-header">
+        <div>
+          <h2 id="inviteModalTitle">Add Member</h2>
+          <p>Invitation will be sent to the registered Align account.</p>
+        </div>
+
+        <button
+          id="closeInviteModal"
+          class="modal-close"
+          type="button"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="inviteForm">
+        <label>
+          Email
+          <input
+            id="inviteEmail"
+            type="email"
+            required
+            maxlength="150"
+            autocomplete="email"
+          >
+        </label>
+
+        <div class="form-actions">
+          <button
+            id="cancelInviteButton"
+            type="button"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="inviteSubmitButton"
+            type="submit"
+            class="primary-button"
+          >
+            Send
+          </button>
+        </div>
+
+        <p id="inviteFormError" class="form-error" hidden></p>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="addExpenseModal" hidden>
+    <div
+      class="modal create-group-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="addExpenseModalTitle"
+    >
+      <div class="modal-header">
+        <div>
+          <h2 id="addExpenseModalTitle">Add Expense</h2>
+          <p>Add a shared expense to this group.</p>
+        </div>
+
+        <button
+          id="closeAddExpenseModal"
+          class="modal-close"
+          type="button"
+        >
+          ×
+        </button>
+      </div>
+
+      <form id="addExpenseForm">
+        <label>
+          Description
+          <input
+            id="addExpenseDescription"
+            type="text"
+            required
+            maxlength="255"
+            autocomplete="off"
+            placeholder="e.g. Dinner"
+          >
+        </label>
+
+        <label>
+          Amount
+          <input
+            id="addExpenseAmount"
+            type="number"
+            required
+            min="0.01"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="0.00"
+          >
+        </label>
+
+        <label>
+          Expense Date
+          <input
+            id="addExpenseDate"
+            type="date"
+            required
+          >
+        </label>
+
+
+        <div class="expense-member-section">
+          <div class="expense-member-section-title">
+            Paid By
+          </div>
+          <div id="expensePaymentsList"></div>
+          <div class="expense-total-row">
+            <span>Total Paid</span>
+            <strong id="expensePaymentsTotal">₹0.00</strong>
+          </div>
+        </div>
+
+        <label>
+          Split
+          <select id="addExpenseSplitType">
+            <option value="equal">Equal</option>
+            <option value="percentage">Percentage</option>
+            <option value="ratio">Ratio</option>
+            <option value="custom">Custom</option>
+          </select>
+        </label>
+
+        <div class="expense-member-section">
+          <div class="expense-member-section-title">
+            Split Between
+          </div>
+          <div id="expenseSplitsList"></div>
+          <div class="expense-total-row">
+            <span>Split Total</span>
+            <strong id="expenseSplitsTotal">₹0.00</strong>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button
+            id="cancelAddExpenseButton"
+            type="button"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="addExpenseSubmitButton"
+            type="submit"
+            class="primary-button"
+          >
+            Add
+          </button>
+        </div>
+
+        <p
+          id="addExpenseFormError"
+          class="form-error"
+          hidden
+        ></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalContainer"></div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/notify.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/components.js"></script>
+  <script src="/js/modal.js"></script>
+  <script>
+    loadComponent(
+      "modalContainer",
+      "/components/modal.html"
+    );
+  </script>
+  <script src="/ledger/js/sharing-group.js"></script>
+</body>
+</html>

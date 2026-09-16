@@ -183,6 +183,28 @@ async function updateGroup(
     name,
     description
 ) {
+    const member =
+        await ledgerGroupMemberRepository
+            .getByGroupAndAccount(
+                groupId,
+                accountId
+            );
+
+    if (
+        !member ||
+        member.status !== "active"
+    ) {
+        throw new Error(
+            "Group not found"
+        );
+    }
+
+    if (member.role !== "owner") {
+        throw new Error(
+            "Only owner can edit this group."
+        );
+    }
+
     const business =
         await ledgerBusinessService
             .getBusiness(accountId);
@@ -216,6 +238,28 @@ async function deactivateGroup(
     accountId,
     groupId
 ) {
+    const member =
+        await ledgerGroupMemberRepository
+            .getByGroupAndAccount(
+                groupId,
+                accountId
+            );
+
+    if (
+        !member ||
+        member.status !== "active"
+    ) {
+        throw new Error(
+            "Group not found"
+        );
+    }
+
+    if (member.role !== "owner") {
+        throw new Error(
+            "Only owner can delete this group."
+        );
+    }
+
     const business =
         await ledgerBusinessService
             .getBusiness(accountId);

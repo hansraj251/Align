@@ -406,7 +406,7 @@
     document.querySelectorAll(".nav-item").forEach((button) => {
       button.addEventListener("click", () => {
         if (button.dataset.nav === "sharing") {
-          alert("Sharing will be completed in a later phase.");
+          window.location.href = "/ledger/sharing.html";
         }
       });
     });
