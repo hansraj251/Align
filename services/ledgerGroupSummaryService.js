@@ -390,7 +390,7 @@ async function getSummary(
 
                 amount;
 
-            payer.net_balance -=
+            payer.net_balance +=
 
                 amount;
 
@@ -402,7 +402,7 @@ async function getSummary(
 
                 amount;
 
-            receiver.net_balance +=
+            receiver.net_balance -=
 
                 amount;
 

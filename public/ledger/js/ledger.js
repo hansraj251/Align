@@ -1,3 +1,4 @@
+localStorage.setItem("ledgerLastPage", "/ledger/index.html");
 (() => {
   "use strict";
 

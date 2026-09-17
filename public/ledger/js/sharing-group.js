@@ -19,6 +19,12 @@
 
   let editingExpense = null;
 
+  let settlementReceiver = null;
+
+  const settlementBasePath =
+    "/api/ledger/group-settlements";
+
+
   const els = {
     groupLoading: $("groupLoading"),
     groupError: $("groupError"),
@@ -77,6 +83,16 @@
     inviteForm: $("inviteForm"),
     inviteEmail: $("inviteEmail"),
     inviteSubmitButton: $("inviteSubmitButton"),
+    settlementModal: $("settlementModal"),
+    closeSettlementModal: $("closeSettlementModal"),
+    cancelSettlementButton: $("cancelSettlementButton"),
+    settlementForm: $("settlementForm"),
+    settlementReceiverAmount: $("settlementReceiverAmount"),
+    settlementPayer: $("settlementPayer"),
+    settlementAmount: $("settlementAmount"),
+    settlementMaximum: $("settlementMaximum"),
+    settlementFormError: $("settlementFormError"),
+    settlementSubmitButton: $("settlementSubmitButton"),
     inviteFormError: $("inviteFormError")
   };
 
@@ -376,6 +392,7 @@
   }
 
   function renderMembers(members) {
+
     els.membersList.innerHTML = "";
 
     els.memberCount.textContent =
@@ -386,10 +403,12 @@
       }`;
 
     for (const member of members) {
+
       const row =
         document.createElement("div");
 
-      row.className = "party-row";
+      row.className =
+        "party-row";
 
       const balance =
         Number(member.net_balance || 0);
@@ -397,25 +416,37 @@
       let balanceClass =
         "party-balance-zero";
 
-      if (balance > 0) {
-        balanceClass =
-          "party-balance-give";
-      }
-      else if (balance < 0) {
-        balanceClass =
-          "party-balance-get";
-      }
+      let balanceLabel =
+        "Settled";
 
       let balanceText =
         "Settled";
 
       if (balance > 0) {
+
+        balanceClass =
+          "party-balance-give";
+
+        balanceLabel =
+          "You will get";
+
         balanceText =
-          ` ${money(balance)}`;
+          money(balance);
+
       }
       else if (balance < 0) {
+
+        balanceClass =
+          "party-balance-get";
+
+        balanceLabel =
+          "You will pay";
+
         balanceText =
-          ` ${money(Math.abs(balance))}`;
+          money(
+            Math.abs(balance)
+          );
+
       }
 
       row.innerHTML = `
@@ -434,22 +465,431 @@
 
           <span class="party-mobile">
             ${escapeHtml(
-              member.role === "owner"
-                ? "Owner"
-                : "Member"
-            )}
+            Number(member.account_id) ===
+            getAlignAccountId()
+            ? "You"
+            : member.role === "owner"
+            ? "Owner"
+            : "Member"
+          )}
           </span>
-        </span>
+          </span>
 
         <span class="party-balance ${balanceClass}">
+          <span class="party-balance-label">
+            ${escapeHtml(
+              balanceLabel
+            )}
+          </span>
+
           <span class="party-balance-amount">
-            ${escapeHtml(balanceText)}
+            ${escapeHtml(
+              balanceText
+            )}
           </span>
         </span>
       `;
 
-      els.membersList.appendChild(row);
+      els.membersList.appendChild(
+        row
+      );
+
     }
+
+  }
+
+  function getSettlementMaximumForPayer(
+    payerId
+  ) {
+
+    if (
+      !settlementReceiver ||
+      !currentSummary ||
+      !Array.isArray(
+        currentSummary.members
+      )
+    ) {
+      return 0;
+    }
+
+    const payer =
+      currentSummary.members.find(
+        (member) =>
+          Number(member.member_id) ===
+          Number(payerId)
+      );
+
+    const payerPendingPay =
+      payer &&
+      Number(payer.net_balance) < 0
+        ? Math.abs(
+            Number(
+              payer.net_balance
+            )
+          )
+        : 0;
+
+    const receiverPendingGet =
+      Number(
+        settlementReceiver.net_balance
+      ) > 0
+        ? Number(
+            settlementReceiver.net_balance
+          )
+        : 0;
+
+    return Math.round(
+      Math.min(
+        payerPendingPay,
+        receiverPendingGet
+      ) * 100
+    ) / 100;
+
+  }
+
+  function updateSettlementMaximum() {
+
+    const maximum =
+      getSettlementMaximumForPayer(
+        els.settlementPayer.value
+      );
+
+    els.settlementMaximum.textContent =
+      money(maximum);
+
+    els.settlementAmount.max =
+      maximum > 0
+        ? maximum.toFixed(2)
+        : "0";
+
+    if (
+      maximum <= 0
+    ) {
+
+      els.settlementAmount.value =
+        "";
+
+      els.settlementSubmitButton.disabled =
+        true;
+
+      return;
+
+    }
+
+    const currentAmount =
+      Number(
+        els.settlementAmount.value
+      );
+
+    if (
+      !currentAmount ||
+      currentAmount > maximum
+    ) {
+
+      els.settlementAmount.value =
+        maximum.toFixed(2);
+
+    }
+
+    els.settlementSubmitButton.disabled =
+      false;
+
+  }
+
+  function populateSettlementPayers() {
+
+    els.settlementPayer.innerHTML =
+      "";
+
+    const receiverId =
+      Number(
+        settlementReceiver.member_id
+      );
+
+    const payers =
+      Array.isArray(
+        currentSummary?.members
+      )
+        ? currentSummary.members.filter(
+            (member) =>
+              Number(
+                member.member_id
+              ) !== receiverId &&
+              Number(
+                member.net_balance
+              ) < 0
+          )
+        : [];
+
+    for (const payer of payers) {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+      option.value =
+        String(
+          payer.member_id
+        );
+
+      option.textContent =
+        `${payer.name || "Unnamed"} Can Pay ${money(
+          Math.abs(
+            Number(
+              payer.net_balance
+            )
+          )
+        )}`;
+
+      els.settlementPayer.appendChild(
+        option
+      );
+
+    }
+
+    els.settlementPayer.disabled =
+      payers.length === 0;
+
+    updateSettlementMaximum();
+
+    if (
+      payers.length === 0
+    ) {
+
+      els.settlementFormError.textContent =
+        "No member currently has a pending Pay balance.";
+
+      els.settlementFormError.hidden =
+        false;
+
+    }
+
+  }
+
+  function openSettlementModal(
+    receiver
+  ) {
+
+    if (
+      !receiver ||
+      Number(receiver.net_balance) <= 0 ||
+      !els.settlementModal
+    ) {
+      return;
+    }
+
+    settlementReceiver =
+      receiver;
+
+    els.settlementReceiverAmount.textContent =
+      "You can receive upto " +
+      money(
+        receiver.net_balance
+      );
+
+    els.settlementAmount.value =
+      "";
+
+    els.settlementFormError.textContent =
+      "";
+
+    els.settlementFormError.hidden =
+      true;
+
+    populateSettlementPayers();
+
+    els.settlementModal.hidden =
+      false;
+
+  }
+
+  function closeSettlementModalDialog() {
+
+    if (
+      els.settlementModal
+    ) {
+
+      els.settlementModal.hidden =
+        true;
+
+    }
+
+    settlementReceiver =
+      null;
+
+  }
+
+  async function createSettlement() {
+
+    if (
+      !groupId ||
+      !settlementReceiver
+    ) {
+      return;
+    }
+
+    const payerId =
+      Number(
+        els.settlementPayer.value
+      );
+
+    const amount =
+      Number(
+        els.settlementAmount.value
+      );
+
+    const maximum =
+      getSettlementMaximumForPayer(
+        payerId
+      );
+
+    if (
+      !payerId ||
+      maximum <= 0
+    ) {
+
+      els.settlementFormError.textContent =
+        "No valid payer is available.";
+
+      els.settlementFormError.hidden =
+        false;
+
+      return;
+
+    }
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+
+      els.settlementFormError.textContent =
+        "Enter a valid settlement amount.";
+
+      els.settlementFormError.hidden =
+        false;
+
+      return;
+
+    }
+
+    if (
+      amount > maximum
+    ) {
+
+      els.settlementFormError.textContent =
+        `Maximum settlement amount is ${money(
+          maximum
+        )}.`;
+
+      els.settlementFormError.hidden =
+        false;
+
+      els.settlementAmount.value =
+        maximum.toFixed(2);
+
+      return;
+
+    }
+
+    els.settlementSubmitButton.disabled =
+      true;
+
+    try {
+
+      const today =
+        new Date();
+
+      const year =
+        today.getFullYear();
+
+      const month =
+        String(
+          today.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
+      const day =
+        String(
+          today.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
+
+      const data =
+        await api(
+          `${settlementBasePath}/groups/${encodeURIComponent(groupId)}`,
+          {
+            method: "POST",
+            body: JSON.stringify({
+
+              paid_by_member_id:
+                payerId,
+
+              paid_to_member_id:
+                Number(
+                  settlementReceiver.member_id
+                ),
+
+              amount:
+                amount,
+
+              settlement_date:
+                `${year}-${month}-${day}`,
+
+              notes:
+                ""
+
+            })
+          }
+        );
+
+      if (!data.success) {
+
+        throw new Error(
+          data.message ||
+          "Unable to record settlement."
+        );
+
+      }
+
+      closeSettlementModalDialog();
+
+      await loadSummary();
+
+    }
+    catch (error) {
+
+      console.error(
+        "Create settlement failed:",
+        error
+      );
+
+      els.settlementFormError.textContent =
+        error.message ||
+        "Unable to record settlement.";
+
+      els.settlementFormError.hidden =
+        false;
+
+    }
+    finally {
+
+      if (
+        !els.settlementModal.hidden
+      ) {
+
+        els.settlementSubmitButton.disabled =
+          false;
+
+      }
+
+    }
+
   }
 
   function renderExpenses(expenses) {
@@ -1301,7 +1741,7 @@
       els.expensePaymentsSection.hidden = true;
     }
 
-    if (els.toggleExpensePaymentsButton) {
+  if (els.toggleExpensePaymentsButton) {
       els.toggleExpensePaymentsButton.classList.remove("active");
     }
 
@@ -1587,8 +2027,57 @@
 
       closeInviteModal();
 
-      alert(
-        "Invitation sent successfully."
+            const message =
+        document.createElement("div");
+
+      message.textContent =
+        "Invitation sent successfully.";
+
+      message.style.position =
+        "fixed";
+
+      message.style.top =
+        "24px";
+
+      message.style.left =
+        "50%";
+
+      message.style.transform =
+        "translateX(-50%)";
+
+      message.style.zIndex =
+        "9999";
+
+      message.style.padding =
+        "12px 20px";
+
+      message.style.borderRadius =
+        "8px";
+
+      message.style.background =
+        "#b569de";
+
+      message.style.color =
+        "#ffffff";
+
+      message.style.fontSize =
+        "14px";
+
+      message.style.fontWeight =
+        "600";
+
+      message.style.boxShadow =
+        "0 4px 12px rgba(0, 0, 0, 0.2)";
+
+      document.body.appendChild(
+        message
+      );
+
+      setTimeout(
+        () => {
+          message.remove();
+        },
+        2000
       );
     }
     catch (error) {
@@ -2151,6 +2640,153 @@
         error.message ||
         "Unable to load group.";
     }
+  }
+
+    if (els.youWillGet) {
+
+    const youWillGetCard =
+
+      els.youWillGet.closest(
+
+        ".summary-card"
+
+      );
+
+    if (youWillGetCard) {
+
+      youWillGetCard.style.cursor =
+
+        "pointer";
+
+      youWillGetCard.addEventListener(
+
+        "click",
+
+        () => {
+
+          const accountId =
+
+            getAlignAccountId();
+
+          if (
+
+            !accountId ||
+
+            !currentSummary ||
+
+            !Array.isArray(
+
+              currentSummary.members
+
+            )
+
+          ) {
+
+            return;
+
+          }
+
+          const member =
+
+            currentSummary.members.find(
+
+              (item) =>
+
+                Number(item.account_id) ===
+
+                accountId
+
+            );
+
+          if (
+
+            !member ||
+
+            Number(member.net_balance) <= 0
+
+          ) {
+
+            return;
+
+          }
+
+          openSettlementModal(member);
+
+        }
+
+      );
+
+    }
+
+  }
+
+    if (els.closeSettlementModal) {
+
+    els.closeSettlementModal.addEventListener(
+      "click",
+      closeSettlementModalDialog
+    );
+
+  }
+
+  if (els.cancelSettlementButton) {
+
+    els.cancelSettlementButton.addEventListener(
+      "click",
+      closeSettlementModalDialog
+    );
+
+  }
+
+  if (els.settlementPayer) {
+
+    els.settlementPayer.addEventListener(
+      "change",
+      updateSettlementMaximum
+    );
+
+  }
+
+  if (els.settlementAmount) {
+
+    els.settlementAmount.addEventListener(
+      "input",
+      () => {
+
+        const maximum =
+          getSettlementMaximumForPayer(
+            els.settlementPayer.value
+          );
+
+        if (
+          Number(
+            els.settlementAmount.value
+          ) > maximum
+        ) {
+
+          els.settlementAmount.value =
+            maximum.toFixed(2);
+
+        }
+
+      }
+    );
+
+  }
+
+  if (els.settlementForm) {
+
+    els.settlementForm.addEventListener(
+      "submit",
+      async (event) => {
+
+        event.preventDefault();
+
+        await createSettlement();
+
+      }
+    );
+
   }
 
   if (els.toggleExpensePaymentsButton) {

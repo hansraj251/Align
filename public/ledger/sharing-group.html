@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Sharing Group - Ledger</title>
+
   <link rel="stylesheet" href="/ledger/css/ledger.css">
 </head>
 <body>
@@ -407,6 +408,121 @@
           hidden
         ></p>
       </form>
+    </div>
+  </div>
+
+  <div
+    class="modal-backdrop"
+    id="settlementModal"
+    hidden
+  >
+    <div
+      class="modal create-group-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settlementModalTitle"
+    >
+
+      <div class="modal-header">
+
+        <div>
+
+          <h2 id="settlementModalTitle">
+            Settlement
+          </h2>
+
+        </div>
+
+        <button
+          id="closeSettlementModal"
+          class="modal-close"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <form id="settlementForm">
+
+        <div
+          id="settlementReceiverAmount"
+          style="
+            margin-bottom: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #8460f0;
+          "
+        >
+          You can receive upto ₹0.00
+        </div>
+
+        <label>
+          Payer
+
+          <select
+            id="settlementPayer"
+            required
+          ></select>
+        </label>
+
+        <label>
+          Amount
+
+          <input
+            id="settlementAmount"
+            type="number"
+            required
+            min="0.01"
+            step="0.01"
+            inputmode="decimal"
+            placeholder="0.00"
+          >
+        </label>
+
+        <p
+          style="
+            margin: -6px 0 0;
+            font-size: 12px;
+            color: #64748b;
+          "
+        >
+          Maximum settlement:
+          <strong
+            id="settlementMaximum"
+          >
+            ₹0.00
+          </strong>
+        </p>
+
+        <div class="form-actions">
+
+          <button
+            id="cancelSettlementButton"
+            type="button"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+          <button
+            id="settlementSubmitButton"
+            type="submit"
+            class="primary-button"
+          >
+            Settle
+          </button>
+
+        </div>
+
+        <p
+          id="settlementFormError"
+          class="form-error"
+          hidden
+        ></p>
+
+      </form>
+
     </div>
   </div>
 

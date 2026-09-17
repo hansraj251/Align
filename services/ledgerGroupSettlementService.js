@@ -4,6 +4,10 @@ const ledgerGroupSettlementRepository =
 const ledgerGroupMemberRepository =
     require("../repositories/ledgerGroupMemberRepository");
 
+
+const ledgerGroupSummaryService =
+
+    require("./ledgerGroupSummaryService");
 function cleanText(value) {
     if (value === undefined || value === null) return null;
 
@@ -146,70 +150,252 @@ async function getSettlement(
     return settlement;
 }
 
-async function createSettlement(
-    accountId,
-    groupId,
-    paidByMemberId,
-    paidToMemberId,
-    amount,
-    settlementDate,
-    notes
+function getMaximumSettlement(
+    payerPendingPay,
+    receiverPendingGet
 ) {
+    const payerAmount =
+        Number(payerPendingPay) > 0
+            ? Number(payerPendingPay)
+            : 0;
+
+    const receiverAmount =
+        Number(receiverPendingGet) > 0
+            ? Number(receiverPendingGet)
+            : 0;
+
+    return Math.round(
+        Math.min(
+            payerAmount,
+            receiverAmount
+        ) * 100
+    ) / 100;
+}
+
+async function createSettlement(
+
+    accountId,
+
+    groupId,
+
+    paidByMemberId,
+
+    paidToMemberId,
+
+    amount,
+
+    settlementDate,
+
+    notes
+
+) {
+
     await requireActiveMember(
+
         accountId,
+
         groupId
+
     );
 
     const paidBy =
+
         await getMember(
+
             groupId,
+
             paidByMemberId
+
         );
 
     const paidTo =
+
         await getMember(
+
             groupId,
+
             paidToMemberId
+
         );
 
     if (
+
         Number(paidBy.id) ===
+
         Number(paidTo.id)
+
     ) {
+
         throw new Error(
+
             "Settlement payer and receiver cannot be the same member"
+
         );
+
     }
 
     const validatedAmount =
+
         validateAmount(amount);
 
+    const summary =
+
+        await ledgerGroupSummaryService
+
+            .getSummary(
+
+                accountId,
+
+                groupId
+
+            );
+
+    const balances =
+
+        Array.isArray(summary.members)
+
+            ? summary.members
+
+            : [];
+
+    const payerBalance =
+
+        balances.find(
+
+            (member) =>
+
+                Number(member.member_id) ===
+
+                Number(paidBy.id)
+
+        );
+
+    const receiverBalance =
+
+        balances.find(
+
+            (member) =>
+
+                Number(member.member_id) ===
+
+                Number(paidTo.id)
+
+        );
+
+    const payerPendingPay =
+
+        payerBalance &&
+
+        Number(payerBalance.net_balance) < 0
+
+            ? Math.abs(
+
+                Number(
+
+                    payerBalance.net_balance
+
+                )
+
+            )
+
+            : 0;
+
+    const receiverPendingGet =
+
+        receiverBalance &&
+
+        Number(receiverBalance.net_balance) > 0
+
+            ? Number(
+
+                receiverBalance.net_balance
+
+            )
+
+            : 0;
+
+    const maximumSettlement =
+        getMaximumSettlement(
+            payerPendingPay,
+            receiverPendingGet
+        );
+
+    if (
+
+        maximumSettlement <= 0
+
+    ) {
+
+        throw new Error(
+
+            "No pending balance is available for this settlement."
+
+        );
+
+    }
+
+    if (
+
+        validatedAmount >
+
+        maximumSettlement
+
+    ) {
+
+        throw new Error(
+
+            `Maximum settlement amount is ${maximumSettlement}.`
+
+        );
+
+    }
+
     const validatedDate =
+
         validateSettlementDate(
+
             settlementDate
+
         );
 
     const cleanedNotes =
+
         cleanText(notes);
 
     if (
+
         cleanedNotes &&
+
         cleanedNotes.length > 1000
+
     ) {
+
         throw new Error(
+
             "Settlement notes must not exceed 1000 characters"
+
         );
+
     }
 
     return ledgerGroupSettlementRepository
+
         .create(
+
             groupId,
+
             paidBy.id,
+
             paidTo.id,
+
             validatedAmount,
+
             validatedDate,
+
             cleanedNotes
+
         );
+
 }
 
 async function deleteSettlement(
@@ -243,6 +429,8 @@ async function deleteSettlement(
 }
 
 module.exports = {
+
+    getMaximumSettlement,
     getSettlements,
     getSettlement,
     createSettlement,

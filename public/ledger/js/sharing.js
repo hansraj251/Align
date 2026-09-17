@@ -1,3 +1,4 @@
+localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
 (() => {
   "use strict";
 
@@ -269,7 +270,7 @@
 
           <button
             type="button"
-            class="primary-button"
+            class="secondary-button"
             data-action="accept"
           >
             Accept

@@ -30,8 +30,8 @@ if (existingLedgerToken) {
             existingPayload &&
             existingPayload.module === "ledger"
         ) {
-            window.location.href =
-                "/ledger/index.html";
+                window.location.href =
+                localStorage.getItem("ledgerLastPage") || "/ledger/index.html";
         }
     } catch (error) {
         console.error(
@@ -108,8 +108,8 @@ async function login() {
             "school_id"
         );
 
-        window.location.href =
-            "/ledger/index.html";
+            window.location.href =
+            localStorage.getItem("ledgerLastPage") || "/ledger/index.html";
     } catch (err) {
         console.error(err);
 
