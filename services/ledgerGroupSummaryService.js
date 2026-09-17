@@ -506,6 +506,8 @@ async function getSummary(
 
         expenses,
 
+        splits,
+
         settlements
 
     };

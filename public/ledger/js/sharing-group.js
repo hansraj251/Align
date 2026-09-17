@@ -511,19 +511,148 @@
 
               "another member";
 
+            const expenseSplits =
+
+              Array.isArray(currentSummary?.splits)
+
+                ? currentSummary.splits.filter(
+
+                    (split) =>
+
+                      Number(split.expense_id) ===
+
+                      Number(expense.id)
+
+                  )
+
+                : [];
+
+            const members =
+
+              Array.isArray(currentSummary?.members)
+
+                ? currentSummary.members
+
+                : [];
+
+            const splitRows =
+
+              expenseSplits
+
+                .map(
+
+                  (split) => {
+
+                    const member =
+
+                      members.find(
+
+                        (item) =>
+
+                          Number(item.member_id) ===
+
+                          Number(split.member_id)
+
+                      );
+
+                    const memberName =
+
+                      member?.name ||
+
+                      "Member";
+
+                    const shareAmount =
+
+                      Number(split.share_amount || 0)
+
+                        .toFixed(2);
+
+                    return `
+
+                      <div class="flex items-center justify-between gap-3 py-1">
+
+                        <span class="text-slate-600">
+
+                          ${escapeHtml(memberName)}
+
+                        </span>
+
+                        <strong class="text-slate-900">
+
+                          ₹${escapeHtml(shareAmount)}
+
+                        </strong>
+
+                      </div>
+
+                    `;
+
+                  }
+
+                )
+
+                .join("");
+
             Modal.confirm(
 
               "Expense Access",
 
               `
+
                 <p class="text-slate-600">
+
                   This expense was added by
+
                   <strong>${escapeHtml(addedByName)}</strong>.
+
                 </p>
-                <p class="mt-2 text-sm text-slate-500">
+
+                <div class="mt-3">
+
+                  <div class="flex items-center justify-between">
+
+                    <span class="text-slate-500">
+
+                      Total Expense
+
+                    </span>
+
+                    <strong class="text-slate-900">
+
+                      ₹${Number(expense.amount || 0).toFixed(2)}
+
+                    </strong>
+
+                  </div>
+
+                </div>
+
+                <div class="mt-3 border-t pt-3">
+
+                  <p class="mb-2 font-medium text-slate-700">
+
+                    Share
+
+                  </p>
+
+                  ${
+
+                    splitRows ||
+
+                    '<p class="text-sm text-slate-500">No share details available.</p>'
+
+                  }
+
+                </div>
+
+                <p class="mt-3 text-sm text-slate-500">
+
                   Only ${escapeHtml(addedByName)}
+
                   can edit or delete this expense.
+
                 </p>
+
               `,
 
               () => {}
@@ -1137,6 +1266,14 @@
       return;
     }
 
+    editingExpenseId = null;
+    editingExpense = null;
+
+    if (els.addExpenseModalTitle) {
+      els.addExpenseModalTitle.textContent =
+        "Add Expense";
+    }
+
     if (els.deleteExpenseButton) {
       els.deleteExpenseButton.hidden = true;
     }
@@ -1174,6 +1311,9 @@
     if (els.addExpenseModal) {
       els.addExpenseModal.hidden = true;
     }
+
+    editingExpenseId = null;
+    editingExpense = null;
   }
 
   async function openEditExpenseModal(expense) {

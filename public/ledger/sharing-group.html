@@ -9,48 +9,56 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
+  <button
+    class="nav-item topbar-back"
+    type="button"
+    onclick="window.history.back()"
+    aria-label="Back"
+  >
+    <span class="nav-icon">←</span>
+  </button>
 
-      <div class="section-heading">
+  <div class="section-heading">
+    <div
+      id="groupHeaderDetails"
+      class="party-header-details"
+      role="button"
+      tabindex="0"
+      aria-label="Group actions"
+      style="text-align:right;"
+    >
+      <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+        <div>
+          <h1 id="groupName">Sharing Group</h1>
+          <p id="groupDescription"></p>
+        </div>
+
         <div
-          id="groupHeaderDetails"
-          class="party-header-details"
-          role="button"
-          tabindex="0"
-          aria-label="Group actions"
-          style="text-align:right;"
+          id="groupHeaderActions"
+          class="party-header-actions"
+          hidden
+          style="justify-content:flex-end;"
         >
-          <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
-            <div>
-              <h1 id="groupName">Sharing Group</h1>
-              <p id="groupDescription"></p>
-            </div>
+          <button
+            id="editGroupButton"
+            type="button"
+            class="secondary-button"
+          >
+            ✎
+          </button>
 
-            <div
-              id="groupHeaderActions"
-            class="party-header-actions"
-            hidden
-              style="justify-content:flex-end;"
-            >
-              <button
-              id="editGroupButton"
-              type="button"
-              class="secondary-button"
-            >
-              ✎
-            </button>
-
-            <button
-              id="deleteGroupButton"
-              type="button"
-              class="secondary-button"
-            >
-              ×
-              </button>
-            </div>
-          </div>
+          <button
+            id="deleteGroupButton"
+            type="button"
+            class="secondary-button"
+          >
+            ×
+          </button>
         </div>
       </div>
-    </header>
+    </div>
+  </div>
+</header>
 
     <main class="content">
       <section id="groupLoading" class="empty-state">
@@ -352,7 +360,7 @@
           <select id="addExpenseSplitType">
             <option value="equal">Equal</option>
             <option value="percentage">Percentage</option>
-            <option value="ratio">Ratio</option>
+            <option value="ratio">Share</option>
             <option value="custom">Custom</option>
           </select>
         </label>
@@ -402,11 +410,8 @@
     </div>
   </div>
 
-  <nav class="bottom-nav">
-    <button class="nav-item" type="button" onclick="window.history.back()">
-      <span class="nav-icon">←</span>
-      <span>Back</span>
-    </button>
+  <nav class="bottom-nav2">
+    
     <button class="nav-item" type="button" id="bottomAddMemberButton">
       <span class="nav-icon">＋</span>
       <span>Add Member</span>
