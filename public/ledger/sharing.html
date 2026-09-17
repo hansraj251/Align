@@ -9,6 +9,16 @@
 <body>
   <div class="app-shell">
     <header class="topbar">
+
+      <button
+        id="ledgerSidebarButton"
+        class="sidebar-menu-button"
+        type="button"
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
+
       <div class="section-heading">
         <div>
           <h1>My Groups</h1>
@@ -70,7 +80,7 @@
       <path d="M8 14h5"/>
     </svg>
       <span> Ledger </span>
-    </button>    
+    </button>
 
     <button
       class="nav-item"
@@ -93,6 +103,69 @@
     </button>
 
   </nav>
+
+
+    <div
+      id="ledgerSidebarOverlay"
+      class="ledger-sidebar-overlay"
+      hidden
+    ></div>
+
+    <aside
+      id="ledgerSidebar"
+      class="ledger-sidebar"
+      aria-label="Align menu"
+    >
+      <div class="ledger-sidebar-header">
+        <strong>Align</strong>
+        <button
+          id="ledgerSidebarClose"
+          class="modal-close"
+          type="button"
+          aria-label="Close menu"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="ledger-sidebar-content">
+        <button
+                id="ledgerProfileButton"
+                class="ledger-sidebar-item"
+                type="button"
+            >
+                <span class="nav-icon">◉</span>
+                <span>Profile</span>
+        </button>
+        <br>
+        <a
+          href="/ledger/index.html"
+          class="ledger-sidebar-item"
+
+        ><span class="nav-icon">◉</span>
+          <span>Ledger</span>
+        </a>
+        <br>
+        <a
+          href="/ledger/sharing.html"
+          class="ledger-sidebar-item selected"
+
+        ><span class="nav-icon">◉</span>
+          <span>Groups</span>
+        </a>
+      </div>
+
+      <div class="ledger-sidebar-footer">
+        <button
+          id="ledgerSidebarLogout"
+          class="ledger-sidebar-logout"
+          type="button"
+        >
+          <span class="nav-icon">↪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
 
   <div class="modal-backdrop" id="createGroupModal" hidden>
     <div
@@ -161,6 +234,7 @@
   </div>
 
   <script src="/js/auth.js"></script>
+  <script src="/ledger/js/sidebar.js"></script>
   <script src="/ledger/js/sharing.js"></script>
 </body>
 </html>

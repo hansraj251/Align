@@ -70,6 +70,7 @@
     addExpenseSplitType: $("addExpenseSplitType"),
     expenseSplitsList: $("expenseSplitsList"),
     expenseSplitsTotal: $("expenseSplitsTotal"),
+    expenseMemberSection: $("expenseSplitsList").parentElement,
     inviteModal: $("inviteModal"),
     closeInviteModal: $("closeInviteModal"),
     cancelInviteButton: $("cancelInviteButton"),
@@ -926,7 +927,9 @@
       return "";
     }
 
-    return number.toFixed(2);
+    return Number.isInteger(number)
+      ? String(number)
+      : String(Number(number.toFixed(2)));
   }
 
   function renderExpensePayments() {
@@ -1052,6 +1055,11 @@
     const members = getExpenseMembers();
     const splitType =
       els.addExpenseSplitType.value;
+
+    if (els.expenseMemberSection) {
+      els.expenseMemberSection.hidden =
+        splitType === "equal";
+    }
 
     els.expenseSplitsList.innerHTML = "";
 
@@ -1759,7 +1767,7 @@
         );
 
       if (ratioTotal <= 0) {
-        return "Ratio split must have a valid ratio.";
+        return "Share split must have a valid share.";
       }
     }
 

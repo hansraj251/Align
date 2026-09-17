@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>Profile - Ledger</title>
+
+    <link
+        rel="stylesheet"
+        href="/ledger/css/ledger.css"
+    >
+
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <header class="topbar">
+
+            <button
+                id="ledgerSidebarButton"
+                class="sidebar-menu-button"
+                type="button"
+                aria-label="Open menu"
+            >
+                ☰
+            </button>
+
+            <div class="section-heading">
+
+                <div>
+
+                    <h1>Profile</h1>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <main class="content">
+
+            <section class="profile-section">
+
+                <div class="profile-card">
+
+                    <div class="profile-avatar">
+                        <span id="profileInitial">A</span>
+                    </div>
+
+                    <div class="profile-heading">
+
+                        <h2 id="profileDisplayName">
+                            Profile
+                        </h2>
+
+                        <p id="profileDisplayEmail">
+                            -
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <form
+                    id="profileForm"
+                    class="profile-form"
+                >
+
+                    <label>
+
+                        Name
+
+                        <input
+                            id="profileName"
+                            type="text"
+                            required
+                            maxlength="100"
+                            autocomplete="name"
+                        >
+
+                    </label>
+
+                    <label>
+
+                        Mobile
+
+                        <input
+                            id="profileMobile"
+                            type="tel"
+                            required
+                            maxlength="20"
+                            autocomplete="tel"
+                        >
+
+                    </label>
+
+                    <label>
+
+                        Email
+
+                        <input
+                            id="profileEmail"
+                            type="email"
+                            readonly
+                            disabled
+                        >
+
+                    </label>
+
+                    <div class="form-actions">
+
+                        <button
+                            id="profileCancelButton"
+                            type="button"
+                            class="secondary-button"
+                        >
+                            Cancel
+                        </button>
+
+                        <button
+                            id="profileSaveButton"
+                            type="submit"
+                            class="primary-button"
+                        >
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                    <p
+                        id="profileFormMessage"
+                        class="form-error"
+                        hidden
+                    ></p>
+
+                </form>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <div
+        id="ledgerSidebarOverlay"
+        class="ledger-sidebar-overlay"
+        hidden
+    ></div>
+
+    <aside
+        id="ledgerSidebar"
+        class="ledger-sidebar"
+        aria-label="Align menu"
+    >
+
+        <div class="ledger-sidebar-header">
+
+            <strong>Align</strong>
+
+            <button
+                id="ledgerSidebarClose"
+                class="modal-close"
+                type="button"
+                aria-label="Close menu"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div class="ledger-sidebar-content">
+        <button
+                id="ledgerProfileButton"
+                class="ledger-sidebar-item selected"
+                type="button"
+            >
+                <span class="nav-icon">◉</span>
+                <span>Profile</span>
+        </button>
+        <br>
+        <a
+          href="/ledger/index.html"
+          class="ledger-sidebar-item"
+
+        ><span class="nav-icon">◉</span>
+          <span>Ledger</span>
+        </a>
+        <br>
+        <a
+          href="/ledger/sharing.html"
+          class="ledger-sidebar-item"
+
+        ><span class="nav-icon">◉</span>
+          <span>Groups</span>
+        </a>
+
+
+        </div>
+
+        <div class="ledger-sidebar-footer">
+
+            <button
+                id="ledgerSidebarLogout"
+                class="ledger-sidebar-logout"
+                type="button"
+            >
+                <span class="nav-icon">↪</span>
+                <span>Logout</span>
+            </button>
+
+        </div>
+
+    </aside>
+
+    <script src="/js/auth.js"></script>
+    <script src="/ledger/js/sidebar.js"></script>
+    <script src="/ledger/js/profile.js"></script>
+
+</body>
+
+</html>

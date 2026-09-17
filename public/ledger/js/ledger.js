@@ -20,7 +20,6 @@
     bookMenu: $("bookMenu"),
     ledgerBookButton: $("ledgerBookButton"),
     createBookButton: $("createBookButton"),
-    logoutButton: $("logoutButton"),
 
     receivableAmount: $("receivableAmount"),
     payableAmount: $("payableAmount"),
@@ -362,11 +361,6 @@
 
     els.createBookButton.addEventListener("click", () => {
       alert("Create new Ledger will be enabled in a later phase.");
-    });
-
-    els.logoutButton.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      window.location.href = "/ledger/login.html";
     });
 
     els.reportsButton.addEventListener("click", () => {

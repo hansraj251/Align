@@ -350,3 +350,79 @@ exports.updatePassword = async (
         ]
     );
 };
+
+exports.updateProfile = async (
+
+    accountId,
+
+    name,
+
+    mobile
+
+) => {
+
+    await db.runAsync(
+
+        `
+
+        UPDATE align_accounts
+
+        SET
+
+            name = ?,
+
+            mobile = ?,
+
+            updated_at = CURRENT_TIMESTAMP
+
+        WHERE id = ?
+
+        `,
+
+        [
+
+            name,
+
+            mobile,
+
+            accountId
+
+        ]
+
+    );
+
+    return await db.getAsync(
+
+        `
+
+        SELECT
+
+            id,
+
+            name,
+
+            email,
+
+            mobile,
+
+            status,
+
+            created_at,
+
+            updated_at
+
+        FROM align_accounts
+
+        WHERE id = ?
+
+        `,
+
+        [
+
+            accountId
+
+        ]
+
+    );
+
+};

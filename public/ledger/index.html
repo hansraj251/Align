@@ -10,14 +10,19 @@
   <div class="app-shell">
 
     <header class="topbar">
-      <button class="logout-button" id="logoutButton" type="button">
-        Logout
+      <button
+        id="ledgerSidebarButton"
+        class="sidebar-menu-button"
+        type="button"
+        aria-label="Open menu"
+      >
+        ☰
       </button>
 
       <div class="ledger-book-wrap">
         <button class="ledger-book-button" id="ledgerBookButton" type="button">
           <span>
-            
+
             <strong id="selectedBookName">Ledger Book</strong>
           </span>
           <span class="chevron">⌄</span>
@@ -110,7 +115,7 @@
       <section class="parties-section">
         <div class="section-heading">
           <div>
-            
+
             <p id="partyCountText" hidden>Your ledger accounts</p>
           </div>
         </div>
@@ -169,6 +174,69 @@
 
   </div>
 
+
+    <div
+      id="ledgerSidebarOverlay"
+      class="ledger-sidebar-overlay"
+      hidden
+    ></div>
+
+    <aside
+      id="ledgerSidebar"
+      class="ledger-sidebar"
+      aria-label="Align menu"
+    >
+      <div class="ledger-sidebar-header">
+        <strong>Align</strong>
+        <button
+          id="ledgerSidebarClose"
+          class="modal-close"
+          type="button"
+          aria-label="Close menu"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="ledger-sidebar-content">
+       <button
+                id="ledgerProfileButton"
+                class="ledger-sidebar-item"
+                type="button"
+            >
+                <span class="nav-icon">◉</span>
+                <span>Profile</span>
+        </button>
+        <br>
+        <a
+          href="/ledger/index.html"
+          class="ledger-sidebar-item selected"
+
+        ><span class="nav-icon">◉</span>
+          <span>Ledger</span>
+        </a>
+        <br>
+        <a
+          href="/ledger/sharing.html"
+          class="ledger-sidebar-item"
+
+        ><span class="nav-icon">◉</span>
+          <span>Groups</span>
+        </a>
+      </div>
+
+      <div class="ledger-sidebar-footer">
+        <button
+          id="ledgerSidebarLogout"
+          class="ledger-sidebar-logout"
+          type="button"
+        >
+          <span class="nav-icon">↪</span>
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
   <div class="modal-backdrop" id="partyModal" hidden>
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="partyModalTitle">
       <div class="modal-header">
@@ -211,6 +279,7 @@
   </div>
 
   <script src="/js/auth.js"></script>
+  <script src="/ledger/js/sidebar.js"></script>
   <script src="/ledger/js/ledger.js"></script>
 </body>
 </html>

@@ -93,6 +93,15 @@ app.use(
 
 );
 
+
+app.use(
+
+    "/api/ledger/profile",
+
+    require("./routes/ledgerProfileRoutes")
+
+);
+
 app.use(
 
     "/api/ledger/parties",

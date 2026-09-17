@@ -788,3 +788,57 @@ exports.resetPassword = async (
             passwordHash
         );
 };
+
+exports.updateProfile = async (
+    accountId,
+    name,
+    mobile
+) => {
+
+    const cleanName =
+        String(name || "").trim();
+
+    const cleanMobile =
+        String(mobile || "").trim();
+
+    if (!accountId) {
+        throw new Error(
+            "Account ID is required"
+        );
+    }
+
+    if (!cleanName) {
+        throw new Error(
+            "Name is required"
+        );
+    }
+
+    if (!cleanMobile) {
+        throw new Error(
+            "Mobile number is required"
+        );
+    }
+
+    const account =
+        await alignAccountRepository
+            .getById(accountId);
+
+    if (!account) {
+        throw new Error(
+            "Align account not found"
+        );
+    }
+
+    if (account.status !== "active") {
+        throw new Error(
+            "Align account is not active"
+        );
+    }
+
+    return await alignAccountRepository
+        .updateProfile(
+            accountId,
+            cleanName,
+            cleanMobile
+        );
+};
