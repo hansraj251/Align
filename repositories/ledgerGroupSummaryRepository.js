@@ -12,51 +12,28 @@ async function getMembers(
 
         `
 
-        SELECT
-
-            id,
-
-            group_id,
-
-            account_id,
-
-            name,
-
-            mobile,
-
-            email,
-
-            role,
-
-            status,
-
-            joined_at,
-
-            created_at,
-
-            updated_at
-
-        FROM ledger_group_members
-
-        WHERE
-
-            group_id = ?
-
-            AND status = 'active'
-
-        ORDER BY
-
-            CASE
-
-                WHEN role = 'owner' THEN 0
-
-                ELSE 1
-
-            END,
-
-            name COLLATE NOCASE ASC,
-
-            id ASC
+        SELECT m.id,
+            m.group_id,
+            m.account_id,
+            a.name AS name,
+            m.mobile,
+            m.email,
+            m.role,
+            m.status,
+            m.joined_at,
+            m.created_at,
+            m.updated_at
+        FROM ledger_group_members m
+        INNER JOIN align_accounts a
+            ON a.id = m.account_id
+        WHERE group_id = ?
+            AND m.status = 'active'
+        ORDER BY CASE
+            WHEN m.role = 'owner' THEN 0
+            ELSE 1
+        END,
+            a.name COLLATE NOCASE ASC,
+            m.id ASC
 
         `,
 
