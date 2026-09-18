@@ -361,7 +361,47 @@ localStorage.setItem("ledgerLastPage", "/ledger/index.html");
     });
 
     els.createBookButton.addEventListener("click", () => {
-      alert("Create new Ledger will be enabled in a later phase.");
+      const message =
+        document.createElement("div");
+
+      message.textContent =
+        "Create new Ledger will be enabled in a later phase.";
+
+      message.style.position =
+        "fixed";
+
+      message.style.top =
+        "24px";
+
+      message.style.left =
+        "50%";
+
+      message.style.transform =
+        "translateX(-50%)";
+
+      message.style.padding =
+        "12px 18px";
+
+      message.style.borderRadius =
+        "10px";
+
+      message.style.background =
+        "#ffffff";
+
+      message.style.border =
+        "1px solid var(--border)";
+
+      message.style.boxShadow =
+        "0 8px 24px rgba(0, 0, 0, 0.12)";
+
+      message.style.zIndex =
+        "9999";
+
+      document.body.appendChild(message);
+
+      setTimeout(() => {
+        message.remove();
+      }, 3000);
     });
 
     els.reportsButton.addEventListener("click", () => {

@@ -45,6 +45,8 @@
     editGroupFormError: $("editGroupFormError"),
     totalExpenses: $("totalExpenses"),
     youWillGet: $("youWillGet"),
+    youWillGetLabel: $("youWillGetLabel"),
+    youWillGetAction: $("youWillGetAction"),
     youWillPay: $("youWillPay"),
     memberCount: $("memberCount"),
     membersTabButton: $("membersTabButton"),
@@ -93,6 +95,9 @@
     settlementMaximum: $("settlementMaximum"),
     settlementFormError: $("settlementFormError"),
     settlementSubmitButton: $("settlementSubmitButton"),
+    settlementConfirmation: $("settlementConfirmation"),
+    cancelSettlementConfirmation: $("cancelSettlementConfirmation"),
+    confirmSettlementButton: $("confirmSettlementButton"),
     inviteFormError: $("inviteFormError")
   };
 
@@ -417,7 +422,7 @@
         "party-balance-zero";
 
       let balanceLabel =
-        "Settled";
+        "";
 
       let balanceText =
         "Settled";
@@ -428,7 +433,7 @@
           "party-balance-give";
 
         balanceLabel =
-          "You will get";
+          "Will get";
 
         balanceText =
           money(balance);
@@ -440,7 +445,7 @@
           "party-balance-get";
 
         balanceLabel =
-          "You will pay";
+          "Will pay";
 
         balanceText =
           money(
@@ -469,8 +474,8 @@
             getAlignAccountId()
             ? "You"
             : member.role === "owner"
-            ? "Owner"
-            : "Member"
+            ? ""
+            : ""
           )}
           </span>
           </span>
@@ -697,6 +702,16 @@
     els.settlementFormError.hidden =
       true;
 
+    els.settlementConfirmation.hidden =
+      true;
+
+    els.settlementSubmitButton.closest(
+      ".form-actions"
+    ).hidden = false;
+
+    els.settlementSubmitButton.disabled =
+      false;
+
     populateSettlementPayers();
 
     els.settlementModal.hidden =
@@ -714,13 +729,101 @@
         true;
 
     }
-
     settlementReceiver =
       null;
+
+    els.settlementConfirmation.hidden =
+      true;
+
+    els.settlementSubmitButton.disabled =
+      false;
 
   }
 
   async function createSettlement() {
+
+
+    if (
+      !groupId ||
+      !settlementReceiver
+    ) {
+      return;
+    }
+
+    const payerId =
+      Number(
+        els.settlementPayer.value
+      );
+
+    const amount =
+      Number(
+        els.settlementAmount.value
+      );
+
+    const maximum =
+      getSettlementMaximumForPayer(
+        payerId
+      );
+
+    if (
+      !payerId ||
+      maximum <= 0
+    ) {
+      els.settlementFormError.textContent =
+        "No valid payer is available.";
+
+      els.settlementFormError.hidden =
+        false;
+
+      return;
+    }
+
+    if (
+      !Number.isFinite(amount) ||
+      amount <= 0
+    ) {
+      els.settlementFormError.textContent =
+        "Enter a valid settlement amount.";
+
+      els.settlementFormError.hidden =
+        false;
+
+      return;
+    }
+
+    if (
+      amount > maximum
+    ) {
+      els.settlementFormError.textContent =
+        `Maximum settlement amount is ${money(
+          maximum
+        )}.`;
+
+      els.settlementFormError.hidden =
+        false;
+
+      els.settlementAmount.value =
+        maximum.toFixed(2);
+
+      return;
+    }
+
+    els.settlementFormError.hidden =
+      true;
+
+    els.settlementConfirmation.hidden =
+      false;
+
+    els.settlementSubmitButton.closest(
+      ".form-actions"
+    ).hidden = true;
+
+    els.settlementSubmitButton.disabled =
+      true;
+
+  }
+
+  async function confirmSettlement() {
 
     if (
       !groupId ||
@@ -1170,9 +1273,25 @@
     els.totalExpenses.closest(".summary-card").hidden =
       Number(summary.total_expenses) <= 0;
 
-    els.youWillGet.closest(".summary-card").hidden =
-      Number(summary.you_will_get) <= 0;
+    const youWillGetAmount =
+      Number(summary.you_will_get);
 
+    if (youWillGetAmount <= 0) {
+      els.youWillGetLabel.textContent =
+        "SETTLED";
+      els.youWillGet.textContent =
+        money(0);
+      els.youWillGetAction.hidden =
+        true;
+    } else {
+      els.youWillGetLabel.textContent =
+        "YOU WILL GET";
+      els.youWillGetAction.hidden =
+        false;
+    }
+
+    els.youWillGet.closest(".summary-card").hidden =
+      false;
     els.youWillPay.closest(".summary-card").hidden =
       Number(summary.you_will_pay) <= 0;
 
@@ -2719,6 +2838,36 @@
     }
 
   }
+
+    if (els.confirmSettlementButton) {
+
+      els.confirmSettlementButton.addEventListener(
+        "click",
+        confirmSettlement
+      );
+
+    }
+
+    if (els.cancelSettlementConfirmation) {
+
+      els.cancelSettlementConfirmation.addEventListener(
+        "click",
+        () => {
+
+          els.settlementConfirmation.hidden =
+            true;
+
+          els.settlementSubmitButton.closest(
+            ".form-actions"
+          ).hidden = false;
+
+          els.settlementSubmitButton.disabled =
+            false;
+
+        }
+      );
+
+    }
 
     if (els.closeSettlementModal) {
 

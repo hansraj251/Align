@@ -551,6 +551,18 @@ function renderInterestReceived(
             ? entries
             : [];
 
+    const interestReceivedSection =
+        interestReceivedList
+            ? interestReceivedList.closest(
+                "section.parties-section"
+            )
+            : null;
+
+    if (interestReceivedSection) {
+        interestReceivedSection.hidden =
+            items.length === 0;
+    }
+
     if (interestReceivedTotal) {
 
         interestReceivedTotal.textContent =
@@ -568,8 +580,7 @@ function renderInterestReceived(
 
     if (items.length === 0) {
 
-        interestReceivedList.innerHTML =
-            '<div class="empty-state compact"><h2>No interest received/paid yet</h2><p>No interest entries recorded.</p></div>';
+        interestReceivedList.innerHTML = "";
 
     } else {
 
