@@ -20,24 +20,6 @@
             <h1 id="partyName"></h1>
             <p id="partyMobile"></p>
           </div>
-          <div id="partyHeaderActions" class="party-header-actions" hidden>
-            <button
-              type="button"
-              class="secondary-button"
-              data-action="edit-party"
-              id="editPartyButton"
-            >
-              ✎
-            </button>
-            <button
-              type="button"
-              class="secondary-button"
-              data-action="delete-party"
-              id="deletePartyButton"
-            >
-              ×
-            </button>
-          </div>
         </div>
     </header>
 
@@ -245,6 +227,14 @@
         </div>
 
         <p id="editPartyFormError" class="form-error" hidden></p>
+        <button
+          id="deletePartyFromEditButton"
+          type="button"
+          class="secondary-button"
+          style="width:100%; margin-top:12px;"
+        >
+          Delete Party
+        </button>
       </form>
     </div>
   </div>

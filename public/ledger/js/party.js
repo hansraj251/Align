@@ -275,31 +275,46 @@ async function deleteParty() {
     );
 }
 
-function togglePartyHeaderActions() {
-    if (partyHeaderActions) {
-        partyHeaderActions.hidden = !partyHeaderActions.hidden;
-    }
-}
-
 if (partyHeaderDetails) {
-    partyHeaderDetails.addEventListener("click", togglePartyHeaderActions);
 
-    partyHeaderDetails.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            togglePartyHeaderActions();
+    partyHeaderDetails.addEventListener(
+        "click",
+        openEditPartyModal
+    );
+
+    partyHeaderDetails.addEventListener(
+        "keydown",
+        (event) => {
+
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+
+                event.preventDefault();
+
+                openEditPartyModal();
+
+            }
+
         }
-    });
+    );
+
 }
 
-if (editPartyButton) {
-    editPartyButton.addEventListener("click", openEditPartyModal);
-}
+const deletePartyFromEditButton =
+    document.getElementById(
+        "deletePartyFromEditButton"
+    );
 
-if (deletePartyButton) {
-    deletePartyButton.addEventListener("click", deleteParty);
-}
+if (deletePartyFromEditButton) {
 
+    deletePartyFromEditButton.addEventListener(
+        "click",
+        deleteParty
+    );
+
+}
 
 if (closeEditPartyModal) {
     closeEditPartyModal.addEventListener(

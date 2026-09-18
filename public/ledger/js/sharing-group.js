@@ -36,6 +36,8 @@
     editGroupButton: $("editGroupButton"),
     deleteGroupButton: $("deleteGroupButton"),
     editGroupModal: $("editGroupModal"),
+    deleteGroupFromEditButton:
+      $("deleteGroupFromEditButton"),
     closeEditGroupModal: $("closeEditGroupModal"),
     cancelEditGroupButton: $("cancelEditGroupButton"),
     editGroupForm: $("editGroupForm"),
@@ -1311,17 +1313,7 @@
   if (els.groupHeaderDetails) {
     els.groupHeaderDetails.addEventListener(
       "click",
-      (event) => {
-        if (
-          event.target.closest(
-            "#groupHeaderActions"
-          )
-        ) {
-          return;
-        }
-
-        toggleGroupHeaderActions();
-      }
+      openEditGroupModal
     );
 
     els.groupHeaderDetails.addEventListener(
@@ -1332,21 +1324,14 @@
           event.key === " "
         ) {
           event.preventDefault();
-          toggleGroupHeaderActions();
+          openEditGroupModal();
         }
       }
     );
   }
 
-  if (els.editGroupButton) {
-    els.editGroupButton.addEventListener(
-      "click",
-      openEditGroupModal
-    );
-  }
-
-  if (els.deleteGroupButton) {
-    els.deleteGroupButton.addEventListener(
+  if (els.deleteGroupFromEditButton) {
+    els.deleteGroupFromEditButton.addEventListener(
       "click",
       deleteGroup
     );
