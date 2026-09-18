@@ -7,6 +7,10 @@ const ledgerGroupExpenseSplitRepository =
 const ledgerGroupMemberRepository =
     require("../repositories/ledgerGroupMemberRepository");
 
+const ledgerNotificationService =
+
+    require("../services/ledgerNotificationService");
+
 function roundAmount(value) {
     return Math.round((value + Number.EPSILON) * 100) / 100;
 }
@@ -528,10 +532,59 @@ async function setSplits(
             );
     }
 
-    return saveSplits(
-        expenseId,
-        splits
+    const savedSplits =
+
+        await saveSplits(
+
+            expenseId,
+
+            splits
+
+        );
+
+    const recipientAccountIds =
+
+        savedSplits
+
+            .filter(
+
+                split =>
+
+                    Number(split.share_amount) > 0 &&
+
+                    Number(split.account_id) > 0
+
+            )
+
+            .map(
+
+                split =>
+
+                    Number(split.account_id)
+
+            );
+
+    await ledgerNotificationService.sendToAccounts(
+
+        recipientAccountIds,
+
+        "Group Expense",
+
+        `${expense.description} - ₹${Number(expense.amount).toFixed(2)}`,
+
+        {
+
+            type: "ledger_group_expense",
+
+            groupId: String(groupId),
+
+            expenseId: String(expenseId)
+
+        }
+
     );
+
+    return savedSplits;
 }
 
 async function getSplits(
