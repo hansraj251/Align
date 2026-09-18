@@ -1293,7 +1293,7 @@
     }
 
     els.youWillGet.closest(".summary-card").hidden =
-      false;
+      youWillGetAmount <= 0;
     els.youWillPay.closest(".summary-card").hidden =
       Number(summary.you_will_pay) <= 0;
 
