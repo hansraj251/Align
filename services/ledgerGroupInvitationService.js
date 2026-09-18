@@ -10,6 +10,10 @@ const ledgerGroupRepository =
 const alignAccountRepository =
     require("../repositories/alignAccountRepository");
 
+const ledgerNotificationService =
+
+    require("./ledgerNotificationService");
+
 function cleanText(
 
     value
@@ -248,23 +252,49 @@ async function createInvitation(
 
     }
 
-    return ledgerGroupInvitationRepository
+    const invitation =
 
-        .create(
+        await ledgerGroupInvitationRepository
 
-            groupId,
+            .create(
 
-            accountId,
+                groupId,
+
+                accountId,
+
+                invitedAccount.id,
+
+                invitedAccount.name,
+
+                invitedAccount.mobile,
+
+                invitedAccount.email
+
+            );
+
+    await ledgerNotificationService
+
+        .sendToAccount(
 
             invitedAccount.id,
 
-            invitedAccount.name,
+            "Group Invitation",
 
-            invitedAccount.mobile,
+            `${group.name} - ${inviter.name}`,
 
-            invitedAccount.email
+            {
+
+                type: "ledger_group_invitation",
+
+                groupId: String(groupId),
+
+                invitationId: String(invitation.id)
+
+            }
 
         );
+
+    return invitation;
 
 }
 
