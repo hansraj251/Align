@@ -17,6 +17,10 @@ const cors =
 const initializeDatabase =
     require("./database/init");
 
+const firebaseService =
+
+    require("./services/firebaseService");
+
 const app =
     express();
 
@@ -99,6 +103,14 @@ app.use(
     "/api/ledger/profile",
 
     require("./routes/ledgerProfileRoutes")
+
+);
+
+app.use(
+
+    "/api/ledger/notifications/devices",
+
+    require("./routes/ledgerNotificationDeviceRoutes")
 
 );
 
@@ -300,6 +312,8 @@ app.get(
 initializeDatabase()
 
     .then(() => {
+
+        firebaseService.initialize();
 
         const PORT =
             process.env.PORT

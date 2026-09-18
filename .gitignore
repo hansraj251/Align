@@ -24,3 +24,6 @@ backups/
 database/*backup*.db
 database/*before*.db
 database/align.db
+
+# Firebase Service Account
+config/firebase-service-account.json

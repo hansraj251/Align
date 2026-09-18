@@ -52,6 +52,9 @@ require("./schema/appVersion");
 const createAlignAccountsTable =
     require("./schema/alignAccounts");
 
+const createLedgerNotificationDevicesTable =
+    require("./schema/ledgerNotificationDevices");
+
 const createAlignAccountLinksTable =
     require("./schema/alignAccountLinks");
 
@@ -189,6 +192,10 @@ async function initializeDatabase() {
     await createAppVersionTable();
 
     await createAlignAccountsTable();
+
+    await createLedgerNotificationDevicesTable();
+
+    await createLedgerNotificationDevicesTable.createIndexes();
 
     await createAlignAccountLinksTable();
 
