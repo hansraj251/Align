@@ -86,6 +86,7 @@
     cancelInviteButton: $("cancelInviteButton"),
     inviteForm: $("inviteForm"),
     inviteEmail: $("inviteEmail"),
+    scanInviteQrButton: $("scanInviteQrButton"),
     inviteSubmitButton: $("inviteSubmitButton"),
     settlementModal: $("settlementModal"),
     closeSettlementModal: $("closeSettlementModal"),
@@ -2096,6 +2097,124 @@
     els.inviteModal.hidden = true;
   }
 
+  async function resolveScannedQrToken(token) {
+
+    const result =
+
+      await api(
+
+        "/api/ledger/account-qr/resolve",
+
+        {
+
+          method: "POST",
+
+          body: JSON.stringify({
+
+            token
+
+          })
+
+        }
+
+      );
+
+    if (
+
+      !result ||
+
+      !result.success ||
+
+      !result.account ||
+
+      !result.account.email
+
+    ) {
+
+      throw new Error(
+
+        "Invalid QR code."
+
+      );
+
+    }
+
+    els.inviteEmail.value =
+
+      result.account.email
+
+        .trim()
+
+        .toLowerCase();
+
+  }
+
+  window.onAndroidQrScanResult =
+
+    async function(token) {
+
+      els.inviteFormError.hidden = true;
+
+      els.inviteFormError.textContent = "";
+
+      try {
+
+        await resolveScannedQrToken(
+
+          token
+
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+
+          "QR resolve failed:",
+
+          error
+
+        );
+
+        els.inviteFormError.textContent =
+
+          error.message ||
+
+          "Unable to read this QR code.";
+
+        els.inviteFormError.hidden = false;
+
+      }
+
+    };
+
+  window.onAndroidQrScanCancelled =
+
+    function() {
+
+      console.log(
+
+        "QR scan cancelled."
+
+      );
+
+    };
+
+  window.onAndroidQrScanError =
+
+    function(message) {
+
+      els.inviteFormError.textContent =
+
+        message ||
+
+        "QR scan failed.";
+
+      els.inviteFormError.hidden = false;
+
+    };
+
   async function sendInvitation(event) {
     event.preventDefault();
 
@@ -3017,6 +3136,46 @@
       }
     }
   );
+
+  if (els.scanInviteQrButton) {
+
+    els.scanInviteQrButton.addEventListener(
+
+      "click",
+
+      () => {
+
+        if (
+
+          !window.AndroidBridge ||
+
+          typeof AndroidBridge.scanQrCode !==
+
+            "function"
+
+        ) {
+
+          els.inviteFormError.textContent =
+
+            "QR scanner is available in the Android app.";
+
+          els.inviteFormError.hidden = false;
+
+          return;
+
+        }
+
+        els.inviteFormError.hidden = true;
+
+        els.inviteFormError.textContent = "";
+
+        AndroidBridge.scanQrCode();
+
+      }
+
+    );
+
+  }
 
   els.inviteForm.addEventListener(
     "submit",

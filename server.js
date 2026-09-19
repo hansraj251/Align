@@ -108,6 +108,14 @@ app.use(
 
 app.use(
 
+    "/api/ledger/account-qr",
+
+    require("./routes/ledgerAccountQrRoutes")
+
+);
+
+app.use(
+
     "/api/ledger/notifications/devices",
 
     require("./routes/ledgerNotificationDeviceRoutes")

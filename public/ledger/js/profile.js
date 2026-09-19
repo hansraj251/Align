@@ -45,7 +45,16 @@
             $("profileFormMessage"),
 
         profileSaveButton:
-            $("profileSaveButton")
+            $("profileSaveButton"),
+
+        profileQrImage:
+            $("profileQrImage"),
+
+        profileQrRefreshButton:
+            $("profileQrRefreshButton"),
+
+        profileQrMessage:
+            $("profileQrMessage")
     };
 
     let originalProfile = null;
@@ -218,6 +227,90 @@
 
     }
 
+    async function loadProfileQr() {
+
+        const qrSection =
+            $("profileQrSection");
+
+        if (!qrSection) {
+
+            return;
+
+        }
+
+        if (
+            !window.AndroidBridge ||
+            typeof AndroidBridge.generateQrCode !==
+                "function"
+        ) {
+
+            qrSection.hidden = true;
+
+            return;
+
+        }
+
+        qrSection.hidden = false;
+
+        els.profileQrMessage.hidden = true;
+
+        els.profileQrMessage.textContent = "";
+
+        els.profileQrImage.hidden = true;
+
+        els.profileQrRefreshButton.disabled = true;
+
+        try {
+
+            const data =
+                await api(
+                    "/api/ledger/account-qr/"
+                );
+
+            const qrImage =
+                AndroidBridge.generateQrCode(
+                    data.token
+                );
+
+            if (!qrImage) {
+
+                throw new Error(
+                    "Unable to generate QR code."
+                );
+
+            }
+
+            els.profileQrImage.src =
+                qrImage;
+
+            els.profileQrImage.hidden =
+                false;
+
+        }
+        catch (err) {
+
+            console.error(
+                "Profile QR load failed:",
+                err
+            );
+
+            els.profileQrMessage.textContent =
+                err.message ||
+                "Unable to load QR code.";
+
+            els.profileQrMessage.hidden =
+                false;
+
+        }
+        finally {
+
+            els.profileQrRefreshButton.disabled =
+                false;
+
+        }
+
+    }
+
     els.profileForm.addEventListener(
         "submit",
         async (event) => {
@@ -315,6 +408,16 @@
         }
     );
 
+    els.profileQrRefreshButton.addEventListener(
+
+        "click",
+
+        loadProfileQr
+
+    );
+
     loadProfile();
+
+    loadProfileQr();
 
 })();
