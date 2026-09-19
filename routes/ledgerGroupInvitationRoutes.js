@@ -49,6 +49,22 @@ router.post(
 );
 
 
+
+// Add account directly from QR
+
+router.post(
+
+    "/groups/:id/qr",
+
+    authMiddleware,
+
+    alignAccountMiddleware,
+
+    ledgerGroupInvitationController.addAccountByQr
+
+);
+
+
 // Accept or reject invitation
 
 router.put(

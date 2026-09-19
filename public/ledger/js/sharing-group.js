@@ -2127,7 +2127,7 @@
 
       !result.account ||
 
-      !result.account.email
+      !result.account.id
 
     ) {
 
@@ -2139,13 +2139,119 @@
 
     }
 
-    els.inviteEmail.value =
+    const addResult =
 
-      result.account.email
+      await api(
 
-        .trim()
+        `/api/ledger/invitations/groups/${
 
-        .toLowerCase();
+          encodeURIComponent(groupId)
+
+        }/qr`,
+
+        {
+
+          method: "POST",
+
+          body: JSON.stringify({
+
+            accountId:
+
+              result.account.id
+
+          })
+
+        }
+
+      );
+
+    if (
+
+      !addResult ||
+
+      !addResult.success
+
+    ) {
+
+      throw new Error(
+
+        addResult?.message ||
+
+        "Unable to add account to group."
+
+      );
+
+    }
+
+    closeInviteModal();
+
+    await refresh();
+
+    const message =
+
+      document.createElement("div");
+
+    message.textContent =
+
+      `${
+
+        result.account.name ||
+
+        result.account.email ||
+
+        "Account"
+
+      } added to the group successfully.`;
+
+    message.style.position =
+
+      "fixed";
+
+    message.style.top =
+
+      "24px";
+
+    message.style.left =
+
+      "50%";
+
+    message.style.transform =
+
+      "translateX(-50%)";
+
+    message.style.padding =
+
+      "12px 18px";
+
+    message.style.background =
+
+      "var(--card-bg, #ffffff)";
+
+    message.style.border =
+
+      "1px solid var(--border-color, #dddddd)";
+
+    message.style.borderRadius =
+
+      "8px";
+
+    message.style.zIndex =
+
+      "9999";
+
+    document.body.appendChild(
+
+      message
+
+    );
+
+    setTimeout(
+
+      () => message.remove(),
+
+      2500
+
+    );
 
   }
 
@@ -2171,7 +2277,7 @@
 
         console.error(
 
-          "QR resolve failed:",
+          "QR add failed:",
 
           error
 
@@ -2181,7 +2287,7 @@
 
           error.message ||
 
-          "Unable to read this QR code.";
+          "Unable to add this account.";
 
         els.inviteFormError.hidden = false;
 

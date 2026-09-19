@@ -298,6 +298,130 @@ async function createInvitation(
 
 }
 
+async function addAccountByQr(
+
+    accountId,
+
+    groupId,
+
+    scannedAccountId
+
+) {
+
+    const group =
+
+        await ledgerGroupRepository
+
+            .getByMemberAccount(
+
+                groupId,
+
+                accountId
+
+            );
+
+    if (!group) {
+
+        throw new Error(
+
+            "Group not found"
+
+        );
+
+    }
+
+    const scannedAccount =
+
+        await alignAccountRepository
+
+            .getById(
+
+                scannedAccountId
+
+            );
+
+    if (
+
+        !scannedAccount ||
+
+        scannedAccount.status !== "active"
+
+    ) {
+
+        throw new Error(
+
+            "Align account not found"
+
+        );
+
+    }
+
+    if (
+
+        scannedAccount.id === accountId
+
+    ) {
+
+        throw new Error(
+
+            "You cannot add yourself"
+
+        );
+
+    }
+
+    const existingMember =
+
+        await ledgerGroupMemberRepository
+
+            .getByGroupAndAccount(
+
+                groupId,
+
+                scannedAccount.id
+
+            );
+
+    if (
+
+        existingMember &&
+
+        existingMember.status === "active"
+
+    ) {
+
+        throw new Error(
+
+            "Account is already a group member"
+
+        );
+
+    }
+
+    return ledgerGroupMemberRepository
+
+        .create(
+
+            groupId,
+
+            scannedAccount.id,
+
+            scannedAccount.name,
+
+            scannedAccount.mobile,
+
+            scannedAccount.email,
+
+            "member",
+
+            "active",
+
+            new Date().toISOString()
+
+        );
+
+}
+
 async function respondToInvitation(
 
     accountId,
@@ -424,6 +548,8 @@ module.exports = {
 
     createInvitation,
 
-    respondToInvitation
+    respondToInvitation,
+
+    addAccountByQr
 
 };

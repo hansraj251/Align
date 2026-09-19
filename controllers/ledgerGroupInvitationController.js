@@ -153,3 +153,55 @@ async (
     }
 
 };
+
+exports.addAccountByQr =
+
+async (
+
+    req,
+
+    res
+
+) => {
+
+    try {
+
+        const member =
+
+            await ledgerGroupInvitationService
+
+                .addAccountByQr(
+
+                    req.alignAccountId,
+
+                    req.params.id,
+
+                    req.body.accountId
+
+                );
+
+        return res.status(201).json({
+
+            success: true,
+
+            member
+
+        });
+
+    }
+
+    catch (err) {
+
+        return res.status(400).json({
+
+            success: false,
+
+            message:
+
+                err.message
+
+        });
+
+    }
+
+};
