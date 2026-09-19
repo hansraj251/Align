@@ -13,6 +13,12 @@ const ledgerTransactionRepository =
 const ledgerTransactionService =
     require("../services/ledgerTransactionService");
 
+const alignAccountRepository =
+    require("../repositories/alignAccountRepository");
+
+const ledgerNotificationService =
+    require("../services/ledgerNotificationService");
+
 test("createTransaction passes interest rate to the transaction repository", async () => {
     const originalGetBusiness =
         ledgerBusinessService.getBusiness;
@@ -90,6 +96,207 @@ test("createTransaction passes interest rate to the transaction repository", asy
         ledgerTransactionRepository.create =
             originalCreate;
     }
+});
+
+test("createTransaction sends notification to party account", async () => {
+
+    const originalGetBusiness =
+        ledgerBusinessService.getBusiness;
+
+    const originalGetParty =
+        ledgerPartyRepository.getById;
+
+    const originalCreate =
+        ledgerTransactionRepository.create;
+
+    const originalGetByEmail =
+        alignAccountRepository.getByEmail;
+
+    const originalSendToAccount =
+        ledgerNotificationService.sendToAccount;
+
+    let notificationArgs = null;
+
+    ledgerBusinessService.getBusiness =
+        async () => ({
+            id: 9,
+            account_id: 42,
+            business_name: "Test Business",
+            status: "active"
+        });
+
+    ledgerPartyRepository.getById =
+        async () => ({
+            id: 1,
+            business_id: 9,
+            name: "Test Party",
+            email: "party@example.com",
+            status: "active"
+        });
+
+    ledgerTransactionRepository.create =
+        async () => ({
+            id: 10,
+            party_id: 1,
+            transaction_type: "credit",
+            amount: 1000,
+            transaction_date: "2026-09-14",
+            interest_rate: 12.5
+        });
+
+    alignAccountRepository.getByEmail =
+        async () => ({
+            id: 99,
+            email: "party@example.com",
+            status: "active"
+        });
+
+    ledgerNotificationService.sendToAccount =
+        async (...args) => {
+            notificationArgs = args;
+        };
+
+    try {
+
+        const result =
+            await ledgerTransactionService.createTransaction(
+                42,
+                1,
+                {
+                    transactionType: "credit",
+                    amount: 1000,
+                    transactionDate: "2026-09-14",
+                    interestRate: 12.5,
+                    description: "Test transaction"
+                }
+            );
+
+        assert.equal(
+            result.id,
+            10
+        );
+
+        assert.deepEqual(
+            notificationArgs,
+            [
+                99,
+                "New Ledger Entry",
+                "₹1000.00 credit entry added for Test Party",
+                {
+                    type:
+                        "ledger_party_transaction",
+                    partyId:
+                        "1",
+                    transactionId:
+                        "10"
+                }
+            ]
+        );
+
+    } finally {
+
+        ledgerBusinessService.getBusiness =
+            originalGetBusiness;
+
+        ledgerPartyRepository.getById =
+            originalGetParty;
+
+        ledgerTransactionRepository.create =
+            originalCreate;
+
+        alignAccountRepository.getByEmail =
+            originalGetByEmail;
+
+        ledgerNotificationService.sendToAccount =
+            originalSendToAccount;
+
+    }
+
+});
+
+test("createTransaction skips notification when party has no email", async () => {
+
+    const originalGetBusiness =
+        ledgerBusinessService.getBusiness;
+
+    const originalGetParty =
+        ledgerPartyRepository.getById;
+
+    const originalCreate =
+        ledgerTransactionRepository.create;
+
+    const originalSendToAccount =
+        ledgerNotificationService.sendToAccount;
+
+    let notificationCalled = false;
+
+    ledgerBusinessService.getBusiness =
+        async () => ({
+            id: 9,
+            account_id: 42,
+            business_name: "Test Business",
+            status: "active"
+        });
+
+    ledgerPartyRepository.getById =
+        async () => ({
+            id: 1,
+            business_id: 9,
+            name: "Test Party",
+            email: null,
+            status: "active"
+        });
+
+    ledgerTransactionRepository.create =
+        async () => ({
+            id: 11,
+            party_id: 1,
+            transaction_type: "credit",
+            amount: 500,
+            transaction_date: "2026-09-14",
+            interest_rate: 12.5
+        });
+
+    ledgerNotificationService.sendToAccount =
+        async () => {
+            notificationCalled = true;
+        };
+
+    try {
+
+        await ledgerTransactionService.createTransaction(
+            42,
+            1,
+            {
+                transactionType: "credit",
+                amount: 500,
+                transactionDate: "2026-09-14",
+                interestRate: 12.5,
+                description: "No email transaction"
+            }
+        );
+
+        assert.equal(
+            notificationCalled,
+            false
+        );
+
+    } finally {
+
+        ledgerBusinessService.getBusiness =
+            originalGetBusiness;
+
+        ledgerPartyRepository.getById =
+            originalGetParty;
+
+        ledgerTransactionRepository.create =
+            originalCreate;
+
+        ledgerNotificationService.sendToAccount =
+            originalSendToAccount;
+
+    }
+
 });
 
 test("transaction repository stores and returns interest rate", async () => {

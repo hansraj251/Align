@@ -7,6 +7,12 @@ const ledgerPartyRepository =
 const ledgerBusinessService =
     require("./ledgerBusinessService");
 
+const alignAccountRepository =
+    require("../repositories/alignAccountRepository");
+
+const ledgerNotificationService =
+    require("./ledgerNotificationService");
+
 function cleanText(value) {
 
     if (
@@ -248,17 +254,59 @@ async function createTransaction(
             interestRate
         );
 
-    return ledgerTransactionRepository
-        .create(
-            party.id,
-            validatedType,
-            validatedAmount,
-            validatedDate,
-            cleanText(description),
-            cleanText(paymentMode),
-            cleanText(referenceNo),
-            validatedInterestRate
-        );
+    const transaction =
+        await ledgerTransactionRepository
+            .create(
+                party.id,
+                validatedType,
+                validatedAmount,
+                validatedDate,
+                cleanText(description),
+                cleanText(paymentMode),
+                cleanText(referenceNo),
+                validatedInterestRate
+            );
+
+    if (party.email) {
+        try {
+            const account =
+                await alignAccountRepository
+                    .getByEmail(
+                        String(party.email)
+                            .trim()
+                            .toLowerCase()
+                    );
+
+            if (
+                account &&
+                account.status === "active"
+            ) {
+                await ledgerNotificationService
+                    .sendToAccount(
+                        account.id,
+                        "New Ledger Entry",
+                        `₹${Number(
+                            transaction.amount
+                        ).toFixed(2)} ${transaction.transaction_type} entry added for ${party.name}`,
+                        {
+                            type:
+                                "ledger_party_transaction",
+                            partyId:
+                                String(party.id),
+                            transactionId:
+                                String(transaction.id)
+                        }
+                    );
+            }
+        } catch (notificationError) {
+            console.error(
+                "Ledger party transaction notification error:",
+                notificationError.message
+            );
+        }
+    }
+
+    return transaction;
 }
 
 async function updateTransaction(
