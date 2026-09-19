@@ -8,9 +8,15 @@ const ledgerGroupMemberRepository =
 const ledgerGroupSummaryService =
 
     require("./ledgerGroupSummaryService");
-function cleanText(value) {
-    if (value === undefined || value === null) return null;
 
+const ledgerNotificationService =
+
+    require("./ledgerNotificationService");
+
+function cleanText(value) {
+
+
+    if (value === undefined || value === null) return null;
     const text = String(value).trim();
 
     return text || null;
@@ -378,23 +384,77 @@ async function createSettlement(
 
     }
 
-    return ledgerGroupSettlementRepository
+    const settlement =
 
-        .create(
+        await ledgerGroupSettlementRepository
 
-            groupId,
+            .create(
 
-            paidBy.id,
+                groupId,
 
-            paidTo.id,
+                paidBy.id,
 
-            validatedAmount,
+                paidTo.id,
 
-            validatedDate,
+                validatedAmount,
 
-            cleanedNotes
+                validatedDate,
 
-        );
+                cleanedNotes
+
+            );
+
+    if (paidBy.account_id) {
+
+        try {
+
+            await ledgerNotificationService
+
+                .sendToAccount(
+
+                    paidBy.account_id,
+
+                    "Settlement",
+
+                    `₹${Number(
+
+                        validatedAmount
+
+                    ).toFixed(2)} settlement recorded with ${paidTo.name}`,
+
+                    {
+
+                        type:
+
+                            "ledger_group_settlement",
+
+                        groupId:
+
+                            String(groupId),
+
+                        settlementId:
+
+                            String(settlement.id)
+
+                    }
+
+                );
+
+        } catch (notificationError) {
+
+            console.error(
+
+                "Ledger group settlement notification error:",
+
+                notificationError.message
+
+            );
+
+        }
+
+    }
+
+    return settlement;
 
 }
 

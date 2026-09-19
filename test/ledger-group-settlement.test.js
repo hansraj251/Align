@@ -29,6 +29,10 @@ const ledgerGroupMemberRepository =
 const ledgerGroupSettlementRepository =
     require("../repositories/ledgerGroupSettlementRepository");
 
+const ledgerNotificationService =
+
+    require("../services/ledgerNotificationService");
+
 test("createSettlement rejects amount above payer or receiver pending balance", async () => {
 
     const originalGetByGroupAndAccount =
@@ -335,6 +339,128 @@ test("createSettlement rejects when no pending payer or receiver balance exists"
 
         ledgerGroupSettlementRepository.create =
             originalCreate;
+
+    }
+
+});
+
+test("createSettlement sends notification to payer account", async () => {
+
+    const originalGetByGroupAndAccount =
+        ledgerGroupMemberRepository.getByGroupAndAccount;
+
+    const originalGetById =
+        ledgerGroupMemberRepository.getById;
+
+    const originalGetSummary =
+        ledgerGroupSummaryService.getSummary;
+
+    const originalCreate =
+        ledgerGroupSettlementRepository.create;
+
+    const originalSendToAccount =
+        ledgerNotificationService.sendToAccount;
+
+    let notificationArgs = null;
+
+    ledgerGroupMemberRepository.getByGroupAndAccount =
+        async () => ({
+            id: 1,
+            group_id: 10,
+            account_id: 100,
+            status: "active"
+        });
+
+    ledgerGroupMemberRepository.getById =
+        async (memberId) => ({
+            id: Number(memberId),
+            group_id: 10,
+            account_id:
+                Number(memberId) === 2
+                    ? 200
+                    : 300,
+            name:
+                Number(memberId) === 2
+                    ? "Payer"
+                    : "Receiver",
+            status: "active"
+        });
+
+    ledgerGroupSummaryService.getSummary =
+        async () => ({
+            members: [
+                {
+                    member_id: 2,
+                    net_balance: -2500
+                },
+                {
+                    member_id: 3,
+                    net_balance: 1000
+                }
+            ]
+        });
+
+    ledgerGroupSettlementRepository.create =
+        async (...args) => ({
+            id: 102,
+            group_id: args[0],
+            paid_by_member_id: args[1],
+            paid_to_member_id: args[2],
+            amount: args[3]
+        });
+
+    ledgerNotificationService.sendToAccount =
+        async (...args) => {
+            notificationArgs = args;
+        };
+
+    try {
+
+        await ledgerGroupSettlementService.createSettlement(
+            100,
+            10,
+            2,
+            3,
+            1000,
+            "2026-09-17",
+            null
+        );
+
+        assert.deepEqual(
+            notificationArgs,
+            [
+                200,
+                "Settlement",
+                "₹1000.00 settlement recorded with Receiver",
+                {
+                    type:
+                        "ledger_group_settlement",
+                    groupId:
+                        "10",
+                    settlementId:
+                        "102"
+                }
+            ]
+        );
+
+    }
+
+    finally {
+
+        ledgerGroupMemberRepository.getByGroupAndAccount =
+            originalGetByGroupAndAccount;
+
+        ledgerGroupMemberRepository.getById =
+            originalGetById;
+
+        ledgerGroupSummaryService.getSummary =
+            originalGetSummary;
+
+        ledgerGroupSettlementRepository.create =
+            originalCreate;
+
+        ledgerNotificationService.sendToAccount =
+            originalSendToAccount;
 
     }
 
