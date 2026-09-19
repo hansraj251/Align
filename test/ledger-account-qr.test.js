@@ -132,7 +132,7 @@ test("resolveToken returns the active account", async () => {
 
                     expiresIn:
 
-                        "30d"
+                        "1d"
 
                 }
 
@@ -200,7 +200,7 @@ test("resolveToken rejects a token with the wrong type", async () => {
 
                 expiresIn:
 
-                    "30d"
+                    "1d"
 
             }
 
@@ -270,7 +270,7 @@ test("resolveToken rejects an inactive account", async () => {
 
                     expiresIn:
 
-                        "30d"
+                        "1d"
 
                 }
 

@@ -12,7 +12,7 @@ const QR_TOKEN_TYPE =
 
 const QR_TOKEN_EXPIRY =
 
-    "30d";
+    "1d";
 
 exports.createToken =
 
