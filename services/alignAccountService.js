@@ -1,3 +1,10 @@
+const fs =
+    require("fs");
+
+const path =
+    require("path");
+
+
 const alignAccountRepository =
     require("../repositories/alignAccountRepository");
 
@@ -845,44 +852,157 @@ exports.updateProfile = async (
 
 
 exports.updateProfilePhoto = async (
+
     accountId,
+
     profilePhoto
+
 ) => {
 
     const cleanProfilePhoto =
+
         String(profilePhoto || "").trim();
 
     if (!accountId) {
+
         throw new Error(
+
             "Account ID is required"
+
         );
+
     }
 
     if (!cleanProfilePhoto) {
+
         throw new Error(
+
             "Profile photo is required"
+
         );
+
     }
 
     const account =
+
         await alignAccountRepository
+
             .getById(accountId);
 
     if (!account) {
+
         throw new Error(
+
             "Align account not found"
+
         );
+
     }
 
     if (account.status !== "active") {
+
         throw new Error(
+
             "Align account is not active"
+
         );
+
     }
 
-    return await alignAccountRepository
-        .updateProfilePhoto(
-            accountId,
+    const oldProfilePhoto =
+
+        String(
+
+            account.profile_photo || ""
+
+        ).trim();
+
+    const updatedAccount =
+
+        await alignAccountRepository
+
+            .updateProfilePhoto(
+
+                accountId,
+
+                cleanProfilePhoto
+
+            );
+
+    if (
+
+        oldProfilePhoto &&
+
+        oldProfilePhoto.startsWith(
+
+            "profile/"
+
+        ) &&
+
+        oldProfilePhoto !==
+
             cleanProfilePhoto
-        );
+
+    ) {
+
+        const uploadsPath =
+
+            process.env.RENDER
+
+                ? "/var/data/uploads"
+
+                : path.join(
+
+                    __dirname,
+
+                    "../uploads"
+
+                );
+
+        const oldPhotoPath =
+
+            path.join(
+
+                uploadsPath,
+
+                oldProfilePhoto
+
+            );
+
+        try {
+
+            await fs.promises.unlink(
+
+                oldPhotoPath
+
+            );
+
+        }
+
+        catch (error) {
+
+            if (
+
+                error.code !==
+
+                "ENOENT"
+
+            ) {
+
+                console.error(
+
+                    "Old profile photo cleanup failed:",
+
+                    error
+
+                );
+
+            }
+
+        }
+
+    }
+
+    return updatedAccount;
+
 };
