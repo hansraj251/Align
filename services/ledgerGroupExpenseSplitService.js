@@ -564,7 +564,7 @@ async function setSplits(
 
             );
 
-    await ledgerNotificationService.sendToAccounts(
+    ledgerNotificationService.sendToAccounts(
 
         recipientAccountIds,
 
@@ -582,7 +582,13 @@ async function setSplits(
 
         }
 
-    );
+    )
+        .catch(error => {
+            console.error(
+                "Ledger group expense notification error:",
+                error.message
+            );
+        });
 
     return savedSplits;
 }
