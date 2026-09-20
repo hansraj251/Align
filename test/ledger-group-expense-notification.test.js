@@ -203,3 +203,130 @@ test("setSplits notifies only members with positive share amount", async () => {
     }
 
 });
+test("deleteExpense notifies only members with positive share amount", async () => {
+
+    const originalGetByGroupAndAccount =
+        ledgerGroupMemberRepository.getByGroupAndAccount;
+
+    const originalGetExpenseById =
+        ledgerGroupExpenseRepository.getById;
+
+    const originalRemove =
+        ledgerGroupExpenseRepository.remove;
+
+    const originalGetByExpenseId =
+        ledgerGroupExpenseSplitRepository.getByExpenseId;
+
+    const originalSendToAccounts =
+        ledgerNotificationService.sendToAccounts;
+
+    let notificationArgs = null;
+
+    ledgerGroupMemberRepository.getByGroupAndAccount =
+        async () => ({
+            id: 1,
+            group_id: 10,
+            account_id: 100,
+            status: "active"
+        });
+
+    ledgerGroupExpenseRepository.getById =
+        async () => ({
+            id: 20,
+            group_id: 10,
+            added_by_account_id: 100,
+            description: "Dinner",
+            amount: 3000
+        });
+
+    ledgerGroupExpenseSplitRepository.getByExpenseId =
+        async () => ([
+            {
+                id: 1,
+                expense_id: 20,
+                member_id: 1,
+                account_id: 100,
+                share_amount: 1000
+            },
+            {
+                id: 2,
+                expense_id: 20,
+                member_id: 2,
+                account_id: 200,
+                share_amount: 2000
+            },
+            {
+                id: 3,
+                expense_id: 20,
+                member_id: 3,
+                account_id: 300,
+                share_amount: 0
+            }
+        ]);
+
+    ledgerGroupExpenseRepository.remove =
+        async () => {};
+
+    ledgerNotificationService.sendToAccounts =
+        async (...args) => {
+            notificationArgs = args;
+        };
+
+    try {
+
+        const ledgerGroupExpenseService =
+            require("../services/ledgerGroupExpenseService");
+
+        await ledgerGroupExpenseService.deleteExpense(
+            100,
+            10,
+            20
+        );
+
+        assert.deepEqual(
+            notificationArgs[0],
+            [
+                100,
+                200
+            ]
+        );
+
+        assert.equal(
+            notificationArgs[1],
+            "Group Expense Deleted"
+        );
+
+        assert.equal(
+            notificationArgs[2],
+            "Dinner - ₹3000.00"
+        );
+
+        assert.deepEqual(
+            notificationArgs[3],
+            {
+                type: "ledger_group_expense_deleted",
+                groupId: "10",
+                expenseId: "20"
+            }
+        );
+
+    }
+    finally {
+
+        ledgerGroupMemberRepository.getByGroupAndAccount =
+            originalGetByGroupAndAccount;
+
+        ledgerGroupExpenseRepository.getById =
+            originalGetExpenseById;
+
+        ledgerGroupExpenseRepository.remove =
+            originalRemove;
+
+        ledgerGroupExpenseSplitRepository.getByExpenseId =
+            originalGetByExpenseId;
+
+        ledgerNotificationService.sendToAccounts =
+            originalSendToAccounts;
+    }
+
+});

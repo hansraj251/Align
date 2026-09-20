@@ -6,6 +6,14 @@ const ledgerGroupMemberRepository =
 
     require("../repositories/ledgerGroupMemberRepository");
 
+const ledgerGroupExpenseSplitRepository =
+
+    require("../repositories/ledgerGroupExpenseSplitRepository");
+
+const ledgerNotificationService =
+
+    require("./ledgerNotificationService");
+
 function cleanText(
 
     value
@@ -616,16 +624,47 @@ async function deleteExpense(
 
     }
 
+    const existingSplits =
+        await ledgerGroupExpenseSplitRepository
+            .getByExpenseId(
+                expenseId
+            );
+
+    const recipientAccountIds =
+        existingSplits
+            .filter(
+                split =>
+                    Number(split.share_amount) > 0 &&
+                    Number(split.account_id) > 0
+            )
+            .map(
+                split =>
+                    Number(split.account_id)
+            );
+
     await ledgerGroupExpenseRepository
-
         .remove(
-
             expenseId,
-
             groupId
-
         );
 
+    ledgerNotificationService
+        .sendToAccounts(
+            recipientAccountIds,
+            "Group Expense Deleted",
+            `${existingExpense.description} - ₹${Number(existingExpense.amount).toFixed(2)}`,
+            {
+                type: "ledger_group_expense_deleted",
+                groupId: String(groupId),
+                expenseId: String(expenseId)
+            }
+        )
+        .catch(error => {
+            console.error(
+                "Ledger group expense deletion notification error:",
+                error.message
+            );
+        });
 }
 
 module.exports = {
