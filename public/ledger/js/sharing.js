@@ -16,10 +16,10 @@ localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
     invitationsSection: $("invitationsSection"),
     invitationsList: $("invitationsList"),
     groupsSection: $("groupsSection"),
-    groupCountText: $("groupCountText"),
     groupsList: $("groupsList"),
     groupsEmptyState: $("groupsEmptyState"),
-    bottomAddGroupButton: $("bottomAddGroupButton"),
+    headerAddGroupButton: $("headerAddGroupButton"),
+    headerGroupsButton: $("headerGroupsButton"),
     emptyCreateGroupButton: $("emptyCreateGroupButton"),
     createGroupModal: $("createGroupModal"),
     closeCreateGroupModal: $("closeCreateGroupModal"),
@@ -135,6 +135,168 @@ localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
     ).toUpperCase();
   }
 
+  function groupTypeIcon(groupType) {
+    const icons = {
+      "Trip / Travel": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M10.2 3.8l2.1-.7 1.2 5.1 5.2 1.7c.6.2 1 .8.8 1.4l-.2.6-5.9-.9-1.4 5.2 2.1 1.4-.3.9-3.4-1.2-3.4 1.2-.3-.9 2.1-1.4-1.4-5.2-5.9.9-.2-.6c-.2-.6.2-1.2.8-1.4l5.2-1.7 1.2-5.1 1.7.7z"/>
+        </svg>
+      `,
+      "Friends": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="9" cy="8" r="3"/>
+          <circle cx="17" cy="9" r="2.5"/>
+          <path d="M3.5 19c.5-3.1 2.4-5 5.5-5s5 1.9 5.5 5"/>
+          <path d="M14.5 15c2.5-.5 5 .8 6 3"/>
+        </svg>
+      `,
+      "Family": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="8" cy="7" r="2.5"/>
+          <circle cx="16" cy="7" r="2.5"/>
+          <circle cx="12" cy="5" r="2.2"/>
+          <path d="M3.5 18c.4-2.7 2-4.5 4.5-4.5S12.1 15.3 12.5 18"/>
+          <path d="M11.5 18c.4-2.7 2-4.5 4.5-4.5s4.1 1.8 4.5 4.5"/>
+        </svg>
+      `,
+      "Roommates": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M3.5 20V9.5L12 4l8.5 5.5V20"/>
+          <path d="M7 20v-6h10v6"/>
+          <path d="M9.5 11h5"/>
+        </svg>
+      `,
+      "Couples": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M20.8 8.8c0 5.2-8.8 10-8.8 10s-8.8-4.8-8.8-10A4.8 4.8 0 0 1 12 6.3a4.8 4.8 0 0 1 8.8 2.5z"/>
+        </svg>
+      `,
+      "Office / Work": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="3.5" y="7" width="17" height="13" rx="2"/>
+          <path d="M8 7V5.5A1.5 1.5 0 0 1 9.5 4h5A1.5 1.5 0 0 1 16 5.5V7"/>
+          <path d="M3.5 12h17"/>
+          <path d="M10 12v2h4v-2"/>
+        </svg>
+      `,
+      "Event / Party": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="4" y="5" width="16" height="15" rx="2"/>
+          <path d="M8 3v4M16 3v4M4 9h16"/>
+          <path d="M12 12l.7 1.5 1.6.2-1.2 1.1.3 1.6-1.4-.8-1.4.8.3-1.6-1.2-1.1 1.6-.2z"/>
+        </svg>
+      `,
+      "Business": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <rect x="4" y="3.5" width="16" height="17" rx="2"/>
+          <path d="M8 7h2M14 7h2M8 11h2M14 11h2M8 15h2M14 15h2M11 20.5v-4h2v4"/>
+        </svg>
+      `,
+      "Other": `
+        <svg
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7.5L12 3l8 4.5v9L12 21l-8-4.5z"/>
+          <path d="M8 9.5l4 2.3 4-2.3"/>
+          <path d="M12 12v4.5"/>
+        </svg>
+      `
+    };
+
+    return (
+      icons[groupType] ||
+      icons["Other"]
+    );
+  }
+
   function openCreateGroupModal() {
     els.createGroupForm.reset();
     els.createGroupFormError.hidden = true;
@@ -151,15 +313,23 @@ localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
     els.createGroupModal.hidden = true;
   }
 
-  function renderGroups(groups) {
-    els.groupsList.innerHTML = "";
+  function groupBalanceStatus(netBalance) {
+  const balance =
+    Number(netBalance || 0);
 
-    els.groupCountText.textContent =
-      `${groups.length} ${
-        groups.length === 1
-          ? "group"
-          : "groups"
-      }`;
+  if (balance > 0) {
+    return `You will get ₹${balance.toFixed(2)}`;
+  }
+
+  if (balance < 0) {
+    return `You will pay ₹${Math.abs(balance).toFixed(2)}`;
+  }
+
+  return "Settled";
+}
+
+function renderGroups(groups) {
+    els.groupsList.innerHTML = "";
 
     if (!groups.length) {
       els.groupsEmptyState.hidden = false;
@@ -177,8 +347,8 @@ localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
 
       row.innerHTML = `
         <span class="party-avatar">
-          ${escapeHtml(
-            initials(group.group_name)
+          ${groupTypeIcon(
+            group.group_description
           )}
         </span>
 
@@ -189,13 +359,13 @@ localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
             )}
           </span>
 
-          ${
-            group.group_description
-              ? `<span class="party-mobile">${escapeHtml(
-                  group.group_description
-                )}</span>`
-              : ""
-          }
+          <span class="party-mobile">
+            ${escapeHtml(
+              groupBalanceStatus(
+                group.net_balance
+              )
+            )}
+          </span>
         </span>
 
         <span class="party-balance party-balance-zero">
@@ -464,7 +634,12 @@ localStorage.setItem("ledgerLastPage", "/ledger/sharing.html");
     openCreateGroupModal
   );
 
-  els.bottomAddGroupButton.addEventListener(
+  els.headerAddGroupButton.addEventListener(
+    "click",
+    openCreateGroupModal
+  );
+
+  els.headerGroupsButton.addEventListener(
     "click",
     openCreateGroupModal
   );

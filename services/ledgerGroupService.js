@@ -4,15 +4,15 @@ const ledgerGroupRepository =
 const ledgerGroupMemberRepository =
     require("../repositories/ledgerGroupMemberRepository");
 
+const ledgerGroupSummaryService =
+    require("./ledgerGroupSummaryService");
+
 const alignAccountRepository =
     require("../repositories/alignAccountRepository");
 
 const ledgerBusinessService =
     require("./ledgerBusinessService");
 
-const ledgerGroupSummaryService =
-
-    require("./ledgerGroupSummaryService");
 
 function cleanText(
     value
@@ -59,13 +59,62 @@ async function getGroups(
 
 ) {
 
-    return ledgerGroupMemberRepository
+    const groups =
 
-        .getByAccountId(
+        await ledgerGroupMemberRepository
 
-            accountId
+            .getByAccountId(
 
-        );
+                accountId
+
+            );
+
+    return Promise.all(
+
+        groups.map(
+
+            async (group) => {
+
+                const summary =
+
+                    await ledgerGroupSummaryService
+
+                        .getSummary(
+
+                            accountId,
+
+                            group.group_id
+
+                        );
+
+                const member =
+
+                    summary.members.find(
+
+                        (item) =>
+
+                            Number(item.account_id) ===
+                            Number(accountId)
+
+                    );
+
+                return {
+
+                    ...group,
+
+                    net_balance:
+
+                        member
+                            ? Number(member.net_balance)
+                            : 0
+
+                };
+
+            }
+
+        )
+
+    );
 
 }
 

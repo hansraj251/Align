@@ -357,6 +357,7 @@ button {
 }
 
 .party-name {
+  display: block;
   font-size: 16px;
   font-weight: 600;
   white-space: normal;
@@ -364,6 +365,7 @@ button {
 }
 
 .party-mobile {
+  display: block;
   margin-top: 4px;
   color: var(--muted);
   font-size: 12px;
@@ -522,6 +524,20 @@ button {
   color: var(--muted);
   font-size: 11px;
   font-weight: 650;
+}
+
+
+.header-group-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text);
 }
 
 .nav-item.selected {
@@ -1470,6 +1486,7 @@ button {
 }
 
 #createGroupForm input,
+#createGroupForm select,
 #createGroupForm textarea {
   display: block;
   width: 100%;
@@ -1490,6 +1507,7 @@ button {
 }
 
 #createGroupForm input:focus,
+#createGroupForm select:focus,
 #createGroupForm textarea:focus {
   border-color: #aeb3ba;
 }
@@ -1503,6 +1521,7 @@ button {
 }
 
 #editGroupForm input,
+#editGroupForm select,
 #editGroupForm textarea {
   display: block;
   width: 100%;
@@ -1523,6 +1542,7 @@ button {
 }
 
 #editGroupForm input:focus,
+#editGroupForm select:focus,
 #editGroupForm textarea:focus {
   border-color: #aeb3ba;
 }

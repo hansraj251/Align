@@ -29,12 +29,11 @@
       style="text-align:right;"
     >
       <div style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+
         <div>
           <h1 id="groupName">Sharing Group</h1>
           <p id="groupDescription"></p>
         </div>
-
-
       </div>
     </div>
   </div>
@@ -173,12 +172,22 @@
         </label>
 
         <label>
-          Description
-          <textarea
+          Group Type
+          <select
             id="editGroupDescription"
-            maxlength="500"
-            rows="3"
-          ></textarea>
+            required
+          >
+            <option value="">Select group type</option>
+            <option value="Trip / Travel">Trip / Travel</option>
+            <option value="Friends">Friends</option>
+            <option value="Family">Family</option>
+            <option value="Roommates">Roommates</option>
+            <option value="Couples">Couples</option>
+            <option value="Office / Work">Office / Work</option>
+            <option value="Event / Party">Event / Party</option>
+            <option value="Business">Business</option>
+            <option value="Other">Other</option>
+          </select>
         </label>
 
         <div class="form-actions">

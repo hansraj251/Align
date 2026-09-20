@@ -130,8 +130,32 @@
     els.editGroupName.value =
       group.name || "";
 
-    els.editGroupDescription.value =
+    const groupDescription =
       group.description || "";
+
+    if (
+      groupDescription &&
+      !Array.from(
+        els.editGroupDescription.options
+      ).some(
+        (option) =>
+          option.value === groupDescription
+      )
+    ) {
+      const existingOption =
+        document.createElement("option");
+
+      existingOption.value = groupDescription;
+      existingOption.textContent =
+        groupDescription;
+
+      els.editGroupDescription.appendChild(
+        existingOption
+      );
+    }
+
+    els.editGroupDescription.value =
+      groupDescription;
 
     if (els.editGroupFormError) {
       els.editGroupFormError.hidden = true;
