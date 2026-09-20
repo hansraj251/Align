@@ -23,7 +23,11 @@ async (
                 id: account.account.id,
                 name: account.account.name,
                 email: account.account.email,
-                mobile: account.account.mobile
+                mobile: account.account.mobile,
+                profilePhoto:
+                    account.account.profile_photo
+                        ? `/uploads/${account.account.profile_photo}`
+                        : null
             }
 
         });
@@ -83,6 +87,62 @@ async (
             message:
                 err.message
 
+        });
+
+    }
+
+};
+
+
+exports.uploadProfilePhoto =
+async (
+    req,
+    res
+) => {
+
+    try {
+
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Profile photo is required"
+            });
+        }
+
+        const profilePhoto =
+            `profile/${req.file.filename}`;
+
+        const account =
+            await alignAccountService
+                .updateProfilePhoto(
+                    req.alignAccountId,
+                    profilePhoto
+                );
+
+        return res.json({
+            success: true,
+            message:
+                "Profile photo updated successfully.",
+            profile: {
+                id: account.id,
+                name: account.name,
+                email: account.email,
+                mobile: account.mobile,
+                profilePhoto:
+                    account.profile_photo
+                        ? `/uploads/${account.profile_photo}`
+                        : null
+            }
+        });
+
+    }
+    catch (err) {
+
+        return res.status(400).json({
+            success: false,
+            message:
+                err.message
         });
 
     }

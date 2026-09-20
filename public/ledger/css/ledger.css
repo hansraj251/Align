@@ -2006,6 +2006,7 @@ body.sidebar-open {
 }
 
 .profile-avatar {
+  position: relative;
   display: grid;
   place-items: center;
   width: 54px;
@@ -2017,6 +2018,20 @@ body.sidebar-open {
   color: var(--accent);
   font-size: 20px;
   font-weight: 800;
+}
+
+.profile-avatar img {
+
+  display: block;
+
+  width: 100%;
+
+  height: 100%;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
 }
 
 .profile-qr-container {
@@ -2186,4 +2201,48 @@ body.sidebar-open {
 .ledger-sidebar-item:focus,
 .ledger-sidebar-item:active {
   text-decoration: none;
+}
+
+.profile-crop-modal {
+  max-width: 520px;
+}
+
+.profile-crop-area {
+  position: relative;
+  width: min(100%, 360px);
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #111111;
+  touch-action: none;
+  user-select: none;
+}
+
+.profile-crop-area img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  max-width: none;
+  transform-origin: center center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.profile-crop-controls {
+  display: grid;
+  grid-template-columns: 44px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.profile-crop-controls .secondary-button {
+  min-height: 44px;
+  padding: 0;
+}
+
+.profile-crop-controls input[type="range"] {
+  width: 100%;
 }

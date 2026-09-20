@@ -13,6 +13,7 @@ async (
             name,
             email,
             mobile,
+            profile_photo,
             status,
             created_at,
             updated_at
@@ -339,6 +340,45 @@ exports.updatePassword = async (
             name,
             email,
             mobile,
+            status,
+            created_at,
+            updated_at
+        FROM align_accounts
+        WHERE id = ?
+        `,
+        [
+            accountId
+        ]
+    );
+};
+
+exports.updateProfilePhoto = async (
+    accountId,
+    profilePhoto
+) => {
+
+    await db.runAsync(
+        `
+        UPDATE align_accounts
+        SET
+            profile_photo = ?,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?
+        `,
+        [
+            profilePhoto,
+            accountId
+        ]
+    );
+
+    return await db.getAsync(
+        `
+        SELECT
+            id,
+            name,
+            email,
+            mobile,
+            profile_photo,
             status,
             created_at,
             updated_at

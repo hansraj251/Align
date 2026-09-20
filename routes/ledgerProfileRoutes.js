@@ -13,6 +13,10 @@ const alignAccountMiddleware =
 const ledgerProfileController =
     require("../controllers/ledgerProfileController");
 
+const ledgerProfilePhotoUploadMiddleware =
+
+    require("../middlewares/ledgerProfilePhotoUploadMiddleware");
+
 router.use(
     authMiddleware,
     alignAccountMiddleware
@@ -26,6 +30,15 @@ router.get(
 router.put(
     "/",
     ledgerProfileController.updateProfile
+);
+
+router.post(
+
+    "/photo",
+
+    ledgerProfilePhotoUploadMiddleware,
+
+    ledgerProfileController.uploadProfilePhoto
 );
 
 module.exports =

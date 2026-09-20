@@ -842,3 +842,47 @@ exports.updateProfile = async (
             cleanMobile
         );
 };
+
+
+exports.updateProfilePhoto = async (
+    accountId,
+    profilePhoto
+) => {
+
+    const cleanProfilePhoto =
+        String(profilePhoto || "").trim();
+
+    if (!accountId) {
+        throw new Error(
+            "Account ID is required"
+        );
+    }
+
+    if (!cleanProfilePhoto) {
+        throw new Error(
+            "Profile photo is required"
+        );
+    }
+
+    const account =
+        await alignAccountRepository
+            .getById(accountId);
+
+    if (!account) {
+        throw new Error(
+            "Align account not found"
+        );
+    }
+
+    if (account.status !== "active") {
+        throw new Error(
+            "Align account is not active"
+        );
+    }
+
+    return await alignAccountRepository
+        .updateProfilePhoto(
+            accountId,
+            cleanProfilePhoto
+        );
+};

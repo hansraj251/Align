@@ -1338,6 +1338,41 @@ console.log("✅ Music artist catalogue seeded.");
             "✅ ledger_transactions interest rate column is up to date."
         );
     }
+
+
+
+    /*
+     * Migration 15:
+     * align_accounts.profile_photo
+     */
+
+    const alignAccountColumns =
+        await db.allAsync(`
+            PRAGMA table_info(
+                align_accounts
+            )
+        `);
+
+    const hasProfilePhoto =
+        alignAccountColumns.some(
+            column =>
+                column.name === "profile_photo"
+        );
+
+    if (!hasProfilePhoto) {
+        await db.runAsync(`
+            ALTER TABLE align_accounts
+            ADD COLUMN profile_photo TEXT
+        `);
+
+        console.log(
+            "✅ align_accounts profile photo column added."
+        );
+    } else {
+        console.log(
+            "✅ align_accounts profile photo column is up to date."
+        );
+    }
 }
 
 module.exports =
