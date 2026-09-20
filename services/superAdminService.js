@@ -140,7 +140,7 @@ async () => {
 
     const dbPath =
         process.env.RENDER
-            ? "/var/data/align.db"
+            ? "/tmp/align.db"
             : path.join(
                 __dirname,
                 "..",
@@ -376,7 +376,7 @@ exports.restoreDatabaseBackup = async (uploadedFile) => {
 
     const dbPath =
         process.env.RENDER
-            ? "/var/data/align.db"
+            ? "/tmp/align.db"
             : path.join(__dirname, "..", "database", "align.db");
 
     const backupsDir =

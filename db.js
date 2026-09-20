@@ -3,7 +3,7 @@ const path = require("path");
 
 const dbPath =
     process.env.RENDER
-        ? "/var/data/align.db"
+        ? "/tmp/align.db"
         : path.join(__dirname, "database", "align.db");       
 
 
