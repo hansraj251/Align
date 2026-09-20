@@ -39,8 +39,6 @@
             $("profileInitial"),
         profilePhoto:
             $("profilePhoto"),
-        profilePhotoButton:
-            $("profilePhotoButton"),
         profilePhotoInput:
             $("profilePhotoInput"),
         profilePhotoMessage:
@@ -1042,7 +1040,15 @@
         }
     );
 
-    els.profilePhotoButton.addEventListener(
+    els.profilePhoto.addEventListener(
+        "click",
+        () => {
+            clearProfilePhotoMessage();
+            els.profilePhotoInput.click();
+        }
+    );
+
+    els.profileInitial.addEventListener(
         "click",
         () => {
             clearProfilePhotoMessage();

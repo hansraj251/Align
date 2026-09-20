@@ -483,9 +483,18 @@
 
       row.innerHTML = `
         <span class="party-avatar">
-          ${escapeHtml(
-            initials(member.name)
-          )}
+          ${
+            member.profile_photo
+              ? `<img
+                  src="/uploads/${encodeURIComponent(
+                    member.profile_photo
+                  )}?t=${Date.now()}"
+                  alt=""
+                >`
+              : escapeHtml(
+                  initials(member.name)
+                )
+          }
         </span>
 
         <span class="party-info">

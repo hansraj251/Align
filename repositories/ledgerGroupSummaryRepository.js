@@ -16,6 +16,7 @@ async function getMembers(
             m.group_id,
             m.account_id,
             a.name AS name,
+            a.profile_photo,
             m.mobile,
             m.email,
             m.role,

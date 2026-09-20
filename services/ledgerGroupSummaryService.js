@@ -107,6 +107,7 @@ function createMemberBalances(
             account_id: member.account_id,
 
             name: member.name,
+            profile_photo: member.profile_photo,
 
             mobile: member.mobile,
 
