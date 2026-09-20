@@ -10,7 +10,7 @@ const fs =
 
 const uploadsPath =
     process.env.RENDER
-        ? "/var/data/uploads"
+        ? "/tmp/uploads"
         : path.join(
             __dirname,
             "../uploads"
